@@ -40,8 +40,7 @@ input[type=number]{width:130px;padding:6px;border-radius:8px;border:1px solid #c
 
 <body>
 
-<h1>루틴체크</h1>
-<div class="small" style="text-align:center" id="today"></div>
+<h1>🎈루틴 체크</h1>
 
 <div class="tabs">
   <button class="tab active" id="tabToday" onclick="showTab('today')">♥️오늘</button>
@@ -53,6 +52,7 @@ input[type=number]{width:130px;padding:6px;border-radius:8px;border:1px solid #c
   <button class="mode" id="mCycle" onclick="setMode('cycle')">🩸생리주기</button>
   <button class="mode" id="mTravel" onclick="setMode('travel')">✈️여행/이탈</button>
 </div>
+
 
 <!-- TODAY -->
 <div id="viewToday">
@@ -132,7 +132,14 @@ const MODES = {
     {c:"핵심",t:"💧 물 1컵",w:1},
     {c:"핵심",t:"🧘 5분 전신 또는 스트레칭",w:2},
   ],
-  cycle: BASE_ITEMS.filter(i=>i.w>0),
+cycle: [
+  {c:"하루", t:"💧 물 충분히", w:1},
+  {c:"하루", t:"🥚 단백질 섭취", w:2, p:1},
+  {c:"하루", t:"🥚 단백질 섭취 (추가)", w:2, p:1},
+  {c:"하루", t:"🚶 식후 걷기 10분 또는 가벼운 움직임", w:2},
+  {c:"하루", t:"🧘 5분 전신 또는 스트레칭", w:2},
+  {c:"하루", t:"📝 기록(대충이라도)", w:1},
+],
   travel: [
     {c:"여행",t:"🥤 단백질 1회",w:2,p:1},
     {c:"여행",t:"🚶 걷기 10분",w:2},
