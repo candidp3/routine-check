@@ -1,174 +1,256 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>루틴체크</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f7f7f7;
-      margin: 0;
-      padding: 16px;
-      color: #222;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 8px;
-    }
-    .date {
-      text-align: center;
-      font-size: 14px;
-      color: #666;
-      margin-bottom: 16px;
-    }
-    .section {
-      background: #fff;
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 12px;
-    }
-    .section h2 {
-      font-size: 16px;
-      margin: 0 0 8px 0;
-    }
-    label {
-      display: block;
-      padding: 6px 0;
-      font-size: 15px;
-    }
-    input[type="checkbox"] {
-      margin-right: 8px;
-    }
-    .result {
-      text-align: center;
-      font-size: 18px;
-      font-weight: bold;
-      margin: 16px 0;
-    }
-    .pass { color: #2e7d32; }
-    .mid { color: #f9a825; }
-    .rest { color: #c62828; }
-    button {
-      width: 100%;
-      padding: 10px;
-      font-size: 15px;
-      border: none;
-      border-radius: 10px;
-      background: #e0e0e0;
-      cursor: pointer;
-    }
-    button:active {
-      background: #ccc;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>루틴체크</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#222222">
+
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+background:#f6f6f6;margin:0;padding:14px;color:#222}
+h1{text-align:center;margin:6px 0}
+.small{font-size:13px;color:#666}
+.tabs{display:flex;gap:8px;margin:12px 0}
+.tab{flex:1;padding:10px;border-radius:12px;border:none;background:#e6e6e6;font-size:14px}
+.tab.active{background:#cfcfcf;font-weight:700}
+.modes{display:flex;gap:8px;margin-bottom:10px}
+.mode{flex:1;padding:10px;border-radius:12px;border:none;background:#e6e6e6;font-size:13px}
+.mode.on{background:#cfcfcf;font-weight:700}
+.section{background:#fff;border-radius:14px;padding:12px;margin-bottom:10px}
+.section h2{margin:0 0 8px;font-size:16px}
+label{display:flex;align-items:center;gap:8px;padding:6px 0}
+input[type=checkbox]{width:18px;height:18px}
+.result{text-align:center;font-size:20px;font-weight:800;margin:14px 0}
+.pass{color:#2e7d32}.mid{color:#f9a825}.rest{color:#c62828}
+.btn{width:100%;padding:10px;border-radius:12px;border:none;background:#e6e6e6;font-size:14px}
+.btn:active{background:#cfcfcf}
+.hide{display:none}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px;border-bottom:1px solid #eee;font-size:13px}
+th{color:#666;text-align:left}
+.badge{padding:2px 8px;border-radius:999px;font-size:12px;font-weight:700}
+.ok{background:#e7f6ea;color:#2e7d32}
+.midb{background:#fff4d6;color:#f9a825}
+.restb{background:#fde7e7;color:#c62828}
+input[type=number]{width:130px;padding:6px;border-radius:8px;border:1px solid #ccc}
+</style>
 </head>
+
 <body>
 
 <h1>루틴체크</h1>
-<div class="date" id="today"></div>
+<div class="small" style="text-align:center" id="today"></div>
+
+<div class="tabs">
+  <button class="tab active" id="tabToday" onclick="showTab('today')">♥️오늘</button>
+  <button class="tab" id="tabWeek" onclick="showTab('week')">📓주간 요약</button>
+</div>
+
+<div class="modes">
+  <button class="mode" id="mHard" onclick="setMode('hard')">😪힘든 날</button>
+  <button class="mode" id="mCycle" onclick="setMode('cycle')">🩸생리주기</button>
+  <button class="mode" id="mTravel" onclick="setMode('travel')">✈️여행/이탈</button>
+</div>
+
+<!-- TODAY -->
+<div id="viewToday">
+
+<div class="section">
+  <div class="small">🎯 목표: 1,450 ~ 1,650 kcal</div>
+  <div style="margin-top:6px">
+    오늘 섭취 kcal:
+    <input type="number" id="kcalInput" placeholder="입력">
+  </div>
+  <div class="small" id="proteinText" style="margin-top:6px"></div>
+</div>
 
 <div id="checklist"></div>
 
-<div class="result" id="resultText">체크를 시작하세요</div>
+<div class="result" id="result">체크 시작</div>
 
-<button onclick="toggleHardDay()">오늘 힘든 날</button>
+<button class="btn" onclick="resetToday()">오늘 체크 초기화</button>
+
+</div>
+
+<!-- WEEK -->
+<div id="viewWeek" class="hide">
+  <div class="section">
+    <h2>최근 7일</h2>
+    <div class="small" id="weekSummary"></div>
+  </div>
+  <div class="section">
+    <table>
+      <thead>
+        <tr>
+          <th>날짜</th><th>모드</th><th>점수</th><th>판정</th><th>단백질</th>
+        </tr>
+      </thead>
+      <tbody id="weekTable"></tbody>
+    </table>
+  </div>
+</div>
 
 <script>
-  const todayKey = new Date().toISOString().slice(0, 10);
-  document.getElementById("today").innerText = todayKey;
+const todayKey = new Date().toISOString().slice(0,10);
+document.getElementById("today").innerText = todayKey;
 
-  const normalItems = [
-    "아침 단백질 섭취",
-    "점심 단백질 포함 식사",
-    "오후 단백질 간식",
-    "저녁 단백질 섭취",
-    "폴댄스 또는 최소 루틴",
-    "식후 걷기 또는 가벼운 움직임",
-    "파스타 앱 기록"
-  ];
+const MIN_PROTEIN = 58;
+const PROTEIN_UNIT = 15;
 
-  const hardItems = [
-    "단백질 1회",
-    "물 1컵",
-    "최소 루틴 또는 스트레칭"
-  ];
+const BASE_ITEMS = [
+  {c:"하루",t:"💧 물 2L 이상",w:1},
+  {c:"하루",t:"⛔ 14시간 단식",w:1},
 
-  let isHardDay = false;
+  {c:"아침",t:"🌞 10시 전 기상",w:1},
+  {c:"아침",t:"🪥 양치 + 환기 + 물",w:1},
+  {c:"아침",t:"💊 영양제",w:1},
+  {c:"아침",t:"🍋 레몬물 세트",w:1},
+  {c:"아침",t:"🥚 단백질 섭취",w:2,p:1},
 
-  function loadState() {
-    const saved = JSON.parse(localStorage.getItem(todayKey));
-    if (saved) {
-      isHardDay = saved.isHardDay;
+  {c:"점심",t:"🥩 단백질 섭취",w:2,p:1},
+  {c:"점심",t:"🚶 식후 걷기 10분",w:2},
+  {c:"점심",t:"💊 영양제",w:1},
+
+  {c:"오후",t:"🧀 단백질 섭취",w:2,p:1},
+
+  {c:"저녁",t:"🍗 단백질 섭취",w:2,p:1},
+  {c:"저녁",t:"🚶 식후 걷기 10분",w:2},
+
+  {c:"운동",t:"🎪 폴 또는 5분 전신운동",w:2},
+  {c:"운동",t:"🔥 복부(보너스)",w:0},
+  {c:"운동",t:"💪 어깨(보너스)",w:0},
+  {c:"운동",t:"🪽 등(보너스)",w:0},
+  {c:"운동",t:"🍑 힙(보너스)",w:0},
+];
+
+const MODES = {
+  base: BASE_ITEMS,
+  hard: [
+    {c:"핵심",t:"🥤 단백질 1회",w:2,p:1},
+    {c:"핵심",t:"💧 물 1컵",w:1},
+    {c:"핵심",t:"🧘 5분 전신 또는 스트레칭",w:2},
+  ],
+  cycle: BASE_ITEMS.filter(i=>i.w>0),
+  travel: [
+    {c:"여행",t:"🥤 단백질 1회",w:2,p:1},
+    {c:"여행",t:"🚶 걷기 10분",w:2},
+    {c:"여행",t:"📝 기록 가능하면",w:1},
+  ]
+};
+
+let state = JSON.parse(localStorage.getItem(todayKey)) || {mode:"base",checks:{},kcal:""};
+
+document.getElementById("kcalInput").value = state.kcal || "";
+
+function save(){localStorage.setItem(todayKey,JSON.stringify(state));}
+
+function setMode(m){
+  state.mode = state.mode===m ? "base" : m;
+  save();render();
+}
+
+function render(){
+  ["mHard","mCycle","mTravel"].forEach(id=>document.getElementById(id).classList.remove("on"));
+  if(state.mode==="hard")mHard.classList.add("on");
+  if(state.mode==="cycle")mCycle.classList.add("on");
+  if(state.mode==="travel")mTravel.classList.add("on");
+
+  const items = MODES[state.mode];
+  const wrap = document.getElementById("checklist");
+  wrap.innerHTML="";
+  let cur="";
+  items.forEach((it,i)=>{
+    if(it.c!==cur){
+      cur=it.c;
+      const s=document.createElement("div");
+      s.className="section";
+      s.innerHTML=`<h2>${cur}</h2>`;
+      wrap.appendChild(s);
     }
+    const id=state.mode+"_"+i;
+    const lbl=document.createElement("label");
+    lbl.innerHTML=`<input type="checkbox" ${state.checks[id]?"checked":""}> ${it.t}`;
+    lbl.querySelector("input").onchange=e=>{
+      state.checks[id]=e.target.checked;
+      save();update();
+    };
+    wrap.lastChild.appendChild(lbl);
+  });
+  update();
+}
+
+function update(){
+  const items = MODES[state.mode];
+  let score=0,total=0,protein=0;
+  items.forEach((it,i)=>{
+    const id=state.mode+"_"+i;
+    if(it.w>0){total+=it.w;if(state.checks[id])score+=it.w;}
+    if(it.p && state.checks[id])protein+=PROTEIN_UNIT;
+  });
+  document.getElementById("proteinText").innerText =
+    `🥩 단백질 ${protein}g / 최소 ${MIN_PROTEIN}g`;
+
+  const r=document.getElementById("result");
+  const ratio=score/total;
+  if(ratio>=0.6){r.innerText="오늘 합격 ✅";r.className="result pass";}
+  else if(ratio>=0.3){r.innerText="보통 🙂";r.className="result mid";}
+  else{r.innerText="회복 데이 🌱";r.className="result rest";}
+}
+
+function resetToday(){
+  if(confirm("오늘 체크를 초기화할까요?")){
+    state={mode:"base",checks:{},kcal:""};
+    save();render();
   }
+}
 
-  function saveState() {
-    const checks = Array.from(document.querySelectorAll("input[type=checkbox]"))
-      .map(cb => cb.checked);
-    localStorage.setItem(todayKey, JSON.stringify({ isHardDay, checks }));
-  }
+function showTab(t){
+  tabToday.classList.toggle("active",t==="today");
+  tabWeek.classList.toggle("active",t==="week");
+  viewToday.classList.toggle("hide",t!=="today");
+  viewWeek.classList.toggle("hide",t!=="week");
+  if(t==="week")renderWeek();
+}
 
-  function render() {
-    const container = document.getElementById("checklist");
-    container.innerHTML = "";
-
-    const items = isHardDay ? hardItems : normalItems;
-
-    const section = document.createElement("div");
-    section.className = "section";
-
-    const title = document.createElement("h2");
-    title.innerText = isHardDay ? "힘든 날 최소 루틴" : "오늘의 루틴";
-    section.appendChild(title);
-
-    const saved = JSON.parse(localStorage.getItem(todayKey));
-    items.forEach((text, i) => {
-      const label = document.createElement("label");
-      const cb = document.createElement("input");
-      cb.type = "checkbox";
-      cb.checked = saved?.checks?.[i] || false;
-      cb.onchange = () => {
-        updateResult();
-        saveState();
-      };
-      label.appendChild(cb);
-      label.appendChild(document.createTextNode(text));
-      section.appendChild(label);
+function renderWeek(){
+  const body=document.getElementById("weekTable");
+  body.innerHTML="";
+  let pass=0,mid=0,rest=0;
+  for(let i=6;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const k=d.toISOString().slice(0,10);
+    const s=JSON.parse(localStorage.getItem(k)||"{}");
+    if(!s.checks)continue;
+    let score=0,total=0,protein=0;
+    (MODES[s.mode||"base"]||[]).forEach((it,j)=>{
+      const id=(s.mode||"base")+"_"+j;
+      if(it.w>0){total+=it.w;if(s.checks[id])score+=it.w;}
+      if(it.p && s.checks[id])protein+=PROTEIN_UNIT;
     });
-
-    container.appendChild(section);
-    updateResult();
+    const ratio=score/total;
+    let badge="restb",txt="회복";rest++;
+    if(ratio>=0.6){badge="ok";txt="합격";pass++;rest--;}
+    else if(ratio>=0.3){badge="midb";txt="보통";mid++;rest--;}
+    body.innerHTML+=`
+      <tr>
+        <td>${k}</td>
+        <td>${s.mode||"base"}</td>
+        <td>${score}/${total}</td>
+        <td><span class="badge ${badge}">${txt}</span></td>
+        <td>${protein}g</td>
+      </tr>`;
   }
+  document.getElementById("weekSummary").innerText=
+    `합격 ${pass}일 · 보통 ${mid}일 · 회복 ${rest}일`;
+}
 
-  function updateResult() {
-    const checkboxes = document.querySelectorAll("input[type=checkbox]");
-    const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
-    const total = checkboxes.length;
-    const ratio = total === 0 ? 0 : checked / total;
+document.getElementById("kcalInput").oninput=e=>{
+  state.kcal=e.target.value;save();
+};
 
-    const result = document.getElementById("resultText");
-    if (ratio >= 0.6) {
-      result.innerText = "오늘 합격 ✅";
-      result.className = "result pass";
-    } else if (ratio >= 0.3) {
-      result.innerText = "보통 🙂";
-      result.className = "result mid";
-    } else {
-      result.innerText = "회복 데이 🌱";
-      result.className = "result rest";
-    }
-  }
-
-  function toggleHardDay() {
-    isHardDay = !isHardDay;
-    localStorage.removeItem(todayKey);
-    saveState();
-    render();
-  }
-
-  loadState();
-  render();
+render();
 </script>
 
 </body>
