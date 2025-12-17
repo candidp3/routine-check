@@ -1,3 +1,6 @@
+self.addEventListener("install", () => self.skipWaiting());
+self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
+
 const CACHE_NAME = "routinecheck-v1";
 const ASSETS = ["./", "./index.html", "./manifest.json", "./sw.js", "./icon-192.png", "./icon-512.png"];
 
@@ -20,3 +23,4 @@ self.addEventListener("fetch", (event) => {
     caches.match(event.request).then((cached) => cached || fetch(event.request))
   );
 });
+
