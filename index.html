@@ -302,7 +302,20 @@ Object.entries(groups).forEach(([ym,arr],i)=>{
 
 kcalInput.oninput=e=>{state.kcal=e.target.value;save();};
 render();
+
+// ✅ Service Worker 등록 + 업데이트 체크
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", async () => {
+    try {
+      const reg = await navigator.serviceWorker.register("./sw.js");
+      await reg.update(); // 새 버전 확인
+    } catch (e) {
+      // 조용히 무시 (설치/업데이트 실패해도 앱은 정상 동작)
+    }
+  });
+}
 </script>
 
 </body>
+
 </html>
