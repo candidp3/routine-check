@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>루틴체크</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 16px;
+      color: #222;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .date {
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 16px;
+    }
+    .section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .section h2 {
+      font-size: 16px;
+      margin: 0 0 8px 0;
+    }
+    label {
+      display: block;
+      padding: 6px 0;
+      font-size: 15px;
+    }
+    input[type="checkbox"] {
+      margin-right: 8px;
+    }
+    .result {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      margin: 16px 0;
+    }
+    .pass { color: #2e7d32; }
+    .mid { color: #f9a825; }
+    .rest { color: #c62828; }
+    button {
+      width: 100%;
+      padding: 10px;
+      font-size: 15px;
+      border: none;
+      border-radius: 10px;
+      background: #e0e0e0;
+      cursor: pointer;
+    }
+    button:active {
+      background: #ccc;
+    }
+  </style>
+</head>
+<body>
+
+<h1>루틴체크</h1>
+<div class="date" id="today"></div>
+
+<div id="checklist"></div>
+
+<div class="result" id="resultText">체크를 시작하세요</div>
+
+<button onclick="toggleHardDay()">오늘 힘든 날</button>
+
+<script>
+  const todayKey = new Date().toISOString().slice(0, 10);
+  document.getElementById("today").innerText = todayKey;
+
+  const normalItems = [
+    "아침 단백질 섭취",
+    "점심 단백질 포함 식사",
+    "오후 단백질 간식",
+    "저녁 단백질 섭취",
+    "폴댄스 또는 최소 루틴",
+    "식후 걷기 또는 가벼운 움직임",
+    "파스타 앱 기록"
+  ];
+
+  const hardItems = [
+    "단백질 1회",
+    "물 1컵",
+    "최소 루틴 또는 스트레칭"
+  ];
+
+  let isHardDay = false;
+
+  function loadState() {
+    const saved = JSON.parse(localStorage.getItem(todayKey));
+    if (saved) {
+      isHardDay = saved.isHardDay;
+    }
+  }
+
+  function saveState() {
+    const checks = Array.from(document.querySelectorAll("input[type=checkbox]"))
+      .map(cb => cb.checked);
+    localStorage.setItem(todayKey, JSON.stringify({ isHardDay, checks }));
+  }
+
+  function render() {
+    const container = document.getElementById("checklist");
+    container.innerHTML = "";
+
+    const items = isHardDay ? hardItems : normalItems;
+
+    const section = document.createElement("div");
+    section.className = "section";
+
+    const title = document.createElement("h2");
+    title.innerText = isHardDay ? "힘든 날 최소 루틴" : "오늘의 루틴";
+    section.appendChild(title);
+
+    const saved = JSON.parse(localStorage.getItem(todayKey));
+    items.forEach((text, i) => {
+      const label = document.createElement("label");
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = saved?.checks?.[i] || false;
+      cb.onchange = () => {
+        updateResult();
+        saveState();
+      };
+      label.appendChild(cb);
+      label.appendChild(document.createTextNode(text));
+      section.appendChild(label);
+    });
+
+    container.appendChild(section);
+    updateResult();
+  }
+
+  function updateResult() {
+    const checkboxes = document.querySelectorAll("input[type=checkbox]");
+    const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+    const total = checkboxes.length;
+    const ratio = total === 0 ? 0 : checked / total;
+
+    const result = document.getElementById("resultText");
+    if (ratio >= 0.6) {
+      result.innerText = "오늘 합격 ✅";
+      result.className = "result pass";
+    } else if (ratio >= 0.3) {
+      result.innerText = "보통 🙂";
+      result.className = "result mid";
+    } else {
+      result.innerText = "회복 데이 🌱";
+      result.className = "result rest";
+    }
+  }
+
+  function toggleHardDay() {
+    isHardDay = !isHardDay;
+    localStorage.removeItem(todayKey);
+    saveState();
+    render();
+  }
+
+  loadState();
+  render();
+</script>
+
+</body>
+</html>
