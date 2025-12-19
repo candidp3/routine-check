@@ -109,6 +109,17 @@ th:nth-child(5), td:nth-child(5){ min-width:65px; } /* 단백질 */
 <!-- TODAY -->
 <div id="viewToday">
   <div class="section">
+  <div class="small">📅 날짜 선택 (과거 기록 수정)</div>
+  <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
+    <input type="date" id="datePicker">
+    <button class="btn" style="width:auto;padding:8px 12px" onclick="loadDate()">불러오기</button>
+    <button class="btn" style="width:auto;padding:8px 12px" onclick="backToToday()">오늘로</button>
+  </div>
+  <div class="small" id="editHint" style="margin-top:6px;color:#c62828;display:none;">
+    ⚠️ 과거 기록 수정 중
+  </div>
+</div>
+  <div class="section">
     <div class="small">🎯 목표 칼로리: 1,450 ~ 1,650 kcal</div>
     <div style="margin-top:6px">
       오늘 섭취 kcal:
@@ -174,7 +185,7 @@ th:nth-child(5), td:nth-child(5){ min-width:65px; } /* 단백질 */
 <script>
 const todayKey = new Date().toISOString().slice(0,10);
 document.getElementById("today").innerText = todayKey;
-
+let activeDateKey = todayKey; // 기본은 오늘
 const MIN_PROTEIN = 58;
 const PROTEIN_UNIT = 15;
 
@@ -214,15 +225,15 @@ const MODES = {
   cycle: [
     {c:"하루",t:"💧 물 충분히",w:1},
     {c:"하루",t:"🥚 단백질 섭취",w:2,p:1},
-    {c:"하루",t:"🥚 단백질 섭취 (추가)",w:2,p:1},
+    {c:"하루",t:"🥚 단백질 섭취(추가)",w:2,p:1},
     {c:"하루",t:"🚶 식후 걷기 10분 또는 가벼운 움직임",w:2},
     {c:"하루",t:"🧘 5분 전신 또는 스트레칭",w:2},
-    {c:"하루",t:"📝 기록(대충이라도)",w:1},
+    {c:"하루",t:"📝 기록",w:1},
   ],
   travel: [
     {c:"여행",t:"🥤 단백질 1회",w:2,p:1},
-    {c:"여행",t:"🚶 걷기 10분",w:2},
-    {c:"여행",t:"📝 기록 가능하면",w:1},
+    {c:"여행",t:"🚶 걷기 10분 또는 스트레칭",w:2},
+    {c:"여행",t:"📝 기록",w:1},
   ]
 };
 
@@ -238,8 +249,9 @@ let state = JSON.parse(localStorage.getItem(todayKey))
 
 document.getElementById("kcalInput").value = state.kcal || "";
 
-function save(){ localStorage.setItem(todayKey, JSON.stringify(state)); }
-
+function save(){
+  localStorage.setItem(activeDateKey, JSON.stringify(state));
+}
 function setMode(m){
   state.mode = (state.mode===m) ? "base" : m;
   save(); render();
@@ -315,6 +327,9 @@ function update(){
 }
 
 function resetToday(){
+  if(activeDateKey !== todayKey){
+  alert("과거 기록을 초기화하려고 해. 날짜를 다시 확인해줘.");
+  }
   if(confirm("오늘 체크를 초기화할까요?")){
     state = {mode:"base",checks:{},kcal:""};
     save(); render();
@@ -501,8 +516,44 @@ render();
 if("serviceWorker" in navigator){
   window.addEventListener("load", ()=>{ navigator.serviceWorker.register("./sw.js").catch(()=>{}); });
 }
+
+function loadDate(){
+  const d = document.getElementById("datePicker").value;
+  if(!d) return alert("날짜를 선택해줘");
+
+  // 미래 날짜 차단
+  if(d > todayKey){
+    alert("미래 날짜는 수정할 수 없어.");
+    return;
+  }
+
+  activeDateKey = d;
+
+  state = JSON.parse(localStorage.getItem(activeDateKey))
+    || {mode:"base",checks:{},kcal:""};
+
+  document.getElementById("today").innerText = activeDateKey + " (수정중)";
+  document.getElementById("kcalInput").value = state.kcal || "";
+  document.getElementById("editHint").style.display = "block";
+
+  render();
+}
+
+function backToToday(){
+  activeDateKey = todayKey;
+
+  state = JSON.parse(localStorage.getItem(todayKey))
+    || {mode:"base",checks:{},kcal:""};
+
+  document.getElementById("today").innerText = todayKey;
+  document.getElementById("kcalInput").value = state.kcal || "";
+  document.getElementById("editHint").style.display = "none";
+
+  render();
+}
 </script>
 
 </body>
 </html>
+
 
