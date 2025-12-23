@@ -30,7 +30,6 @@ th{text-align:left;color:#666}
 .ok{background:#e7f6ea;color:#2e7d32}
 .midb{background:#fff4d6;color:#f9a825}
 .restb{background:#fde7e7;color:#c62828}
-input[type=number]{width:130px;padding:6px;border-radius:8px;border:1px solid #ccc}
 
 .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 select,.textin{
@@ -43,38 +42,25 @@ details > summary::-webkit-details-marker{display:none}
 .summaryRow{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
 .mono{font-variant-numeric:tabular-nums}
 
-/* =========================================================
-   ✅ 패치 1) 모바일 표 줄바꿈 완전 차단 + 글자 축소 + 열 최소폭
-   ========================================================= */
-table{
-  table-layout:auto;
-  width:max-content;
-  min-width:100%;
-}
+/* ===== 모바일 표 줄바꿈 완전 차단 + 글자 축소 + 열 최소폭 ===== */
+table{table-layout:auto;width:max-content;min-width:100%}
 th, td{
   white-space:nowrap !important;
   word-break:keep-all !important;
   text-align:center;
   vertical-align:middle;
 }
-/* 판정 배지 줄바꿈 방지 */
-.badge{
-  white-space:nowrap;
-  display:inline-block;
-}
-/* 문제되는 열 최소 폭 확보 */
+.badge{white-space:nowrap;display:inline-block}
 th:nth-child(2), td:nth-child(2){ min-width:70px; } /* 모드 */
 th:nth-child(4), td:nth-child(4){ min-width:60px; } /* 판정 */
 th:nth-child(5), td:nth-child(5){ min-width:65px; } /* 단백질 */
-/* 모바일 글자 크기 자동 축소 */
+th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 @media (max-width:420px){
   th, td{ font-size:12px; padding:6px 8px; }
   .tab, .mode{ font-size:13px; padding:9px; }
 }
 
-/* =========================================================
-   ✅ 패치 2) BONUS 배지 스타일
-   ========================================================= */
+/* ===== BONUS 배지 ===== */
 .bonusTag{
   margin-left:8px;
   font-size:12px;
@@ -84,6 +70,20 @@ th:nth-child(5), td:nth-child(5){ min-width:65px; } /* 단백질 */
   color:#777;
   font-weight:700;
 }
+
+/* ===== 물 트래커 UI ===== */
+.waterRow{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  padding:6px 0;
+}
+.waterBtns{display:flex;gap:8px;align-items:center}
+.waterBtns button{
+  border:none;border-radius:10px;padding:8px 10px;background:#e6e6e6;font-size:13px;
+}
+.waterBtns button:active{background:#cfcfcf}
+.waterStat{font-size:13px;color:#444}
+.waterGood{font-weight:800;color:#2e7d32}
+.waterNeed{font-weight:800;color:#c62828}
 </style>
 </head>
 
@@ -108,24 +108,32 @@ th:nth-child(5), td:nth-child(5){ min-width:65px; } /* 단백질 */
 
 <!-- TODAY -->
 <div id="viewToday">
+
+  <!-- ✅ 과거 기록 수정 -->
   <div class="section">
-  <div class="small">📅 날짜 선택 (과거 기록 수정)</div>
-  <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
-    <input type="date" id="datePicker">
-    <button class="btn" style="width:auto;padding:8px 12px" onclick="loadDate()">불러오기</button>
-    <button class="btn" style="width:auto;padding:8px 12px" onclick="backToToday()">오늘로</button>
-  </div>
-  <div class="small" id="editHint" style="margin-top:6px;color:#c62828;display:none;">
-    ⚠️ 과거 기록 수정 중
-  </div>
-</div>
-  <div class="section">
-    <div class="small">🎯 목표 칼로리: 1,450 ~ 1,650 kcal</div>
-    <div style="margin-top:6px">
-      오늘 섭취 kcal:
-      <input type="number" id="kcalInput" placeholder="입력">
+    <div class="small">📅 날짜 선택 (과거 기록 수정)</div>
+    <div style="display:flex; gap:8px; align-items:center; margin-top:6px; flex-wrap:wrap;">
+      <input type="date" id="datePicker" style="padding:8px 10px;border-radius:10px;border:1px solid #ddd;background:#fff;font-size:14px;">
+      <button class="btn" style="width:auto;padding:9px 12px" onclick="loadDate()">불러오기</button>
+      <button class="btn" style="width:auto;padding:9px 12px" onclick="backToToday()">오늘로</button>
     </div>
-    <div class="small" id="proteinText" style="margin-top:6px"></div>
+    <div class="small" id="editHint" style="margin-top:6px;color:#c62828;display:none;">
+      ⚠️ 과거 기록 수정 중
+    </div>
+  </div>
+
+  <!-- ✅ 단백질/물 상태 -->
+  <div class="section">
+    <div class="small" id="proteinText"></div>
+
+    <div class="waterRow">
+      <div class="waterStat" id="waterText"></div>
+      <div class="waterBtns">
+        <button onclick="addWater(-WATER_UNIT)">↩️ -120ml</button>
+        <button onclick="addWater(WATER_UNIT)">💧 +120ml</button>
+        <button onclick="resetWater()">초기화</button>
+      </div>
+    </div>
   </div>
 
   <div id="checklist"></div>
@@ -133,6 +141,7 @@ th:nth-child(5), td:nth-child(5){ min-width:65px; } /* 단백질 */
   <div class="result" id="result">체크 시작</div>
 
   <button class="btn" onclick="resetToday()">오늘 체크 초기화</button>
+
 </div>
 
 <!-- WEEK -->
@@ -145,7 +154,7 @@ th:nth-child(5), td:nth-child(5){ min-width:65px; } /* 단백질 */
     <table>
       <thead>
         <tr>
-          <th>날짜</th><th>모드</th><th>점수</th><th>판정</th><th>단백질</th><th>kcal</th>
+          <th>날짜</th><th>모드</th><th>점수</th><th>판정</th><th>단백질</th><th>물</th>
         </tr>
       </thead>
       <tbody id="weekTable"></tbody>
@@ -174,7 +183,7 @@ th:nth-child(5), td:nth-child(5){ min-width:65px; } /* 단백질 */
         <option value="rest">회복</option>
       </select>
 
-      <input id="allTextFilter" class="textin" placeholder="검색(날짜/메모: kcal 등)" />
+      <input id="allTextFilter" class="textin" placeholder="검색(날짜/단백질/물 등)" />
       <button class="btn" style="width:auto;padding:9px 12px" onclick="resetAllFilters()">필터 초기화</button>
     </div>
   </div>
@@ -185,12 +194,17 @@ th:nth-child(5), td:nth-child(5){ min-width:65px; } /* 단백질 */
 <script>
 const todayKey = new Date().toISOString().slice(0,10);
 document.getElementById("today").innerText = todayKey;
-let activeDateKey = todayKey; // 기본은 오늘
+
+let activeDateKey = todayKey; // 과거 수정용
+
 const MIN_PROTEIN = 58;
 const PROTEIN_UNIT = 15;
 
+const WATER_UNIT = 120;
+const WATER_TARGET = 2000;
+
 const BASE_ITEMS = [
-  {c:"하루",t:"💧 물 2L 이상",w:1},
+  // ✅ 물은 트래커로 관리 (체크박스 제거)
   {c:"하루",t:"⛔ 14시간 단식",w:1},
 
   {c:"아침",t:"🌞 10시 전 기상",w:1},
@@ -209,31 +223,29 @@ const BASE_ITEMS = [
   {c:"저녁",t:"🚶 식후 걷기 10분",w:2},
 
   {c:"운동",t:"🎪 폴 또는 5분 전신운동",w:2},
-  {c:"운동",t:"🔥 복부",w:0},
-  {c:"운동",t:"💪 어깨",w:0},
-  {c:"운동",t:"🪽 등",w:0},
-  {c:"운동",t:"🍑 힙",w:0},
+  {c:"운동",t:"🔥 복부(보너스)",w:0},
+  {c:"운동",t:"💪 어깨(보너스)",w:0},
+  {c:"운동",t:"🪽 등(보너스)",w:0},
+  {c:"운동",t:"🍑 힙(보너스)",w:0},
 ];
 
 const MODES = {
   base: BASE_ITEMS,
   hard: [
     {c:"핵심",t:"🥤 단백질 1회",w:2,p:1},
-    {c:"핵심",t:"💧 물 1컵",w:1},
     {c:"핵심",t:"🧘 5분 전신 또는 스트레칭",w:2},
   ],
   cycle: [
-    {c:"하루",t:"💧 물 충분히",w:1},
     {c:"하루",t:"🥚 단백질 섭취",w:2,p:1},
-    {c:"하루",t:"🥚 단백질 섭취(추가)",w:2,p:1},
+    {c:"하루",t:"🥚 단백질 섭취 (추가)",w:2,p:1},
     {c:"하루",t:"🚶 식후 걷기 10분 또는 가벼운 움직임",w:2},
     {c:"하루",t:"🧘 5분 전신 또는 스트레칭",w:2},
-    {c:"하루",t:"📝 기록",w:1},
+    {c:"하루",t:"📝 기록(대충이라도)",w:1},
   ],
   travel: [
     {c:"여행",t:"🥤 단백질 1회",w:2,p:1},
-    {c:"여행",t:"🚶 걷기 10분 또는 스트레칭",w:2},
-    {c:"여행",t:"📝 기록",w:1},
+    {c:"여행",t:"🚶 걷기 10분",w:2},
+    {c:"여행",t:"📝 기록 가능하면",w:1},
   ]
 };
 
@@ -244,17 +256,76 @@ const modeLabel = (m) => {
   return "기본";
 };
 
-let state = JSON.parse(localStorage.getItem(todayKey))
-  || {mode:"base",checks:{},kcal:""};
+let state = JSON.parse(localStorage.getItem(activeDateKey))
+  || {mode:"base",checks:{},waterMl:0};
 
-document.getElementById("kcalInput").value = state.kcal || "";
+// 하위호환: 예전 데이터에 waterMl 없으면 0
+if(typeof state.waterMl !== "number") state.waterMl = 0;
 
 function save(){
   localStorage.setItem(activeDateKey, JSON.stringify(state));
 }
+
 function setMode(m){
   state.mode = (state.mode===m) ? "base" : m;
   save(); render();
+}
+
+/* ===== 물 트래커 ===== */
+function addWater(delta){
+  const next = Math.max(0, (state.waterMl||0) + delta);
+  state.waterMl = next;
+  save(); update();
+}
+
+function resetWater(){
+  state.waterMl = 0;
+  save(); update();
+}
+
+function renderWater(){
+  const ml = state.waterMl || 0;
+  const left = Math.max(0, WATER_TARGET - ml);
+  const cups = Math.floor(ml / WATER_UNIT);
+  const ok = ml >= WATER_TARGET;
+
+  document.getElementById("waterText").innerHTML =
+    ok
+    ? `💧 물 <span class="waterGood">${ml}ml</span> (✅ 목표 달성)`
+    : `💧 물 <span class="waterNeed">${ml}ml</span> (남은 ${left}ml / ${cups}회)`;
+}
+
+/* ===== 날짜 불러오기(과거만) ===== */
+function loadDate(){
+  const d = document.getElementById("datePicker").value;
+  if(!d) return alert("날짜를 선택해줘");
+  if(d > todayKey) return alert("미래 날짜는 수정할 수 없어.");
+
+  activeDateKey = d;
+
+  state = JSON.parse(localStorage.getItem(activeDateKey))
+    || {mode:"base",checks:{},waterMl:0};
+
+  if(typeof state.waterMl !== "number") state.waterMl = 0;
+
+  document.getElementById("today").innerText = activeDateKey + " (수정중)";
+  document.getElementById("editHint").style.display = "block";
+
+  render();
+}
+
+function backToToday(){
+  activeDateKey = todayKey;
+
+  state = JSON.parse(localStorage.getItem(activeDateKey))
+    || {mode:"base",checks:{},waterMl:0};
+
+  if(typeof state.waterMl !== "number") state.waterMl = 0;
+
+  document.getElementById("today").innerText = todayKey;
+  document.getElementById("editHint").style.display = "none";
+
+  render();
 }
 
 function render(){
@@ -279,7 +350,6 @@ function render(){
     const id = state.mode + "_" + i;
     const lbl=document.createElement("label");
 
-    /* ✅ BONUS 배지: w===0 항목이면 자동 표시 */
     const bonus = (it.w===0) ? `<span class="bonusTag">BONUS</span>` : "";
     lbl.innerHTML = `<input type="checkbox" ${state.checks[id]?"checked":""}> ${it.t}${bonus}`;
 
@@ -304,8 +374,13 @@ function calcStats(s){
     if(it.p && s.checks && s.checks[id]) protein += PROTEIN_UNIT;
   });
 
+  // ✅ 물은 트래커로 합격 처리(가중치 1)
+  const waterMl = (typeof s.waterMl==="number") ? s.waterMl : 0;
+  total += 1;
+  if(waterMl >= WATER_TARGET) score += 1;
+
   const ratio = total ? (score/total) : 0;
-  return { mode, score, total, ratio, protein, kcal: (s.kcal||"") };
+  return { mode, score, total, ratio, protein, waterMl };
 }
 
 function verdictFromRatio(ratio){
@@ -316,8 +391,11 @@ function verdictFromRatio(ratio){
 
 function update(){
   const st = calcStats(state);
+
   document.getElementById("proteinText").innerText =
     `🥩 단백질 ${st.protein}g / 최소 ${MIN_PROTEIN}g`;
+
+  renderWater();
 
   const r=document.getElementById("result");
   const v = verdictFromRatio(st.ratio);
@@ -327,11 +405,8 @@ function update(){
 }
 
 function resetToday(){
-  if(activeDateKey !== todayKey){
-  alert("과거 기록을 초기화하려고 해. 날짜를 다시 확인해줘.");
-  }
-  if(confirm("오늘 체크를 초기화할까요?")){
-    state = {mode:"base",checks:{},kcal:""};
+  if(confirm("현재 선택된 날짜의 체크를 초기화할까요?")){
+    state = {mode:"base",checks:{},waterMl:0};
     save(); render();
   }
 }
@@ -373,7 +448,7 @@ function renderWeek(){
         <td class="mono">${st.score}/${st.total}</td>
         <td><span class="badge ${v.cls}">${v.txt}</span></td>
         <td class="mono">${st.protein}g</td>
-        <td class="mono">${st.kcal}</td>
+        <td class="mono">${st.waterMl}ml</td>
       </tr>`;
   }
 
@@ -390,7 +465,7 @@ function getAllKeys(){
     const k = localStorage.key(i);
     if(dateRe.test(k)) keys.push(k);
   }
-  keys.sort((a,b)=> b.localeCompare(a)); // newest first
+  keys.sort((a,b)=> b.localeCompare(a));
   return keys;
 }
 
@@ -407,8 +482,6 @@ function renderAll(){
   const txtF  = document.getElementById("allTextFilter").value.trim().toLowerCase();
 
   const keys = getAllKeys();
-
-  // group { "YYYY-MM": [rows...] }
   const groups = {};
   let totalDays=0, pass=0, mid=0, rest=0;
 
@@ -419,11 +492,10 @@ function renderAll(){
     const st = calcStats(s);
     const v  = verdictFromRatio(st.ratio);
 
-    // filters
     if(modeF!=="all" && (st.mode||"base") !== modeF) return;
     if(verF!=="all" && v.key !== verF) return;
     if(txtF){
-      const hay = `${k} ${modeLabel(st.mode)} ${st.kcal} ${v.txt} ${st.protein}`.toLowerCase();
+      const hay = `${k} ${modeLabel(st.mode)} ${v.txt} ${st.protein} ${st.waterMl}`.toLowerCase();
       if(!hay.includes(txtF)) return;
     }
 
@@ -434,17 +506,16 @@ function renderAll(){
 
     const ym = k.slice(0,7);
     groups[ym] = groups[ym] || [];
-    groups[ym].push({date:k, mode:st.mode, score:st.score, total:st.total, v, protein:st.protein, kcal:st.kcal});
+    groups[ym].push({date:k, mode:st.mode, score:st.score, total:st.total, v, protein:st.protein, waterMl:st.waterMl});
   });
 
   document.getElementById("allSummary").innerText =
     `필터 결과: ${totalDays}일 · 합격 ${pass} · 보통 ${mid} · 회복 ${rest} (월별로 눌러 펼치기)`;
 
-  // render
   const wrap = document.getElementById("allGroups");
   wrap.innerHTML = "";
 
-  const months = Object.keys(groups).sort((a,b)=> b.localeCompare(a)); // newest month first
+  const months = Object.keys(groups).sort((a,b)=> b.localeCompare(a));
   if(months.length===0){
     wrap.innerHTML = `<div class="section"><div class="small">기록이 없거나 필터 조건에 맞는 기록이 없어.</div></div>`;
     return;
@@ -452,7 +523,7 @@ function renderAll(){
 
   months.forEach((ym, idx)=>{
     const rows = groups[ym];
-    // month counts
+
     let mp=0, mm=0, mr=0;
     rows.forEach(r=>{
       if(r.v.key==="pass") mp++;
@@ -461,7 +532,6 @@ function renderAll(){
     });
 
     const det = document.createElement("details");
-    // 최신 월은 기본 펼침
     if(idx===0) det.open = true;
 
     det.innerHTML = `
@@ -475,7 +545,7 @@ function renderAll(){
         <table>
           <thead>
             <tr>
-              <th>날짜</th><th>모드</th><th>점수</th><th>판정</th><th>단백질</th><th>kcal</th>
+              <th>날짜</th><th>모드</th><th>점수</th><th>판정</th><th>단백질</th><th>물</th>
             </tr>
           </thead>
           <tbody>
@@ -486,7 +556,7 @@ function renderAll(){
                 <td class="mono">${r.score}/${r.total}</td>
                 <td><span class="badge ${r.v.cls}">${r.v.txt}</span></td>
                 <td class="mono">${r.protein}g</td>
-                <td class="mono">${r.kcal}</td>
+                <td class="mono">${r.waterMl}ml</td>
               </tr>
             `).join("")}
           </tbody>
@@ -504,11 +574,6 @@ document.getElementById("allTextFilter").oninput = () => {
   window.__rt = setTimeout(renderAll, 120);
 };
 
-document.getElementById("kcalInput").oninput = e => {
-  state.kcal = e.target.value;
-  save();
-};
-
 // init
 render();
 
@@ -516,44 +581,7 @@ render();
 if("serviceWorker" in navigator){
   window.addEventListener("load", ()=>{ navigator.serviceWorker.register("./sw.js").catch(()=>{}); });
 }
-
-function loadDate(){
-  const d = document.getElementById("datePicker").value;
-  if(!d) return alert("날짜를 선택해줘");
-
-  // 미래 날짜 차단
-  if(d > todayKey){
-    alert("미래 날짜는 수정할 수 없어.");
-    return;
-  }
-
-  activeDateKey = d;
-
-  state = JSON.parse(localStorage.getItem(activeDateKey))
-    || {mode:"base",checks:{},kcal:""};
-
-  document.getElementById("today").innerText = activeDateKey + " (수정중)";
-  document.getElementById("kcalInput").value = state.kcal || "";
-  document.getElementById("editHint").style.display = "block";
-
-  render();
-}
-
-function backToToday(){
-  activeDateKey = todayKey;
-
-  state = JSON.parse(localStorage.getItem(todayKey))
-    || {mode:"base",checks:{},kcal:""};
-
-  document.getElementById("today").innerText = todayKey;
-  document.getElementById("kcalInput").value = state.kcal || "";
-  document.getElementById("editHint").style.display = "none";
-
-  render();
-}
 </script>
 
 </body>
 </html>
-
-
