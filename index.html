@@ -23,6 +23,7 @@ input[type=checkbox]{width:18px;height:18px}
 .btn{width:100%;padding:10px;border-radius:12px;border:none;background:#e6e6e6;font-size:14px}
 .btn:active{background:#cfcfcf}
 .hide{display:none}
+
 table{width:100%;border-collapse:collapse}
 th,td{padding:8px;border-bottom:1px solid #eee;font-size:13px}
 th{text-align:left;color:#666}
@@ -84,6 +85,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 .trackStat{font-size:13px;color:#444}
 .good{font-weight:800;color:#2e7d32}
 .need{font-weight:800;color:#c62828}
+.hint{font-size:12px;color:#777;margin-top:6px;line-height:1.35}
 </style>
 </head>
 
@@ -122,20 +124,34 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
     </div>
   </div>
 
-  <!-- 단백질/물 트래커 -->
+  <!-- 단식/단백질/물 트래커 -->
   <div class="section">
+
+    <div class="trackRow">
+      <div class="trackStat" id="fastText"></div>
+      <div class="trackBtns">
+        <button onclick="startFasting()">⛔ 단식 시작</button>
+        <button onclick="resetFasting()">초기화</button>
+      </div>
+    </div>
+
     <div class="trackRow">
       <div class="trackStat" id="proteinTrackText"></div>
       <div class="trackBtns">
         <button onclick="addProtein(-20)">↩️ -20g</button>
         <button onclick="addProtein(-10)">↩️ -10g</button>
         <button onclick="addProtein(-5)">↩️ -5g</button>
+
+        <!-- ✅ 마이너스/플러스 사이 줄바꿈 -->
+        <div style="flex-basis:100%;height:0"></div>
+
         <button onclick="addProtein(5)">🥚 +5g</button>
         <button onclick="addProtein(10)">🥚 +10g</button>
         <button onclick="addProtein(20)">🥩 +20g</button>
         <button onclick="resetProtein()">초기화</button>
       </div>
     </div>
+    <div class="hint" id="proteinHint"></div>
 
     <div class="trackRow">
       <div class="trackStat" id="waterText"></div>
@@ -145,6 +161,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
         <button onclick="resetWater()">초기화</button>
       </div>
     </div>
+
   </div>
 
   <div id="checklist"></div>
@@ -203,42 +220,41 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 </div>
 
 <script>
+/* =========================
+   날짜/상태 기본
+========================= */
 const todayKey = new Date().toISOString().slice(0,10);
 document.getElementById("today").innerText = todayKey;
-document.getElementById("datePicker").value = todayKey;
+let activeDateKey = todayKey;
 
-let activeDateKey = todayKey; // 과거 수정용
-
-const MIN_PROTEIN = 58;
-  // ✅ 모드별 단백질 최소치(속 불편 방지 + 현실성)
-const PROTEIN_TARGETS = {
-  base: 58,    // 기본
-  hard: 40,    // 힘든 날(최저선)
-  cycle: 50,   // 생리주기(무기력/식욕변동 고려)
-  travel: 45   // 여행/이탈(현실선)
-};
-
-function getProteinTarget(mode){
-  return PROTEIN_TARGETS[mode] ?? MIN_PROTEIN;
-}
+/* =========================
+   설정값
+========================= */
+const FAST_HOURS = 14;
 
 const WATER_UNIT = 120;
 const WATER_TARGET = 2000;
 
-const BASE_ITEMS = [
-  {c:"하루",t:"⛔ 14시간 단식",w:1},
+// ✅ 단백질: 모드별 최소치 + 소프트 상한(권장)
+const PROTEIN_TARGETS = { base: 58, hard: 40, cycle: 50, travel: 45 };
+const PROTEIN_SOFT_CAP = 100;
+function getProteinTarget(mode){ return PROTEIN_TARGETS[mode] ?? 58; }
 
+/* =========================
+   체크리스트 (시간+내용 통일)
+========================= */
+const BASE_ITEMS = [
   {c:"아침",t:"🌞 10시 전 기상",w:1},
-  {c:"아침",t:"🪥 양치 + 환기 + 물",w:1},
+  {c:"아침",t:"🪥 양치 + 물",w:1},
   {c:"아침",t:"💊 영양제",w:1},
   {c:"아침",t:"🍋 레몬물 세트",w:1},
 
-  {c:"점심",t:"🚶 식후 걷기 10분",w:2},
   {c:"점심",t:"💊 영양제",w:1},
+  {c:"점심",t:"🚶 환기 + 10분 식후 걷기",w:2},
 
-  {c:"저녁",t:"🚶 식후 걷기 10분",w:2},
+  {c:"저녁",t:"🚶 10분 식후 걷기",w:2},
 
-  {c:"운동",t:"🎪 폴 또는 5분 전신운동",w:2},
+  {c:"운동",t:"🎪 5분 전신운동 또는 폴",w:2},
   {c:"운동",t:"🔥 복부",w:0},
   {c:"운동",t:"💪 어깨",w:0},
   {c:"운동",t:"🪽 등",w:0},
@@ -248,14 +264,14 @@ const BASE_ITEMS = [
 const MODES = {
   base: BASE_ITEMS,
   hard: [
-    {c:"핵심",t:"🧘 5분 전신 또는 스트레칭",w:2},
+    {c:"핵심",t:"🧘 5분 스트레칭",w:2},
   ],
   cycle: [
-    {c:"하루",t:"🚶 식후 걷기 10분 또는 가벼운 움직임",w:2},
-    {c:"하루",t:"🧘 5분 전신 또는 스트레칭",w:2},
+    {c:"하루",t:"🚶 10분 가벼운 움직임",w:2},
+    {c:"하루",t:"🧘 5분 스트레칭",w:2},
   ],
   travel: [
-    {c:"여행",t:"🚶 걷기 10분",w:2},
+    {c:"여행",t:"🚶 10분 식후 걷기",w:2},
   ]
 };
 
@@ -266,102 +282,38 @@ const modeLabel = (m) => {
   return "기본";
 };
 
+/* =========================
+   state 로드/보정
+========================= */
 let state = JSON.parse(localStorage.getItem(activeDateKey))
-  || {mode:"base",checks:{},waterMl:0,proteinG:0};
+  || {mode:"base",checks:{},waterMl:0,proteinG:0,fastingStart:null};
 
-if(typeof state.waterMl !== "number") state.waterMl = 0;
-if(typeof state.proteinG !== "number") state.proteinG = 0;
+function normalizeState(){
+  if(!state || typeof state!=="object") state = {mode:"base",checks:{},waterMl:0,proteinG:0,fastingStart:null};
+  if(!state.checks || typeof state.checks!=="object") state.checks = {};
+  if(typeof state.waterMl !== "number") state.waterMl = 0;
+  if(typeof state.proteinG !== "number") state.proteinG = 0;
+  if(!("fastingStart" in state)) state.fastingStart = null;
+  if(!state.mode) state.mode = "base";
+}
+normalizeState();
 
 function save(){
   localStorage.setItem(activeDateKey, JSON.stringify(state));
 }
 
+/* =========================
+   모드/렌더
+========================= */
 function setMode(m){
   state.mode = (state.mode===m) ? "base" : m;
-  save(); render();
-}
-
-/* ===== 단백질 트래커 ===== */
-function addProtein(delta){
-  const next = Math.max(0, (state.proteinG||0) + delta);
-  state.proteinG = next;
-  save(); update();
-}
-function resetProtein(){
-  state.proteinG = 0;
-  save(); update();
-}
-function renderProtein(){
-  const g = state.proteinG || 0;
-  const target = getProteinTarget(state.mode || "base");
-  const left = Math.max(0, target - g);
-  const ok = g >= target;
-
-  document.getElementById("proteinTrackText").innerHTML =
-    ok
-    ? `🥩 단백질 <span class="good">${g}g</span> (✅ 최소 ${target}g 달성)`
-    : `🥩 단백질 <span class="need">${g}g</span> (남은 ${left}g / 최소 ${target}g)`;
-}
-
-
-/* ===== 물 트래커 ===== */
-function addWater(delta){
-  const next = Math.max(0, (state.waterMl||0) + delta);
-  state.waterMl = next;
-  save(); update();
-}
-function resetWater(){
-  state.waterMl = 0;
-  save(); update();
-}
-function renderWater(){
-  const ml = state.waterMl || 0;
-  const left = Math.max(0, WATER_TARGET - ml);
-  const cups = Math.floor(ml / WATER_UNIT);
-  const ok = ml >= WATER_TARGET;
-  document.getElementById("waterText").innerHTML =
-    ok
-    ? `💧 물 <span class="good">${ml}ml</span> (✅ 목표 달성)`
-    : `💧 물 <span class="need">${ml}ml</span> (남은 ${left}ml / ${cups}회)`;
-}
-
-/* ===== 날짜 불러오기(과거만) ===== */
-function loadDate(){
-  const d = document.getElementById("datePicker").value;
-  if(!d) return alert("날짜를 선택해줘");
-  if(d > todayKey) return alert("미래 날짜는 수정할 수 없어.");
-
-  activeDateKey = d;
-
-  state = JSON.parse(localStorage.getItem(activeDateKey))
-    || {mode:"base",checks:{},waterMl:0,proteinG:0};
-
-  if(typeof state.waterMl !== "number") state.waterMl = 0;
-  if(typeof state.proteinG !== "number") state.proteinG = 0;
-
-  document.getElementById("today").innerText = activeDateKey + " (수정중)";
-  document.getElementById("editHint").style.display = "block";
-
-  render();
-  datePicker.value = activeDateKey;
-}
-
-function backToToday(){
-  activeDateKey = todayKey;
-
-  state = JSON.parse(localStorage.getItem(activeDateKey))
-    || {mode:"base",checks:{},waterMl:0,proteinG:0};
-
-  if(typeof state.waterMl !== "number") state.waterMl = 0;
-  if(typeof state.proteinG !== "number") state.proteinG = 0;
-
-  document.getElementById("today").innerText = todayKey;
-  document.getElementById("editHint").style.display = "none";
-
+  save();
   render();
 }
 
 function render(){
+  normalizeState();
+
   ["mHard","mCycle","mTravel"].forEach(id=>document.getElementById(id).classList.remove("on"));
   if(state.mode==="hard") mHard.classList.add("on");
   if(state.mode==="cycle") mCycle.classList.add("on");
@@ -382,10 +334,8 @@ function render(){
     }
     const id = state.mode + "_" + i;
     const lbl=document.createElement("label");
-
     const bonus = (it.w===0) ? `<span class="bonusTag">BONUS</span>` : "";
     lbl.innerHTML = `<input type="checkbox" ${state.checks[id]?"checked":""}> ${it.t}${bonus}`;
-
     lbl.querySelector("input").onchange = e => {
       state.checks[id] = e.target.checked;
       save(); update();
@@ -393,9 +343,149 @@ function render(){
     wrap.lastChild.appendChild(lbl);
   });
 
+  // datePicker: 빈 () 방지 + 미래 차단
+  const dp = document.getElementById("datePicker");
+  if(dp){
+    dp.max = todayKey;
+    dp.value = activeDateKey; // ✅ 빈 date input 표시(()) 방지
+  }
+
   update();
 }
 
+/* =========================
+   단식 트래킹
+========================= */
+function startFasting(){
+  if(state.fastingStart){
+    if(!confirm("단식 시작 시간을 새로 기록할까?")) return;
+  }
+  state.fastingStart = new Date().toISOString();
+  save(); update();
+}
+function resetFasting(){
+  state.fastingStart = null;
+  save(); update();
+}
+function fmtHM(d){
+  const hh = String(d.getHours()).padStart(2,"0");
+  const mm = String(d.getMinutes()).padStart(2,"0");
+  return `${hh}:${mm}`;
+}
+function renderFasting(){
+  const el = document.getElementById("fastText");
+  if(!el) return;
+
+  if(!state.fastingStart){
+    el.innerHTML = `⛔ ${FAST_HOURS}시간 단식 (시작 안 함)`;
+    return;
+  }
+  const start = new Date(state.fastingStart);
+  const end = new Date(start.getTime() + FAST_HOURS*60*60*1000);
+  const now = new Date();
+
+  if(now >= end){
+    el.innerHTML = `⛔ ${FAST_HOURS}시간 단식 (✅ 식사 가능: <span class="good">${fmtHM(end)}</span>)`;
+  }else{
+    const ms = end - now;
+    const h = Math.floor(ms/(60*60*1000));
+    const m = Math.floor((ms%(60*60*1000))/(60*1000));
+    el.innerHTML = `⛔ ${FAST_HOURS}시간 단식 (식사 가능: <span class="need">${fmtHM(end)}</span> / 남은 ${h}시간 ${m}분)`;
+  }
+}
+
+/* =========================
+   단백질 트래킹
+========================= */
+function addProtein(delta){
+  const next = Math.max(0, (state.proteinG||0) + delta);
+  state.proteinG = next;
+  save(); update();
+}
+function resetProtein(){
+  state.proteinG = 0;
+  save(); update();
+}
+function renderProtein(){
+  const g = state.proteinG || 0;
+  const target = getProteinTarget(state.mode || "base");
+  const left = Math.max(0, target - g);
+  const ok = g >= target;
+
+  const capMsg = (g > PROTEIN_SOFT_CAP)
+    ? ` · <span class="need">상한 ${PROTEIN_SOFT_CAP}g↑</span>`
+    : "";
+
+  document.getElementById("proteinTrackText").innerHTML =
+    ok
+    ? `🥩 단백질 <span class="good">${g}g</span> (✅ 최소 ${target}g 달성${capMsg})`
+    : `🥩 단백질 <span class="need">${g}g</span> (남은 ${left}g / 최소 ${target}g${capMsg})`;
+
+  // 속 불편 방지용 아주 짧은 안내(체크 항목 아님)
+  const hintEl = document.getElementById("proteinHint");
+  if(hintEl){
+    hintEl.innerText = `TIP: 단백질만 몰아먹으면 속이 불편할 수 있어. 단백질 올릴 땐 밥/과일/견과처럼 한 입 같이. (권장 상한 ${PROTEIN_SOFT_CAP}g)`;
+  }
+}
+
+/* =========================
+   물 트래킹
+========================= */
+function addWater(delta){
+  const next = Math.max(0, (state.waterMl||0) + delta);
+  state.waterMl = next;
+  save(); update();
+}
+function resetWater(){
+  state.waterMl = 0;
+  save(); update();
+}
+function renderWater(){
+  const ml = state.waterMl || 0;
+  const left = Math.max(0, WATER_TARGET - ml);
+  const cups = Math.floor(ml / WATER_UNIT);
+  const ok = ml >= WATER_TARGET;
+
+  document.getElementById("waterText").innerHTML =
+    ok
+    ? `💧 물 <span class="good">${ml}ml</span> (✅ 목표 ${WATER_TARGET}ml 달성)`
+    : `💧 물 <span class="need">${ml}ml</span> (남은 ${left}ml / ${cups}회)`;
+}
+
+/* =========================
+   날짜 불러오기(과거만)
+========================= */
+function loadDate(){
+  const d = document.getElementById("datePicker").value;
+  if(!d) return alert("날짜를 선택해줘");
+  if(d > todayKey) return alert("미래 날짜는 수정할 수 없어.");
+
+  activeDateKey = d;
+  state = JSON.parse(localStorage.getItem(activeDateKey))
+    || {mode:"base",checks:{},waterMl:0,proteinG:0,fastingStart:null};
+  normalizeState();
+
+  document.getElementById("today").innerText = activeDateKey + " (수정중)";
+  document.getElementById("editHint").style.display = "block";
+
+  render();
+}
+
+function backToToday(){
+  activeDateKey = todayKey;
+  state = JSON.parse(localStorage.getItem(activeDateKey))
+    || {mode:"base",checks:{},waterMl:0,proteinG:0,fastingStart:null};
+  normalizeState();
+
+  document.getElementById("today").innerText = todayKey;
+  document.getElementById("editHint").style.display = "none";
+
+  render();
+}
+
+/* =========================
+   판정 계산
+========================= */
 function verdictFromRatio(ratio){
   if(ratio>=0.6) return {key:"pass", cls:"ok", txt:"합격"};
   if(ratio>=0.3) return {key:"mid", cls:"midb", txt:"보통"};
@@ -412,22 +502,25 @@ function calcStats(s){
     if(it.w>0){ total += it.w; if(s.checks && s.checks[id]) score += it.w; }
   });
 
-  // 단백질(가중치 2) + 물(가중치 1)
   const proteinG = (typeof s.proteinG==="number") ? s.proteinG : 0;
   const waterMl  = (typeof s.waterMl==="number")  ? s.waterMl  : 0;
+  const fasting  = s.fastingStart ? 1 : 0;
+
+  // ✅ 단백질(가중치 2) / 물(가중치 1) / 단식 시작(가중치 1)
   const proteinTarget = getProteinTarget(mode);
-
-  total += 2;
-  if(proteinG >= proteinTarget) score += 2;
-
-  total += 1;
-  if(waterMl >= WATER_TARGET) score += 1;
+  total += 2; if(proteinG >= proteinTarget) score += 2;
+  total += 1; if(waterMl >= WATER_TARGET) score += 1;
+  total += 1; if(fasting) score += 1;
 
   const ratio = total ? (score/total) : 0;
   return { mode, score, total, ratio, proteinG, waterMl };
 }
 
+/* =========================
+   업데이트/초기화
+========================= */
 function update(){
+  renderFasting();
   renderProtein();
   renderWater();
 
@@ -442,11 +535,14 @@ function update(){
 
 function resetToday(){
   if(confirm("현재 선택된 날짜의 체크를 초기화할까요?")){
-    state = {mode:"base",checks:{},waterMl:0,proteinG:0};
+    state = {mode:"base",checks:{},waterMl:0,proteinG:0,fastingStart:null};
     save(); render();
   }
 }
 
+/* =========================
+   탭/요약
+========================= */
 function showTab(t){
   tabToday.classList.toggle("active", t==="today");
   tabWeek.classList.toggle("active", t==="week");
@@ -610,8 +706,11 @@ document.getElementById("allTextFilter").oninput = () => {
   window.__rt = setTimeout(renderAll, 120);
 };
 
-// init
+/* =========================
+   init + 단식 텍스트 주기 갱신
+========================= */
 render();
+setInterval(()=>{ renderFasting(); }, 60*1000);
 
 // PWA
 if("serviceWorker" in navigator){
