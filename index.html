@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎈루틴 체크</title>
+<title>🍎루틴 체크</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#222222">
 
@@ -170,6 +170,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   padding:8px 0;
   font-size:12px;
   text-align:center;
+  line-height:1.2;
 }
 .fastBtns.proteinBtns{
   flex-wrap:wrap;   /* 단백질만 줄바꿈 허용 */
@@ -230,7 +231,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 
 <!-- MODES -->
 <div class="modes">
-  <button class="mode" id="mHard" onclick="setMode('hard')">💀힘든 날</button>
+  <button class="mode" id="mHard" onclick="setMode('hard')">🫠힘든 날</button>
   <button class="mode" id="mCycle" onclick="setMode('cycle')">🩸생리주기</button>
   <button class="mode" id="mTravel" onclick="setMode('travel')">✈️여행/이탈</button>
 </div>
@@ -656,7 +657,7 @@ function renderFasting(){
   }
 
   // 3) 그 외: 시작 안 함
-  el.innerHTML = `⛔ ${FAST_HOURS}시간 단식 (시작 전)`;
+  el.innerHTML = `⛔ ${FAST_HOURS}시간 단식`;
   if(delBtn) delBtn.style.display = "none";
 
 }
@@ -715,7 +716,7 @@ function renderSleep(){
   // 1) 취침 중
   if(sess && sess.startAt){
     const start = new Date(sess.startAt);
-    el.innerHTML = `🌙 취침 중 (${fmtHM(start)})`;
+    el.innerHTML = `💤 잠자는 중 (${fmtHM(start)})`;
     return;
   }
 
@@ -723,12 +724,12 @@ function renderSleep(){
   if(state.sleepEndAt && typeof state.sleepMinutes === "number"){
     const h = Math.floor(state.sleepMinutes / 60);
     const m = state.sleepMinutes % 60;
-    el.innerHTML = `😴 수면 ${h}시간 ${m}분`;
+    el.innerHTML = `🛌 수면 ${h}시간 ${m}분`;
     return;
   }
 
   // 3) 기록 없음
-  el.innerHTML = "😴 수면 기록 없음";
+  el.innerHTML = "🤸‍♂️ 활동 중";
 }
 
 /* =========================
@@ -761,7 +762,7 @@ function renderProtein(){
   // 속 불편 방지용 아주 짧은 안내(체크 항목 아님)
   const hintEl = document.getElementById("proteinHint");
   if(hintEl){
-    hintEl.innerText = `TIP: 단백질 먹을 때 밥/과일/견과 같이. (권장 상한 ${PROTEIN_SOFT_CAP}g)`;
+    hintEl.innerText = `TIP: 단백질 먹을 때 밥/과일/견과 같이(권장 상한 ${PROTEIN_SOFT_CAP}g)`;
   }
 }
 
@@ -978,9 +979,9 @@ function update(){
   const r=document.getElementById("result");
   const v = verdictFromRatio(st.ratio);
 
-  if(v.key==="pass"){ r.innerText="오늘 합격 ✅"; r.className="result pass"; }
-  else if(v.key==="mid"){ r.innerText="보통 🙂"; r.className="result mid"; }
-  else { r.innerText="회복 데이 🌱"; r.className="result rest"; }
+  if(v.key==="pass"){ r.innerText="완전 뿌듯 🎀"; r.className="result pass"; }
+  else if(v.key==="mid"){ r.innerText="잘했다 🌹"; r.className="result mid"; }
+  else { r.innerText="회복하는 날 🌿"; r.className="result rest"; }
 }
 
 function resetToday(){
@@ -1221,4 +1222,5 @@ if("serviceWorker" in navigator){
 
 </body>
 </html>
+
 
