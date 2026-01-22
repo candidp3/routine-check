@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+"<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -73,6 +73,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 }
 
 /* ===== 트래커 UI ===== */
+
 .trackRow{
   display:flex;
   align-items:flex-start;
@@ -106,14 +107,74 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   font-size:12px;
   opacity:0.7;
 }
+  
+/* ===== 날짜 선택 한 줄 정렬 ===== */
+.dateRow{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:nowrap;   /* 절대 줄바꿈 금지 */
+}
 
+.dateTitle{
+  font-size:13px;
+  color:#666;
+  white-space:nowrap;
+}
+
+#datePicker{
+  width:120px;        /* ✅ 날짜 박스 고정 폭 (원하면 140~170 조절) */
+  padding:6px 10px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  background:#fff;
+  font-size:14px;
+}
+
+.dateBtn{
+  padding:6px 11px;
+  border-radius:12px;
+  border:none;
+  background:#e6e6e6;
+  font-size:13px;
+  white-space:nowrap;
+}
+
+.dateBtn:active{ background:#cfcfcf; }
+
+/* ===== 단식 전용 정렬 ===== */
+.fastText{
+  white-space:nowrap;      /* 문구 한 줄 */
+  overflow:hidden;
+  text-overflow:ellipsis; /* 너무 길면 ... */
+}
+
+.fastBtns{
+  width:100%;
+  display:flex;
+  justify-content:flex-end; /* 버튼 오른쪽 정렬 */
+  gap:6px;
+  margin-top:4px;
+  flex-wrap:nowrap;        /* 줄바꿈 금지 */
+}
+
+.fastBtns button{
+  white-space:nowrap;     /* 글씨 줄바꿈 금지 */
+  flex-shrink:0;          /* 버튼 찌그러지지 않게 */
+}
+
+/* ===== 단백질 전용 정렬 ===== */
+  
 .proteinBtn{
-  width:80px;          /* ← 이 숫자만 취향에 맞게 조절 */
+  width:70px;          /* ← 이 숫자만 취향에 맞게 조절 */
   padding:8px 0;
   font-size:12px;
   text-align:center;
 }
-
+.fastBtns.proteinBtns{
+  flex-wrap:wrap;   /* 단백질만 줄바꿈 허용 */
+}
+  
 #deleteFastingBtn{
   padding:4px 6px;
   font-size:11px;
@@ -121,13 +182,6 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 }
 #deleteFastingBtn:hover{
   opacity:1;
-}
-
-.checkCategory{
-  margin-top:10px;
-  font-weight:700;
-  font-size:13px;
-  color:#333;
 }
 
 /* 체크리스트 전용 글씨 크기 복구 */
@@ -159,22 +213,6 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   }
 }
 
-.weeklyTable{
-  width:100%;
-  border-collapse:collapse;
-  font-size:13px;
-}
-.weeklyTable th,
-.weeklyTable td{
-  border-bottom:1px solid #eee;
-  padding:6px;
-  text-align:center;
-}
-.weeklyTable th{
-  background:#fafafa;
-  font-weight:700;
-}
-
 </style>
 </head>
 
@@ -185,14 +223,14 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 
 <!-- TABS -->
 <div class="tabs">
-  <button class="tab active" id="tabToday" onclick="showTab('today')">♥️오늘</button>
+  <button class="tab active" id="tabToday" onclick="showTab('today')">♥️기록</button>
   <button class="tab" id="tabWeek" onclick="showTab('week')">📓주간 요약</button>
   <button class="tab" id="tabAll" onclick="showTab('all')">📚전체 기록</button>
 </div>
 
 <!-- MODES -->
 <div class="modes">
-  <button class="mode" id="mHard" onclick="setMode('hard')">😪힘든 날</button>
+  <button class="mode" id="mHard" onclick="setMode('hard')">💀힘든 날</button>
   <button class="mode" id="mCycle" onclick="setMode('cycle')">🩸생리주기</button>
   <button class="mode" id="mTravel" onclick="setMode('travel')">✈️여행/이탈</button>
 </div>
@@ -202,69 +240,77 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 
   <!-- 과거 기록 수정 -->
   <div class="section">
-    <div class="small">📅 날짜 선택</div>
-    <div style="display:flex; gap:8px; align-items:center; margin-top:6px; flex-wrap:wrap;">
-      <input type="date" id="datePicker" style="padding:6px 10px;border-radius:10px;border:1px solid #ddd;background:#fff;font-size:14px;">
-      <button class="btn" style="width:auto;padding:6px 11px" onclick="loadDate()">불러오기</button>
-      <button class="btn" style="width:auto;padding:6px 11px" onclick="backToToday()">오늘로</button>
+    <div class="dateRow">
+      <div class="dateTitle">📅 날짜 선택</div>
+  
+      <input type="date" id="datePicker">
+  
+      <button class="dateBtn" onclick="loadDate()">🔽 확인</button>
+      <button class="dateBtn" onclick="backToToday()">🦖 오늘</button>
     </div>
+  
     <div class="small" id="editHint" style="margin-top:6px;color:#c62828;display:none;">
       ⚠️ 과거 기록 수정 중
     </div>
   </div>
 
+
   <!-- 단식/단백질/물/수면 트래커 -->
   <div class="section">
 
-    <div class="trackRow">
-      <div class="trackStat" id="fastText"></div>
-      <div class="trackBtns">
-        <button class="reset" onclick="cancelFasting()">초기화</button>
-        <button onclick="startFasting()">⛔ 시작</button>
-        <button onclick="endFasting()">✅ 종료</button>
-        <button id="deleteFastingBtn"
-                class="reset"
-                onclick="deleteFastingRecord()"
-                style="display:none"
-                >🗑</button>
-      </div>
+    <div class="trackRow" style="flex-direction:column;">
+    <div class="trackStat fastText" id="fastText"></div>
+  
+    <div class="trackBtns fastBtns">
+      <button class="reset" onclick="cancelFasting()">초기화</button>
+      <button onclick="startFasting()">⛔ 시작</button>
+      <button onclick="endFasting()">✅ 종료</button>
+      <button id="deleteFastingBtn"
+              class="reset"
+              onclick="deleteFastingRecord()"
+              style="display:none"
+              >🗑</button>
     </div>
+  </div>
+
     <div class="hint" id="proteinHint"></div>
 
-    <div class="trackRow">
-      <div class="trackStat" id="proteinTrackText"></div>
-      <div class="trackBtns">
-        <button class="reset" onclick="resetProtein()">초기화</button>
-       <button class="proteinBtn" onclick="addProtein(-20)">↩️ -20g</button>
+    <div class="trackRow" style="flex-direction:column;">
+      <div class="trackStat fastText" id="proteinTrackText"></div>
+    
+      <div class="trackBtns fastBtns proteinBtns">
+        <button class="reset" onclick="resetProtein()">초기화</button>    
         <button class="proteinBtn" onclick="addProtein(-10)">↩️ -10g</button>
         <button class="proteinBtn" onclick="addProtein(-5)">↩️ -5g</button>
-
-        <!-- ✅ 마이너스/플러스 사이 줄바꿈 -->
+        <!-- ✅ 여기 줄바꿈 -->
         <div style="flex-basis:100%;height:0"></div>
-
+        
         <button class="proteinBtn" onclick="addProtein(5)">🥚 +5g</button>
         <button class="proteinBtn" onclick="addProtein(10)">🍗 +10g</button>
         <button class="proteinBtn" onclick="addProtein(20)">🥩 +20g</button>
       </div>
     </div>
 
-    <div class="trackRow">
-      <div class="trackStat" id="waterText"></div>
-      <div class="trackBtns">
+    <div class="trackRow" style="flex-direction:column;">
+      <div class="trackStat fastText" id="waterText"></div>
+    
+      <div class="trackBtns fastBtns">
         <button class="reset" onclick="resetWater()">초기화</button>
         <button onclick="addWater(-WATER_UNIT)">↩️ -120ml</button>
         <button onclick="addWater(WATER_UNIT)">💧 +120ml</button>
       </div>
     </div>
-    <div class="trackRow">
-      <div class="trackStat" id="sleepText"></div>
-      <div class="trackBtns">
+
+    <div class="trackRow" style="flex-direction:column;">
+      <div class="trackStat fastText" id="sleepText"></div>
+    
+      <div class="trackBtns fastBtns">
         <button class="reset" onclick="cancelSleep()">초기화</button>
         <button onclick="startSleep()">🌙 취침</button>
         <button onclick="endSleep()">☀️ 기상</button>
       </div>
-    </div>   
-
+    </div>
+  
   </div>
 
   <div id="checklist"></div>
@@ -385,15 +431,14 @@ function getProteinTarget(mode){ return PROTEIN_TARGETS[mode] ?? 58; }
 const BASE_ITEMS = [
   {c:"아침",t:"🌞 10시 전 기상",w:1},
   {c:"아침",t:"🪥 양치 + 물",w:1},
-  {c:"아침",t:"💊 영양제",w:1},
+  {c:"아침",t:"💊 유산균",w:1},
   {c:"아침",t:"🍋 레몬물 세트",w:1},
 
-  {c:"점심",t:"💊 영양제",w:1},
+  {c:"점심",t:"💊 비타민",w:1},
   {c:"점심",t:"🍃 환기",w:1},
   {c:"점심",t:"🎠 가벼운 활동",w:2},
 
   {c:"저녁",t:"🧴 림프 마사지",w:2},
-
 ];
 
 const MODES = {
@@ -463,30 +508,6 @@ function render(){
   if(state.mode==="cycle") mCycle.classList.add("on");
   if(state.mode==="travel") mTravel.classList.add("on");
 
-  const items = MODES[state.mode];
-  const wrap = document.getElementById("checklist");
-  wrap.innerHTML="";
-  let cur="";
-
-  items.forEach((it,i)=>{
-    if(it.c!==cur){
-      cur=it.c;
-      const s=document.createElement("div");
-      s.className="section";
-      s.innerHTML=`<h2>${cur}</h2>`;
-      wrap.appendChild(s);
-    }
-    const id = state.mode + "_" + i;
-    const lbl=document.createElement("label");
-    const bonus = (it.w===0) ? `<span class="bonusTag">BONUS</span>` : "";
-    lbl.innerHTML = `<input type="checkbox" ${state.checks[id]?"checked":""}> ${it.t}${bonus}`;
-    lbl.querySelector("input").onchange = e => {
-      state.checks[id] = e.target.checked;
-      save(); update();
-    };
-    wrap.lastChild.appendChild(lbl);
-  });
-
   // datePicker: 빈 () 방지 + 미래 차단
   const dp = document.getElementById("datePicker");
   if(dp){
@@ -494,7 +515,8 @@ function render(){
     dp.value = activeDateKey; // ✅ 빈 date input 표시(()) 방지
   }
 
-  update();
+  update();            // 트래커 + 판정 + 요약
+  renderChecklist();  // 체크리스트(요일 운동 포함)
 }
 
 /* =========================
@@ -739,7 +761,7 @@ function renderProtein(){
   // 속 불편 방지용 아주 짧은 안내(체크 항목 아님)
   const hintEl = document.getElementById("proteinHint");
   if(hintEl){
-    hintEl.innerText = `TIP: 단백질만 몰아먹으면 속이 불편할 수 있어. 단백질 올릴 땐 밥/과일/견과처럼 한 입 같이. (권장 상한 ${PROTEIN_SOFT_CAP}g)`;
+    hintEl.innerText = `TIP: 단백질 먹을 때 밥/과일/견과 같이. (권장 상한 ${PROTEIN_SOFT_CAP}g)`;
   }
 }
 
@@ -901,11 +923,6 @@ function calcWorkoutScore(s){
   return Math.min(checked * perItem, 1);
 }
 
-function calcFreedivingScore(s){
-  const key = "운동_🥽 프리다이빙";
-  return (s.checks && s.checks[key]) ? 1 : 0;
-}
-
 function calcStats(s){
   const mode = s.mode || "base";
 let score = 0;
@@ -940,11 +957,6 @@ if(fasting) score += 1;
 // ✅ 요일별 운동 (최대 1점)
 total += 1;
 score += calcWorkoutScore(s);
-
-// ✅ 프리다이빙 (+1점)
-total += 1;
-score += calcFreedivingScore(s);
-
 
   const ratio = total ? (score / total) : 0;
   return { mode, score, total, ratio, proteinG, waterMl };
