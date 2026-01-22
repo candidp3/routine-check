@@ -64,7 +64,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 /* ===== BONUS 배지 ===== */
 .bonusTag{
   margin-left:8px;
-  font-size:12px;
+  font-size:10px;
   padding:2px 8px;
   border-radius:999px;
   background:#f1f1f1;
@@ -74,18 +74,107 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 
 /* ===== 트래커 UI ===== */
 .trackRow{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
   padding:6px 0;
 }
-.trackBtns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+.trackBtns{
+  margin-left:auto;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  justify-content:flex-end;
+}
+
 .trackBtns button{
-  border:none;border-radius:10px;padding:8px 10px;background:#e6e6e6;font-size:13px;
+  border:none;
+  border-radius:10px;
+  padding:6px 8px;
+  background:#e6e6e6;
+  font-size:13px;
 }
 .trackBtns button:active{background:#cfcfcf}
 .trackStat{font-size:13px;color:#444}
 .good{font-weight:800;color:#2e7d32}
 .need{font-weight:800;color:#c62828}
 .hint{font-size:12px;color:#777;margin-top:6px;line-height:1.35}
+
+.trackBtns button.reset{
+  background:#f1f1f1;
+  font-size:12px;
+  opacity:0.7;
+}
+
+.proteinBtn{
+  width:80px;          /* ← 이 숫자만 취향에 맞게 조절 */
+  padding:8px 0;
+  font-size:12px;
+  text-align:center;
+}
+
+#deleteFastingBtn{
+  padding:4px 6px;
+  font-size:11px;
+  opacity:0.6;
+}
+#deleteFastingBtn:hover{
+  opacity:1;
+}
+
+.checkCategory{
+  margin-top:10px;
+  font-weight:700;
+  font-size:13px;
+  color:#333;
+}
+
+/* 체크리스트 전용 글씨 크기 복구 */
+.checkItem{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:15px;   /* ← 이전 크기로 */
+  color:#222;
+  margin:6px 0;
+}
+
+.sectionTitle{
+  font-weight:700;
+  font-size:14px;
+  margin-bottom:6px;
+}
+
+.checkItem input[type="checkbox"]{
+  width:15px;
+  height:15px;
+  transform: scale(0.9);
+}
+
+@media (max-width: 480px){
+  .trackBtns button{
+    padding:5px 7px;
+    font-size:11px;
+  }
+}
+
+.weeklyTable{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+.weeklyTable th,
+.weeklyTable td{
+  border-bottom:1px solid #eee;
+  padding:6px;
+  text-align:center;
+}
+.weeklyTable th{
+  background:#fafafa;
+  font-weight:700;
+}
+
 </style>
 </head>
 
@@ -113,54 +202,68 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 
   <!-- 과거 기록 수정 -->
   <div class="section">
-    <div class="small">📅 날짜 선택 (과거 기록 수정)</div>
+    <div class="small">📅 날짜 선택</div>
     <div style="display:flex; gap:8px; align-items:center; margin-top:6px; flex-wrap:wrap;">
-      <input type="date" id="datePicker" style="padding:8px 10px;border-radius:10px;border:1px solid #ddd;background:#fff;font-size:14px;">
-      <button class="btn" style="width:auto;padding:9px 12px" onclick="loadDate()">불러오기</button>
-      <button class="btn" style="width:auto;padding:9px 12px" onclick="backToToday()">오늘로</button>
+      <input type="date" id="datePicker" style="padding:6px 10px;border-radius:10px;border:1px solid #ddd;background:#fff;font-size:14px;">
+      <button class="btn" style="width:auto;padding:6px 11px" onclick="loadDate()">불러오기</button>
+      <button class="btn" style="width:auto;padding:6px 11px" onclick="backToToday()">오늘로</button>
     </div>
     <div class="small" id="editHint" style="margin-top:6px;color:#c62828;display:none;">
       ⚠️ 과거 기록 수정 중
     </div>
   </div>
 
-  <!-- 단식/단백질/물 트래커 -->
+  <!-- 단식/단백질/물/수면 트래커 -->
   <div class="section">
 
     <div class="trackRow">
       <div class="trackStat" id="fastText"></div>
       <div class="trackBtns">
-        <button onclick="startFasting()">⛔ 단식 시작</button>
-        <button onclick="resetFasting()">초기화</button>
-      </div>
-    </div>
-
-    <div class="trackRow">
-      <div class="trackStat" id="proteinTrackText"></div>
-      <div class="trackBtns">
-        <button onclick="addProtein(-20)">↩️ -20g</button>
-        <button onclick="addProtein(-10)">↩️ -10g</button>
-        <button onclick="addProtein(-5)">↩️ -5g</button>
-
-        <!-- ✅ 마이너스/플러스 사이 줄바꿈 -->
-        <div style="flex-basis:100%;height:0"></div>
-
-        <button onclick="addProtein(5)">🥚 +5g</button>
-        <button onclick="addProtein(10)">🥚 +10g</button>
-        <button onclick="addProtein(20)">🥩 +20g</button>
-        <button onclick="resetProtein()">초기화</button>
+        <button class="reset" onclick="cancelFasting()">초기화</button>
+        <button onclick="startFasting()">⛔ 시작</button>
+        <button onclick="endFasting()">✅ 종료</button>
+        <button id="deleteFastingBtn"
+                class="reset"
+                onclick="deleteFastingRecord()"
+                style="display:none"
+                >🗑</button>
       </div>
     </div>
     <div class="hint" id="proteinHint"></div>
 
     <div class="trackRow">
-      <div class="trackStat" id="waterText"></div>
+      <div class="trackStat" id="proteinTrackText"></div>
       <div class="trackBtns">
-        <button onclick="addWater(-WATER_UNIT)">↩️ -120ml</button>
-        <button onclick="addWater(WATER_UNIT)">💧 +120ml</button>
-        <button onclick="resetWater()">초기화</button>
+        <button class="reset" onclick="resetProtein()">초기화</button>
+       <button class="proteinBtn" onclick="addProtein(-20)">↩️ -20g</button>
+        <button class="proteinBtn" onclick="addProtein(-10)">↩️ -10g</button>
+        <button class="proteinBtn" onclick="addProtein(-5)">↩️ -5g</button>
+
+        <!-- ✅ 마이너스/플러스 사이 줄바꿈 -->
+        <div style="flex-basis:100%;height:0"></div>
+
+        <button class="proteinBtn" onclick="addProtein(5)">🥚 +5g</button>
+        <button class="proteinBtn" onclick="addProtein(10)">🍗 +10g</button>
+        <button class="proteinBtn" onclick="addProtein(20)">🥩 +20g</button>
       </div>
     </div>
+
+    <div class="trackRow">
+      <div class="trackStat" id="waterText"></div>
+      <div class="trackBtns">
+        <button class="reset" onclick="resetWater()">초기화</button>
+        <button onclick="addWater(-WATER_UNIT)">↩️ -120ml</button>
+        <button onclick="addWater(WATER_UNIT)">💧 +120ml</button>
+      </div>
+    </div>
+    <div class="trackRow">
+      <div class="trackStat" id="sleepText"></div>
+      <div class="trackBtns">
+        <button class="reset" onclick="cancelSleep()">초기화</button>
+        <button onclick="startSleep()">🌙 취침</button>
+        <button onclick="endSleep()">☀️ 기상</button>
+      </div>
+    </div>   
 
   </div>
 
@@ -182,7 +285,13 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
     <table>
       <thead>
         <tr>
-          <th>날짜</th><th>모드</th><th>점수</th><th>판정</th><th>단백질</th><th>물</th>
+          <th>날짜</th>
+          <th>모드</th>
+          <th>판정</th>
+          <th>단백질</th>
+          <th>물</th>
+          <th>단식</th>
+          <th>수면</th>
         </tr>
       </thead>
       <tbody id="weekTable"></tbody>
@@ -190,40 +299,41 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   </div>
 </div>
 
-<!-- ALL -->
-<div id="viewAll" class="hide">
+<!-- ALL v2 -->
+<div id="viewAll_v2" class="hide">
   <div class="section">
     <h2>전체 기록</h2>
-    <div class="small" id="allSummary"></div>
-    <div style="margin-top:10px" class="controls">
-      <select id="allModeFilter">
+    <div class="controls" style="margin-top:8px">
+      <select id="allModeFilter_v2">
         <option value="all">모드: 전체</option>
         <option value="base">기본</option>
         <option value="cycle">🩸생리주기</option>
         <option value="hard">😪힘든 날</option>
         <option value="travel">✈️여행/이탈</option>
       </select>
-
-      <select id="allVerdictFilter">
+    
+      <select id="allVerdictFilter_v2">
         <option value="all">판정: 전체</option>
         <option value="pass">합격</option>
         <option value="mid">보통</option>
         <option value="rest">회복</option>
       </select>
-
-      <input id="allTextFilter" class="textin" placeholder="검색(날짜/단백질/물 등)" />
-      <button class="btn" style="width:auto;padding:9px 12px" onclick="resetAllFilters()">필터 초기화</button>
     </div>
-  </div>
 
-  <div id="allGroups"></div>
+    <div class="small" id="allSummary_v2"></div>
+  </div>
 </div>
 
 <script>
 /* =========================
    날짜/상태 기본
 ========================= */
-const todayKey = new Date().toISOString().slice(0,10);
+/* ===== 로컬 날짜 키(UTC 오차 방지) ===== */
+function getLocalDateKey(d=new Date()){
+  // sv-SE는 YYYY-MM-DD 포맷을 안정적으로 반환
+  return d.toLocaleDateString('sv-SE');
+}
+const todayKey = getLocalDateKey(new Date());
 document.getElementById("today").innerText = todayKey;
 let activeDateKey = todayKey;
 
@@ -231,6 +341,35 @@ let activeDateKey = todayKey;
    설정값
 ========================= */
 const FAST_HOURS = 14;
+
+/* ===== 단식 세션(날짜를 넘어 이어지게) =====
+   - 진행 중 단식은 날짜(state)와 분리해서 저장
+   - 종료 시 "오늘(todayKey)" 기록으로 저장
+========================================== */
+const FAST_SESSION_KEY = "__fastingSession_v1";
+const SLEEP_SESSION_KEY = "sleep_session";
+
+function loadFastSession(){
+  try{
+    return JSON.parse(localStorage.getItem(FAST_SESSION_KEY) || "null");
+  }catch(e){ return null; }
+}
+function saveFastSession(obj){
+  localStorage.setItem(FAST_SESSION_KEY, JSON.stringify(obj));
+}
+function clearFastSession(){
+  localStorage.removeItem(FAST_SESSION_KEY);
+}
+
+function loadSleepSession(){
+  return JSON.parse(localStorage.getItem(SLEEP_SESSION_KEY) || "null");
+}
+function saveSleepSession(v){
+  localStorage.setItem(SLEEP_SESSION_KEY, JSON.stringify(v));
+}
+function clearSleepSession(){
+  localStorage.removeItem(SLEEP_SESSION_KEY);
+}
 
 const WATER_UNIT = 120;
 const WATER_TARGET = 2000;
@@ -250,28 +389,24 @@ const BASE_ITEMS = [
   {c:"아침",t:"🍋 레몬물 세트",w:1},
 
   {c:"점심",t:"💊 영양제",w:1},
-  {c:"점심",t:"🚶 환기 + 10분 식후 걷기",w:2},
+  {c:"점심",t:"🍃 환기",w:1},
+  {c:"점심",t:"🎠 가벼운 활동",w:2},
 
-  {c:"저녁",t:"🚶 10분 식후 걷기",w:2},
+  {c:"저녁",t:"🧴 림프 마사지",w:2},
 
-  {c:"운동",t:"🎪 5분 전신운동 또는 폴",w:2},
-  {c:"운동",t:"🔥 복부",w:0},
-  {c:"운동",t:"💪 어깨",w:0},
-  {c:"운동",t:"🪽 등",w:0},
-  {c:"운동",t:"🍑 힙",w:0},
 ];
 
 const MODES = {
   base: BASE_ITEMS,
   hard: [
-    {c:"핵심",t:"🧘 5분 스트레칭",w:2},
+    {c:"핵심",t:"😘 딱 5분만 움직이자",w:2},
   ],
   cycle: [
-    {c:"하루",t:"🚶 10분 가벼운 움직임",w:2},
-    {c:"하루",t:"🧘 5분 스트레칭",w:2},
+    {c:"하루",t:"😘 딱 5분만 움직이자",w:2},
+    {c:"하루",t:"🎠 식후 가벼운 활동",w:2},
   ],
   travel: [
-    {c:"여행",t:"🚶 10분 식후 걷기",w:2},
+    {c:"여행",t:"🧘 스트레칭",w:2},
   ]
 };
 
@@ -286,14 +421,23 @@ const modeLabel = (m) => {
    state 로드/보정
 ========================= */
 let state = JSON.parse(localStorage.getItem(activeDateKey))
-  || {mode:"base",checks:{},waterMl:0,proteinG:0,fastingStart:null};
+  || {mode:"base",checks:{},waterMl:0,proteinG:0,fastingStartAt:null,fastingEndAt:null,fastingMinutes:null};
 
 function normalizeState(){
-  if(!state || typeof state!=="object") state = {mode:"base",checks:{},waterMl:0,proteinG:0,fastingStart:null};
+  if(!state || typeof state!=="object") state = {mode:"base",checks:{},waterMl:0,proteinG:0,fastingStartAt:null,fastingEndAt:null,fastingMinutes:null};
   if(!state.checks || typeof state.checks!=="object") state.checks = {};
   if(typeof state.waterMl !== "number") state.waterMl = 0;
   if(typeof state.proteinG !== "number") state.proteinG = 0;
-  if(!("fastingStart" in state)) state.fastingStart = null;
+
+  // ✅ 구버전 호환: fastingStart → fastingStartAt
+  if(state.fastingStart && !state.fastingStartAt){
+    state.fastingStartAt = state.fastingStart;
+  }
+  // 필드 보정
+  if(!("fastingStartAt" in state)) state.fastingStartAt = null;
+  if(!("fastingEndAt" in state)) state.fastingEndAt = null;
+  if(!("fastingMinutes" in state)) state.fastingMinutes = null;
+
   if(!state.mode) state.mode = "base";
 }
 normalizeState();
@@ -354,44 +498,215 @@ function render(){
 }
 
 /* =========================
-   단식 트래킹
+   단식 트래킹 (시작→종료, 날짜 넘어 유지)
 ========================= */
-function startFasting(){
-  if(state.fastingStart){
-    if(!confirm("단식 시작 시간을 새로 기록할까?")) return;
-  }
-  state.fastingStart = new Date().toISOString();
-  save(); update();
-}
-function resetFasting(){
-  state.fastingStart = null;
-  save(); update();
-}
 function fmtHM(d){
   const hh = String(d.getHours()).padStart(2,"0");
   const mm = String(d.getMinutes()).padStart(2,"0");
   return `${hh}:${mm}`;
 }
+function fmtDuration(mins){
+  const m = Math.max(0, Math.round(mins));
+  const h = Math.floor(m/60);
+  const mm = m % 60;
+  return `${h}시간 ${mm}분`;
+}
+
+function getStateForKey(k){
+  const s = JSON.parse(localStorage.getItem(k) || "null")
+    || {mode:"base",checks:{},waterMl:0,proteinG:0,fastingStartAt:null,fastingEndAt:null,fastingMinutes:null};
+  // 구버전 호환
+  if(s.fastingStart && !s.fastingStartAt) s.fastingStartAt = s.fastingStart;
+  if(!("fastingStartAt" in s)) s.fastingStartAt = null;
+  if(!("fastingEndAt" in s)) s.fastingEndAt = null;
+  if(!("fastingMinutes" in s)) s.fastingMinutes = null;
+  if(!s.checks || typeof s.checks!=="object") s.checks = {};
+  if(typeof s.waterMl !== "number") s.waterMl = 0;
+  if(typeof s.proteinG !== "number") s.proteinG = 0;
+  if(!s.mode) s.mode = "base";
+  return s;
+}
+function saveStateForKey(k, s){
+  localStorage.setItem(k, JSON.stringify(s));
+}
+
+function startFasting(){
+  const sess = loadFastSession();
+  if(sess && sess.startAt){
+    if(!confirm("이미 단식이 진행 중이야. 새 단식을 시작하면 이전 단식은 취소돼. 계속할까?")) return;
+  }
+  saveFastSession({ startAt: new Date().toISOString() });
+  update();
+}
+
+function endFasting(){
+  const sess = loadFastSession();
+  if(!sess || !sess.startAt){
+    alert("종료할 단식이 없어. 먼저 '단식 시작'을 눌러줘.");
+    return;
+  }
+  const start = new Date(sess.startAt);
+  const end = new Date();
+  const mins = (end - start) / (60*1000);
+
+  // ✅ 종료한 '오늘'에 기록으로 저장 (날짜 넘어도 OK)
+  const k = getLocalDateKey(new Date()); // 지금 시점 기준
+  const s = getStateForKey(k);
+  s.fastingStartAt = sess.startAt;
+  s.fastingEndAt   = end.toISOString();
+  s.fastingMinutes = Math.max(0, Math.round(mins));
+  saveStateForKey(k, s);
+
+  // 진행 세션 종료
+  clearFastSession();
+
+  // 화면이 오늘이든 과거 편집이든, "오늘 기록"이 저장된 뒤 표시 갱신
+  if(activeDateKey === todayKey){
+    state = s;
+  }
+  update();
+}
+
+function cancelFasting(){
+  const sess = loadFastSession();
+  if(!sess || !sess.startAt){
+    alert("취소할 진행 중 단식이 없어.");
+    return;
+  }
+
+  if(!confirm("진행 중인 단식만 취소할까? 기록에는 남지 않아.")) return;
+
+  clearFastSession();
+  update();
+}
+
+function deleteFastingRecord(){
+  if(!state.fastingEndAt){
+    alert("삭제할 단식 기록이 없어.");
+    return;
+  }
+
+  if(!confirm("이 날짜의 단식 기록을 삭제할까? 이 작업은 되돌릴 수 없어.")) return;
+
+  state.fastingStartAt = null;
+  state.fastingEndAt   = null;
+  state.fastingMinutes = null;
+
+  // 구버전 필드 정리 (있을 경우만)
+  if("fastingStart" in state) state.fastingStart = null;
+
+  saveStateForKey(activeDateKey, state);
+  update();
+}
+
+
 function renderFasting(){
+  const delBtn = document.getElementById("deleteFastingBtn");
   const el = document.getElementById("fastText");
   if(!el) return;
 
-  if(!state.fastingStart){
-    el.innerHTML = `⛔ ${FAST_HOURS}시간 단식 (시작 안 함)`;
+  const sess = loadFastSession();
+
+  // 1) 진행 중 세션이 있으면: 날짜 넘어도 계속 표시
+  if(sess && sess.startAt){
+    const start = new Date(sess.startAt);
+    const end = new Date(start.getTime() + FAST_HOURS*60*60*1000);
+    const now = new Date();
+
+    if(now >= end){
+      el.innerHTML = `⛔ ${FAST_HOURS}시간 단식 (식사 가능: <span class="good">${fmtHM(end)}</span>)`;
+    }else{
+      const ms = end - now;
+      const h = Math.floor(ms/(60*60*1000));
+      const m = Math.floor((ms%(60*60*1000))/(60*1000));
+      el.innerHTML = `⛔ ${FAST_HOURS}시간 단식 (식사 가능: <span class="need">${fmtHM(end)}</span> / 남은 ${h}시간 ${m}분)`;
+    }
     return;
   }
-  const start = new Date(state.fastingStart);
-  const end = new Date(start.getTime() + FAST_HOURS*60*60*1000);
-  const now = new Date();
 
-  if(now >= end){
-    el.innerHTML = `⛔ ${FAST_HOURS}시간 단식 (✅ 식사 가능: <span class="good">${fmtHM(end)}</span>)`;
-  }else{
-    const ms = end - now;
-    const h = Math.floor(ms/(60*60*1000));
-    const m = Math.floor((ms%(60*60*1000))/(60*1000));
-    el.innerHTML = `⛔ ${FAST_HOURS}시간 단식 (식사 가능: <span class="need">${fmtHM(end)}</span> / 남은 ${h}시간 ${m}분)`;
+  // 2) 진행 중이 아니면: 오늘(선택된 날짜)의 완료 기록 표시
+  if(state.fastingEndAt && typeof state.fastingMinutes === "number"){
+    const endAt = new Date(state.fastingEndAt);
+    el.innerHTML = `✅ 단식 종료 <span class="good">${fmtHM(endAt)}</span> · 🕒 실제 단식 ${fmtDuration(state.fastingMinutes)}`;
+
+    if(delBtn) delBtn.style.display = "inline-block";
+    return;
   }
+
+  // 3) 그 외: 시작 안 함
+  el.innerHTML = `⛔ ${FAST_HOURS}시간 단식 (시작 전)`;
+  if(delBtn) delBtn.style.display = "none";
+
+}
+
+/* =========================
+   수면 트래킹
+========================= */
+
+function startSleep(){
+  const sess = loadSleepSession();
+  if(sess && sess.startAt){
+    if(!confirm("이미 취침 기록이 있어. 새로 시작할까?")) return;
+  }
+  saveSleepSession({ startAt: new Date().toISOString() });
+  update();
+}
+
+function endSleep(){
+  const sess = loadSleepSession();
+  if(!sess || !sess.startAt){
+    alert("취침 기록이 없어.");
+    return;
+  }
+
+  const start = new Date(sess.startAt);
+  const end   = new Date();
+  const mins  = Math.max(0, Math.round((end - start) / 60000));
+
+  // ✅ 기상 시점 날짜에 저장
+  const k = getLocalDateKey(end);
+  const s = getStateForKey(k);
+
+  s.sleepStartAt = sess.startAt;
+  s.sleepEndAt   = end.toISOString();
+  s.sleepMinutes = mins;
+
+  saveStateForKey(k, s);
+  clearSleepSession();
+
+  if(activeDateKey === k) state = s;
+  update();
+}
+
+function cancelSleep(){
+  if(!confirm("진행 중인 취침 기록만 취소할까?")) return;
+  clearSleepSession();
+  update();
+}
+
+function renderSleep(){
+  const el = document.getElementById("sleepText");
+  if(!el) return;
+
+  const sess = loadSleepSession();
+
+  // 1) 취침 중
+  if(sess && sess.startAt){
+    const start = new Date(sess.startAt);
+    el.innerHTML = `🌙 취침 중 (${fmtHM(start)})`;
+    return;
+  }
+
+  // 2) 기상 완료 기록
+  if(state.sleepEndAt && typeof state.sleepMinutes === "number"){
+    const h = Math.floor(state.sleepMinutes / 60);
+    const m = state.sleepMinutes % 60;
+    el.innerHTML = `😴 수면 ${h}시간 ${m}분`;
+    return;
+  }
+
+  // 3) 기록 없음
+  el.innerHTML = "😴 수면 기록 없음";
 }
 
 /* =========================
@@ -453,6 +768,85 @@ function renderWater(){
 }
 
 /* =========================
+   체크리스트
+========================= */
+
+const WEEKLY_WORKOUTS = {
+  0: ["🪽 등"],                 // 일요일
+  1: ["🔥 복부", "👯 폴"],       // 월요일
+  2: ["🍑 힙", "🦵 폼롤러"],     // 화요일
+  3: ["🪽 등", "👯 폴"],         // 수요일
+  4: ["🔥 복부", "💪 폼롤러"],   // 목요일
+  5: ["🍑 힙", "👯 홈폴링"],     // 금요일
+  6: ["👯 폴"]                  // 토요일
+};
+
+function renderChecklist(){
+  const box = document.getElementById("checklist");
+  if(!box) return;
+  box.innerHTML = "";
+
+  let list = MODES[state.mode] || BASE_ITEMS;
+
+  // 운동 항목 치환
+  list = list.filter(item => item.c !== "운동");
+  list = list.concat(getWorkoutChecklistItems());
+
+  // ✅ 여기서부터 교체된 코드
+  let lastCategory = null;
+  let categoryBox = null;
+
+  list.forEach(item => {
+
+    if(item.c !== lastCategory){
+      categoryBox = document.createElement("div");
+      categoryBox.className = "section";
+      box.appendChild(categoryBox);
+
+      const h = document.createElement("div");
+      h.className = "sectionTitle";
+      h.innerText = item.c;
+      categoryBox.appendChild(h);
+
+      lastCategory = item.c;
+    }
+
+    const key = `${item.c}_${item.t}`;
+    const checked = !!state.checks[key];
+
+    const label = document.createElement("label");
+    label.className = "checkItem";
+    label.innerHTML = `
+      <input type="checkbox" ${checked ? "checked" : ""}>
+      <span>${item.t}</span>
+    `;
+
+    label.querySelector("input").addEventListener("change", e => {
+      state.checks[key] = e.target.checked;
+      saveStateForKey(activeDateKey, state);
+    });
+
+    categoryBox.appendChild(label);
+  });
+}
+
+function getWorkoutChecklistItems(){
+
+  // 👉 기본 모드가 아니면 운동 생성 자체 안 함
+  if(state.mode !== "base") return [];
+
+  const day = new Date(activeDateKey).getDay();
+  const workouts = WEEKLY_WORKOUTS[day] || [];
+
+  return workouts.map(text => ({
+    c: "운동",
+    t: text,
+    w: 2
+  }));
+}
+
+
+/* =========================
    날짜 불러오기(과거만)
 ========================= */
 function loadDate(){
@@ -462,7 +856,7 @@ function loadDate(){
 
   activeDateKey = d;
   state = JSON.parse(localStorage.getItem(activeDateKey))
-    || {mode:"base",checks:{},waterMl:0,proteinG:0,fastingStart:null};
+    || {mode:"base",checks:{},waterMl:0,proteinG:0,fastingStartAt:null,fastingEndAt:null,fastingMinutes:null};
   normalizeState();
 
   document.getElementById("today").innerText = activeDateKey + " (수정중)";
@@ -474,7 +868,7 @@ function loadDate(){
 function backToToday(){
   activeDateKey = todayKey;
   state = JSON.parse(localStorage.getItem(activeDateKey))
-    || {mode:"base",checks:{},waterMl:0,proteinG:0,fastingStart:null};
+    || {mode:"base",checks:{},waterMl:0,proteinG:0,fastingStartAt:null,fastingEndAt:null,fastingMinutes:null};
   normalizeState();
 
   document.getElementById("today").innerText = todayKey;
@@ -487,42 +881,86 @@ function backToToday(){
    판정 계산
 ========================= */
 function verdictFromRatio(ratio){
-  if(ratio>=0.6) return {key:"pass", cls:"ok", txt:"합격"};
-  if(ratio>=0.3) return {key:"mid", cls:"midb", txt:"보통"};
+  if(ratio>=0.55) return {key:"pass", cls:"ok", txt:"합격"};
+  if(ratio>=0.30) return {key:"mid", cls:"midb", txt:"보통"};
   return {key:"rest", cls:"restb", txt:"회복"};
+}
+
+function calcWorkoutScore(s){
+  const day = new Date(activeDateKey).getDay();
+  const workouts = WEEKLY_WORKOUTS[day] || [];
+  if(workouts.length === 0) return 0;
+
+  let checked = 0;
+  workouts.forEach(text => {
+    const key = `운동_${text}`;
+    if(s.checks && s.checks[key]) checked++;
+  });
+
+  const perItem = 0.5;
+  return Math.min(checked * perItem, 1);
+}
+
+function calcFreedivingScore(s){
+  const key = "운동_🥽 프리다이빙";
+  return (s.checks && s.checks[key]) ? 1 : 0;
 }
 
 function calcStats(s){
   const mode = s.mode || "base";
-  const items = MODES[mode] || MODES.base;
-  let score=0,total=0;
+let score = 0;
+let total = 0;
 
-  items.forEach((it,i)=>{
-    const id = mode + "_" + i;
-    if(it.w>0){ total += it.w; if(s.checks && s.checks[id]) score += it.w; }
-  });
+// ✅ 기본 체크리스트 점수
+const baseList = MODES[mode] || BASE_ITEMS;
+baseList.forEach(it => {
+  if(it.w > 0){
+    total += it.w;
+    const key = `${it.c}_${it.t}`;
+    if(s.checks && s.checks[key]) score += it.w;
+  }
+});
+  const proteinG = s.proteinG || 0;
+  const waterMl  = s.waterMl  || 0;
+  const fasting  = s.fastingEndAt ? 1 : 0;
 
-  const proteinG = (typeof s.proteinG==="number") ? s.proteinG : 0;
-  const waterMl  = (typeof s.waterMl==="number")  ? s.waterMl  : 0;
-  const fasting  = s.fastingStart ? 1 : 0;
+// 단백질
+const proteinTarget = getProteinTarget(mode);
+total += 2;
+if(proteinG >= proteinTarget) score += 2;
 
-  // ✅ 단백질(가중치 2) / 물(가중치 1) / 단식 시작(가중치 1)
-  const proteinTarget = getProteinTarget(mode);
-  total += 2; if(proteinG >= proteinTarget) score += 2;
-  total += 1; if(waterMl >= WATER_TARGET) score += 1;
-  total += 1; if(fasting) score += 1;
+// 물
+total += 1;
+if(waterMl >= WATER_TARGET) score += 1;
 
-  const ratio = total ? (score/total) : 0;
+// 단식
+total += 1;
+if(fasting) score += 1;
+
+// ✅ 요일별 운동 (최대 1점)
+total += 1;
+score += calcWorkoutScore(s);
+
+// ✅ 프리다이빙 (+1점)
+total += 1;
+score += calcFreedivingScore(s);
+
+
+  const ratio = total ? (score / total) : 0;
   return { mode, score, total, ratio, proteinG, waterMl };
 }
+
 
 /* =========================
    업데이트/초기화
 ========================= */
 function update(){
   renderFasting();
+  renderSleep();
   renderProtein();
   renderWater();
+  renderChecklist();
+  renderWeek();
 
   const st = calcStats(state);
   const r=document.getElementById("result");
@@ -535,7 +973,7 @@ function update(){
 
 function resetToday(){
   if(confirm("현재 선택된 날짜의 체크를 초기화할까요?")){
-    state = {mode:"base",checks:{},waterMl:0,proteinG:0,fastingStart:null};
+    state = {mode:"base",checks:{},waterMl:0,proteinG:0,fastingStartAt:null,fastingEndAt:null,fastingMinutes:null};
     save(); render();
   }
 }
@@ -550,43 +988,72 @@ function showTab(t){
 
   viewToday.classList.toggle("hide", t!=="today");
   viewWeek.classList.toggle("hide", t!=="week");
-  viewAll.classList.toggle("hide", t!=="all");
+  viewAll_v2.classList.toggle("hide", t!=="all");
+
 
   if(t==="week") renderWeek();
-  if(t==="all") renderAll();
+  if(t==="all") renderAll_v2();
 }
 
 function renderWeek(){
-  const body=document.getElementById("weekTable");
-  body.innerHTML="";
+  const body = document.getElementById("weekTable");
+  body.innerHTML = "";
+
   let pass=0, mid=0, rest=0;
 
   for(let i=6;i>=0;i--){
-    const d=new Date(); d.setDate(d.getDate()-i);
-    const k=d.toISOString().slice(0,10);
-    const s=JSON.parse(localStorage.getItem(k)||"null");
-    if(!s || !s.checks) continue;
+    const d = new Date();
+    d.setDate(d.getDate()-i);
+    const k = getLocalDateKey(d);
+    const s = getStateForKey(k);
+
+    if(!s) continue;
 
     const st = calcStats(s);
-    const v = verdictFromRatio(st.ratio);
+    const v  = verdictFromRatio(st.ratio);
+
     if(v.key==="pass") pass++;
     else if(v.key==="mid") mid++;
     else rest++;
+
+    // 단백질
+    const protein = s.proteinG ? `${s.proteinG}g` : "-";
+
+    // 물
+    const water = s.waterMl ? `${(s.waterMl/1000).toFixed(1)}L` : "-";
+
+    // 단식
+    let fasting = "-";
+    if(s.fastingMinutes){
+      const h = Math.floor(s.fastingMinutes/60);
+      const m = s.fastingMinutes%60;
+      fasting = `${h}:${String(m).padStart(2,"0")}`;
+    }
+
+    // 수면
+    let sleep = "-";
+    if(s.sleepMinutes){
+      const h = Math.floor(s.sleepMinutes/60);
+      const m = s.sleepMinutes%60;
+      sleep = `${h}:${String(m).padStart(2,"0")}`;
+    }
 
     body.innerHTML += `
       <tr>
         <td>${k}</td>
         <td>${modeLabel(st.mode)}</td>
-        <td class="mono">${st.score}/${st.total}</td>
         <td><span class="badge ${v.cls}">${v.txt}</span></td>
-        <td class="mono">${st.proteinG}g</td>
-        <td class="mono">${st.waterMl}ml</td>
+        <td class="mono">${protein}</td>
+        <td class="mono">${water}</td>
+        <td class="mono">${fasting}</td>
+        <td class="mono">${sleep}</td>
       </tr>`;
   }
 
   document.getElementById("weekSummary").innerText =
     `합격 ${pass}일 · 보통 ${mid}일 · 회복 ${rest}일`;
 }
+
 
 /* ===== ALL: group by month + filters ===== */
 const dateRe = /^\d{4}-\d{2}-\d{2}$/;
@@ -601,55 +1068,74 @@ function getAllKeys(){
   return keys;
 }
 
-function resetAllFilters(){
-  document.getElementById("allModeFilter").value="all";
-  document.getElementById("allVerdictFilter").value="all";
-  document.getElementById("allTextFilter").value="";
-  renderAll();
-}
+function renderAll_v2(){
+  const modeF = document.getElementById("allModeFilter_v2")?.value || "all";
+  const verF  = document.getElementById("allVerdictFilter_v2")?.value || "all";
 
-function renderAll(){
-  const modeF = document.getElementById("allModeFilter").value;
-  const verF  = document.getElementById("allVerdictFilter").value;
-  const txtF  = document.getElementById("allTextFilter").value.trim().toLowerCase();
+  const summary = document.getElementById("allSummary_v2");
+  const container = document.getElementById("viewAll_v2");
+  if(!summary || !container) return;
+
+  // 기존 월별 리스트 제거 (요약/필터는 유지)
+  container.querySelectorAll("details").forEach(el => el.remove());
+  container.querySelectorAll(".emptyMsg").forEach(el => el.remove());
 
   const keys = getAllKeys();
-  const groups = {};
-  let totalDays=0, pass=0, mid=0, rest=0;
+  const groups = {}; // { YYYY-MM: [...] }
+  let total=0, pass=0, mid=0, rest=0;
 
   keys.forEach(k=>{
-    const s = JSON.parse(localStorage.getItem(k)||"null");
-    if(!s || !s.checks) return;
+    const s = getStateForKey(k);
+    if(!s) return;
 
     const st = calcStats(s);
     const v  = verdictFromRatio(st.ratio);
 
-    if(modeF!=="all" && (st.mode||"base") !== modeF) return;
-    if(verF!=="all" && v.key !== verF) return;
-    if(txtF){
-      const hay = `${k} ${modeLabel(st.mode)} ${v.txt} ${st.proteinG} ${st.waterMl}`.toLowerCase();
-      if(!hay.includes(txtF)) return;
-    }
+    // ✅ 필터는 여기서!
+    if(modeF !== "all" && (st.mode || "base") !== modeF) return;
+    if(verF  !== "all" && v.key !== verF) return;
 
-    totalDays++;
+    total++;
     if(v.key==="pass") pass++;
     else if(v.key==="mid") mid++;
     else rest++;
 
     const ym = k.slice(0,7);
     groups[ym] = groups[ym] || [];
-    groups[ym].push({date:k, mode:st.mode, score:st.score, total:st.total, v, proteinG:st.proteinG, waterMl:st.waterMl});
+
+    const protein = s.proteinG ? `${s.proteinG}g` : "-";
+    const water   = s.waterMl ? `${(s.waterMl/1000).toFixed(1)}L` : "-";
+
+    let fasting = "-";
+    if(s.fastingMinutes){
+      const h = Math.floor(s.fastingMinutes/60);
+      const m = s.fastingMinutes % 60;
+      fasting = `${h}:${String(m).padStart(2,"0")}`;
+    }
+
+    let sleep = "-";
+    if(s.sleepMinutes){
+      const h = Math.floor(s.sleepMinutes/60);
+      const m = s.sleepMinutes % 60;
+      sleep = `${h}:${String(m).padStart(2,"0")}`;
+    }
+
+    groups[ym].push({
+      date:k,
+      mode:st.mode,
+      verdict:v,
+      protein, water, fasting, sleep
+    });
   });
 
-  document.getElementById("allSummary").innerText =
-    `필터 결과: ${totalDays}일 · 합격 ${pass} · 보통 ${mid} · 회복 ${rest} (월별로 눌러 펼치기)`;
-
-  const wrap = document.getElementById("allGroups");
-  wrap.innerHTML = "";
+  summary.innerText = `총 ${total}일 · 합격 ${pass} · 보통 ${mid} · 회복 ${rest}`;
 
   const months = Object.keys(groups).sort((a,b)=> b.localeCompare(a));
-  if(months.length===0){
-    wrap.innerHTML = `<div class="section"><div class="small">기록이 없거나 필터 조건에 맞는 기록이 없어.</div></div>`;
+  if(months.length === 0){
+    container.insertAdjacentHTML(
+      "beforeend",
+      `<div class="section emptyMsg"><div class="small">기록이 없어.</div></div>`
+    );
     return;
   }
 
@@ -658,8 +1144,8 @@ function renderAll(){
 
     let mp=0, mm=0, mr=0;
     rows.forEach(r=>{
-      if(r.v.key==="pass") mp++;
-      else if(r.v.key==="mid") mm++;
+      if(r.verdict.key==="pass") mp++;
+      else if(r.verdict.key==="mid") mm++;
       else mr++;
     });
 
@@ -677,7 +1163,13 @@ function renderAll(){
         <table>
           <thead>
             <tr>
-              <th>날짜</th><th>모드</th><th>점수</th><th>판정</th><th>단백질</th><th>물</th>
+              <th>날짜</th>
+              <th>모드</th>
+              <th>판정</th>
+              <th>단백질</th>
+              <th>물</th>
+              <th>단식</th>
+              <th>수면</th>
             </tr>
           </thead>
           <tbody>
@@ -685,26 +1177,23 @@ function renderAll(){
               <tr>
                 <td>${r.date}</td>
                 <td>${modeLabel(r.mode)}</td>
-                <td class="mono">${r.score}/${r.total}</td>
-                <td><span class="badge ${r.v.cls}">${r.v.txt}</span></td>
-                <td class="mono">${r.proteinG}g</td>
-                <td class="mono">${r.waterMl}ml</td>
+                <td><span class="badge ${r.verdict.cls}">${r.verdict.txt}</span></td>
+                <td class="mono">${r.protein}</td>
+                <td class="mono">${r.water}</td>
+                <td class="mono">${r.fasting}</td>
+                <td class="mono">${r.sleep}</td>
               </tr>
             `).join("")}
           </tbody>
         </table>
       </div>
     `;
-    wrap.appendChild(det);
+    container.appendChild(det);
   });
 }
 
-document.getElementById("allModeFilter").onchange = renderAll;
-document.getElementById("allVerdictFilter").onchange = renderAll;
-document.getElementById("allTextFilter").oninput = () => {
-  clearTimeout(window.__rt);
-  window.__rt = setTimeout(renderAll, 120);
-};
+document.getElementById("allModeFilter_v2").onchange = renderAll_v2;
+document.getElementById("allVerdictFilter_v2").onchange = renderAll_v2;
 
 /* =========================
    init + 단식 텍스트 주기 갱신
