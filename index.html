@@ -256,7 +256,6 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
     </div>
   </div>
 
-
   <!-- 단식/단백질/물/수면 트래커 -->
   <div class="section">
 
@@ -1087,43 +1086,89 @@ function calcStats(s){
   const mode = s.mode || "base";
   let score = 0;
   let total = 0;
+  let baseWorkoutOK = true; // ✅ 스코프 문제 해결
 
-  const list = MODES[mode] || BASE_ITEMS;
+  const proteinG = s.proteinG || 0;
+  const waterMl  = s.waterMl  || 0;
+  const sleepH   = (s.sleepMinutes || 0) / 60;
+  const fastH    = (s.fastingMinutes || 0) / 60;
 
-  list.forEach(it => {
-    if(it.w > 0){
-      total += it.w;
-      const key = `${it.c}_${it.t}`;
-      if(s.checks && s.checks[key]) score += it.w;
-    }
-  });
-
-  // 👉 base 모드일 때만 트래커 점수 포함
   if(mode === "base"){
-    const proteinG = s.proteinG || 0;
-    const waterMl  = s.waterMl  || 0;
-    const fasting  = s.fastingEndAt ? 1 : 0;
+    const list = MODES.base || BASE_ITEMS;
+    list.forEach(it=>{
+      if(it.w > 0){
+        total += it.w;
+        const key = `${it.c}_${it.t}`;
+        if(s.checks && s.checks[key]) score += it.w;
+      }
+    });
 
-    const proteinTarget = getProteinTarget(mode);
-
-    // 단백질
+    const workoutScore = calcWorkoutScore(s);
     total += 2;
-    if(proteinG >= proteinTarget) score += 2;
+    score += workoutScore * 2;
+    baseWorkoutOK = workoutScore > 0;
 
-    // 물
+    total += 2;
+    if(proteinG >= getProteinTarget(mode)) score += 2;
+
     total += 1;
     if(waterMl >= WATER_TARGET) score += 1;
 
-    // 단식
     total += 1;
-    if(fasting) score += 1;
+    if(sleepH >= 7 && sleepH <= 9) score += 1;
 
-    // 요일별 운동 (최대 1점)
     total += 1;
-    score += calcWorkoutScore(s);
+    if(fastH >= 14) score += 1;
   }
 
-  const ratio = total ? (score / total) : 0;
+  else if(mode === "hard" || mode === "cycle"){
+    const list = MODES[mode] || [];
+    let checkedAny = false;
+    list.forEach(it=>{
+      const key = `${it.c}_${it.t}`;
+      if(s.checks && s.checks[key]) checkedAny = true;
+    });
+
+    total += 2;
+    if(checkedAny) score += 2;
+
+    total += 1;
+    if(proteinG >= getProteinTarget(mode)) score += 1;
+
+    total += 1;
+    if(waterMl >= WATER_TARGET * 0.6) score += 1;
+
+    total += 1;
+    if(sleepH >= 7 && sleepH <= 10) score += 1;
+
+    total += 1;
+    if(fastH >= 12) score += 1;
+  }
+
+  else if(mode === "travel"){
+    const list = MODES.travel || [];
+    let checkedAny = false;
+    list.forEach(it=>{
+      const key = `${it.c}_${it.t}`;
+      if(s.checks && s.checks[key]) checkedAny = true;
+    });
+
+    total += 2;
+    if(checkedAny) score += 2;
+
+    total += 1;
+    if(proteinG >= getProteinTarget(mode)) score += 1;
+
+    total += 1;
+    if(waterMl >= WATER_TARGET * 0.6) score += 1;
+  }
+
+  let ratio = total ? score / total : 0;
+
+  if(mode === "base" && !baseWorkoutOK){
+    ratio = Math.min(ratio, 0.54);
+  }
+
   return { mode, score, total, ratio };
 }
 
@@ -1386,3 +1431,4 @@ if("serviceWorker" in navigator){
 
 </body>
 </html>
+
