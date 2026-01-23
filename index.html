@@ -19,7 +19,7 @@ h1{text-align:center;margin:6px 0}
 label{display:flex;align-items:center;gap:8px;padding:6px 0}
 input[type=checkbox]{width:18px;height:18px}
 .result{text-align:center;font-size:20px;font-weight:800;margin:14px 0}
-.pass{color:#2e7d32}.mid{color:#f9a825}.rest{color:#c62828}
+.pass{color:#1fa16f}.mid{color:#2494bd}.rest{color:#facc00}
 .btn{width:100%;padding:10px;border-radius:12px;border:none;background:#e6e6e6;font-size:14px}
 .btn:active{background:#cfcfcf}
 .hide{display:none}
@@ -104,7 +104,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 
 .trackBtns button.reset{
   background:#f1f1f1;
-  font-size:12px;
+  font-size:11px;
   opacity:0.7;
 }
   
@@ -166,11 +166,12 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 /* ===== 단백질 전용 정렬 ===== */
   
 .proteinBtn{
-  width:70px;          /* ← 이 숫자만 취향에 맞게 조절 */
-  padding:8px 0;
+  width:65px;          /* ✅ 넑이 강제 고정 */
+  height:27px;          /* ✅ 높이 강제 고정 */
+  padding:0;
   font-size:12px;
   text-align:center;
-  line-height:1.2;
+    line-height:1;
 }
 .fastBtns.proteinBtns{
   flex-wrap:wrap;   /* 단백질만 줄바꿈 허용 */
@@ -224,16 +225,16 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 
 <!-- TABS -->
 <div class="tabs">
-  <button class="tab active" id="tabToday" onclick="showTab('today')">♥️기록</button>
-  <button class="tab" id="tabWeek" onclick="showTab('week')">📓주간 요약</button>
-  <button class="tab" id="tabAll" onclick="showTab('all')">📚전체 기록</button>
+  <button class="tab active" id="tabToday" onclick="showTab('today')">♥️ 기록</button>
+  <button class="tab" id="tabWeek" onclick="showTab('week')">📓 주간 요약</button>
+  <button class="tab" id="tabAll" onclick="showTab('all')">📚 전체 기록</button>
 </div>
 
 <!-- MODES -->
 <div class="modes">
-  <button class="mode" id="mHard" onclick="setMode('hard')">🫠힘든 날</button>
-  <button class="mode" id="mCycle" onclick="setMode('cycle')">🩸생리주기</button>
-  <button class="mode" id="mTravel" onclick="setMode('travel')">✈️여행/이탈</button>
+  <button class="mode" id="mHard" onclick="setMode('hard')">🫠 힘든 날</button>
+  <button class="mode" id="mCycle" onclick="setMode('cycle')">🩸 생리주기</button>
+  <button class="mode" id="mTravel" onclick="setMode('travel')">✈️ 여행/이탈</button>
 </div>
 
 <!-- TODAY -->
@@ -246,7 +247,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   
       <input type="date" id="datePicker">
   
-      <button class="dateBtn" onclick="loadDate()">🔽 확인</button>
+      <button class="dateBtn" onclick="loadDate()">확인</button>
       <button class="dateBtn" onclick="backToToday()">🦖 오늘</button>
     </div>
   
@@ -263,9 +264,10 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
     <div class="trackStat fastText" id="fastText"></div>
   
     <div class="trackBtns fastBtns">
-      <button class="reset" onclick="cancelFasting()">초기화</button>
+      <button class="reset" onclick="cancelFasting()">Reset</button>
       <button onclick="startFasting()">⛔ 시작</button>
       <button onclick="endFasting()">✅ 종료</button>
+      <button onclick="manualFasting()">⏱</button>
       <button id="deleteFastingBtn"
               class="reset"
               onclick="deleteFastingRecord()"
@@ -280,7 +282,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
       <div class="trackStat fastText" id="proteinTrackText"></div>
     
       <div class="trackBtns fastBtns proteinBtns">
-        <button class="reset" onclick="resetProtein()">초기화</button>    
+        <button class="reset" onclick="resetProtein()">Reset</button>    
         <button class="proteinBtn" onclick="addProtein(-10)">↩️ -10g</button>
         <button class="proteinBtn" onclick="addProtein(-5)">↩️ -5g</button>
         <!-- ✅ 여기 줄바꿈 -->
@@ -296,7 +298,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
       <div class="trackStat fastText" id="waterText"></div>
     
       <div class="trackBtns fastBtns">
-        <button class="reset" onclick="resetWater()">초기화</button>
+        <button class="reset" onclick="resetWater()">Reset</button>
         <button onclick="addWater(-WATER_UNIT)">↩️ -120ml</button>
         <button onclick="addWater(WATER_UNIT)">💧 +120ml</button>
       </div>
@@ -306,9 +308,10 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
       <div class="trackStat fastText" id="sleepText"></div>
     
       <div class="trackBtns fastBtns">
-        <button class="reset" onclick="cancelSleep()">초기화</button>
-        <button onclick="startSleep()">🌙 취침</button>
-        <button onclick="endSleep()">☀️ 기상</button>
+        <button class="reset" onclick="cancelSleep()">Reset</button>
+        <button onclick="startSleep()">🌙 꿀잠</button>
+        <button onclick="endSleep()">☀️ 인나</button>
+        <button onclick="manualSleep()">⏱</button>
       </div>
     </div>
   
@@ -353,10 +356,10 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
     <div class="controls" style="margin-top:8px">
       <select id="allModeFilter_v2">
         <option value="all">모드: 전체</option>
-        <option value="base">기본</option>
-        <option value="cycle">🩸생리주기</option>
-        <option value="hard">😪힘든 날</option>
-        <option value="travel">✈️여행/이탈</option>
+        <option value="base">♥️ 기본</option>
+        <option value="cycle">🩸 생리주기</option>
+        <option value="hard">🫠 힘든 날</option>
+        <option value="travel">✈️ 여행/이탈</option>
       </select>
     
       <select id="allVerdictFilter_v2">
@@ -430,7 +433,7 @@ function getProteinTarget(mode){ return PROTEIN_TARGETS[mode] ?? 58; }
    체크리스트 (시간+내용 통일)
 ========================= */
 const BASE_ITEMS = [
-  {c:"아침",t:"🌞 10시 전 기상",w:1},
+  {c:"아침",t:"🌞 10시 전 활동",w:1},
   {c:"아침",t:"🪥 양치 + 물",w:1},
   {c:"아침",t:"💊 유산균",w:1},
   {c:"아침",t:"🍋 레몬물 세트",w:1},
@@ -439,7 +442,7 @@ const BASE_ITEMS = [
   {c:"점심",t:"🍃 환기",w:1},
   {c:"점심",t:"🎠 가벼운 활동",w:2},
 
-  {c:"저녁",t:"🧴 림프 마사지",w:2},
+  {c:"저녁",t:"🪆 림프 마사지",w:2},
 ];
 
 const MODES = {
@@ -452,14 +455,14 @@ const MODES = {
     {c:"하루",t:"🎠 식후 가벼운 활동",w:2},
   ],
   travel: [
-    {c:"여행",t:"🧘 스트레칭",w:2},
+    {c:"여행",t:"🐙 스트레칭",w:2},
   ]
 };
 
 const modeLabel = (m) => {
-  if(m==="hard") return "😪힘든 날";
-  if(m==="cycle") return "🩸생리주기";
-  if(m==="travel") return "✈️여행/이탈";
+  if(m==="hard") return ";🫠 힘든 날";
+  if(m==="cycle") return "🩸 생리주기";
+  if(m==="travel") return "✈️ 여행/이탈";
   return "기본";
 };
 
@@ -556,7 +559,7 @@ function saveStateForKey(k, s){
 function startFasting(){
   const sess = loadFastSession();
   if(sess && sess.startAt){
-    if(!confirm("이미 단식이 진행 중이야. 새 단식을 시작하면 이전 단식은 취소돼. 계속할까?")) return;
+    if(!confirm("새로운 단식을 시작할까?")) return;
   }
   saveFastSession({ startAt: new Date().toISOString() });
   update();
@@ -565,7 +568,7 @@ function startFasting(){
 function endFasting(){
   const sess = loadFastSession();
   if(!sess || !sess.startAt){
-    alert("종료할 단식이 없어. 먼저 '단식 시작'을 눌러줘.");
+    alert("종료할 단식이 없어. 먼저 '⛔시작'을 눌러줘.");
     return;
   }
   const start = new Date(sess.startAt);
@@ -597,7 +600,7 @@ function cancelFasting(){
     return;
   }
 
-  if(!confirm("진행 중인 단식만 취소할까? 기록에는 남지 않아.")) return;
+  if(!confirm("진행 중인 단식만 취소할까?")) return;
 
   clearFastSession();
   update();
@@ -609,7 +612,7 @@ function deleteFastingRecord(){
     return;
   }
 
-  if(!confirm("이 날짜의 단식 기록을 삭제할까? 이 작업은 되돌릴 수 없어.")) return;
+  if(!confirm("이 날짜의 단식 기록을 삭제할까?")) return;
 
   state.fastingStartAt = null;
   state.fastingEndAt   = null;
@@ -635,14 +638,18 @@ function renderFasting(){
     const start = new Date(sess.startAt);
     const end = new Date(start.getTime() + FAST_HOURS*60*60*1000);
     const now = new Date();
-
+  
+    const startHM = fmtHM(start);
+    const endHM   = fmtHM(end);
+  
     if(now >= end){
-      el.innerHTML = `⛔ ${FAST_HOURS}시간 단식 (식사 가능: <span class="good">${fmtHM(end)}</span>)`;
+      el.innerHTML = `🍏 ${FAST_HOURS}시간 단식 (${startHM}-<span class="good">${endHM}</span> / 00:00)`;
     }else{
-      const ms = end - now;
-      const h = Math.floor(ms/(60*60*1000));
-      const m = Math.floor((ms%(60*60*1000))/(60*1000));
-      el.innerHTML = `⛔ ${FAST_HOURS}시간 단식 (식사 가능: <span class="need">${fmtHM(end)}</span> / 남은 ${h}시간 ${m}분)`;
+      const mm = Math.floor((end - now)/60000);
+      const rh = Math.floor(mm/60);
+      const rm = mm % 60;
+  
+      el.innerHTML = `🍏 ${FAST_HOURS}시간 단식 (${startHM}-<span class="need">${endHM}</span> / 남은 ${String(rh).padStart(2,"0")}:${String(rm).padStart(2,"0")})`;
     }
     return;
   }
@@ -657,11 +664,87 @@ function renderFasting(){
   }
 
   // 3) 그 외: 시작 안 함
-  el.innerHTML = `⛔ ${FAST_HOURS}시간 단식`;
+  el.innerHTML = `🍏 ${FAST_HOURS}시간 단식`;
   if(delBtn) delBtn.style.display = "none";
+}
+  
+function manualFasting(){
+  const sess = loadFastSession();
 
+  let start, end;
+
+  // 1️⃣ 자동 세션 없음 + 지금 단식 중 → 시작만 입력
+  if(!sess){
+    const wantStart = confirm("이미 단식 중이야?\n\n취소 = 둘 다 입력\n확인 = 시작만 입력");
+
+    if(wantStart){
+      const startStr = prompt("시작 시각 (HH:MM)");
+      if(!startStr) return;
+
+      const [sh, sm] = startStr.split(":").map(Number);
+      if(isNaN(sh)||isNaN(sm)){ alert("HH:MM 형식"); return; }
+
+      const base = new Date();
+      start = new Date(base);
+      start.setHours(sh, sm, 0, 0);
+
+      if(start > base) start.setDate(start.getDate()-1);
+
+      saveFastSession({ startAt: start.toISOString() });
+      update();
+      return;
+    }
+  }
+
+  // 2️⃣ 이미 시작 버튼 눌러둔 경우 → 종료만 입력
+  if(sess && sess.startAt){
+    start = new Date(sess.startAt);
+
+    const endStr = prompt("종료 시각 (HH:MM)");
+    if(!endStr) return;
+
+    const [eh, em] = endStr.split(":").map(Number);
+    if(isNaN(eh)||isNaN(em)){ alert("HH:MM 형식"); return; }
+
+    end = new Date(start);
+    end.setHours(eh, em, 0, 0);
+    if(end <= start) end.setDate(end.getDate()+1);
+  }
+
+  // 3️⃣ 둘 다 입력
+  else{
+    const startStr = prompt("시작 시각 (HH:MM)");
+    if(!startStr) return;
+
+    const endStr = prompt("종료 시각 (HH:MM)");
+    if(!endStr) return;
+
+    const [sh, sm] = startStr.split(":").map(Number);
+    const [eh, em] = endStr.split(":").map(Number);
+
+    if(isNaN(sh)||isNaN(sm)||isNaN(eh)||isNaN(em)){
+      alert("HH:MM 형식"); return;
+    }
+
+    const base = new Date(activeDateKey);
+    start = new Date(base); start.setHours(sh, sm, 0, 0);
+    end   = new Date(base); end.setHours(eh, em, 0, 0);
+    if(end <= start) end.setDate(end.getDate()+1);
+  }
+
+  const mins = Math.round((end - start)/60000);
+
+  state.fastingStartAt = start.toISOString();
+  state.fastingEndAt   = end.toISOString();
+  state.fastingMinutes = mins;
+
+  save();
+  clearFastSession();
+  update();
 }
 
+
+  
 /* =========================
    수면 트래킹
 ========================= */
@@ -669,7 +752,7 @@ function renderFasting(){
 function startSleep(){
   const sess = loadSleepSession();
   if(sess && sess.startAt){
-    if(!confirm("이미 취침 기록이 있어. 새로 시작할까?")) return;
+    if(!confirm("넌 잠자고 있어. 새로 시작할까?")) return;
   }
   saveSleepSession({ startAt: new Date().toISOString() });
   update();
@@ -678,7 +761,7 @@ function startSleep(){
 function endSleep(){
   const sess = loadSleepSession();
   if(!sess || !sess.startAt){
-    alert("취침 기록이 없어.");
+    alert("넌 잠자고 있지 않아.");
     return;
   }
 
@@ -702,7 +785,7 @@ function endSleep(){
 }
 
 function cancelSleep(){
-  if(!confirm("진행 중인 취침 기록만 취소할까?")) return;
+  if(!confirm("진행 중인 수면 기록을 취소할까?")) return;
   clearSleepSession();
   update();
 }
@@ -716,7 +799,7 @@ function renderSleep(){
   // 1) 취침 중
   if(sess && sess.startAt){
     const start = new Date(sess.startAt);
-    el.innerHTML = `💤 잠자는 중 (${fmtHM(start)})`;
+    el.innerHTML = `💤 꿀잠 중 (${fmtHM(start)})`;
     return;
   }
 
@@ -724,17 +807,93 @@ function renderSleep(){
   if(state.sleepEndAt && typeof state.sleepMinutes === "number"){
     const h = Math.floor(state.sleepMinutes / 60);
     const m = state.sleepMinutes % 60;
-    el.innerHTML = `🛌 수면 ${h}시간 ${m}분`;
+    el.innerHTML = `🍯 수면시간 ${h}시간 ${m}분`;
     return;
   }
 
   // 3) 기록 없음
-  el.innerHTML = "🤸‍♂️ 활동 중";
+  el.innerHTML = "💚 활동 중";
 }
+
+function manualSleep(){
+  const sess = loadSleepSession();
+
+  let start, end;
+
+  // 1️⃣ 자동 세션 없음 + 지금 자고 있음 → 시작만 입력
+  if(!sess){
+    const wantStart = confirm("수면 기록 할래?\n\n취소 = 둘 다 입력\n확인 = 시작만 입력");
+
+    if(wantStart){
+      const startStr = prompt("취침 시각 (HH:MM)");
+      if(!startStr) return;
+
+      const [sh, sm] = startStr.split(":").map(Number);
+      if(isNaN(sh)||isNaN(sm)){ alert("HH:MM 형식"); return; }
+
+      const base = new Date();
+      start = new Date(base);
+      start.setHours(sh, sm, 0, 0);
+      if(start > base) start.setDate(start.getDate()-1);
+
+      saveSleepSession({ startAt: start.toISOString() });
+      update();
+      return;
+    }
+  }
+
+  // 2️⃣ 이미 취침 버튼 눌러둔 경우 → 기상만 입력
+  if(sess && sess.startAt){
+    start = new Date(sess.startAt);
+
+    const endStr = prompt("기상 시각 (HH:MM)");
+    if(!endStr) return;
+
+    const [eh, em] = endStr.split(":").map(Number);
+    if(isNaN(eh)||isNaN(em)){ alert("HH:MM 형식"); return; }
+
+    end = new Date(start);
+    end.setHours(eh, em, 0, 0);
+    if(end <= start) end.setDate(end.getDate()+1);
+  }
+
+  // 3️⃣ 둘 다 입력
+  else{
+    const startStr = prompt("취침 시각 (HH:MM)");
+    if(!startStr) return;
+
+    const endStr = prompt("기상 시각 (HH:MM)");
+    if(!endStr) return;
+
+    const [sh, sm] = startStr.split(":").map(Number);
+    const [eh, em] = endStr.split(":").map(Number);
+
+    if(isNaN(sh)||isNaN(sm)||isNaN(eh)||isNaN(em)){
+      alert("HH:MM 형식"); return;
+    }
+
+    const base = new Date(activeDateKey);
+    start = new Date(base); start.setHours(sh, sm, 0, 0);
+    end   = new Date(base); end.setHours(eh, em, 0, 0);
+    if(end <= start) end.setDate(end.getDate()+1);
+  }
+
+  const mins = Math.round((end - start)/60000);
+
+  state.sleepStartAt = start.toISOString();
+  state.sleepEndAt   = end.toISOString();
+  state.sleepMinutes = mins;
+
+  save();
+  clearSleepSession();
+  update();
+}
+
 
 /* =========================
    단백질 트래킹
 ========================= */
+  
 function addProtein(delta){
   const next = Math.max(0, (state.proteinG||0) + delta);
   state.proteinG = next;
@@ -796,12 +955,12 @@ function renderWater(){
 
 const WEEKLY_WORKOUTS = {
   0: ["🪽 등"],                 // 일요일
-  1: ["🔥 복부", "👯 폴"],       // 월요일
+  1: ["🔥 복부", "🌹 폴"],       // 월요일
   2: ["🍑 힙", "🦵 폼롤러"],     // 화요일
-  3: ["🪽 등", "👯 폴"],         // 수요일
+  3: ["🪽 등", "🌹 폴"],         // 수요일
   4: ["🔥 복부", "💪 폼롤러"],   // 목요일
-  5: ["🍑 힙", "👯 홈폴링"],     // 금요일
-  6: ["👯 폴"]                  // 토요일
+  5: ["🍑 힙", "🌹 홈폴링"],     // 금요일
+  6: ["🌹 폴"]                  // 토요일
 };
 
 function renderChecklist(){
@@ -926,41 +1085,46 @@ function calcWorkoutScore(s){
 
 function calcStats(s){
   const mode = s.mode || "base";
-let score = 0;
-let total = 0;
+  let score = 0;
+  let total = 0;
 
-// ✅ 기본 체크리스트 점수
-const baseList = MODES[mode] || BASE_ITEMS;
-baseList.forEach(it => {
-  if(it.w > 0){
-    total += it.w;
-    const key = `${it.c}_${it.t}`;
-    if(s.checks && s.checks[key]) score += it.w;
+  const list = MODES[mode] || BASE_ITEMS;
+
+  list.forEach(it => {
+    if(it.w > 0){
+      total += it.w;
+      const key = `${it.c}_${it.t}`;
+      if(s.checks && s.checks[key]) score += it.w;
+    }
+  });
+
+  // 👉 base 모드일 때만 트래커 점수 포함
+  if(mode === "base"){
+    const proteinG = s.proteinG || 0;
+    const waterMl  = s.waterMl  || 0;
+    const fasting  = s.fastingEndAt ? 1 : 0;
+
+    const proteinTarget = getProteinTarget(mode);
+
+    // 단백질
+    total += 2;
+    if(proteinG >= proteinTarget) score += 2;
+
+    // 물
+    total += 1;
+    if(waterMl >= WATER_TARGET) score += 1;
+
+    // 단식
+    total += 1;
+    if(fasting) score += 1;
+
+    // 요일별 운동 (최대 1점)
+    total += 1;
+    score += calcWorkoutScore(s);
   }
-});
-  const proteinG = s.proteinG || 0;
-  const waterMl  = s.waterMl  || 0;
-  const fasting  = s.fastingEndAt ? 1 : 0;
-
-// 단백질
-const proteinTarget = getProteinTarget(mode);
-total += 2;
-if(proteinG >= proteinTarget) score += 2;
-
-// 물
-total += 1;
-if(waterMl >= WATER_TARGET) score += 1;
-
-// 단식
-total += 1;
-if(fasting) score += 1;
-
-// ✅ 요일별 운동 (최대 1점)
-total += 1;
-score += calcWorkoutScore(s);
 
   const ratio = total ? (score / total) : 0;
-  return { mode, score, total, ratio, proteinG, waterMl };
+  return { mode, score, total, ratio };
 }
 
 
@@ -980,7 +1144,7 @@ function update(){
   const v = verdictFromRatio(st.ratio);
 
   if(v.key==="pass"){ r.innerText="완전 뿌듯 🎀"; r.className="result pass"; }
-  else if(v.key==="mid"){ r.innerText="잘했다 🌹"; r.className="result mid"; }
+  else if(v.key==="mid"){ r.innerText="잘했다 🌷"; r.className="result mid"; }
   else { r.innerText="회복하는 날 🌿"; r.className="result rest"; }
 }
 
@@ -1222,5 +1386,3 @@ if("serviceWorker" in navigator){
 
 </body>
 </html>
-
-
