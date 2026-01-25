@@ -311,6 +311,11 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
         <button onclick="startSleep()">🌙 꿀잠</button>
         <button onclick="endSleep()">☀️ 인나</button>
         <button onclick="manualSleep()">⏱</button>
+        <button id="deleteSleepBtn"
+                class="reset"
+                onclick="deleteSleepRecord()"
+                style="display:none"
+                >🗑</button> 
       </div>
     </div>
   
@@ -459,7 +464,7 @@ const MODES = {
 };
 
 const modeLabel = (m) => {
-  if(m==="hard") return ";🫠 힘든 날";
+  if(m==="hard") return "🫠 힘든 날";
   if(m==="cycle") return "🩸 생리주기";
   if(m==="travel") return "✈️ 여행/이탈";
   return "기본";
@@ -611,7 +616,17 @@ function deleteFastingRecord(){
     return;
   }
 
-  if(!confirm("이 날짜의 단식 기록을 삭제할까?")) return;
+  const start = new Date(state.fastingStartAt);
+  const end   = new Date(state.fastingEndAt);
+  
+  const dateStr =
+    `${start.getFullYear()}.` +
+    `${String(start.getMonth()+1).padStart(2,"0")}.` +
+    `${String(start.getDate()).padStart(2,"0")}. ` +
+    `${fmtHM(start)}–${fmtHM(end)}`;
+  
+  if(!confirm(`${dateStr}\n\n이 날짜의 단식 기록을 삭제할까?`)) return;
+
 
   state.fastingStartAt = null;
   state.fastingEndAt   = null;
@@ -789,30 +804,65 @@ function cancelSleep(){
   update();
 }
 
+function deleteSleepRecord(){
+  if(!state.sleepEndAt){
+    alert("삭제할 수면 기록이 없어.");
+    return;
+  }
+
+  const start = new Date(state.sleepStartAt);
+  const end   = new Date(state.sleepEndAt);
+
+  const dateStr =
+    `${start.getFullYear()}.` +
+    `${String(start.getMonth()+1).padStart(2,"0")}.` +
+    `${String(start.getDate()).padStart(2,"0")}. ` +
+    `${fmtHM(start)}–${fmtHM(end)}`;
+
+  if(!confirm(`${dateStr}\n\n이 날짜의 수면 기록을 삭제할까?`)) return;
+
+  state.sleepStartAt = null;
+  state.sleepEndAt   = null;
+  state.sleepMinutes = null;
+
+  save();
+  update();
+}
+
+  
 function renderSleep(){
   const el = document.getElementById("sleepText");
   if(!el) return;
 
+  const delBtn = document.getElementById("deleteSleepBtn");
   const sess = loadSleepSession();
 
   // 1) 취침 중
   if(sess && sess.startAt){
     const start = new Date(sess.startAt);
     el.innerHTML = `💤 꿀잠 중 (${fmtHM(start)})`;
+    if(delBtn) delBtn.style.display = "none";
     return;
   }
 
-  // 2) 기상 완료 기록
+  // 2) 기상 완료 기록 ✅ (여기가 핵심)
   if(state.sleepEndAt && typeof state.sleepMinutes === "number"){
+    const endAt = new Date(state.sleepEndAt);
     const h = Math.floor(state.sleepMinutes / 60);
     const m = state.sleepMinutes % 60;
-    el.innerHTML = `🍯 수면시간 ${h}시간 ${m}분`;
+
+    el.innerHTML =
+      `☀️ 기상 <span class="good">${fmtHM(endAt)}</span> · 🕒 수면 시간 ${h}시간 ${m}분`;
+
+    if(delBtn) delBtn.style.display = "inline-block";
     return;
   }
 
   // 3) 기록 없음
   el.innerHTML = "💚 활동 중";
+  if(delBtn) delBtn.style.display = "none";
 }
+
 
 function manualSleep(){
   const sess = loadSleepSession();
@@ -1067,8 +1117,8 @@ function verdictFromRatio(ratio){
   return {key:"rest", cls:"restb", txt:"회복"};
 }
 
-function calcWorkoutScore(s){
-  const day = new Date(activeDateKey).getDay();
+function calcWorkoutScore(s, dateKey){
+  const day = new Date(dateKey).getDay();
   const workouts = WEEKLY_WORKOUTS[day] || [];
   if(workouts.length === 0) return 0;
 
@@ -1082,7 +1132,7 @@ function calcWorkoutScore(s){
   return Math.min(checked * perItem, 1);
 }
 
-function calcStats(s){
+function calcStats(s, dateKey){
   const mode = s.mode || "base";
   let score = 0;
   let total = 0;
@@ -1103,7 +1153,7 @@ function calcStats(s){
       }
     });
 
-    const workoutScore = calcWorkoutScore(s);
+    const workoutScore = calcWorkoutScore(s, dateKey);
     total += 2;
     score += workoutScore * 2;
     baseWorkoutOK = workoutScore > 0;
@@ -1184,7 +1234,7 @@ function update(){
   renderChecklist();
   renderWeek();
 
-  const st = calcStats(state);
+  const st = calcStats(state, activeDateKey);
   const r=document.getElementById("result");
   const v = verdictFromRatio(st.ratio);
 
@@ -1231,7 +1281,7 @@ function renderWeek(){
 
     if(!s) continue;
 
-    const st = calcStats(s);
+    const st = calcStats(s, k);
     const v  = verdictFromRatio(st.ratio);
 
     if(v.key==="pass") pass++;
@@ -1310,7 +1360,7 @@ function renderAll_v2(){
     const s = getStateForKey(k);
     if(!s) return;
 
-    const st = calcStats(s);
+    const st = calcStats(s, k);
     const v  = verdictFromRatio(st.ratio);
 
     // ✅ 필터는 여기서!
