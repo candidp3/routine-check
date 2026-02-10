@@ -1467,6 +1467,12 @@ function renderAll_v2(){
 document.getElementById("allModeFilter_v2").onchange = renderAll_v2;
 document.getElementById("allVerdictFilter_v2").onchange = renderAll_v2;
 
+function exportBackup() {
+  const data = JSON.stringify(localStorage);
+  navigator.clipboard.writeText(data);
+  alert("백업 데이터가 클립보드에 복사됨");
+}
+  
 /* =========================
    init + 단식 텍스트 주기 갱신
 ========================= */
@@ -1481,5 +1487,6 @@ if("serviceWorker" in navigator){
 
 </body>
 </html>
+
 
 
