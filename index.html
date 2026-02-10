@@ -215,6 +215,32 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   }
 }
 
+/* ===== 식단 추천 ===== */
+.mealItem{
+  display:grid;
+  grid-template-columns: 1fr auto auto;
+  gap:8px;
+  padding:6px 0;
+  align-items:center;
+  font-size:14px;
+}
+.mealItem .protein{
+  font-weight:700;
+  color:#2e7d32;
+}
+.optionCard{
+  background:#f7f7f7;
+  border-radius:10px;
+  padding:8px;
+  margin-top:8px;
+}
+.optionTitle{
+  font-size:12px;
+  font-weight:700;
+  color:#666;
+  margin-bottom:4px;
+}
+
 </style>
 </head>
 
@@ -223,20 +249,20 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 <h1>🍎 루틴 체크</h1>
 <div class="small" style="text-align:center" id="today"></div>
 
-<!-- TABS -->
+<!-- FIRST ROW : MODE -->
 <div class="tabs">
-  <button class="tab active" id="tabToday" onclick="showTab('today')">♥️ 기록</button>
-  <button class="tab" id="tabWeek" onclick="showTab('week')">📓 주간 요약</button>
+  <button class="tab active" id="tabToday" onclick="showTab('today'); setMode('base')">♥️ 기록</button>
+  <button class="tab" id="mHard" onclick="setMode('hard')">🫠 힘든 날</button>
+  <button class="tab" id="mTravel" onclick="setMode('travel')">✈️ 여행/일탈</button>
+</div>
+  
+<!-- SECOND ROW : PAGES -->
+<div class="tabs">
+  <button class="tab" id="tabMeal" onclick="showTab('meal')">🍽️ 식단 추천</button>
   <button class="tab" id="tabAll" onclick="showTab('all')">📚 전체 기록</button>
-</div>
-
-<!-- MODES -->
-<div class="modes">
-  <button class="mode" id="mHard" onclick="setMode('hard')">🫠 힘든 날</button>
-  <button class="mode" id="mCycle" onclick="setMode('cycle')">🩸 생리주기</button>
-  <button class="mode" id="mTravel" onclick="setMode('travel')">✈️ 여행/이탈</button>
-</div>
-
+  <button class="tab" id="tabBackup" onclick="showTab('backup')">🔐 백업</button>
+</div>  
+  
 <!-- TODAY -->
 <div id="viewToday">
 
@@ -286,7 +312,8 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
         <button class="proteinBtn" onclick="addProtein(-5)">↩️ -5g</button>
         <!-- ✅ 여기 줄바꿈 -->
         <div style="flex-basis:100%;height:0"></div>
-        
+
+        <button class="proteinBtn" onclick="addProtein(1)">🤏 +1g</button>        
         <button class="proteinBtn" onclick="addProtein(5)">🥚 +5g</button>
         <button class="proteinBtn" onclick="addProtein(10)">🍗 +10g</button>
         <button class="proteinBtn" onclick="addProtein(20)">🥩 +20g</button>
@@ -326,31 +353,6 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   <div class="result" id="result">체크 시작</div>
 
   <button class="btn" onclick="resetToday()">오늘 체크 초기화</button>
-
-</div>
-
-<!-- WEEK -->
-<div id="viewWeek" class="hide">
-  <div class="section">
-    <h2>최근 7일 요약</h2>
-    <div class="small" id="weekSummary"></div>
-  </div>
-  <div class="section" style="overflow:auto">
-    <table>
-      <thead>
-        <tr>
-          <th>날짜</th>
-          <th>모드</th>
-          <th>판정</th>
-          <th>단백질</th>
-          <th>물</th>
-          <th>단식</th>
-          <th>수면</th>
-        </tr>
-      </thead>
-      <tbody id="weekTable"></tbody>
-    </table>
-  </div>
 </div>
 
 <!-- ALL v2 -->
@@ -361,9 +363,8 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
       <select id="allModeFilter_v2">
         <option value="all">모드: 전체</option>
         <option value="base">♥️ 기본</option>
-        <option value="cycle">🩸 생리주기</option>
         <option value="hard">🫠 힘든 날</option>
-        <option value="travel">✈️ 여행/이탈</option>
+        <option value="travel">✈️ 여행/일탈</option>
       </select>
     
       <select id="allVerdictFilter_v2">
@@ -378,7 +379,194 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   </div>
 </div>
 
+<!-- MEAL -->
+<div id="viewMeal" class="hide">
+
+  <!-- 공통 메인 단백질 -->
+  <div class="section">
+    <h2>🥩 메인 단백질 <span class="small">(점심·저녁 공통)</span></h2>
+    <div class="small"><b>아래 중 1가지 선택</b></div>
+  
+    <div class="mealItem">
+      <span>🍗 닭가슴살</span>
+      <span class="mono">100g</span>
+      <span class="protein">20g</span>
+    </div>
+    <div class="mealItem">
+      <span>🥩 목살구이</span>
+      <span class="mono">100g</span>
+      <span class="protein">20g</span>
+    </div>
+    <div class="mealItem">
+      <span>🐟 생선구이</span>
+      <span class="mono">100g</span>
+      <span class="protein">20g</span>
+    </div>
+    
+    <hr style="border:none;border-top:1px dashed #ddd;margin:10px 0">
+    </div>
+  
+  <!-- 점심 -->
+  <div class="section">
+    <h2>🍽️ 점심 <span class="small">(11:00)</span></h2>
+    <div class="small">
+      기본 구성 + <b>메인 단백질 1가지 선택</b>
+    </div>
+  
+    <div class="mealItem">
+      <span>🥚 달걀</span>
+      <span class="mono">1개</span>
+      <span class="protein">6g</span>
+    </div>
+    <div class="mealItem">
+      <span>🍚 현미밥</span>
+      <span class="mono">160g</span>
+      <span class="protein">3g</span>
+    </div>
+    <div class="mealItem">
+      <span>🥗 채소</span>
+      <span class="mono">100g</span>
+      <span class="protein">1g</span>
+    </div>
+    <div class="mealItem">
+      <span>🫘 두유</span>
+      <span class="mono">190ml</span>
+      <span class="protein">5g</span>
+    </div>
+  </div>
+
+
+  <!-- 간식 -->
+  <div class="section">
+    <h2>🍪 간식 <span class="small">(16:30)</span></h2>
+
+    <div class="optionCard">
+      <div class="optionTitle">옵션 A</div>
+      <div class="mealItem">
+        <span>🍶 단백질 음료</span>
+        <span class="mono">1팩</span>
+        <span class="protein">20g</span>
+      </div>
+    </div>
+
+    <div class="optionCard">
+      <div class="optionTitle">옵션 B</div>
+      <div class="mealItem">
+        <span>🍫 단백질바</span>
+        <span class="mono">1개</span>
+        <span class="protein">20g</span>
+      </div>
+    </div>
+
+    <div class="optionCard">
+      <div class="optionTitle">옵션 C</div>
+      <div class="mealItem">
+        <span>🍯 그릭요거트</span>
+        <span class="mono">80g</span>
+        <span class="protein">9g</span>
+      </div>
+      <div class="mealItem">
+        <span>🍫 단백질바</span>
+        <span class="mono">1/2개</span>
+        <span class="protein">10g</span>
+      </div>
+      <div class="mealItem">
+        <span>🍎 과일</span>
+        <span class="mono">120g</span>
+        <span class="protein">0g</span>
+      </div>
+    </div>
+
+    <div class="optionCard">
+      <div class="optionTitle">옵션 D</div>
+      <div class="mealItem">
+        <span>🥛 단백질 우유</span>
+        <span class="mono">200ml</span>
+        <span class="protein">9g</span>
+      </div>
+      <div class="mealItem">
+        <span>🥜 그레놀라</span>
+        <span class="mono">40g</span>
+        <span class="protein">3g</span>
+      </div>
+      <div class="mealItem">
+        <span>🥨 단백질 과자</span>
+        <span class="mono">45개</span>
+        <span class="protein">5g</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 저녁 -->
+  <div class="section">
+    <h2>🍽️ 저녁 <span class="small">(20:00)</span></h2>
+    <div class="small">
+      기본 구성 + <b>메인 단백질 1가지 선택</b>
+    </div>
+  
+    <div class="mealItem">
+      <span>🍚 현미밥</span>
+      <span class="mono">100g</span>
+      <span class="protein">2g</span>
+    </div>
+    <div class="mealItem">
+      <span>🥗 채소</span>
+      <span class="mono">100g</span>
+      <span class="protein">1g</span>
+    </div>
+  </div>
+
+  <!-- 치환 기준 -->
+  <details class="section">
+    <summary>🔁 식단 치환 기준</summary>
+    <div class="small" style="margin-top:8px;line-height:1.6">
+      <b>곡물</b><br>
+      • 현미밥 160g = 통밀모닝빵 80g (약 2개)<br>
+      • 현미밥 100g = 통밀모닝빵 50g (1~1.5개)<br><br>
+
+      <b>채소 100g 기준</b><br>
+      • 상추 6장 + 방울토마토 6개<br>
+      • 상추 12장<br>
+      • 방울토마토 12개<br>
+      • 볶음밥용 채소 (조리 전 100g)
+    </div>
+  </details>
+    
+</div>
+  
+<!-- BACKUP -->
+<div id="viewBackup" class="hide">
+  <div class="section">
+    <h2>🔐 백업 · 복원</h2>
+
+    <button class="btn" onclick="exportBackup()">📦 백업 복사</button>
+
+    <textarea
+      id="backupInput"
+      class="textin"
+      placeholder="여기에 백업 JSON 붙여넣기"
+      style="width:100%; height:120px; margin-top:8px;"
+    ></textarea>
+
+    <button class="btn" style="margin-top:6px;" onclick="importBackup()">
+      ♻️ 복원하기
+    </button>
+
+    <button class="btn" style="margin-top:6px;" onclick="restoreLatestAutoBackup()">
+      ⏮ 자동 백업으로 복원
+    </button>
+  </div>
+
+  <div class="section">
+    <div class="small">
+      • 자동 백업: 앱 실행 시와 날짜 변경 시 자동 저장됨<br>
+      • 휴대폰 변경/앱 삭제 대비는 반드시 "📦백업 복사" 사용
+    </div>
+  </div>
+</div>
+
 <script>
+  
 /* =========================
    날짜/상태 기본
 ========================= */
@@ -390,6 +578,16 @@ function getLocalDateKey(d=new Date()){
 const todayKey = getLocalDateKey(new Date());
 document.getElementById("today").innerText = todayKey;
 let activeDateKey = todayKey;
+
+let lastBackupDate = getLocalDateKey(new Date());
+
+setInterval(()=>{
+  const nowKey = getLocalDateKey(new Date());
+  if(nowKey !== lastBackupDate){
+    lastBackupDate = nowKey;
+    makeAutoBackup();
+  }
+}, 60 * 1000); // 1분 체크
 
 /* =========================
    설정값
@@ -429,7 +627,7 @@ const WATER_UNIT = 120;
 const WATER_TARGET = 2000;
 
 // ✅ 단백질: 모드별 최소치 + 소프트 상한(권장)
-const PROTEIN_TARGETS = { base: 58, hard: 40, cycle: 50, travel: 45 };
+const PROTEIN_TARGETS = { base: 58, hard: 40, travel: 45 };
 const PROTEIN_SOFT_CAP = 100;
 function getProteinTarget(mode){ return PROTEIN_TARGETS[mode] ?? 58; }
 
@@ -438,13 +636,15 @@ function getProteinTarget(mode){ return PROTEIN_TARGETS[mode] ?? 58; }
 ========================= */
 const BASE_ITEMS = [
   {c:"아침",t:"🌞 10시 전 활동",w:1},
-  {c:"아침",t:"🪥 양치 + 물",w:1},
+  {c:"아침",t:"🪥 양치",w:1},
   {c:"아침",t:"💊 유산균",w:1},
-  {c:"아침",t:"🍋 레몬물 세트",w:1},
+
 
   {c:"점심",t:"💊 비타민",w:1},
+  {c:"점심",t:"🍋 레몬물",w:1},
   {c:"점심",t:"🍃 환기",w:1},
   {c:"점심",t:"🎠 가벼운 활동",w:2},
+
 
   {c:"저녁",t:"🪆 림프 마사지",w:2},
 ];
@@ -452,9 +652,6 @@ const BASE_ITEMS = [
 const MODES = {
   base: BASE_ITEMS,
   hard: [
-    {c:"핵심",t:"😘 딱 5분만 움직이자",w:2},
-  ],
-  cycle: [
     {c:"하루",t:"😘 딱 5분만 움직이자",w:2},
     {c:"하루",t:"🎠 식후 가벼운 활동",w:2},
   ],
@@ -465,8 +662,7 @@ const MODES = {
 
 const modeLabel = (m) => {
   if(m==="hard") return "🫠 힘든 날";
-  if(m==="cycle") return "🩸 생리주기";
-  if(m==="travel") return "✈️ 여행/이탈";
+  if(m==="travel") return "✈️ 여행/일탈";
   return "기본";
 };
 
@@ -509,23 +705,31 @@ function setMode(m){
 }
 
 function render(){
-  normalizeState();
 
-  ["mHard","mCycle","mTravel"].forEach(id=>document.getElementById(id).classList.remove("on"));
-  if(state.mode==="hard") mHard.classList.add("on");
-  if(state.mode==="cycle") mCycle.classList.add("on");
-  if(state.mode==="travel") mTravel.classList.add("on");
+  // 모드 버튼 초기화
+  ["mHard","mTravel"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.classList.remove("active");
+  });
 
-  // datePicker: 빈 () 방지 + 미래 차단
+  // 현재 모드 강조
+  if(state.mode === "hard") {
+    document.getElementById("mHard")?.classList.add("active");
+  } else if(state.mode === "travel") {
+    document.getElementById("mTravel")?.classList.add("active");
+  }
+  // base 모드는 '기록(tabToday)'가 이미 활성화 역할
+
+  // datePicker 보정
   const dp = document.getElementById("datePicker");
   if(dp){
     dp.max = todayKey;
-    dp.value = activeDateKey; // ✅ 빈 date input 표시(()) 방지
+    dp.value = activeDateKey;
   }
 
-  update();            // 트래커 + 판정 + 요약
-  renderChecklist();  // 체크리스트(요일 운동 포함)
+  update(); // ✅ 여기까지 와야 체크리스트가 그려짐
 }
+
 
 /* =========================
    단식 트래킹 (시작→종료, 날짜 넘어 유지)
@@ -622,7 +826,7 @@ function deleteFastingRecord(){
   const dateStr =
     `${start.getFullYear()}.` +
     `${String(start.getMonth()+1).padStart(2,"0")}.` +
-    `${String(start.getDate()).padStart(2,"0")}. ` +
+    `${String(start.getDate()).padStart(2,"0")} ` +
     `${fmtHM(start)}–${fmtHM(end)}`;
   
   if(!confirm(`${dateStr}\n\n이 날짜의 단식 기록을 삭제할까?`)) return;
@@ -816,7 +1020,7 @@ function deleteSleepRecord(){
   const dateStr =
     `${start.getFullYear()}.` +
     `${String(start.getMonth()+1).padStart(2,"0")}.` +
-    `${String(start.getDate()).padStart(2,"0")}. ` +
+    `${String(start.getDate()).padStart(2,"0")} ` +
     `${fmtHM(start)}–${fmtHM(end)}`;
 
   if(!confirm(`${dateStr}\n\n이 날짜의 수면 기록을 삭제할까?`)) return;
@@ -1003,7 +1207,7 @@ function renderWater(){
 ========================= */
 
 const WEEKLY_WORKOUTS = {
-  0: ["🪽 등"],                 // 일요일
+  0: ["🪽 등", "🐙 스트레칭"],     // 일요일
   1: ["🔥 복부", "🌹 폴"],       // 월요일
   2: ["🍑 힙", "🦵 폼롤러"],     // 화요일
   3: ["🪽 등", "🌹 폴"],         // 수요일
@@ -1017,7 +1221,10 @@ function renderChecklist(){
   if(!box) return;
   box.innerHTML = "";
 
-  let list = MODES[state.mode] || BASE_ITEMS;
+  let list = MODES[state.mode];
+if(!Array.isArray(list) || list.length === 0){
+  list = BASE_ITEMS;
+}
 
   // 운동 항목 치환
   list = list.filter(item => item.c !== "운동");
@@ -1171,7 +1378,7 @@ function calcStats(s, dateKey){
     if(fastH >= 14) score += 1;
   }
 
-  else if(mode === "hard" || mode === "cycle"){
+  else if(mode === "hard"){
     const list = MODES[mode] || [];
     let checkedAny = false;
     list.forEach(it=>{
@@ -1232,9 +1439,7 @@ function update(){
   renderProtein();
   renderWater();
   renderChecklist();
-  renderWeek();
-
-  const st = calcStats(state, activeDateKey);
+const st = calcStats(state, activeDateKey);
   const r=document.getElementById("result");
   const v = verdictFromRatio(st.ratio);
 
@@ -1254,76 +1459,23 @@ function resetToday(){
    탭/요약
 ========================= */
 function showTab(t){
-  tabToday.classList.toggle("active", t==="today");
-  tabWeek.classList.toggle("active", t==="week");
-  tabAll.classList.toggle("active", t==="all");
+
+  ["tabToday","tabMeal","tabAll","tabBackup"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.classList.remove("active");
+  });
+
+  if(t==="today")  tabToday.classList.add("active");
+  if(t==="meal")   tabMeal.classList.add("active");
+  if(t==="all")    tabAll.classList.add("active");
+  if(t==="backup") tabBackup.classList.add("active");
 
   viewToday.classList.toggle("hide", t!=="today");
-  viewWeek.classList.toggle("hide", t!=="week");
+  viewMeal.classList.toggle("hide", t!=="meal");
   viewAll_v2.classList.toggle("hide", t!=="all");
+  viewBackup.classList.toggle("hide", t!=="backup");
 
-
-  if(t==="week") renderWeek();
   if(t==="all") renderAll_v2();
-}
-
-function renderWeek(){
-  const body = document.getElementById("weekTable");
-  body.innerHTML = "";
-
-  let pass=0, mid=0, rest=0;
-
-  for(let i=6;i>=0;i--){
-    const d = new Date();
-    d.setDate(d.getDate()-i);
-    const k = getLocalDateKey(d);
-    const s = getStateForKey(k);
-
-    if(!s) continue;
-
-    const st = calcStats(s, k);
-    const v  = verdictFromRatio(st.ratio);
-
-    if(v.key==="pass") pass++;
-    else if(v.key==="mid") mid++;
-    else rest++;
-
-    // 단백질
-    const protein = s.proteinG ? `${s.proteinG}g` : "-";
-
-    // 물
-    const water = s.waterMl ? `${(s.waterMl/1000).toFixed(1)}L` : "-";
-
-    // 단식
-    let fasting = "-";
-    if(s.fastingMinutes){
-      const h = Math.floor(s.fastingMinutes/60);
-      const m = s.fastingMinutes%60;
-      fasting = `${h}:${String(m).padStart(2,"0")}`;
-    }
-
-    // 수면
-    let sleep = "-";
-    if(s.sleepMinutes){
-      const h = Math.floor(s.sleepMinutes/60);
-      const m = s.sleepMinutes%60;
-      sleep = `${h}:${String(m).padStart(2,"0")}`;
-    }
-
-    body.innerHTML += `
-      <tr>
-        <td>${k}</td>
-        <td>${modeLabel(st.mode)}</td>
-        <td><span class="badge ${v.cls}">${v.txt}</span></td>
-        <td class="mono">${protein}</td>
-        <td class="mono">${water}</td>
-        <td class="mono">${fasting}</td>
-        <td class="mono">${sleep}</td>
-      </tr>`;
-  }
-
-  document.getElementById("weekSummary").innerText =
-    `합격 ${pass}일 · 보통 ${mid}일 · 회복 ${rest}일`;
 }
 
 
@@ -1467,11 +1619,118 @@ function renderAll_v2(){
 document.getElementById("allModeFilter_v2").onchange = renderAll_v2;
 document.getElementById("allVerdictFilter_v2").onchange = renderAll_v2;
 
-function exportBackup() {
+/* =========================
+   백업 / 복원
+========================= */
+
+function exportBackup(){
   const data = JSON.stringify(localStorage);
-  navigator.clipboard.writeText(data);
-  alert("백업 데이터가 클립보드에 복사됨");
+  navigator.clipboard.writeText(data)
+    .then(()=> alert("백업 데이터가 클립보드에 복사됨"))
+    .catch(()=> alert("복사 실패. 수동으로 복사해줘."));
 }
+
+function importBackup(){
+  const input = document.getElementById("backupInput").value.trim();
+  if(!input) return alert("복원할 데이터가 없어.");
+
+  if(!confirm("⚠️ 기존 모든 기록을 덮어쓸 거야.\n정말 복원할까?")) return;
+  if(!confirm("⚠️ 되돌릴 수 없어.\n마지막으로 확인할게.")) return;
+
+  let data;
+  try{
+    data = JSON.parse(input);
+  }catch(e){
+    alert("JSON 형식이 아니야.");
+    return;
+  }
+
+  localStorage.clear();
+
+  Object.keys(data).forEach(k=>{
+    localStorage.setItem(k, data[k]);
+  });
+
+  alert("복원 완료. 앱을 새로고침해줘.");
+}
+
+/* =========================
+   자동 백업 (스냅샷)
+========================= */
+
+const AUTO_BACKUP_PREFIX = "__auto_backup__";
+const AUTO_BACKUP_LIMIT = 7; // 최근 7개만 유지
+
+function makeAutoBackup(){
+  const now = new Date();
+  const key =
+    AUTO_BACKUP_PREFIX +
+    now.toISOString().slice(0,13).replace("T","_"); // YYYY-MM-DD_HH
+
+  // 이미 같은 키가 있으면 중복 저장 안 함
+  if(localStorage.getItem(key)) return;
+
+  const data = JSON.stringify(localStorage);
+  localStorage.setItem(key, data);
+
+  cleanupOldAutoBackups();
+}
+
+function cleanupOldAutoBackups(){
+  const keys = [];
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    if(k.startsWith(AUTO_BACKUP_PREFIX)){
+      keys.push(k);
+    }
+  }
+
+  keys.sort(); // 오래된 것부터
+  while(keys.length > AUTO_BACKUP_LIMIT){
+    const oldKey = keys.shift();
+    localStorage.removeItem(oldKey);
+  }
+}
+function restoreLatestAutoBackup(){
+  const keys = [];
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    if(k.startsWith(AUTO_BACKUP_PREFIX)){
+      keys.push(k);
+    }
+  }
+
+  if(keys.length === 0){
+    alert("자동 백업이 없어.");
+    return;
+  }
+
+  keys.sort(); // 시간순
+  const latestKey = keys[keys.length - 1];
+  const dataStr = localStorage.getItem(latestKey);
+
+  if(!confirm(`가장 최근 자동 백업으로 복원할까?\n(${latestKey})`)) return;
+  if(!confirm("⚠️ 현재 기록은 전부 덮어써.\n정말 진행할까?")) return;
+
+  let data;
+  try{
+    data = JSON.parse(dataStr);
+  }catch(e){
+    alert("백업 데이터가 손상됐어.");
+    return;
+  }
+
+  localStorage.clear();
+  Object.keys(data).forEach(k=>{
+    localStorage.setItem(k, data[k]);
+  });
+
+  alert("복원 완료. 앱을 새로고침해줘.");
+}
+
+  
+makeAutoBackup();
+
   
 /* =========================
    init + 단식 텍스트 주기 갱신
@@ -1487,6 +1746,5 @@ if("serviceWorker" in navigator){
 
 </body>
 </html>
-
 
 
