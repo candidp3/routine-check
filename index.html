@@ -249,6 +249,27 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   box-sizing:border-box;
 }
   
+/* ===== 측정 섹션 모바일 레이아웃 보정 ===== */
+#measureSection .textin{
+  min-width: 0 !important;   /* ✅ 전역 min-width(160px) 무력화 */
+  width: 70px !important;    /* ✅ 지금 의도한 폭 유지 */
+  padding: 8px 10px;
+}
+
+@media (max-width:420px){
+  #measureSection .textin{
+    width: 62px !important;  /* ✅ 폰에서 살짝 더 줄이기 */
+  }
+}
+  
+/* ===== 측정 헤더 + Reset 버튼 ===== */
+.measureHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+}
+
 </style>
 </head>
 
@@ -358,10 +379,17 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 
   <!-- 측정 기록 (2회 평균) -->
   <div class="section" id="measureSection">
-    <h2>📐 측정 기록 <span class="small">(2회 평균)</span></h2>
+    <div class="measureHeader">
+      <div class="sectionTitle">
+        📐 측정 기록 <span class="small">(2회 평균)</span>
+      </div>
+      <div class="trackBtns">
+        <button class="reset" onclick="resetMeasures()">Reset</button>
+      </div>
+    </div>
   
     <div class="mealItem">
-      <span>⚖️ 몸무게</span>
+      <span class="trackStat">⚖️ 몸무게</span>
       <span class="mono">
         <input id="w1" class="textin" type="text" inputmode="decimal" placeholder="1차" style="width:70px">
         <input id="w2" class="textin" type="text" inputmode="decimal" placeholder="2차" style="width:70px; margin-left:6px">
@@ -370,7 +398,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
     </div>
   
     <div class="mealItem">
-      <span>📏 허리둘레</span>
+      <span class="trackStat">📏 허리둘레</span>
       <span class="mono">
         <input id="wa1" class="textin" type="text" inputmode="decimal" placeholder="1차" style="width:70px">
         <input id="wa2" class="textin" type="text" inputmode="decimal" placeholder="2차" style="width:70px; margin-left:6px">
@@ -381,10 +409,6 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
     <div class="small" style="margin-top:6px">
       평균은 자동 저장됨 (해당 날짜 기준)
     </div>
-  
-    <button class="btn" style="margin-top:8px" onclick="resetMeasures()">
-      🔄 측정 초기화
-    </button>
   </div>
   
   <div id="checklist"></div>
@@ -1951,5 +1975,6 @@ if("serviceWorker" in navigator){
 
 </body>
 </html>
+
 
 
