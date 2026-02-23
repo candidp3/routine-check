@@ -287,8 +287,8 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   
 <!-- SECOND ROW : PAGES -->
 <div class="tabs">
-  <button class="tab" id="tabMeal" onclick="showTab('meal')">🍽️ 식단 추천</button>
-  <button class="tab" id="tabAll" onclick="showTab('all')">📚 전체 기록</button>
+  <button class="tab" id="tabMeal" onclick="showTab('meal')">🍽️ 식단</button>
+  <button class="tab" id="tabAll" onclick="showTab('all')">📚 전체</button>
   <button class="tab" id="tabBackup" onclick="showTab('backup')">🔐 백업</button>
 </div>  
   
@@ -471,13 +471,13 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   <div class="section">
     <h2>🍽️ 점심 <span class="small">(11:00)</span></h2>
     <div class="small">
-      기본 구성 + <b>메인 단백질 1가지 선택</b> = 35g
+      기본 구성 + <b>메인 단백질 1가지 선택</b> = 37g
     </div>
   
     <div class="mealItem">
-      <span>🥚 달걀</span>
+      <span>🥚 단백이</span>
       <span class="mono">1개</span>
-      <span class="protein">6g</span>
+      <span class="protein">8g</span>
     </div>
     <div class="mealItem">
       <span>🍚 현미밥</span>
@@ -501,7 +501,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   <div class="section">
     <h2>🍪 간식 <span class="small">(16:30)</span></h2>
     <div class="small" style="margin-bottom:6px">
-    단백질 <b>20g</b> + 과일 <b>80g</b><br>
+    단백질 <b>20g</b> + 과일 <b>80g</b> = 20g<br>
     (하나만 선택하거나 조합해도 OK)
     </div>  
 
@@ -555,7 +555,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
     <h2>🍽️ 저녁 <span class="small">(20:00)</span></h2>
     <div class="small">
       기본 구성 + <b>메인 단백질 1가지 선택</b> = 23g<br>
-      (🎯 집중 1주차 협미밥 60g → 50g + 화목일 단백질 10g 추가)     
+      (🎯 집중 1주차 협미밥 60g → 50g)     
     </div>
   
     <div class="mealItem">
@@ -689,7 +689,8 @@ function getProteinTarget(mode){ return PROTEIN_TARGETS[mode] ?? 58; }
    체크리스트 (시간+내용 통일)
 ========================= */
 const BASE_ITEMS = [
-  {c:"아침",t:"🌞 10시 전 활동",w:1},
+  {c:"아침",t:"🌬️ 복식호흡",w:2},
+  {c:"아침",t:"🦭 하복부힘",w:2},
   {c:"아침",t:"🪥 양치",w:1},
   {c:"아침",t:"💊 유산균",w:1},
 
@@ -701,13 +702,15 @@ const BASE_ITEMS = [
 
 
   {c:"저녁",t:"🪆 림프 마사지",w:2},
+  {c:"저녁",t:"🌬️ 복식호흡",w:2},
 ];
 
 const MODES = {
   base: BASE_ITEMS,
 
   hard: [    
-    {c:"아침",t:"🌞 10시 전 활동",w:1},
+    {c:"아침",t:"🌬️ 복식호흡",w:2},
+    {c:"아침",t:"🦭 하복부힘5",w:2},
     {c:"아침",t:"🪥 양치",w:1},
     {c:"아침",t:"📸 눈바디",w:1},
     {c:"아침",t:"💊 유산균",w:1},
@@ -716,9 +719,10 @@ const MODES = {
     {c:"점심",t:"🍋 레몬물",w:1},
     {c:"점심",t:"🍃 환기",w:1},
     {c:"점심",t:"🎠 가벼운 활동",w:2},
-    {c:"점심",t:"🔥 유산소 1세트",w:2},
+    {c:"점심",t:"🧁 혈당관리",w:2},
 
     {c:"저녁",t:"🪆 림프 마사지",w:2},
+    {c:"저녁",t:"🌬️ 복식호흡",w:2},
   ],
 
   travel: [
@@ -1359,24 +1363,24 @@ function resetMeasures(){
 ========================= */
 
 const WEEKLY_WORKOUTS = {
-  0: ["🪽 등", "🐙 스트레칭"],     // 일요일
-  1: ["🔥 복부", "🌹 폴"],       // 월요일
-  2: ["🍑 힙", "🦵 폼롤러"],     // 화요일
-  3: ["🪽 등", "🌹 폴"],         // 수요일
-  4: ["🔥 복부", "💪 폼롤러"],   // 목요일
-  5: ["🍑 힙", "🌹 홈폴링"],     // 금요일
-  6: ["🌹 폴"]                  // 토요일
+  0: ["점심 ·🪽 등", "저녁 ·🐙 스트레칭"],     // 일요일
+  1: ["점심 ·🔥 복부", "저녁 ·🌹 폴 +단백질 10g"],       // 월요일
+  2: ["점심 ·🍑 힙", "점심 ·🦵 폼롤러"],     // 화요일
+  3: ["점심 ·🪽 등", "저녁 ·🌹 폴 +단백질 10g"],         // 수요일
+  4: ["점심 ·🔥 복부", "점심 ·💪 폼롤러"],   // 목요일
+  5: ["아침 ·🌹 폴 +단백질 10g", "점심 ·🍑 힙"],     // 금요일
+  6: ["아침 ·🌹 폴 +단백질 10g"]                  // 토요일
 };
 
 // ✅ 🎯 집중(hard) 전용: 운동
 const HARD_WEEKLY_WORKOUTS = {
-  0: ["🔥 공복 유산소", "🪽 등", "🪽 사이드플랭크 12ea × 3set", "🐙 스트레칭"],                 // 일
-  1: ["🔥 공복 유산소", "🦭 복부", "🦭 RKC플랭크 30sec × 4set", "🦭 할로우바디 20sec", "🌹 폴+단백질 10g"],     // 월
-  2: ["🔥 공복 유산소", "🍑 힙", "🍑 싱글레그힙 브릿지 12ea × 3set", "🦵 폼롤러"],                   // 화
-  3: ["🪽 등", "🪽 사이드플랭크 12ea × 3set", "🌹 폴+단백질 10g"],                       // 수
-  4: ["🔥 공복 유산소", "🦭 복부", "🦭 RKC플랭크 30sec × 4set", "🦭 할로우바디 20min", "💪 폼롤러"],                 // 목
-  5: ["🍑 힙", "🍑 싱글레그힙 브릿지 12ea × 3set", "🌹 폴+단백질 10g"],                       // 금
-  6: ["🌹 폴+단백질 10g"]                                // 토
+  0: ["아침 ·🔥 공복 유산소", "점심 ·🪽 등 ➕ 사플 12reps ×3", "저녁 ·🐙 스트레칭"],                 // 일
+  1: ["아침 ·🔥 공복 유산소", "점심 ·🦭 복부", "저녁 ·🌹 폴 +단백질 10g"],     // 월
+  2: ["아침 ·🔥 공복 유산소", "점심 ·🍑 힙 ➕ 힙브릿지 12reps ×3", "점심 ·🦵 폼롤러",  "저녁 ·🦭 RKC 30s ×2 ➕ 데드버그 10reps ×2"],                   // 화
+  3: ["점심 ·🪽 등", "저녁 ·🌹 폴 +단백질 10g"],                       // 수
+  4: ["아침 ·🔥 공복 유산소", "점심 ·🦭 복부 ➕ RKC 30s × 4 ➕ 할로우바디 20s", "점심 ·💪 폼롤러"],                 // 목
+  5: ["아침 ·🌹 폴 +단백질 10g", "점심 ·🍑 힙", "저녁 ·🦭 RKC 30s ×2 ➕ 데드버그 10reps ×2"],                       // 금
+  6: ["아침 ·🌹 폴 +단백질 10g", "저녁 ·🦭 RKC 30s ×2 ➕ 데드버그 10reps ×2"]                                // 토
 };
 
 function renderChecklist(){
@@ -1661,8 +1665,30 @@ const st = calcStats(state, activeDateKey);
 
 function resetToday(){
   if(confirm("현재 선택된 날짜의 체크를 초기화할까요?")){
-    state = {mode:"base",checks:{},waterMl:0,proteinG:0,fastingStartAt:null,fastingEndAt:null,fastingMinutes:null};
-    save(); render();
+    // ✅ 선택된 날짜(today/과거 포함)의 모든 기록을 초기화
+    // (측정/수면/단식 완료 기록까지 포함)
+    state = {
+      mode:"base",
+      checks:{},
+      waterMl:0,
+      proteinG:0,
+
+      // 측정
+      weight1:null, weight2:null,
+      waist1:null,  waist2:null,
+
+      // 단식(완료 기록)
+      fastingStartAt:null,
+      fastingEndAt:null,
+      fastingMinutes:null,
+
+      // 수면(완료 기록)
+      sleepStartAt:null,
+      sleepEndAt:null,
+      sleepMinutes:null
+    };
+    save();
+    render();
   }
 }
 
