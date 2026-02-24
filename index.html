@@ -593,8 +593,8 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   <div class="section">
     <h2>🔐 백업 · 복원</h2>
 
-    <button class="btn" onclick="exportBackup()">📦 백업 복사</button>
-    <button class="btn" onclick="downloadBackup()">🔽 백업 다운로드(.json)</button>
+    <button class="btn" style="margin-top:6px;" onclick="exportBackup()">📦 백업 복사</button>
+    <button class="btn" style="margin-top:6px;" onclick="downloadBackup()">🔽 백업 다운로드(.json)</button>
 
     <textarea
       id="backupInput"
@@ -602,6 +602,11 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
       placeholder="여기에 백업 JSON 붙여넣기"
       style="height:120px; margin-top:8px;"
     ></textarea>
+
+    <div style="margin-top:8px">
+      <input id="backupFile" type="file" accept="application/json,.json">
+      <button class="btn" onclick="loadBackupFile()">📂 파일 불러오기</button>
+    </div>
 
     <button class="btn" style="margin-top:6px;" onclick="importBackup()">
       ♻️ 복원하기
@@ -1961,6 +1966,32 @@ function importBackup(){
   alert("복원 완료. 앱을 새로고침해줘.");
 }
 
+function loadBackupFile(){
+  const fileInput = document.getElementById("backupFile");
+  const textarea = document.getElementById("backupInput");
+  const file = fileInput?.files?.[0];
+
+  if(!file){
+    alert("복원할 .json 파일을 먼저 선택해줘.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    const text = String(reader.result || "");
+    if(textarea){
+      textarea.value = text;
+      textarea.focus();
+      textarea.setSelectionRange(0, 0);
+    }
+    alert("파일을 불러왔어. 아래 ‘복원’ 버튼을 누르면 적용돼.");
+  };
+  reader.onerror = () => {
+    alert("파일 읽기에 실패했어.");
+  };
+  reader.readAsText(file, "utf-8");
+}
+  
 /* =========================
    자동 백업 (스냅샷)
 ========================= */
@@ -2063,6 +2094,7 @@ if("serviceWorker" in navigator){
 
 </body>
 </html>
+
 
 
 
