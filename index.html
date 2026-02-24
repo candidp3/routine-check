@@ -502,7 +502,6 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
     <h2>🍪 간식 <span class="small">(16:30)</span></h2>
     <div class="small" style="margin-bottom:6px">
     단백질 <b>20g</b> + 과일 <b>80g</b> = 20g<br>
-    (하나만 선택하거나 조합해도 OK)
     </div>  
 
     <div class="optionCard">
@@ -545,7 +544,8 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
       </div>
     
       <div class="small" style="margin-top:4px">
-        ※ 10g 이하 제품은 2개 조합 권장
+        ※ 토요일 간식에 과일 대신:<br>
+        🍪 과자 20g or 🍫 초콜릿 7g → 저녁밥 15g<br>
       </div>
     </div>
   </div>
@@ -594,6 +594,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
     <h2>🔐 백업 · 복원</h2>
 
     <button class="btn" onclick="exportBackup()">📦 백업 복사</button>
+    <button class="btn" onclick="downloadBackup()">🔽 백업 다운로드(.json)</button>
 
     <textarea
       id="backupInput"
@@ -614,7 +615,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   <div class="section">
     <div class="small">
       • 자동 백업: 앱 실행 시와 날짜 변경 시 자동 저장됨<br>
-      • 휴대폰 변경/앱 삭제 대비는 반드시 "📦백업 복사" 사용
+      • 휴대폰 변경/앱 삭제 반드시 수동 저장!
     </div>
   </div>
 </div>
@@ -710,7 +711,7 @@ const MODES = {
 
   hard: [    
     {c:"아침",t:"🌬️ 복식호흡",w:2},
-    {c:"아침",t:"🦭 하복부힘5",w:2},
+    {c:"아침",t:"🦭 하복부힘",w:2},
     {c:"아침",t:"🪥 양치",w:1},
     {c:"아침",t:"📸 눈바디",w:1},
     {c:"아침",t:"💊 유산균",w:1},
@@ -1304,8 +1305,11 @@ function renderMeasures(){
   const sec = document.getElementById("measureSection");
   if(!sec) return;
 
-  // (선택) 🎯 집중에서만 보이게 하고 싶으면:
-  sec.style.display = (state.mode==="hard") ? "block" : "none";
+  // (선택) 🎯 집중_월,금만 보이게 하고 싶으면:
+  const day = new Date(activeDateKey).getDay(); // 0=일,1=월,...,5=금
+  const isMeasureDay = (day === 1 || day === 5); // 월/금만
+  
+  sec.style.display = (state.mode === "hard" && isMeasureDay) ? "block" : "none";
 
   const w1 = document.getElementById("w1");
   const w2 = document.getElementById("w2");
@@ -1363,24 +1367,24 @@ function resetMeasures(){
 ========================= */
 
 const WEEKLY_WORKOUTS = {
-  0: ["점심 ·🪽 등", "저녁 ·🐙 스트레칭"],     // 일요일
-  1: ["점심 ·🔥 복부", "저녁 ·🌹 폴 +단백질 10g"],       // 월요일
-  2: ["점심 ·🍑 힙", "점심 ·🦵 폼롤러"],     // 화요일
-  3: ["점심 ·🪽 등", "저녁 ·🌹 폴 +단백질 10g"],         // 수요일
-  4: ["점심 ·🔥 복부", "점심 ·💪 폼롤러"],   // 목요일
-  5: ["아침 ·🌹 폴 +단백질 10g", "점심 ·🍑 힙"],     // 금요일
-  6: ["아침 ·🌹 폴 +단백질 10g"]                  // 토요일
+  0: ["점심 · 🪽 Back", "저녁 · 🐙 Stretching"],     // 일요일
+  1: ["점심 · 🦭 Abs", "저녁 · 🌹 Pole +Protein 10g"],       // 월요일
+  2: ["점심 · 🍑 Hip", "점심 · 🦵 Foam Roller"],     // 화요일
+  3: ["점심 · 🪽 Back", "저녁 · 🌹 Pole +Protein 10g"],         // 수요일
+  4: ["점심 · 🦭 Abs", "점심 · 💪 Foam Roller"],   // 목요일
+  5: ["아침 · 🌹 Pole +Protein 10g", "점심 · 🍑 Hip"],     // 금요일
+  6: ["아침 · 🌹 Pole +Protein 10g"]                  // 토요일
 };
 
 // ✅ 🎯 집중(hard) 전용: 운동
 const HARD_WEEKLY_WORKOUTS = {
-  0: ["아침 ·🔥 공복 유산소", "점심 ·🪽 등 ➕ 사플 12reps ×3", "저녁 ·🐙 스트레칭"],                 // 일
-  1: ["아침 ·🔥 공복 유산소", "점심 ·🦭 복부", "저녁 ·🌹 폴 +단백질 10g"],     // 월
-  2: ["아침 ·🔥 공복 유산소", "점심 ·🍑 힙 ➕ 힙브릿지 12reps ×3", "점심 ·🦵 폼롤러",  "저녁 ·🦭 RKC 30s ×2 ➕ 데드버그 10reps ×2"],                   // 화
-  3: ["점심 ·🪽 등", "저녁 ·🌹 폴 +단백질 10g"],                       // 수
-  4: ["아침 ·🔥 공복 유산소", "점심 ·🦭 복부 ➕ RKC 30s × 4 ➕ 할로우바디 20s", "점심 ·💪 폼롤러"],                 // 목
-  5: ["아침 ·🌹 폴 +단백질 10g", "점심 ·🍑 힙", "저녁 ·🦭 RKC 30s ×2 ➕ 데드버그 10reps ×2"],                       // 금
-  6: ["아침 ·🌹 폴 +단백질 10g", "저녁 ·🦭 RKC 30s ×2 ➕ 데드버그 10reps ×2"]                                // 토
+  0: ["아침 · 🔥 Cardio", "점심 · 🪽 Back", "점심 · 🪽 Side Plank 12reps ×3", "저녁 · 🐙 Stretching"],                 // 일
+  1: ["아침 · 🔥 Cardio", "점심 · 🦭 Abs", "저녁 · 🌹 Pole +Protein 10g"],     // 월
+  2: ["아침 · 🔥 Cardio", "점심 · 🍑 Hip", "점심 · 🍑 Hip Bridge  12reps ×3", "점심 · 🦵 Foam Roller",  "저녁 · 🦭 RKC 30s ×2", "저녁 · 🪲 Dead Bug 10reps ×2"],                   // 화
+  3: ["점심 · 🪽 Back", "저녁 · 🌹 Pole +Protein 10g"],                       // 수
+  4: ["아침 · 🔥 Cardio", "점심 · 🦭 Abs", "점심 · 🦭 RKC 30s × 4", "점심 · 🦭 Hollow Body 20s", "점심 ·💪 Foam Roller"],                 // 목
+  5: ["아침 · 🌹 Pole +Protein 10g", "점심 · 🍑 Hip", "저녁 · 🦭 RKC 30s ×2", "저녁 · 🪲 Dead Bug 10reps ×2"],                       // 금
+  6: ["아침 · 🌹 Pole +Protein 10g", "저녁 · 🦭 RKC 30s ×2", "저녁 · 🪲 Dead Bug 10reps ×2"]                                // 토
 };
 
 function renderChecklist(){
@@ -1589,17 +1593,22 @@ function calcStats(s, dateKey){
   total += 1;
   if(fastH >= 14) score += 1;
 
-  // 4) 측정 입력 완료 시 +1점
-  total += 1;
-
-  const measureComplete =
-    s.weight1 != null &&
-    s.weight2 != null &&
-    s.waist1  != null &&
-    s.waist2  != null;
-
-  if(measureComplete){
-    score += 1;
+  // 4) 측정 입력 완료 시 +1점 (월/금만)
+  const day = new Date(dateKey).getDay(); // 0=일,1=월,...,5=금
+  const isMeasureDay = (day === 1 || day === 5);
+  
+  if(isMeasureDay){
+    total += 1;
+  
+    const measureComplete =
+      s.weight1 != null &&
+      s.weight2 != null &&
+      s.waist1  != null &&
+      s.waist2  != null;
+  
+    if(measureComplete){
+      score += 1;
+    }
   }
 
   // 5) 운동 미실행 시 합격 상한 동일 적용
@@ -1870,11 +1879,64 @@ document.getElementById("allVerdictFilter_v2").onchange = renderAll_v2;
 
 function exportBackup(){
   const data = JSON.stringify(localStorage);
-  navigator.clipboard.writeText(data)
-    .then(()=> alert("백업 데이터가 클립보드에 복사됨"))
-    .catch(()=> alert("복사 실패. 수동으로 복사해줘."));
+  const textarea = document.getElementById("backupInput");
+
+  // 1️⃣ 최신 브라우저 시도
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(data)
+      .then(()=>{
+        alert("백업 데이터가 클립보드에 복사됨");
+      })
+      .catch(()=>{
+        fallbackCopy(data, textarea);
+      });
+  }else{
+    fallbackCopy(data, textarea);
+  }
 }
 
+function fallbackCopy(data, textarea){
+  textarea.value = data;
+  textarea.focus();
+  textarea.select();
+  textarea.setSelectionRange(0, 999999);
+
+  try{
+    document.execCommand("copy");
+    alert("클립보드에 복사됨");
+  }catch(e){
+    alert("자동 복사 실패.\n텍스트를 길게 눌러 복사해주세요.");
+  }
+}
+
+function downloadBackup(){
+  const data = JSON.stringify(localStorage);
+  const textarea = document.getElementById("backupInput");
+  if(textarea){
+    textarea.value = data;
+    textarea.focus();
+    textarea.setSelectionRange(0, 0); // 커서는 맨 앞(선택은 안 함)
+  }
+  
+  const date = new Date().toISOString().slice(0,10); // YYYY-MM-DD
+  const filename = `routine_backup_${date}.json`;
+
+  const blob = new Blob([data], { type: "application/json;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+
+  // cleanup
+  setTimeout(()=>{
+    URL.revokeObjectURL(url);
+    a.remove();
+  }, 0);
+}
+  
 function importBackup(){
   const input = document.getElementById("backupInput").value.trim();
   if(!input) return alert("복원할 데이터가 없어.");
@@ -2001,6 +2063,7 @@ if("serviceWorker" in navigator){
 
 </body>
 </html>
+
 
 
 
