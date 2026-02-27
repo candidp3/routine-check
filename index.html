@@ -649,6 +649,12 @@ setInterval(()=>{
   }
 }, 60 * 1000); // 1분 체크
 
+// ✅ YYYY-MM-DD를 로컬 날짜로 안전하게 파싱 (UTC 요일 밀림 방지)
+function parseDateKeyLocal(dateStr){
+  // dateStr: "YYYY-MM-DD"
+  return new Date(`${dateStr}T00:00:00`);
+}
+  
 /* =========================
    설정값
 ========================= */
@@ -1311,7 +1317,7 @@ function renderMeasures(){
   if(!sec) return;
 
   // (선택) 🎯 집중_월,금만 보이게 하고 싶으면:
-  const day = new Date(activeDateKey).getDay(); // 0=일,1=월,...,5=금
+  const day = parseDateKeyLocal(activeDateKey).getDay(); // 0=일,1=월,...,5=금
   const isMeasureDay = (day === 1 || day === 5); // 월/금만
   
   sec.style.display = (state.mode === "hard" && isMeasureDay) ? "block" : "none";
@@ -1457,7 +1463,7 @@ function getWorkoutChecklistItems(){
   // base / hard에서만 생성
   if(state.mode !== "base" && state.mode !== "hard") return [];
 
-  const day = new Date(activeDateKey).getDay();
+  const day = parseDateKeyLocal(activeDateKey).getDay();
 
   if(state.mode === "base"){
     const workouts = WEEKLY_WORKOUTS[day] || [];
@@ -1513,7 +1519,7 @@ function verdictFromRatio(ratio){
 }
   
 function calcWorkoutScoreFromMap(s, dateKey, workoutMap){
-  const day = new Date(dateKey).getDay();
+  const day = parseDateKeyLocal(dateKey).getDay();
   const workouts = (workoutMap && workoutMap[day]) ? workoutMap[day] : [];
   if(workouts.length === 0) return 0;
 
@@ -1599,7 +1605,7 @@ function calcStats(s, dateKey){
   if(fastH >= 14) score += 1;
 
   // 4) 측정 입력 완료 시 +1점 (월/금만)
-  const day = new Date(dateKey).getDay(); // 0=일,1=월,...,5=금
+  const day = parseDateKeyLocal(dateKey).getDay(); // 0=일,1=월,...,5=금
   const isMeasureDay = (day === 1 || day === 5);
   
   if(isMeasureDay){
