@@ -631,9 +631,11 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
    날짜/상태 기본
 ========================= */
 /* ===== 로컬 날짜 키(UTC 오차 방지) ===== */
-function getLocalDateKey(d=new Date()){
-  // sv-SE는 YYYY-MM-DD 포맷을 안정적으로 반환
-  return d.toLocaleDateString('sv-SE');
+function getLocalDateKey(d = new Date()){
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`; // ✅ 항상 YYYY-MM-DD
 }
 const todayKey = getLocalDateKey(new Date());
 document.getElementById("today").innerText = todayKey;
@@ -649,10 +651,11 @@ setInterval(()=>{
   }
 }, 60 * 1000); // 1분 체크
 
-// ✅ YYYY-MM-DD를 로컬 날짜로 안전하게 파싱 (UTC 요일 밀림 방지)
+// ✅ YYYY-MM-DD를 로컬 날짜로 안전하게 파싱(요일 밀림 방지)
 function parseDateKeyLocal(dateStr){
-  // dateStr: "YYYY-MM-DD"
-  return new Date(`${dateStr}T00:00:00`);
+  // dateStr: "YYYY-MM-DD"만 들어온다는 전제(1번에서 보장됨)
+  const [y, m, d] = dateStr.split("-").map(Number);
+  return new Date(y, (m - 1), d, 0, 0, 0, 0); // ✅ 로컬 자정
 }
   
 /* =========================
@@ -1036,7 +1039,7 @@ function manualFasting(){
       alert("HH:MM 형식"); return;
     }
 
-    const base = new Date(activeDateKey);
+    const base = parseDateKeyLocal(activeDateKey);
     start = new Date(base); start.setHours(sh, sm, 0, 0);
     end   = new Date(base); end.setHours(eh, em, 0, 0);
     if(end <= start) end.setDate(end.getDate()+1);
@@ -1316,11 +1319,8 @@ function renderMeasures(){
   const sec = document.getElementById("measureSection");
   if(!sec) return;
 
-  // (선택) 🎯 집중_월,금만 보이게 하고 싶으면:
-  const day = parseDateKeyLocal(activeDateKey).getDay(); // 0=일,1=월,...,5=금
-  const isMeasureDay = (day === 1 || day === 5); // 월/금만
-  
-  sec.style.display = (state.mode === "hard" && isMeasureDay) ? "block" : "none";
+  // 🎯 집중 모드일 때 항상 보이도록 수정 (요일 제한 제거)
+  sec.style.display = (state.mode === "hard") ? "block" : "none";
 
   const w1 = document.getElementById("w1");
   const w2 = document.getElementById("w2");
@@ -1344,23 +1344,25 @@ function renderMeasures(){
 }
 
 function bindMeasureInputs(){
-  const w1 = document.getElementById("w1");
-  const w2 = document.getElementById("w2");
-  const wa1 = document.getElementById("wa1");
-  const wa2 = document.getElementById("wa2");
+  // ✅ 이벤트 위임: 어떤 렌더/숨김/재진입 상황에서도 입력 이벤트를 놓치지 않음
+  document.addEventListener("input", (e) => {
+    const id = e.target?.id;
+    if(!id) return;
 
-  const handler = () => {
-    state.weight1 = nOrNull(w1?.value);
-    state.weight2 = nOrNull(w2?.value);
-    state.waist1  = nOrNull(wa1?.value);
-    state.waist2  = nOrNull(wa2?.value);
-    save();
-    renderMeasures();
-  };
+    if(id === "w1" || id === "w2" || id === "wa1" || id === "wa2"){
+      const w1  = document.getElementById("w1");
+      const w2  = document.getElementById("w2");
+      const wa1 = document.getElementById("wa1");
+      const wa2 = document.getElementById("wa2");
 
-  [w1,w2,wa1,wa2].forEach(el=>{
-    if(!el) return;
-    el.addEventListener("input", handler);
+      state.weight1 = nOrNull(w1?.value);
+      state.weight2 = nOrNull(w2?.value);
+      state.waist1  = nOrNull(wa1?.value);
+      state.waist2  = nOrNull(wa2?.value);
+
+      save();
+      renderMeasures();
+    }
   });
 }
 
@@ -2100,8 +2102,5 @@ if("serviceWorker" in navigator){
 
 </body>
 </html>
-
-
-
 
 
