@@ -281,8 +281,8 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 <!-- FIRST ROW : MODE -->
 <div class="tabs">
   <button class="tab active" id="tabToday" onclick="showTab('today'); setMode('base')">♥️ 일상</button>
-  <button class="tab" id="mHard" onclick="setMode('hard')">🎯 집중</button>
-  <button class="tab" id="mTravel" onclick="setMode('travel')">✈️ 이탈</button>
+  <button class="tab" id="mHard" onclick="showTab('today'); setMode('hard')">🎯 집중</button>
+  <button class="tab" id="mTravel" onclick="showTab('today'); setMode('travel')">✈️ 이탈</button>
 </div>
   
 <!-- SECOND ROW : PAGES -->
@@ -631,11 +631,9 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
    날짜/상태 기본
 ========================= */
 /* ===== 로컬 날짜 키(UTC 오차 방지) ===== */
-function getLocalDateKey(d = new Date()){
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`; // ✅ 항상 YYYY-MM-DD
+function getLocalDateKey(d=new Date()){
+  // sv-SE는 YYYY-MM-DD 포맷을 안정적으로 반환
+  return d.toLocaleDateString('sv-SE');
 }
 const todayKey = getLocalDateKey(new Date());
 document.getElementById("today").innerText = todayKey;
@@ -653,9 +651,7 @@ setInterval(()=>{
 
 // ✅ YYYY-MM-DD를 로컬 날짜로 안전하게 파싱(요일 밀림 방지)
 function parseDateKeyLocal(dateStr){
-  // dateStr: "YYYY-MM-DD"만 들어온다는 전제(1번에서 보장됨)
-  const [y, m, d] = dateStr.split("-").map(Number);
-  return new Date(y, (m - 1), d, 0, 0, 0, 0); // ✅ 로컬 자정
+  return new Date(`${dateStr}T00:00:00`);
 }
   
 /* =========================
@@ -1039,7 +1035,7 @@ function manualFasting(){
       alert("HH:MM 형식"); return;
     }
 
-    const base = parseDateKeyLocal(activeDateKey);
+    const base = new Date(activeDateKey);
     start = new Date(base); start.setHours(sh, sm, 0, 0);
     end   = new Date(base); end.setHours(eh, em, 0, 0);
     if(end <= start) end.setDate(end.getDate()+1);
@@ -1319,8 +1315,11 @@ function renderMeasures(){
   const sec = document.getElementById("measureSection");
   if(!sec) return;
 
-  // 🎯 집중 모드일 때 항상 보이도록 수정 (요일 제한 제거)
-  sec.style.display = (state.mode === "hard") ? "block" : "none";
+  // (선택) 🎯 집중_월,금만 보이게 하고 싶으면:
+  const day = parseDateKeyLocal(activeDateKey).getDay(); // 0=일,1=월,...,5=금
+  const isMeasureDay = (day === 1 || day === 5); // 월/금만
+  
+  sec.style.display = (state.mode === "hard" && isMeasureDay) ? "block" : "none";
 
   const w1 = document.getElementById("w1");
   const w2 = document.getElementById("w2");
@@ -1344,26 +1343,46 @@ function renderMeasures(){
 }
 
 function bindMeasureInputs(){
-  // ✅ 이벤트 위임: 어떤 렌더/숨김/재진입 상황에서도 입력 이벤트를 놓치지 않음
-  document.addEventListener("input", (e) => {
-    const id = e.target?.id;
-    if(!id) return;
+  // ✅ 중복 바인딩 방지
+  if(window.__measureBound) return;
+  window.__measureBound = true;
 
-    if(id === "w1" || id === "w2" || id === "wa1" || id === "wa2"){
-      const w1  = document.getElementById("w1");
-      const w2  = document.getElementById("w2");
-      const wa1 = document.getElementById("wa1");
-      const wa2 = document.getElementById("wa2");
+  const apply = () => {
+    const w1  = document.getElementById("w1");
+    const w2  = document.getElementById("w2");
+    const wa1 = document.getElementById("wa1");
+    const wa2 = document.getElementById("wa2");
+    if(!w1 || !w2 || !wa1 || !wa2) return;
 
-      state.weight1 = nOrNull(w1?.value);
-      state.weight2 = nOrNull(w2?.value);
-      state.waist1  = nOrNull(wa1?.value);
-      state.waist2  = nOrNull(wa2?.value);
+    state.weight1 = nOrNull(w1.value);
+    state.weight2 = nOrNull(w2.value);
+    state.waist1  = nOrNull(wa1.value);
+    state.waist2  = nOrNull(wa2.value);
 
-      save();
-      renderMeasures();
+    // ✅ 해당 날짜(activeDateKey)에 확실히 저장
+    saveStateForKey(activeDateKey, state);
+
+    // ✅ 평균 표시 + 점수/판정까지 갱신
+    update();
+
+    // ✅ 전체 탭 보고 있는 중이면 즉시 반영
+    if(!document.getElementById("viewAll_v2")?.classList.contains("hide")){
+      renderAll_v2();
     }
-  });
+  };
+
+  const handler = (e) => {
+    const id = e?.target?.id;
+    if(id === "w1" || id === "w2" || id === "wa1" || id === "wa2"){
+      apply();
+    }
+  };
+
+  // 모바일에서 input이 늦게/불안정하게 들어오는 케이스까지 커버
+  document.addEventListener("input", handler, true);
+  document.addEventListener("change", handler, true);
+  document.addEventListener("keyup", handler, true);
+  document.addEventListener("blur", handler, true);
 }
 
 function resetMeasures(){
@@ -1521,7 +1540,7 @@ function verdictFromRatio(ratio){
 }
   
 function calcWorkoutScoreFromMap(s, dateKey, workoutMap){
-  const day = parseDateKeyLocal(dateKey).getDay();
+  const day = new Date(dateKey).getDay();
   const workouts = (workoutMap && workoutMap[day]) ? workoutMap[day] : [];
   if(workouts.length === 0) return 0;
 
@@ -2016,10 +2035,52 @@ function makeAutoBackup(){
   // 이미 같은 키가 있으면 중복 저장 안 함
   if(localStorage.getItem(key)) return;
 
-  const data = JSON.stringify(localStorage);
-  localStorage.setItem(key, data);
-
+  // ✅ 1) 먼저 오래된 자동백업을 정리 (저장 전에!)
   cleanupOldAutoBackups();
+
+  // ✅ 2) "백업을 백업하는" 폭발을 막기 위해 자동백업 키는 제외하고 저장
+  const dataObj = {};
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    if(!k) continue;
+    if(k.startsWith(AUTO_BACKUP_PREFIX)) continue; // 자동백업 제외
+    dataObj[k] = localStorage.getItem(k);
+  }
+  const data = JSON.stringify(dataObj);
+
+  // ✅ 3) 용량 초과 시: 자동백업을 더 지우고 1회 재시도 (앱이 죽지 않게)
+  try{
+    localStorage.setItem(key, data);
+  }catch(e){
+    if(e && String(e.name).includes("QuotaExceeded")){
+      // 최근 7개 제한으로도 부족하면 더 공격적으로 줄임
+      forceCleanupAutoBackups(3); // 최근 3개만 유지
+      try{
+        localStorage.setItem(key, data);
+      }catch(e2){
+        // 그래도 안 되면 자동백업 포기(앱 작동이 우선)
+        console.warn("Auto backup skipped due to quota.", e2);
+      }
+    }else{
+      throw e;
+    }
+  }
+
+  // ✅ 마지막으로 한 번 더 정리
+  cleanupOldAutoBackups();
+}
+
+// ✅ 쿼터 초과 시 강제 정리(최근 n개만 남김)
+function forceCleanupAutoBackups(keepN){
+  const keys = [];
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    if(k && k.startsWith(AUTO_BACKUP_PREFIX)) keys.push(k);
+  }
+  keys.sort(); // 오래된 것부터
+  while(keys.length > keepN){
+    localStorage.removeItem(keys.shift());
+  }
 }
 
 function cleanupOldAutoBackups(){
