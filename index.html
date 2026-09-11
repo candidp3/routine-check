@@ -457,6 +457,16 @@ button,input,select,textarea{font:inherit}
   border:0;background:#f2f3f0;border-radius:10px;padding:7px 10px;
   font-family:inherit;font-size:12px;font-weight:400;color:#777d78
 }
+
+.proteinInlineActions{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.proteinInlineActions button{padding-left:2px;padding-right:2px;font-size:11px}
+
+.sleepManualSheet .lifeField{margin:10px 0}
+.sleepManualGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.sleepManualHint{font-size:10px;line-height:1.5;color:#8f9690;margin-top:4px}
+.sleepManualDateNote{font-size:11px;color:#657066;background:#f3f6f1;border-radius:10px;padding:9px 10px;margin:2px 0 8px}
+@media(max-width:380px){.sleepManualGrid{grid-template-columns:1fr}}
+
 @media(max-width:380px){
   .dailyCareGrid{gap:6px}
   .dailyCareItem{padding:9px 4px 7px}
@@ -700,6 +710,8 @@ button,input,select,textarea{font:inherit}
           <div class="dailyCareMeta" id="proteinTrackText"></div>
           <div class="dailyCareActions proteinInlineActions">
             <button onclick="addProtein(-5)">−5</button>
+            <button onclick="addProtein(-10)">−10</button>
+            <button onclick="addProtein(10)">+10</button>
             <button onclick="addProtein(20)">+20</button>
           </div>
           <button class="dailyCareReset proteinReset" onclick="resetProtein()">초기화</button>
@@ -987,6 +999,23 @@ button,input,select,textarea{font:inherit}
 </div>
 
 
+<div id="sleepManualModal" class="lifeModal hide" onclick="if(event.target===this) closeSleepManualModal()">
+  <div class="lifeSheet sleepManualSheet">
+    <div class="lifeSheetHead"><b>수면 직접 기록</b><button class="lifeClose" onclick="closeSleepManualModal()">×</button></div>
+    <div class="sleepManualDateNote" id="sleepManualDateNote"></div>
+    <div class="lifeField">
+      <label>기록 날짜 <span class="fieldHint">이 수면을 어느 날의 기록으로 둘지 선택</span></label>
+      <input id="sleepManualRecordDate" type="date" onchange="renderSleepManualDateNote()">
+    </div>
+    <div class="sleepManualGrid">
+      <div class="lifeField"><label>취침 시각</label><input id="sleepManualStartTime" type="time"></div>
+      <div class="lifeField"><label>기상 시각</label><input id="sleepManualEndTime" type="time"></div>
+    </div>
+    <div class="sleepManualHint">새벽 0시~5시 59분에 잠들면 기본적으로 전날 수면으로 기록합니다. 예: 토요일 02:00 취침 → 금요일 기록.</div>
+    <div class="lifeActions"><button class="lifeDelete" onclick="closeSleepManualModal()">취소</button><button class="lifeSave" onclick="saveManualSleepFromModal()">저장</button></div>
+  </div>
+</div>
+
 <div id="routineModal" class="lifeModal hide" onclick="if(event.target===this) closeRoutineModal()">
   <div class="lifeSheet">
     <div class="lifeSheetHead"><b id="routineModalTitle">루틴 추가</b><button class="lifeClose" onclick="closeRoutineModal()">×</button></div>
@@ -996,7 +1025,7 @@ button,input,select,textarea{font:inherit}
       <div class="lifeField"><label>아이콘 / 이모지</label><input id="rIcon" placeholder="📘"></div>
     </div>
     <div class="life2col">
-      <div class="lifeField"><label>활동 유형</label><select id="rType" onchange="toggleRoutineTypeFields()"><option value="check">체크형</option><option value="number">숫자형</option><option value="time">시간형</option><option value="free">자유 기록형</option></select></div>
+      <div class="lifeField"><label>활동 유형</label><select id="rType" onchange="toggleRoutineTypeFields()"><option value="check">체크형</option><option value="time">시간형</option><option value="free">자유 기록형</option></select></div>
       <div class="lifeField"><label>시간 블록</label><select id="rBlock"><option value="breakfast">BREAKFAST</option><option value="morning">MORNING</option><option value="lunch">LUNCH</option><option value="afternoon">AFTERNOON</option><option value="evening">EVENING</option><option value="free">FREE TIME</option></select></div>
     </div>
     <div class="lifeField"><label>반복 방식</label><select id="rRecurrence" onchange="toggleRoutineDays()"><option value="daily">매일</option><option value="weekday">평일</option><option value="weekend">주말</option><option value="days">특정 요일 선택</option><option value="free">자유 활동</option></select></div>
@@ -1004,7 +1033,6 @@ button,input,select,textarea{font:inherit}
       <label><input type="checkbox" name="rDay" value="1">월</label><label><input type="checkbox" name="rDay" value="2">화</label><label><input type="checkbox" name="rDay" value="3">수</label><label><input type="checkbox" name="rDay" value="4">목</label><label><input type="checkbox" name="rDay" value="5">금</label><label><input type="checkbox" name="rDay" value="6">토</label><label><input type="checkbox" name="rDay" value="0">일</label>
     </div></div>
     <div id="rTimeOptions" class="lifeField hide"><label>목표 시간 <span class="fieldHint">분</span></label><input id="rTarget" type="number" min="1" step="1" placeholder="20"></div>
-    <div id="rNumberOptions" class="life2col hide"><div class="lifeField"><label>목표값</label><input id="rNumberTarget" type="number" step="any" placeholder="1000"></div><div class="lifeField"><label>단위</label><input id="rUnit" placeholder="예: 개, ml"></div></div>
     <div id="rFreeOptions" class="lifeField hide"><label>기본 기록 내용 <span class="fieldHint">선택</span></label><input id="rDefaultNote" placeholder="예: 계란 · 두유 · 견과"><div class="fieldHint" style="margin-top:5px">오늘 다른 내용을 기록하면 기본 내용 대신 그날 기록이 표시됩니다.</div></div>
     <div class="lifeField"><label>표시 순서 <span class="fieldHint">숫자가 작을수록 위에 표시</span></label><input id="rOrder" type="number" step="1" value="10"></div>
     <div class="lifeField"><label><input id="rEnabled" type="checkbox" checked style="width:auto;margin-right:6px">활성 상태로 표시</label></div>
@@ -1486,28 +1514,48 @@ function manualFasting(){
    수면 트래킹
 ========================= */
 
+function sleepRecordDateKeyFromStart(start){
+  const d = new Date(start);
+  if(d.getHours() < 6) d.setDate(d.getDate()-1);
+  return getLocalDateKey(d);
+}
+function sleepActualStartFromRecordDate(recordDateKey,timeText){
+  const [h,m]=String(timeText||'').split(':').map(Number);
+  if(!Number.isFinite(h)||!Number.isFinite(m))return null;
+  const d=parseDateKeyLocal(recordDateKey);
+  if(h<6)d.setDate(d.getDate()+1);
+  d.setHours(h,m,0,0);
+  return d;
+}
+function sleepActualEndFromStart(start,timeText){
+  const [h,m]=String(timeText||'').split(':').map(Number);
+  if(!Number.isFinite(h)||!Number.isFinite(m))return null;
+  const d=new Date(start);
+  d.setHours(h,m,0,0);
+  if(d<=start)d.setDate(d.getDate()+1);
+  return d;
+}
 function startSleep(){
   const sess = loadSleepSession();
   if(sess && sess.startAt){
-    if(!confirm("넌 잠자고 있어. 새로 시작할까?")) return;
+    if(!confirm("이미 수면 기록이 진행 중이에요. 새로 시작할까요?")) return;
   }
-  saveSleepSession({ startAt: new Date().toISOString() });
+  const start=new Date();
+  saveSleepSession({ startAt:start.toISOString(), recordDateKey:sleepRecordDateKeyFromStart(start) });
   update();
 }
 
 function endSleep(){
   const sess = loadSleepSession();
   if(!sess || !sess.startAt){
-    alert("넌 잠자고 있지 않아.");
+    alert("진행 중인 수면 기록이 없어요.");
     return;
   }
 
   const start = new Date(sess.startAt);
   const end   = new Date();
   const mins  = Math.max(0, Math.round((end - start) / 60000));
-
-  // ✅ 기상 시점 날짜에 저장
-  const k = getLocalDateKey(end);
+  const k = sess.recordDateKey || sleepRecordDateKeyFromStart(start);
   const s = getStateForKey(k);
 
   s.sleepStartAt = sess.startAt;
@@ -1582,78 +1630,66 @@ function handleSleepMainAction(){
 }
 
 
-function manualSleep(){
-  const sess = loadSleepSession();
+function openSleepManualModal(){
+  const modal=document.getElementById('sleepManualModal');if(!modal)return;
+  const sess=loadSleepSession();
+  let recordDate=activeDateKey||todayKey;
+  let startText='',endText='';
 
-  let start, end;
-
-  // 1️⃣ 자동 세션 없음 + 지금 자고 있음 → 시작만 입력
-  if(!sess){
-    const wantStart = confirm("수면 기록 할래?\n\n취소 = 둘 다 입력\n확인 = 시작만 입력");
-
-    if(wantStart){
-      const startStr = prompt("취침 시각 (HH:MM)");
-      if(!startStr) return;
-
-      const [sh, sm] = startStr.split(":").map(Number);
-      if(isNaN(sh)||isNaN(sm)){ alert("HH:MM 형식"); return; }
-
-      const base = new Date();
-      start = new Date(base);
-      start.setHours(sh, sm, 0, 0);
-      if(start > base) start.setDate(start.getDate()-1);
-
-      saveSleepSession({ startAt: start.toISOString() });
-      update();
-      return;
-    }
+  if(sess?.startAt){
+    const start=new Date(sess.startAt);
+    recordDate=sess.recordDateKey||sleepRecordDateKeyFromStart(start);
+    startText=fmtHM(start);
+  }else if(state.sleepStartAt){
+    const start=new Date(state.sleepStartAt);
+    recordDate=activeDateKey||sleepRecordDateKeyFromStart(start);
+    startText=fmtHM(start);
+    if(state.sleepEndAt)endText=fmtHM(new Date(state.sleepEndAt));
+  }else{
+    const now=new Date();
+    recordDate=sleepRecordDateKeyFromStart(now);
   }
 
-  // 2️⃣ 이미 취침 버튼 눌러둔 경우 → 기상만 입력
-  if(sess && sess.startAt){
-    start = new Date(sess.startAt);
+  document.getElementById('sleepManualRecordDate').value=recordDate;
+  document.getElementById('sleepManualStartTime').value=startText;
+  document.getElementById('sleepManualEndTime').value=endText;
+  renderSleepManualDateNote();
+  modal.classList.remove('hide');
+}
+function closeSleepManualModal(){
+  document.getElementById('sleepManualModal')?.classList.add('hide');
+}
+function renderSleepManualDateNote(){
+  const k=document.getElementById('sleepManualRecordDate')?.value||'';
+  const el=document.getElementById('sleepManualDateNote');if(!el)return;
+  el.textContent=k?`${k}의 수면 기록으로 저장됩니다.`:'기록 날짜를 선택해 주세요.';
+}
+function saveManualSleepFromModal(){
+  const recordDate=document.getElementById('sleepManualRecordDate')?.value||'';
+  const startText=document.getElementById('sleepManualStartTime')?.value||'';
+  const endText=document.getElementById('sleepManualEndTime')?.value||'';
+  if(!recordDate||!startText||!endText){alert('기록 날짜, 취침 시각, 기상 시각을 모두 입력해 주세요.');return;}
 
-    const endStr = prompt("기상 시각 (HH:MM)");
-    if(!endStr) return;
+  const start=sleepActualStartFromRecordDate(recordDate,startText);
+  const end=start?sleepActualEndFromStart(start,endText):null;
+  if(!start||!end){alert('수면 시각을 확인해 주세요.');return;}
+  const mins=Math.round((end-start)/60000);
+  if(mins<=0||mins>24*60){alert('수면 시간을 확인해 주세요.');return;}
 
-    const [eh, em] = endStr.split(":").map(Number);
-    if(isNaN(eh)||isNaN(em)){ alert("HH:MM 형식"); return; }
-
-    end = new Date(start);
-    end.setHours(eh, em, 0, 0);
-    if(end <= start) end.setDate(end.getDate()+1);
-  }
-
-  // 3️⃣ 둘 다 입력
-  else{
-    const startStr = prompt("취침 시각 (HH:MM)");
-    if(!startStr) return;
-
-    const endStr = prompt("기상 시각 (HH:MM)");
-    if(!endStr) return;
-
-    const [sh, sm] = startStr.split(":").map(Number);
-    const [eh, em] = endStr.split(":").map(Number);
-
-    if(isNaN(sh)||isNaN(sm)||isNaN(eh)||isNaN(em)){
-      alert("HH:MM 형식"); return;
-    }
-
-    const base = new Date(activeDateKey);
-    start = new Date(base); start.setHours(sh, sm, 0, 0);
-    end   = new Date(base); end.setHours(eh, em, 0, 0);
-    if(end <= start) end.setDate(end.getDate()+1);
-  }
-
-  const mins = Math.round((end - start)/60000);
-
-  state.sleepStartAt = start.toISOString();
-  state.sleepEndAt   = end.toISOString();
-  state.sleepMinutes = mins;
-
-  save();
+  const s=getStateForKey(recordDate);
+  s.sleepStartAt=start.toISOString();
+  s.sleepEndAt=end.toISOString();
+  s.sleepMinutes=mins;
+  saveStateForKey(recordDate,s);
   clearSleepSession();
+
+  if(activeDateKey===recordDate)state=s;
+  closeSleepManualModal();
   update();
+}
+
+function manualSleep(){
+  openSleepManualModal();
 }
 
 
@@ -3626,11 +3662,22 @@ function toggleLifeRoutine(id){
     renderLifeGuide();
     return;
   }
-  if(r.type==='free'){recordFreeRoutine(id);return;}
   let logs=getLifeDayLogs();const idx=logs.findIndex(x=>x.routineId===id);
-  if(idx>=0){logs.splice(idx,1);}else{
+
+  if(r.type==='free'&&idx>=0){
+    logs.splice(idx,1);
+    setLifeDayLogs(logs);
+    renderLifeGuide();renderLifeCalendar();renderRecordDashboard();
+    return;
+  }
+  if(r.type==='free'){recordFreeRoutine(id);return;}
+
+  if(idx>=0){
+    logs.splice(idx,1);
+  }else{
     let value=null,duration=null;
     if(r.type==='number'){
+      // 구버전 숫자형 데이터 호환: 새 숫자형 생성은 지원하지 않음
       const raw=prompt(`${r.name}${r.target?` (기본 ${r.target}${r.unit||''})`:''}\n오늘 기록할 값을 입력해줘.`,r.target??'');
       if(raw===null)return; value=raw===''?null:Number(raw); if(raw!==''&&!Number.isFinite(value))return;
     }else if(r.type==='time'){
@@ -3638,7 +3685,7 @@ function toggleLifeRoutine(id){
     }
     logs.push({routineId:id,completed:true,value,duration,memo:'',loggedAt:new Date().toISOString()});
   }
-  setLifeDayLogs(logs);renderLifeGuide();
+  setLifeDayLogs(logs);renderLifeGuide();renderLifeCalendar();renderRecordDashboard();
 }
 
 
@@ -3909,11 +3956,9 @@ function renderLifeGuide(){
   const blocks=[['breakfast','BREAKFAST','기상 후 아침 루틴'],['morning','MORNING','점심 전 오전 루틴'],['lunch','LUNCH','점심과 식후 루틴'],['afternoon','AFTERNOON','평일 업무 · 연구'],['evening','EVENING','하루 마무리 루틴']];
   const renderRow=r=>{
     const running=isTimerRunningFor(r.id);
-    const lead=r.type==='time'
-      ? `<button class="lifeTimerBtn ${running?'running':''}" onclick="${running?'stopActivityTimer()':`startActivityTimer('${r.id}')`}">${running?'종료':'시작'}</button>`
-      : `<button class="lifeCheck ${lifeDone(r.id)?'done':''}" onclick="toggleLifeRoutine('${r.id}')">${lifeDone(r.id)?'✓':''}</button>`;
+    const lead=`<button class="lifeCheck ${lifeDone(r.id)?'done':''}" onclick="toggleLifeRoutine('${r.id}')">${lifeDone(r.id)?'✓':''}</button>`;
     const timerActions=r.type==='time'
-      ? `<div class="lifeRoutineTimerActions"><button class="lifeManualBtn" onclick="manualActivityDuration('${r.id}')">직접</button><button class="lifeMiniBtn" onclick="openRoutineModal('${r.id}')">편집</button></div>`
+      ? `<div class="lifeRoutineTimerActions"><button class="lifeManualBtn ${running?'running':''}" onclick="${running?'stopActivityTimer()':`startActivityTimer('${r.id}')`}">${running?'종료':'타이머'}</button><button class="lifeMiniBtn" onclick="openRoutineModal('${r.id}')">편집</button></div>`
       : r.type==='free'
         ? `<div class="lifeRoutineTimerActions"><button class="lifeManualBtn" onclick="editFreeRoutineRecord('${r.id}')">기록</button><button class="lifeMiniBtn" onclick="openRoutineModal('${r.id}')">편집</button></div>`
         : `<button class="lifeMiniBtn" onclick="openRoutineModal('${r.id}')">편집</button>`;
@@ -3932,7 +3977,7 @@ function renderLifeGuide(){
     html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">${title}</div><div class="lifeBlockHint">${hint}</div></div></div><div>${body}</div><button class="lifeAddBtn" onclick="openRoutineModal(null,'${key}')">+ 이 블록에 루틴 추가</button></section>`;
   }
   const free=routines.filter(r=>r.block==='free'&&r.enabled).sort((a,b)=>(a.order||0)-(b.order||0));
-  html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">FREE TIME</div><div class="lifeBlockHint">해야 할 일이 아니라, 오늘 여유가 있을 때 고르는 활동</div></div><button class="lifeMiniBtn" onclick="openRoutineModal(null,'free')">+ 추가</button></div><div class="freeGrid">${free.map(r=>`<div class="freeChipWrap"><button class="freeChip ${lifeDone(r.id)?'done':''}" onclick="toggleLifeRoutine('${r.id}')"><span class="ico">${escapeLife(r.icon||'·')}</span>${escapeLife(r.name)}</button>${r.type==='time'?`<button class="freeTimerBtn ${isTimerRunningFor(r.id)?'running':''}" aria-label="${escapeLife(r.name)} 시간 기록" onclick="event.stopPropagation();${isTimerRunningFor(r.id)?'stopActivityTimer()':`startActivityTimer('${r.id}')`}">⏱</button>`:r.type==='free'?`<button class="freeTimerBtn" aria-label="${escapeLife(r.name)} 자유 기록" onclick="event.stopPropagation();recordFreeRoutine('${r.id}')">✎</button>`:''}<button class="freeEditBtn" aria-label="${escapeLife(r.name)} 편집" onclick="event.stopPropagation();openRoutineModal('${r.id}')">⋯</button></div>`).join('')}</div><div class="lifeBlockHint" style="margin-top:9px">하지 않은 활동은 아무 표시도 남기지 않아요.</div></section>`;
+  html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">FREE TIME</div><div class="lifeBlockHint">해야 할 일이 아니라, 오늘 여유가 있을 때 고르는 활동</div></div><button class="lifeMiniBtn" onclick="openRoutineModal(null,'free')">+ 추가</button></div><div class="freeGrid">${free.map(r=>`<div class="freeChipWrap"><button class="freeChip ${lifeDone(r.id)?'done':''}" onclick="toggleLifeRoutine('${r.id}')"><span class="ico">${escapeLife(r.icon||'·')}</span>${escapeLife(r.name)}</button>${r.type==='time'?`<button class="freeTimerBtn ${isTimerRunningFor(r.id)?'running':''}" aria-label="${escapeLife(r.name)} 시간 기록" onclick="event.stopPropagation();${isTimerRunningFor(r.id)?'stopActivityTimer()':`startActivityTimer('${r.id}')`}">⏱</button>`:r.type==='free'?`<button class="freeTimerBtn" aria-label="${escapeLife(r.name)} 자유 기록 수정" onclick="event.stopPropagation();editFreeRoutineRecord('${r.id}')">✎</button>`:''}<button class="freeEditBtn" aria-label="${escapeLife(r.name)} 편집" onclick="event.stopPropagation();openRoutineModal('${r.id}')">⋯</button></div>`).join('')}</div><div class="lifeBlockHint" style="margin-top:9px">하지 않은 활동은 아무 표시도 남기지 않아요.</div></section>`;
   root.innerHTML=html;
   renderTodayNote();
   renderActivityTimerBanner();
@@ -3942,8 +3987,9 @@ function openRoutineModal(id,block){
   const list=loadLifeRoutines();const r=id?list.find(x=>x.id===id):null;
   document.getElementById('routineModalTitle').textContent=r?'루틴 수정':'루틴 추가';
   document.getElementById('rId').value=r?.id||'';document.getElementById('rName').value=r?.name||'';document.getElementById('rIcon').value=r?.icon||'';
-  document.getElementById('rType').value=r?.type||(block==='free'?'free':'check');document.getElementById('rBlock').value=r?.block||block||'morning';document.getElementById('rRecurrence').value=r?.recurrence||(block==='free'?'free':'daily');
-  document.getElementById('rTarget').value=r?.type==='time'?(r?.target??''):'';document.getElementById('rNumberTarget').value=r?.type==='number'?(r?.target??''):'';document.getElementById('rUnit').value=r?.type==='number'?(r?.unit||''):'';document.getElementById('rDefaultNote').value=r?.type==='free'?(r?.defaultNote||''):'';document.getElementById('rOrder').value=r?.order??10;document.getElementById('rEnabled').checked=r?.enabled??true;
+  const editableType=r?.type==='number'?'check':(r?.type||(block==='free'?'free':'check'));
+  document.getElementById('rType').value=editableType;document.getElementById('rBlock').value=r?.block||block||'morning';document.getElementById('rRecurrence').value=r?.recurrence||(block==='free'?'free':'daily');
+  document.getElementById('rTarget').value=r?.type==='time'?(r?.target??''):'';document.getElementById('rDefaultNote').value=r?.type==='free'?(r?.defaultNote||''):'';document.getElementById('rOrder').value=r?.order??10;document.getElementById('rEnabled').checked=r?.enabled??true;
   document.querySelectorAll('input[name="rDay"]').forEach(x=>x.checked=!!r?.days?.includes(Number(x.value)));
   document.getElementById('routineDeleteBtn').classList.toggle('hide',!r);toggleRoutineDays();toggleRoutineTypeFields();document.getElementById('routineModal').classList.remove('hide');
 }
@@ -3952,7 +3998,6 @@ function toggleRoutineDays(){document.getElementById('rDaysWrap').classList.togg
 function toggleRoutineTypeFields(){
   const type=document.getElementById('rType').value;
   document.getElementById('rTimeOptions').classList.toggle('hide',type!=='time');
-  document.getElementById('rNumberOptions').classList.toggle('hide',type!=='number');
   document.getElementById('rFreeOptions').classList.toggle('hide',type!=='free');
 }
 function saveRoutineFromModal(){
@@ -3962,8 +4007,8 @@ function saveRoutineFromModal(){
   if(recurrence==='days'&&!days.length){alert('표시할 요일을 하나 이상 선택해줘.');return;}
   const num=id=>{const v=document.getElementById(id).value.trim();return v===''?null:Number(v)};
   const type=document.getElementById('rType').value;
-  const target=type==='time'?num('rTarget'):(type==='number'?num('rNumberTarget'):null);
-  const unit=type==='time'?'분':(type==='number'?document.getElementById('rUnit').value.trim():'');
+  const target=type==='time'?num('rTarget'):null;
+  const unit=type==='time'?'분':'';
   const r={id,name,icon:document.getElementById('rIcon').value.trim(),type,block:document.getElementById('rBlock').value,recurrence,days,target,unit,defaultNote:type==='free'?document.getElementById('rDefaultNote').value.trim():'',maxDuration:null,enabled:document.getElementById('rEnabled').checked,order:num('rOrder')??10};
   const list=loadLifeRoutines();const idx=list.findIndex(x=>x.id===id);if(idx>=0)list[idx]=r;else list.push(r);saveLifeRoutines(list);closeRoutineModal();renderLifeGuide();
 }
