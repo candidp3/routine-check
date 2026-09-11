@@ -3,9 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🍎루틴 체크</title>
+<title>Routine Check</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#222222">
+<meta name="theme-color" content="#f6f6f6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Routine Check">
+<link rel="apple-touch-icon" href="icon-192.png">
 
 <style>
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f6f6f6;margin:0;padding:14px;color:#222}
@@ -270,175 +274,496 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   margin-bottom:8px;
 }
 
+
+/* ===== LIFE GUIDE v1 : Phase 1 ===== */
+:root{--life-bg:#f7f8f6;--life-card:#fff;--life-line:#e8e9e5;--life-muted:#777;--life-soft:#f0f3ed;--life-accent:#496451}
+body{padding-bottom:86px;background:var(--life-bg)}
+.lifeTop{margin:4px 0 14px}
+.lifeTitle{font-size:24px;font-weight:850;letter-spacing:-.4px;margin:0 0 3px}
+.lifeSub{font-size:13px;color:var(--life-muted);line-height:1.45}
+.lifeBlock{background:var(--life-card);border:1px solid var(--life-line);border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:0 1px 0 rgba(0,0,0,.02)}
+.lifeBlockHead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:9px}
+.lifeBlockTitle{font-size:12px;font-weight:850;letter-spacing:.08em;color:#4f5b52}
+.lifeBlockHint{font-size:12px;color:#8a8f8b;margin-top:3px}
+.lifeRoutine{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid #f0f1ee}
+.lifeRoutine:first-child{border-top:0}
+.lifeCheck{width:24px;height:24px;border-radius:9px;border:1px solid #cfd5ce;background:#fff;font-size:14px;display:grid;place-items:center;flex:0 0 24px}
+.lifeCheck.done{background:#e7eee7;border-color:#b9c9bb}
+.lifeRoutineMain{min-width:0;flex:1}
+.lifeRoutineName{font-size:15px;font-weight:700;line-height:1.25}
+.lifeRoutineMeta{font-size:11px;color:#8a8f8b;margin-top:3px}
+.lifeMiniBtn{border:0;background:#f2f3f0;border-radius:10px;padding:7px 9px;font-size:12px;color:#555}
+.lifeAddBtn{width:100%;border:1px dashed #cfd5ce;background:#fafbf9;border-radius:12px;padding:10px;font-size:13px;color:#657066;margin-top:7px}
+.freeGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.freeChip{border:1px solid #e0e4df;background:#fafbf9;border-radius:13px;padding:11px 6px;text-align:center;font-size:13px;min-height:42px}
+.freeChip.done{background:#e9f0e9;border-color:#c4d2c5}
+.freeChip .ico{display:block;font-size:19px;margin-bottom:3px}
+.legacyHealth{margin-top:14px;background:#f3f4f1;border-radius:16px;padding:0 12px}
+.legacyHealth>summary{padding:13px 2px;font-size:14px;font-weight:800;color:#59615b;cursor:pointer}
+.bottomNav{position:fixed;left:0;right:0;bottom:0;z-index:100;background:rgba(255,255,255,.96);border-top:1px solid #e5e7e3;display:grid;grid-template-columns:repeat(5,1fr);padding:7px max(8px,env(safe-area-inset-right)) calc(7px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));backdrop-filter:blur(10px)}
+.bottomNav button{border:0;background:transparent;padding:6px 2px;font-size:10px;color:#858985;min-width:0}
+.bottomNav button span{display:block;font-size:18px;margin-bottom:2px}.bottomNav button.on{color:#314b38;font-weight:800}
+.lifeModal{position:fixed;inset:0;z-index:300;background:rgba(25,30,27,.36);display:flex;align-items:flex-end;justify-content:center}
+.lifeModal.hide{display:none}.lifeSheet{background:#fff;width:min(100%,560px);max-height:90vh;overflow:auto;border-radius:22px 22px 0 0;padding:18px 16px calc(22px + env(safe-area-inset-bottom));box-sizing:border-box}
+.lifeSheetHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.lifeSheetHead b{font-size:18px}.lifeClose{border:0;background:#f1f2ef;border-radius:50%;width:34px;height:34px}
+.lifeField{margin:11px 0}.lifeField label{display:block;padding:0;margin-bottom:5px;font-size:12px;font-weight:750;color:#666}.lifeField input,.lifeField select{width:100%;box-sizing:border-box;padding:11px;border:1px solid #dadeda;border-radius:11px;font-size:14px;background:#fff}
+.life2col{display:grid;grid-template-columns:1fr 1fr;gap:9px}.dayPills{display:flex;gap:5px;flex-wrap:wrap}.dayPills label{display:flex!important;align-items:center;gap:3px!important;padding:6px 7px!important;margin:0!important;background:#f4f5f2;border-radius:9px;font-size:12px!important}.dayPills input{width:auto!important}
+.lifeActions{display:flex;gap:8px;margin-top:16px}.lifeActions button{flex:1;border:0;border-radius:12px;padding:12px;font-weight:750}.lifeSave{background:#dfe9df}.lifeDelete{background:#f1f1ef;color:#777}
+.placeholderView{padding:70px 18px;text-align:center;color:#888}.placeholderView b{display:block;color:#555;font-size:18px;margin-bottom:8px}
+@media(max-width:380px){.freeGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.life2col{grid-template-columns:1fr}}
+
+
+/* ===== Phase 2: daily note + calendar ===== */
+.freeChipWrap{position:relative;min-width:0}
+.freeChipWrap .freeChip{width:100%;padding-right:28px;height:100%}
+.freeEditBtn{position:absolute;right:4px;top:4px;border:0;background:rgba(255,255,255,.86);border-radius:9px;width:25px;height:25px;font-size:16px;line-height:1;color:#687068;z-index:2}
+.todayNoteBox{margin-top:14px}
+.todayNoteBox textarea{width:100%;box-sizing:border-box;min-height:76px;resize:vertical;border:1px solid #dfe3dd;border-radius:13px;padding:11px 12px;font:inherit;background:#fff}
+.calWrap{padding:12px}
+.calHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.calHead button{border:0;background:#f1f3ef;border-radius:10px;padding:8px 11px}
+.calTitle{font-size:18px;font-weight:850}
+.calWeek,.calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.calWeek div{text-align:center;font-size:11px;color:#888;padding:5px 0}
+.calDay{position:relative;border:1px solid #edf0eb;background:#fff;border-radius:11px;min-height:48px;padding:7px 4px;text-align:center;font-size:13px}
+.calDay.blank{visibility:hidden}.calDay.today{font-weight:900;border-color:#aebdaf}.calDay.selected{background:#eef3ed;border-color:#aebdaf}
+.calDot{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:#667b69}
+.calDetail{margin-top:12px}.calDetail h3{margin:0 0 8px;font-size:16px}
+.calDetailGroup{padding:9px 0;border-top:1px solid #eef0ed}.calDetailGroup:first-of-type{border-top:0}
+.calDetailLabel{font-size:11px;font-weight:800;color:#7b827c;margin-bottom:5px}
+.calDetailItem{font-size:13px;line-height:1.55}
+
+
+/* ===== UI polish ===== */
+:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR","Apple SD Gothic Neo",Roboto,sans-serif}
+body{font-family:inherit;background:#f5f6f3;color:#252a26}
+button,input,select,textarea{font:inherit}
+.section{border-radius:18px;padding:14px;box-shadow:0 1px 0 rgba(30,40,32,.025)}
+.todayHealthCore{padding:14px 14px 10px}
+.todayHealthCore .trackRow{padding:13px 0;border-bottom:1px solid #eef0ec}
+.todayHealthCore .trackRow:last-child{border-bottom:0}
+.todayHealthCore .trackStat{font-size:15px;font-weight:760;color:#303631;letter-spacing:-.01em}
+.todayHealthCore .hint{font-size:11px;color:#899088;margin-bottom:3px}
+.todayHealthCore .trackBtns{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.todayHealthCore .trackBtns button{border:1px solid #e1e6df;background:#f8faf7;color:#4b554d;border-radius:11px;padding:8px 11px;font-size:12px;font-weight:680;box-shadow:none}
+.todayHealthCore .trackBtns button:active{background:#e9eee8;transform:translateY(1px)}
+.todayHealthCore .trackBtns button.reset{background:transparent;border-color:transparent;color:#9a9f9a;font-size:11px;padding-left:2px;padding-right:4px}
+.todayHealthCore .proteinBtns .proteinBtn{background:#f5f8f3}
+.dateBtn{background:#f0f3ef!important;color:#536057!important;border:0!important;font-weight:700}
+.lifeSheet{font-family:inherit;background:#fbfcfa;padding:20px 17px calc(24px + env(safe-area-inset-bottom))}
+.lifeSheetHead b{font-size:19px;letter-spacing:-.025em}
+.lifeField label{font-size:12px;font-weight:750;color:#707771;letter-spacing:-.01em}
+.lifeField input,.lifeField select{border:1px solid #dfe4dd;border-radius:12px;background:#fff;padding:12px 13px;font-size:14px;color:#272d28;outline:none}
+.lifeField input:focus,.lifeField select:focus{border-color:#aebcaf;box-shadow:0 0 0 3px rgba(121,145,125,.09)}
+.fieldHint{font-weight:500;color:#a0a5a0;margin-left:4px}
+.lifeSave{background:#405a46!important;border-radius:12px!important;font-weight:800}
+.lifeDelete{border-radius:12px!important}
+
+
+/* ===== Phase 2.1 visual refinement ===== */
+.todayHealthCore{padding:4px 14px;background:#fff}
+.healthMetricCard{padding:15px 0;border-bottom:1px solid #edf0ec}
+.healthMetricCard:last-child{border-bottom:0}
+.healthMetricHead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.healthMetricText{font-size:14px;font-weight:760;line-height:1.45;color:#303631;min-width:0}
+.healthReset,.healthDelete,.healthActionGrid button{
+  border:0;background:#f2f3f0;color:#555;border-radius:10px;font-family:inherit;font-weight:650;
+  box-shadow:none
+}
+.healthReset{font-size:11px;padding:6px 8px;flex:0 0 auto;color:#858b85}
+.healthDelete{font-size:11px;padding:7px 9px;margin-top:8px}
+.healthActionGrid{display:grid;gap:7px}
+.healthActionGrid.proteinActions{grid-template-columns:repeat(4,1fr)}
+.healthActionGrid.twoActions{grid-template-columns:repeat(2,1fr)}
+.healthActionGrid.threeActions{grid-template-columns:repeat(3,1fr)}
+.healthActionGrid button{height:38px;padding:0 6px;font-size:12px}
+.healthActionGrid button:active,.healthReset:active{background:#e7e9e5}
+.healthHint{font-size:10px;line-height:1.4;color:#a0a5a0;margin-top:8px}
+.calBlockGroup{margin:11px 0 14px}
+.calBlockTitle{font-size:10px;font-weight:850;letter-spacing:.07em;color:#8a918b;margin-bottom:7px}
+.calRoutineChips{display:flex;flex-wrap:wrap;gap:6px}
+.calRoutineChip{display:inline-flex;align-items:center;gap:4px;background:#f2f3f0;border-radius:10px;padding:7px 9px;font-size:12px;font-weight:650;color:#4d554f;line-height:1.2}
+.calInfoCard{background:#f7f8f5;border-radius:13px;padding:11px 12px;margin-top:9px}
+.calInfoCard .calDetailLabel{margin-bottom:5px}
+
+
+/* ===== Phase 3: lighter typography + activity timer ===== */
+.lifeRoutineName{font-size:13px!important;font-weight:400!important;line-height:1.35}
+.lifeRoutineMeta{font-size:11px;font-weight:400}
+.calRoutineChip{font-weight:400!important}
+.calDetailItem{font-weight:400}
+.lifeRoutineTimerActions{display:flex;gap:6px;align-items:center;flex:0 0 auto}
+.lifeTimerBtn,.lifeManualBtn{
+  border:0;background:#f2f3f0;border-radius:10px;padding:7px 9px;font-size:11px;color:#555;font-weight:400
+}
+.lifeTimerBtn.running{background:#e6eee7;color:#35513d}
+.activityTimerBanner{
+  background:#eef3ed;border:1px solid #dce5dc;border-radius:14px;padding:10px 12px;margin:0 0 10px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px
+}
+.activityTimerBanner.hide{display:none}
+.activityTimerMain{min-width:0}.activityTimerName{font-size:13px;font-weight:400;color:#344238}
+.activityTimerElapsed{font-size:11px;color:#7d867f;margin-top:2px}
+.activityTimerStop{border:0;background:#f2f3f0;border-radius:10px;padding:7px 10px;font-size:11px;color:#555;font-weight:400}
+.freeTimerBtn{
+  position:absolute;left:4px;top:4px;border:0;background:rgba(255,255,255,.86);border-radius:9px;
+  width:25px;height:25px;font-size:12px;color:#687068;z-index:2;font-weight:400
+}
+.freeTimerBtn.running{background:#e6eee7}
+.weeklyActivityCard{padding:16px}
+.weeklyActivityHead{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.weeklyActivityList{display:flex;flex-direction:column;gap:8px}
+.weeklyActivityRow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid #eef0ed}
+.weeklyActivityRow:first-child{border-top:0}
+.weeklyActivityName{font-size:13px;font-weight:400;color:#3f4741}
+.weeklyActivityTime{font-size:12px;font-weight:400;color:#7b837d;white-space:nowrap}
+.weeklyActivityEmpty{font-size:12px;color:#939994;padding:6px 0}
+
+
+/* ===== DAILY CARE: FREE TIME-like full-width cards ===== */
+.todayHealthCore{display:none!important}
+.dailyCareBlock{margin-top:0}
+.dailyCareGrid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;
+  width:100%;margin-top:9px
+}
+.dailyCareItem{
+  min-width:0;border:1px solid #e0e4df;background:#fafbf9;border-radius:13px;
+  padding:10px 6px 8px;text-align:center
+}
+.dailyCareName{font-size:13px;font-weight:400;line-height:1.35;color:#303630;white-space:nowrap}
+.dailyCareMeta{
+  font-size:10.5px;font-weight:400;line-height:1.35;color:#8a8f8b;
+  margin-top:4px;min-height:29px;display:flex;align-items:flex-start;justify-content:center
+}
+.dailyCareMeta .good,.dailyCareMeta .need{font-weight:400!important;color:inherit!important}
+.dailyCareActions{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;
+  width:100%;margin:7px auto 0
+}
+.dailyCareActions button{
+  border:0;background:#f2f3f0;border-radius:10px;min-width:0;width:100%;
+  height:auto;min-height:0;padding:7px 4px;line-height:1.15;
+  font-family:inherit;font-size:12px;font-weight:400;color:#5e655f;box-shadow:none
+}
+.dailyCareActions button:active{background:#e7e9e5}
+.dailyCareActions .dailyCareMore{color:#8a8f8b}
+.dailyCareReset{
+  display:inline-block;border:0;background:transparent;padding:5px 0 0;margin:0;
+  font-family:inherit;font-size:10px;font-weight:400;line-height:1.2;color:#a0a5a0
+}
+.dayResetBar{display:flex;justify-content:center;margin:10px 0 2px}
+.dayResetBtn{
+  border:0;background:#f2f3f0;border-radius:10px;padding:7px 10px;
+  font-family:inherit;font-size:12px;font-weight:400;color:#777d78
+}
+@media(max-width:380px){
+  .dailyCareGrid{gap:6px}
+  .dailyCareItem{padding:9px 4px 7px}
+  .dailyCareName{font-size:12px}
+  .dailyCareMeta{font-size:9.5px}
+  .dailyCareActions{gap:4px}
+  .dailyCareActions button{padding:7px 2px;font-size:11px}
+  .dailyCareReset{font-size:9px}
+}
+
+/* ===== compact floating activity timer ===== */
+.activityTimerFloat{position:fixed;right:14px;bottom:76px;z-index:70;display:flex;align-items:center;gap:6px;max-width:180px;padding:7px 10px;border:1px solid #e2e5e1;border-radius:999px;background:rgba(250,251,249,.96);box-shadow:0 3px 12px rgba(0,0,0,.07);font-family:inherit;font-size:11px;font-weight:400;color:#505650;white-space:nowrap}
+.activityTimerFloat.hide{display:none}
+
+/* ===== PHASE 4 BOOKS ===== */
+.booksView{padding-bottom:62px}
+.booksHead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
+.booksTitle{font-size:18px;font-weight:700}.booksSub{font-size:11px;color:#929792;margin-top:3px}
+.bookAddBtn,.bookSmallBtn{border:0;background:#f2f3f0;border-radius:10px;padding:7px 9px;font:400 12px/1 inherit;color:#555}
+.bookFilters{display:flex;gap:6px;overflow:auto;margin:8px 0 12px;padding-bottom:2px}
+.bookFilter,.dateBtn{
+  padding:6px 10px;
+  border-radius:12px;
+  border:none;
+  background:#f0f3ef;
+  font-size:12px;
+  font-weight:700;
+  color:#536057;
+  white-space:nowrap;
+}
+.bookFilter.on{background:#dfe6de;color:#364238}
+.bookStats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:12px}
+.bookStat{background:#fafbf9;border:1px solid #e5e8e3;border-radius:12px;padding:9px 5px;text-align:center}
+.bookStatVal{font-size:16px}.bookStatLabel{font-size:9px;color:#969b97;margin-top:3px}
+.bookYearRow{display:flex;justify-content:flex-end;align-items:center;gap:5px;margin-bottom:8px;font-size:10px;color:#8d938e}
+.bookYearRow select{border:1px solid #e3e6e1;border-radius:8px;background:#fff;padding:5px;font:inherit}
+.bookList{display:grid;gap:8px}.bookCard{border:1px solid #e3e6e1;background:#fff;border-radius:14px;padding:11px}
+.bookCardTop{display:flex;justify-content:space-between;gap:8px}.bookName{font-size:14px;font-weight:400}.bookAuthor{font-size:10px;color:#929792;margin-top:3px}
+.bookTags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.bookTag{font-size:9px;color:#777e78;background:#f5f6f3;border-radius:999px;padding:4px 6px}
+.bookDates{font-size:10px;color:#969b97;margin-top:7px}.bookEmpty{padding:22px 10px;text-align:center;color:#9ba09c;font-size:11px}
+.bookModalBox{max-height:88vh;overflow:auto}.bookFormGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bookField{margin-top:8px}.bookField label{display:block;font-size:9px;color:#838984;margin-bottom:3px}
+.bookField input,.bookField select,.bookField textarea{width:100%;box-sizing:border-box;border:1px solid #dfe3dd;border-radius:9px;padding:7px 8px;font:400 10px/1.3 inherit;background:#fff;color:#343a35}
+.bookField textarea{min-height:65px;resize:vertical}.bookWide{grid-column:1/-1}
+.readingPickList{display:grid;gap:6px;margin-top:10px}.readingPickBtn{border:1px solid #e2e5e0;background:#fff;border-radius:11px;padding:9px;text-align:left;font:400 12px/1.25 inherit;color:#414742}
+.readingPickSkip{color:#929792}.calendarReadingCard{margin-top:9px;padding:10px;border:1px solid #e3e6e1;border-radius:12px;background:#fafbf9}
+.calendarReadingTitle{font-size:10px;color:#858b86;margin-bottom:6px}.calendarReadingRow{font-size:11px;color:#4f5650;margin-top:4px}
+
+/* ===== BOOKS Phase 4.1 reading dashboard ===== */
+.bookPeriodTabs{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid #eceeeb;margin:3px -2px 13px}
+.bookPeriodTab{border:0;background:transparent;padding:10px 4px 9px;font:400 12px/1 inherit;color:#737973;border-bottom:2px solid transparent}
+.bookPeriodTab.on{color:#3d4740;border-bottom-color:#89968b}
+.bookOverviewCard,.bookCategoryCard{border:1px solid #e4e7e2;background:#fff;border-radius:15px;padding:13px;margin-bottom:10px}
+.bookOverviewTitle,.bookCategoryTitle,.bookShelfHead{font-size:13px;font-weight:600;color:#353c36}
+.bookStatsOverview{grid-template-columns:repeat(2,minmax(0,1fr));margin:13px 0 0;gap:8px}
+.bookStatsOverview .bookStat{padding:12px 7px;background:#fafbf9}
+.bookStatsOverview .bookStatVal{font-size:22px;font-weight:400}.bookStatsOverview .bookStatLabel{font-size:10px}
+.bookCategoryRows{margin-top:10px;display:grid;gap:8px}.bookCategoryRow{display:grid;grid-template-columns:70px 1fr 28px;align-items:center;gap:7px;font-size:10px;color:#656c66}
+.bookCategoryTrack{height:7px;border-radius:999px;background:#f0f2ef;overflow:hidden}.bookCategoryFill{height:100%;background:#aab5ac;border-radius:999px}
+.bookCategoryCount{text-align:right}.bookCategoryEmpty{font-size:10px;color:#999f9a;margin-top:8px}
+.bookShelfHead{display:flex;justify-content:space-between;align-items:center;padding:6px 2px 9px}.bookShelfHead span:last-child{font-size:10px;font-weight:400;color:#949a95}
+.bookYearRow{margin:-3px 1px 9px}.bookYearRow.hide{display:none}
+.bookModalBox{padding:15px 14px 12px}.bookModalHead{padding:1px 1px 8px}.bookModalTitle{font-size:16px;font-weight:600;color:#353b36}
+.bookModalFooter{position:sticky;bottom:-12px;background:rgba(255,255,255,.97);display:flex;justify-content:space-between;align-items:center;gap:8px;margin:14px -2px -2px;padding:10px 2px 2px;border-top:1px solid #eef0ed}
+.bookModalFooterRight{display:flex;gap:6px;margin-left:auto}.bookCancelBtn,.bookSaveBtn{border:0;border-radius:10px;padding:7px 9px;font:400 12px/1 inherit}
+.bookCancelBtn{background:#f1f3f0;color:#6e756f}.bookSaveBtn{background:#555f57;color:#fff}.bookDeleteText{border:0;background:transparent;padding:7px 4px;font:400 11px/1 inherit;color:#9a817f}
+
+/* ===== Phase 5 Life Dashboard ===== */
+.recordDashboard{padding-bottom:88px}.recordHero{padding-bottom:10px}
+#recordPeriodTabs{grid-template-columns:repeat(4,1fr);margin-top:5px}
+#bookLibraryFilters{grid-template-columns:repeat(4,1fr);margin:7px -2px 12px}
+.dashboardCard{margin-top:10px}.dashboardCardTitle{font-size:14px;font-weight:600;color:#343b35}
+.dashMetrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:11px}
+.dashMetric{border:1px solid #e5e8e3;background:#fafbf9;border-radius:12px;padding:10px 5px;text-align:center}
+.dashMetricValue{font-size:18px;font-weight:400;color:#343a35;white-space:nowrap}.dashMetricLabel{font-size:9px;color:#949a95;margin-top:4px}
+.dashSectionLabel{font-size:10px;color:#8b918c;margin:13px 0 7px}.dashBars{display:grid;gap:7px}
+.dashBarRow{display:grid;grid-template-columns:minmax(72px,1.1fr) 2fr auto;gap:7px;align-items:center;font-size:10px;color:#5c635d}
+.dashBarName{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dashBarTrack{height:7px;border-radius:999px;background:#f0f2ef;overflow:hidden}.dashBarFill{height:100%;background:#aab5ac;border-radius:999px}.dashBarValue{color:#838984;white-space:nowrap}
+.dashEmpty{font-size:10px;color:#9a9f9b;padding:13px 2px 3px}.dashTopActivity{margin-top:10px;font-size:11px;color:#555c56}
+.readingBookMini{margin-top:9px;display:grid;gap:5px}.readingBookMiniRow{font-size:10px;color:#5d645e;padding:7px 8px;background:#fafbf9;border-radius:9px}
+@media(max-width:380px){.dashMetrics{gap:5px}.dashMetricValue{font-size:16px}.dashBarRow{grid-template-columns:minmax(65px,1fr) 1.6fr auto}}
+
+.readingBookMiniRow{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.readingBookMiniRow .bookTag{flex:0 0 auto}
+
+.bookCardActions{display:flex;align-items:center;gap:5px;flex:0 0 auto}
+
+.dashCompare{margin-top:5px;font-size:10px;line-height:1.25;color:var(--muted);white-space:normal}
+
+.dashMetricsTwo{grid-template-columns:repeat(2,minmax(0,1fr))}
+.genreSegmentBar{display:flex;width:100%;height:14px;overflow:hidden;border-radius:999px;background:var(--line);margin:8px 0 12px}
+.genreSegment{display:block;height:100%;min-width:2px}
+.genreSegment0{background:var(--accent)}
+.genreSegment1{background:color-mix(in srgb,var(--accent) 78%,var(--text))}
+.genreSegment2{background:color-mix(in srgb,var(--accent) 62%,var(--muted))}
+.genreSegment3{background:color-mix(in srgb,var(--accent) 45%,var(--line))}
+.genreSegment4{background:color-mix(in srgb,var(--accent) 28%,var(--line))}
+.genreLegend{display:flex;flex-wrap:wrap;gap:7px 12px;font-size:11px;color:var(--muted)}
+.genreLegend span{display:inline-flex;align-items:center;gap:5px}
+.genreDot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:0 0 auto}
+
+/* Phase 5.9 BOOKS compact controls + covers + book search */
+.bookAddBtn,.bookSmallBtn,.bookCancelBtn,.bookSaveBtn,.bookDeleteBtn,.bookSearchBtn{
+  border-radius:10px;
+  padding:7px 9px;
+  font-size:12px;
+  line-height:1;
+  font-weight:400;
+  min-height:0;
+  height:auto;
+}
+.bookSmallBtn{border:0;background:#f2f3f0;color:#555}
+.bookAddBtn{border:0;background:#f2f3f0;color:#555}
+.bookCancelBtn{border:0;background:#f1f3f0;color:#6e756f}
+.bookSaveBtn{border:0;background:#555f57;color:#fff}
+.bookDeleteBtn{border:1px solid #e4d6d3;background:#fbf6f5;color:#875f5b}
+.bookCardMain{display:flex;gap:10px;min-width:0;flex:1}
+.bookCardText{min-width:0;flex:1}
+.bookCover{width:46px;height:64px;object-fit:cover;border-radius:6px;background:#f2f3f0;flex:0 0 auto}
+.bookSearchBox{margin:10px 0 3px;padding:10px;background:#fafbf9;border:1px solid #e5e8e3;border-radius:12px}
+.bookSearchLabel{font-size:10px;color:#4f5650;margin-bottom:6px}
+.bookSearchLabel span{font-size:9px;color:#969b97;margin-left:5px}
+.bookSearchRow{display:flex;gap:6px;align-items:center}
+.bookSearchRow input{flex:1;min-width:0;box-sizing:border-box;border:1px solid #dfe3dd;border-radius:9px;padding:7px 8px;font:400 10px/1.25 inherit;background:#fff;color:#343a35}
+.bookSearchStatus{font-size:9px;color:#919792;margin-top:6px}
+.bookSearchResults{display:grid;gap:6px;margin-top:7px}
+.bookSearchResult{width:100%;border:1px solid #e3e6e1;background:#fff;border-radius:10px;padding:7px;text-align:left;display:flex;gap:8px;align-items:center;color:#424843;font:400 11px/1.3 inherit}
+.bookSearchResult img{width:34px;height:48px;object-fit:cover;border-radius:4px;background:#f1f2ef;flex:0 0 auto}
+.bookSearchResultText{min-width:0}
+.bookSearchResultTitle{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bookSearchResultMeta{font-size:9px;color:#919792;margin-top:2px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bookCoverPreview{margin-top:8px;display:flex;gap:8px;align-items:center;font-size:10px;color:#7e857f}
+.bookCoverPreview img{width:42px;height:59px;object-fit:cover;border-radius:5px;background:#f1f2ef}
+.bookCoverManual{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:7px}
+.bookCoverManualLabel{font-size:9px;color:#929893;margin-right:2px}
+.bookCoverUploadBtn,.bookCoverRemoveBtn{border:1px solid #e2e5e0;background:#fff;border-radius:9px;padding:6px 8px;font:400 10px/1 inherit;color:#646b65}
+.bookCoverRemoveBtn{color:#8b7673}
+.bookCoverManualNote{width:100%;font-size:8px;color:#a1a6a2;margin-top:1px}
+.bookCoverPreview.customCoverPreview span::after{content:" · 직접 업로드";color:#929893}
+.readingBookMiniMain{display:flex;gap:8px;align-items:center;min-width:0}
+.readingBookCover{width:30px;height:42px;object-fit:cover;border-radius:4px;background:#f1f2ef;flex:0 0 auto}
+.readingBookTitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.genreSegmentBar{height:18px;margin:8px 0 10px;background:#eef0ed}
+.genreSegment{display:flex;align-items:center;justify-content:center;height:100%;min-width:2px;font-size:9px;font-weight:600;color:rgba(255,255,255,.95);overflow:hidden;white-space:nowrap}
+.genreSegmentPct{padding:0 3px}
+.genreSegment0{background:#5d86b3}.genreSegment1{background:#70a5bf}.genreSegment2{background:#82bebf}.genreSegment3{background:#96c7ad}
+.genreSegment4{background:#9bb7d5}.genreSegment5{background:#7898c2}.genreSegment6{background:#91b2a0}.genreSegment7{background:#6e8fae}
+.genreLegend{gap:7px 11px}.genreLegend span{font-size:10px}.genreDot{width:7px;height:7px}
+
+/* BOOKS / reading popup modals */
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:320;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  padding:18px 12px max(18px,env(safe-area-inset-bottom));
+  background:rgba(27,31,28,.34);
+  backdrop-filter:blur(2px);
+  box-sizing:border-box;
+}
+.modal.hide{display:none}
+.modalBox{
+  width:min(100%,560px);
+  max-height:min(88vh,760px);
+  overflow:auto;
+  box-sizing:border-box;
+  background:#fff;
+  border-radius:18px;
+  padding:15px 14px 12px;
+  box-shadow:0 16px 40px rgba(0,0,0,.16);
+}
+.bookModalBox{max-height:min(88vh,760px);overflow:auto}
+@media(min-width:700px){
+  .modal{align-items:center}
+  .modalBox{border-radius:20px}
+}
 </style>
 </head>
 
 <body>
 
-<h1>🍎 루틴 체크</h1>
-<div class="small" style="text-align:center" id="today"></div>
-
-<!-- FIRST ROW : MODE -->
-<div class="tabs">
-  <button class="tab active" id="tabToday" onclick="showTab('today'); setMode('base')">♥️ 일상</button>
-  <button class="tab" id="mHard" onclick="showTab('today'); setMode('hard')">🎯 집중</button>
-  <button class="tab" id="mTravel" onclick="showTab('today'); setMode('travel')">✈️ 이탈</button>
+<div class="lifeTop">
+  <div class="lifeTitle">Today</div>
+  <div class="lifeSub" id="lifeDateLine"></div>
 </div>
-  
-<!-- SECOND ROW : PAGES -->
-<div class="tabs">
-  <button class="tab" id="tabMeal" onclick="showTab('meal')">🍽️ 식단</button>
-  <button class="tab" id="tabAll" onclick="showTab('all')">📚 전체</button>
-  <button class="tab" id="tabBackup" onclick="showTab('backup')">🔐 백업</button>
-</div>  
+<div id="today" class="hide"></div>
   
 <!-- TODAY -->
 <div id="viewToday">
+  <div id="todayHealthFront">
+    <div class="section">
+      <div class="dateRow">
+        <div class="dateTitle">📅</div>
+        <input type="date" id="datePicker">
+        <button class="dateBtn" onclick="loadDate()">확인</button>
+        <button class="dateBtn" onclick="backToToday()">🦖 오늘</button>
+      </div>
+      <div class="small" id="editHint" style="margin-top:6px;color:#c62828;display:none;">⚠️ 과거 기록 수정 중</div>
+    </div>
 
-  <!-- 과거 기록 수정 -->
-  <div class="section">
-    <div class="dateRow">
-      <div class="dateTitle">📅</div>
-  
-      <input type="date" id="datePicker">
-  
-      <button class="dateBtn" onclick="loadDate()">확인</button>
-      <button class="dateBtn" onclick="backToToday()">🦖 오늘</button>
-    </div>
-  
-    <div class="small" id="editHint" style="margin-top:6px;color:#c62828;display:none;">
-      ⚠️ 과거 기록 수정 중
-    </div>
+    <section class="lifeBlock dailyCareBlock">
+      <div class="lifeBlockHead">
+        <div>
+          <div class="lifeBlockTitle">DAILY CARE</div>
+          <div class="lifeBlockHint">오늘의 기본 컨디션 관리</div>
+        </div>
+      </div>
+      <div class="dailyCareGrid">
+        <div class="dailyCareItem dailyCareItemCard">
+          <div class="dailyCareName">🥩 단백질</div>
+          <div class="dailyCareMeta" id="proteinTrackText"></div>
+          <div class="dailyCareActions proteinInlineActions">
+            <button onclick="addProtein(-5)">−5</button>
+            <button onclick="addProtein(20)">+20</button>
+          </div>
+          <button class="dailyCareReset proteinReset" onclick="resetProtein()">초기화</button>
+          <div id="proteinHint" class="healthHint hide"></div>
+        </div>
+
+        <div class="dailyCareItem dailyCareItemCard">
+          <div class="dailyCareName">💧 물</div>
+          <div class="dailyCareMeta" id="waterText"></div>
+          <div class="dailyCareActions waterInlineActions">
+            <button onclick="addWater(-WATER_UNIT)">−120</button>
+            <button onclick="addWater(WATER_UNIT)">+120</button>
+          </div>
+          <button class="dailyCareReset waterReset" onclick="resetWater()">초기화</button>
+        </div>
+
+        <div class="dailyCareItem dailyCareItemCard">
+          <div class="dailyCareName">💤 수면</div>
+          <div class="dailyCareMeta" id="sleepText"></div>
+          <div class="dailyCareActions sleepInlineAction">
+            <button id="sleepMainBtn" onclick="handleSleepMainAction()">취침</button>
+            <button class="dailyCareMore" onclick="manualSleep()">직접</button>
+          </div>
+          <button class="dailyCareReset sleepReset" onclick="deleteSleepRecord()">기록 삭제</button>
+          <button id="deleteSleepBtn" onclick="deleteSleepRecord()" class="hide" style="display:none"></button>
+        </div>
+      </div>
+    </section>
   </div>
 
-  <!-- 단식/단백질/물/수면 트래커 -->
-  <div class="section">
-
-    <div class="trackRow" style="flex-direction:column;">
-    <div class="trackStat fastText" id="fastText"></div>
-  
-    <div class="trackBtns fastBtns">
-      <button class="reset" onclick="cancelFasting()">Reset</button>
-      <button onclick="startFasting()">⛔ 시작</button>
-      <button onclick="endFasting()">✅ 종료</button>
-      <button onclick="manualFasting()">⏱</button>
-      <button id="deleteFastingBtn"
-              class="reset"
-              onclick="deleteFastingRecord()"
-              style="display:none"
-              >🗑</button>
-    </div>
+  <div id="activityTimerBanner" class="activityTimerBanner hide"></div>
+  <div id="activityTimerFloat" class="activityTimerFloat hide"></div>
+  <div id="lifeGuide"></div>
+  <div class="section todayNoteBox">
+    <h2>📝 오늘 한 줄</h2>
+    <textarea id="todayNote" placeholder="오늘 기억하고 싶은 것만 가볍게 적어두기" oninput="saveTodayNote()"></textarea>
+    <div class="small" style="margin-top:5px">날짜별로 자동 저장돼요.</div>
   </div>
 
-    <div class="hint" id="proteinHint"></div>
-
-    <div class="trackRow" style="flex-direction:column;">
-      <div class="trackStat fastText" id="proteinTrackText"></div>
-    
-      <div class="trackBtns fastBtns proteinBtns">
-        <button class="reset" onclick="resetProtein()">Reset</button>    
-        <button class="proteinBtn" onclick="addProtein(-10)">↩️ -10g</button>
-        <button class="proteinBtn" onclick="addProtein(-5)">↩️ -5g</button>
-        <!-- ✅ 여기 줄바꿈 -->
-        <div style="flex-basis:100%;height:0"></div>
-
-        <button class="proteinBtn" onclick="addProtein(1)">🐣 +1g</button>        
-        <button class="proteinBtn" onclick="addProtein(5)">🥚 +5g</button>
-        <button class="proteinBtn" onclick="addProtein(10)">🍗 +10g</button>
-        <button class="proteinBtn" onclick="addProtein(20)">🥩 +20g</button>
-      </div>
-    </div>
-
-    <div class="trackRow" style="flex-direction:column;">
-      <div class="trackStat fastText" id="waterText"></div>
-    
-      <div class="trackBtns fastBtns">
-        <button class="reset" onclick="resetWater()">Reset</button>
-        <button onclick="addWater(-WATER_UNIT)">↩️ -120ml</button>
-        <button onclick="addWater(WATER_UNIT)">💧 +120ml</button>
-      </div>
-    </div>
-
-    <div class="trackRow" style="flex-direction:column;">
-      <div class="trackStat fastText" id="sleepText"></div>
-    
-      <div class="trackBtns fastBtns">
-        <button class="reset" onclick="cancelSleep()">Reset</button>
-        <button onclick="startSleep()">🌙 꿀잠</button>
-        <button onclick="endSleep()">☀️ 인나</button>
-        <button onclick="manualSleep()">⏱</button>
-        <button id="deleteSleepBtn"
-                class="reset"
-                onclick="deleteSleepRecord()"
-                style="display:none"
-                >🗑</button> 
-      </div>
-    </div>
-  
+  <div class="dayResetBar">
+    <button class="dayResetBtn" onclick="resetDayRecords()">이 날짜 기록 초기화</button>
   </div>
 
-  <!-- 측정 기록 (2회 평균) -->
-  <div class="section" id="measureSection">
-    <div class="measureHeader">
-      <div class="sectionTitle">
-        📐 측정 기록 <span class="small">(2회 평균)</span>
-      </div>
-      <div class="trackBtns">
-        <button class="reset" onclick="resetMeasures()">Reset</button>
-      </div>
+</div>
+
+<!-- CALENDAR / BOOKS placeholders: Phase 2/4 -->
+<div id="viewCalendar" class="hide">
+  <div class="section calWrap">
+    <div class="calHead">
+      <button onclick="moveCalendarMonth(-1)">‹</button>
+      <div class="calTitle" id="calendarTitle"></div>
+      <button onclick="moveCalendarMonth(1)">›</button>
     </div>
-  
-    <div class="mealItem">
-      <span class="trackStat">⚖️ 몸무게</span>
-      <span class="mono">
-        <input id="w1" class="textin" type="text" inputmode="decimal" placeholder="1차" style="width:70px">
-        <input id="w2" class="textin" type="text" inputmode="decimal" placeholder="2차" style="width:70px; margin-left:6px">
-      </span>
-      <span class="protein" id="wAvg">-</span>
-    </div>
-  
-    <div class="mealItem">
-      <span class="trackStat">📏 허리둘레</span>
-      <span class="mono">
-        <input id="wa1" class="textin" type="text" inputmode="decimal" placeholder="1차" style="width:70px">
-        <input id="wa2" class="textin" type="text" inputmode="decimal" placeholder="2차" style="width:70px; margin-left:6px">
-      </span>
-      <span class="protein" id="waAvg">-</span>
-    </div>
-  
-    <div class="small" style="margin-top:6px">
-      평균은 자동 저장됨 (해당 날짜 기준)
-    </div>
+    <div class="calWeek"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
+    <div class="calGrid" id="calendarGrid"></div>
+    <div style="margin-top:9px"><button class="dateBtn" onclick="calendarGoToday()">오늘로 이동</button></div>
   </div>
-  
-  <div id="checklist"></div>
-
-  <div class="result" id="result">체크 시작</div>
-
-  <button class="btn" onclick="resetToday()">오늘 체크 초기화</button>
+  <div class="section calDetail" id="calendarDetail"></div>
+</div>
+<div id="viewBooks" class="hide section booksView">
+  <div class="booksHead"><div><div class="booksTitle">BOOKS</div><div class="booksSub">내 책 목록과 독서 상태 관리</div></div><button class="bookAddBtn lifeMiniBtn" onclick="openBookModal()">+ 책 추가</button></div>
+  <div id="bookLibraryFilters" class="bookPeriodTabs">
+    <button class="bookPeriodTab on" data-filter="읽고있어" onclick="setBookLibraryFilter('읽고있어')">읽고있어</button>
+    <button class="bookPeriodTab" data-filter="읽고싶어" onclick="setBookLibraryFilter('읽고싶어')">읽고싶어</button>
+    <button class="bookPeriodTab" data-filter="완독" onclick="setBookLibraryFilter('완독')">완독</button>
+    <button class="bookPeriodTab" data-filter="전체" onclick="setBookLibraryFilter('전체')">전체</button>
+  </div>
+  <div id="bookList" class="bookList"></div>
 </div>
 
 <!-- ALL v2 -->
-<div id="viewAll_v2" class="hide">
-  <div class="section">
-    <h2>전체 기록</h2>
-    <div class="controls" style="margin-top:8px">
-      <select id="allModeFilter_v2">
-        <option value="all">모드: 전체</option>
-        <option value="base">♥️ 일상</option>
-        <option value="hard">🎯 집중</option>
-        <option value="travel">✈️ 이탈</option>
-      </select>
-    
-      <select id="allVerdictFilter_v2">
-        <option value="all">판정: 전체</option>
-        <option value="pass">합격</option>
-        <option value="mid">보통</option>
-        <option value="rest">회복</option>
-      </select>
+<div id="viewAll_v2" class="hide recordDashboard">
+  <div class="section recordHero">
+    <div class="booksHead"><div><div class="booksTitle">RECORD</div><div class="booksSub">내 생활의 흐름을 한눈에 보기</div></div></div>
+    <div id="recordPeriodTabs" class="bookPeriodTabs">
+      <button class="bookPeriodTab on" data-rperiod="week" onclick="setRecordPeriod('week')">이번 주</button>
+      <button class="bookPeriodTab" data-rperiod="month" onclick="setRecordPeriod('month')">이번 달</button>
+      <button class="bookPeriodTab" data-rperiod="year" onclick="setRecordPeriod('year')">올해</button>
+      <button class="bookPeriodTab" data-rperiod="all" onclick="setRecordPeriod('all')">누적</button>
     </div>
+    <div id="recordYearRow" class="bookYearRow hide">조회연도 <select id="recordStatsYear" onchange="renderRecordDashboard()"></select></div>
+  </div>
+<div class="section dashboardCard">
+    <div class="dashboardCardTitle">DAILY CARE</div>
+    <div class="booksSub">기록한 날의 평균</div>
+    <div id="dailyCareDashboard"></div>
+  </div>
 
-    <div class="small" id="allSummary_v2"></div>
+  <div class="section dashboardCard">
+    <div class="dashboardCardTitle">MY READING</div>
+    <div class="booksSub" id="readingPeriodLabel"></div>
+    <div id="readingDashboard"></div>
   </div>
 </div>
 
@@ -625,6 +950,91 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   </div>
 </div>
 
+
+<div id="routineModal" class="lifeModal hide" onclick="if(event.target===this) closeRoutineModal()">
+  <div class="lifeSheet">
+    <div class="lifeSheetHead"><b id="routineModalTitle">루틴 추가</b><button class="lifeClose" onclick="closeRoutineModal()">×</button></div>
+    <input type="hidden" id="rId">
+    <div class="life2col">
+      <div class="lifeField"><label>이름</label><input id="rName" placeholder="예: 영어 공부"></div>
+      <div class="lifeField"><label>아이콘 / 이모지</label><input id="rIcon" placeholder="📘"></div>
+    </div>
+    <div class="life2col">
+      <div class="lifeField"><label>활동 유형</label><select id="rType" onchange="toggleRoutineTypeFields()"><option value="check">체크형</option><option value="number">숫자형</option><option value="time">시간형</option><option value="free">자유 기록형</option></select></div>
+      <div class="lifeField"><label>시간 블록</label><select id="rBlock"><option value="breakfast">BREAKFAST</option><option value="morning">MORNING</option><option value="lunch">LUNCH</option><option value="afternoon">AFTERNOON</option><option value="evening">EVENING</option><option value="free">FREE TIME</option></select></div>
+    </div>
+    <div class="lifeField"><label>반복 방식</label><select id="rRecurrence" onchange="toggleRoutineDays()"><option value="daily">매일</option><option value="weekday">평일</option><option value="weekend">주말</option><option value="days">특정 요일 선택</option><option value="free">자유 활동</option></select></div>
+    <div class="lifeField hide" id="rDaysWrap"><label>요일 선택</label><div class="dayPills">
+      <label><input type="checkbox" name="rDay" value="1">월</label><label><input type="checkbox" name="rDay" value="2">화</label><label><input type="checkbox" name="rDay" value="3">수</label><label><input type="checkbox" name="rDay" value="4">목</label><label><input type="checkbox" name="rDay" value="5">금</label><label><input type="checkbox" name="rDay" value="6">토</label><label><input type="checkbox" name="rDay" value="0">일</label>
+    </div></div>
+    <div id="rTimeOptions" class="lifeField hide"><label>목표 시간 <span class="fieldHint">분</span></label><input id="rTarget" type="number" min="1" step="1" placeholder="20"></div>
+    <div id="rNumberOptions" class="life2col hide"><div class="lifeField"><label>목표값</label><input id="rNumberTarget" type="number" step="any" placeholder="1000"></div><div class="lifeField"><label>단위</label><input id="rUnit" placeholder="예: 개, ml"></div></div>
+    <div id="rFreeOptions" class="lifeField hide"><label>기본 기록 내용 <span class="fieldHint">선택</span></label><input id="rDefaultNote" placeholder="예: 계란 · 두유 · 견과"><div class="fieldHint" style="margin-top:5px">오늘 다른 내용을 기록하면 기본 내용 대신 그날 기록이 표시됩니다.</div></div>
+    <div class="lifeField"><label>표시 순서 <span class="fieldHint">숫자가 작을수록 위에 표시</span></label><input id="rOrder" type="number" step="1" value="10"></div>
+    <div class="lifeField"><label><input id="rEnabled" type="checkbox" checked style="width:auto;margin-right:6px">활성 상태로 표시</label></div>
+    <div class="lifeActions"><button id="routineDeleteBtn" class="lifeDelete hide" onclick="deleteRoutineFromModal()">삭제</button><button class="lifeSave" onclick="saveRoutineFromModal()">저장</button></div>
+  </div>
+</div>
+
+<div id="bookModal" class="modal hide"><div class="modalBox bookModalBox">
+  <div class="bookModalHead"><div><div id="bookModalTitle" class="bookModalTitle">책 추가</div><div class="booksSub">필요한 항목만 가볍게 기록해요.</div></div></div>
+  <input type="hidden" id="bookId">
+  <input type="hidden" id="bookCoverUrl">
+  <input type="hidden" id="bookIsbn">
+  <div class="bookSearchBox">
+    <div class="bookSearchLabel">책 정보 자동입력 <span>제목 또는 ISBN으로 검색</span></div>
+    <div class="bookSearchRow">
+      <input id="bookSearchQuery" placeholder="예: 책제목 또는 ISBN" onkeydown="if(event.key==='Enter'){event.preventDefault();searchBookOnline();}">
+      <button class="lifeMiniBtn bookSearchBtn" onclick="searchBookOnline()">검색</button>
+    </div>
+    <div id="bookSearchStatus" class="bookSearchStatus"></div>
+    <div id="bookSearchResults" class="bookSearchResults"></div>
+    <div id="bookCoverPreview" class="bookCoverPreview hide"></div>
+    <div class="bookCoverManual">
+      <span class="bookCoverManualLabel">표지 직접 설정</span>
+      <input id="bookCoverFile" type="file" accept="image/*" hidden onchange="handleBookCoverFile(event)">
+      <button type="button" class="bookCoverUploadBtn" onclick="chooseBookCoverFile()">이미지 업로드</button>
+      <button type="button" id="bookCoverRemoveBtn" class="bookCoverRemoveBtn hide" onclick="removeUploadedBookCover()">업로드 표지 삭제</button>
+      <div class="bookCoverManualNote">자동 표지가 없거나 다른 표지를 쓰고 싶을 때만 업로드해 주세요.</div>
+    </div>
+  </div>
+  <div class="bookFormGrid">
+    <div class="bookField bookWide"><label>책 제목</label><input id="bookTitle"></div>
+    <div class="bookField"><label>저자</label><input id="bookAuthor"></div><div class="bookField"><label>출판사</label><input id="bookPublisher"></div>
+    <div class="bookField"><label>독서상태</label><select id="bookStatus"><option>읽고싶어</option><option>읽고있어</option><option>완독</option><option>중단</option></select></div>
+    <div class="bookField"><label>형태</label><select id="bookFormat">
+      <option value=""></option>
+      <option>종이책</option>
+      <option>전자책</option>
+      <option>오디오북</option>
+      <option>전자책, 오디오북</option>
+      <option>기타</option>
+    </select></div>
+    <div class="bookField"><label>읽은 곳</label><select id="bookSource"><option value=""></option><option>교보</option><option>윌라</option><option>크레마</option><option>도서관</option><option>기타</option></select></div>
+    <div class="bookField"><label>소장</label><select id="bookOwnership"><option value=""></option><option>구매</option><option>대여</option></select></div>
+    <div class="bookField"><label>시작일</label><input id="bookStartDate" type="date"></div><div class="bookField"><label>완독일</label><input id="bookFinishDate" type="date"></div>
+    <div class="bookField"><label>장르</label><input id="bookGenre"></div><div class="bookField"><label>세부</label><input id="bookDetail"></div>
+    <div class="bookField"><label>별점</label><select id="bookRating"><option value=""></option><option>★</option><option>★★</option><option>★★★</option><option>★★★★</option><option>★★★★★</option></select></div>
+    <div class="bookField bookWide"><label>하이라이트</label><textarea id="bookHighlight"></textarea></div>
+    <div class="bookField bookWide"><label>메모</label><textarea id="bookMemo"></textarea></div>
+  </div>
+  <div class="bookModalFooter">
+    <button class="bookDeleteBtn lifeMiniBtn" id="bookDeleteBtn" onclick="deleteBook()">삭제</button>
+    <div class="bookModalFooterRight"><button class="bookCancelBtn lifeMiniBtn" onclick="closeBookModal()">취소</button><button class="bookSaveBtn lifeMiniBtn" id="bookModalSave" onclick="saveBook()">저장</button></div>
+  </div>
+</div></div>
+<div id="readingBookModal" class="modal hide"><div class="modalBox">
+  <div class="modalHead"><b>어떤 책을 읽었나요?</b><button onclick="closeReadingBookModal()">×</button></div>
+  <div class="small" id="readingBookDuration"></div><div id="readingPickList" class="readingPickList"></div>
+</div></div>
+<nav class="bottomNav">
+  <button id="navToday" class="on" onclick="lifeNavigate('today')"><span>◷</span>TODAY</button>
+  <button id="navCalendar" onclick="lifeNavigate('calendar')"><span>▦</span>CALENDAR</button>
+  <button id="navBooks" onclick="lifeNavigate('books')"><span>▤</span>BOOKS</button>
+  <button id="navRecord" onclick="lifeNavigate('record')"><span>⌁</span>RECORD</button>
+  <button id="navBackup" onclick="lifeNavigate('backup')"><span>◇</span>BACKUP</button>
+</nav>
+
 <script>
   
 /* =========================
@@ -792,29 +1202,10 @@ function setMode(m){
 }
 
 function render(){
-  if(!document.getElementById("checklist")) return;
-  // 모드 버튼 초기화
-  ["mHard","mTravel"].forEach(id=>{
-    const el = document.getElementById(id);
-    if(el) el.classList.remove("active");
-  });
-
-  // 현재 모드 강조
-  if(state.mode === "hard") {
-    document.getElementById("mHard")?.classList.add("active");
-  } else if(state.mode === "travel") {
-    document.getElementById("mTravel")?.classList.add("active");
-  }
-  // base 모드는 '기록(tabToday)'가 이미 활성화 역할
-
-  // datePicker 보정
+  renderLifeGuide();
   const dp = document.getElementById("datePicker");
-  if(dp){
-    dp.max = todayKey;
-    dp.value = activeDateKey;
-  }
-
-  update(); // ✅ 여기까지 와야 체크리스트가 그려짐
+  if(dp){ dp.max = todayKey; dp.value = activeDateKey; }
+  update();
 }
 
 
@@ -1126,36 +1517,31 @@ function deleteSleepRecord(){
 
   
 function renderSleep(){
-  const el = document.getElementById("sleepText");
-  if(!el) return;
-
-  const delBtn = document.getElementById("deleteSleepBtn");
-  const sess = loadSleepSession();
-
-  // 1) 취침 중
-  if(sess && sess.startAt){
-    const start = new Date(sess.startAt);
-    el.innerHTML = `💤 꿀잠 중 (${fmtHM(start)})`;
-    if(delBtn) delBtn.style.display = "none";
+  const el=document.getElementById("sleepText");if(!el)return;
+  const btn=document.getElementById("sleepMainBtn");
+  const delBtn=document.getElementById("deleteSleepBtn");
+  const sess=loadSleepSession();
+  if(sess&&sess.startAt){
+    const start=new Date(sess.startAt);
+    const mins=Math.max(0,Math.floor((Date.now()-start.getTime())/60000));
+    el.textContent=`${formatDurationMin(mins)} 진행 중 · ${fmtHM(start)} 취침`;
+    if(btn){btn.textContent="기상";btn.onclick=endSleep;}
+    if(delBtn)delBtn.style.display="none";
     return;
   }
-
-  // 2) 기상 완료 기록 ✅ (여기가 핵심)
-  if(state.sleepEndAt && typeof state.sleepMinutes === "number"){
-    const endAt = new Date(state.sleepEndAt);
-    const h = Math.floor(state.sleepMinutes / 60);
-    const m = state.sleepMinutes % 60;
-
-    el.innerHTML =
-      `☀️ 기상 <span class="good">${fmtHM(endAt)}</span> · 🕒 수면 시간 ${h}시간 ${m}분`;
-
-    if(delBtn) delBtn.style.display = "inline-block";
+  if(state.sleepEndAt&&typeof state.sleepMinutes==="number"){
+    el.textContent=`${formatDurationMin(state.sleepMinutes)} · 기록 완료`;
+    if(btn){btn.textContent="취침";btn.onclick=startSleep;}
+    if(delBtn)delBtn.style.display="none";
     return;
   }
-
-  // 3) 기록 없음
-  el.innerHTML = "💚 활동 중";
-  if(delBtn) delBtn.style.display = "none";
+  el.textContent="기록 없음";
+  if(btn){btn.textContent="취침";btn.onclick=startSleep;}
+  if(delBtn)delBtn.style.display="none";
+}
+function handleSleepMainAction(){
+  const sess=loadSleepSession();
+  if(sess&&sess.startAt)endSleep();else startSleep();
 }
 
 
@@ -1248,25 +1634,13 @@ function resetProtein(){
   save(); update();
 }
 function renderProtein(){
-  const g = state.proteinG || 0;
-  const target = getProteinTarget(state.mode || "base");
-  const left = Math.max(0, target - g);
-  const ok = g >= target;
-
-  const capMsg = (g > PROTEIN_SOFT_CAP)
-    ? ` · <span class="need">상한 ${PROTEIN_SOFT_CAP}g↑</span>`
-    : "";
-
-  document.getElementById("proteinTrackText").innerHTML =
-    ok
-    ? `🥩 단백질 <span class="good">${g}g</span> (✅ 최소 ${target}g 달성${capMsg})`
-    : `🥩 단백질 <span class="need">${g}g</span> (남은 ${left}g / 최소 ${target}g${capMsg})`;
-
-  // 속 불편 방지용 아주 짧은 안내(체크 항목 아님)
-  const hintEl = document.getElementById("proteinHint");
-  if(hintEl){
-    hintEl.innerText = `TIP: 단백질 먹을 때 밥/과일/견과 같이(권장 상한 ${PROTEIN_SOFT_CAP}g)`;
-  }
+  const g=state.proteinG||0;
+  const target=getProteinTarget(state.mode||"base");
+  const left=Math.max(0,target-g);
+  const el=document.getElementById("proteinTrackText");
+  if(el) el.textContent=g>=target?`${g}g · 오늘 기준 ${target}g`:`${g}g · ${left}g 남음`;
+  const hintEl=document.getElementById("proteinHint");
+  if(hintEl) hintEl.textContent="";
 }
 
 /* =========================
@@ -1282,15 +1656,10 @@ function resetWater(){
   save(); update();
 }
 function renderWater(){
-  const ml = state.waterMl || 0;
-  const left = Math.max(0, WATER_TARGET - ml);
-  const cups = Math.floor(ml / WATER_UNIT);
-  const ok = ml >= WATER_TARGET;
-
-  document.getElementById("waterText").innerHTML =
-    ok
-    ? `💧 물 <span class="good">${ml}ml</span> (✅ 목표 ${WATER_TARGET}ml 달성)`
-    : `💧 물 <span class="need">${ml}ml</span> (남은 ${left}ml / ${cups}회)`;
+  const ml=state.waterMl||0;
+  const left=Math.max(0,WATER_TARGET-ml);
+  const el=document.getElementById("waterText");
+  if(el) el.textContent=ml>=WATER_TARGET?`${ml.toLocaleString()}ml · 오늘 기준 ${WATER_TARGET.toLocaleString()}ml`:`${ml.toLocaleString()}ml · ${left.toLocaleString()}ml 남음`;
 }
 
 function nOrNull(v){
@@ -1343,46 +1712,26 @@ function renderMeasures(){
 }
 
 function bindMeasureInputs(){
-  // ✅ 중복 바인딩 방지
-  if(window.__measureBound) return;
-  window.__measureBound = true;
+  // ✅ 이벤트 위임: 어떤 렌더/숨김/재진입 상황에서도 입력 이벤트를 놓치지 않음
+  document.addEventListener("input", (e) => {
+    const id = e.target?.id;
+    if(!id) return;
 
-  const apply = () => {
-    const w1  = document.getElementById("w1");
-    const w2  = document.getElementById("w2");
-    const wa1 = document.getElementById("wa1");
-    const wa2 = document.getElementById("wa2");
-    if(!w1 || !w2 || !wa1 || !wa2) return;
-
-    state.weight1 = nOrNull(w1.value);
-    state.weight2 = nOrNull(w2.value);
-    state.waist1  = nOrNull(wa1.value);
-    state.waist2  = nOrNull(wa2.value);
-
-    // ✅ 해당 날짜(activeDateKey)에 확실히 저장
-    saveStateForKey(activeDateKey, state);
-
-    // ✅ 평균 표시 + 점수/판정까지 갱신
-    update();
-
-    // ✅ 전체 탭 보고 있는 중이면 즉시 반영
-    if(!document.getElementById("viewAll_v2")?.classList.contains("hide")){
-      renderAll_v2();
-    }
-  };
-
-  const handler = (e) => {
-    const id = e?.target?.id;
     if(id === "w1" || id === "w2" || id === "wa1" || id === "wa2"){
-      apply();
-    }
-  };
+      const w1  = document.getElementById("w1");
+      const w2  = document.getElementById("w2");
+      const wa1 = document.getElementById("wa1");
+      const wa2 = document.getElementById("wa2");
 
-  // 모바일에서 input이 늦게/불안정하게 들어오는 케이스까지 커버
-  document.addEventListener("input", handler, true);
-  document.addEventListener("change", handler, true);
-  document.addEventListener("keyup", handler, true);
-  document.addEventListener("blur", handler, true);
+      state.weight1 = nOrNull(w1?.value);
+      state.weight2 = nOrNull(w2?.value);
+      state.waist1  = nOrNull(wa1?.value);
+      state.waist2  = nOrNull(wa2?.value);
+
+      save();
+      renderMeasures();
+    }
+  });
 }
 
 function resetMeasures(){
@@ -1693,15 +2042,8 @@ function update(){
   renderSleep();
   renderProtein();
   renderWater();
-  renderChecklist();
   renderMeasures();
-const st = calcStats(state, activeDateKey);
-  const r=document.getElementById("result");
-  const v = verdictFromRatio(st.ratio);
-
-  if(v.key==="pass"){ r.innerText="완전 뿌듯 🎀"; r.className="result pass"; }
-  else if(v.key==="mid"){ r.innerText="잘했다 🌷"; r.className="result mid"; }
-  else { r.innerText="회복하는 날 🌿"; r.className="result rest"; }
+  renderLifeGuide();
 }
 
 function resetToday(){
@@ -1770,140 +2112,7 @@ function getAllKeys(){
   return keys;
 }
 
-function renderAll_v2(){
-  const modeF = document.getElementById("allModeFilter_v2")?.value || "all";
-  const verF  = document.getElementById("allVerdictFilter_v2")?.value || "all";
-
-  const summary = document.getElementById("allSummary_v2");
-  const container = document.getElementById("viewAll_v2");
-  if(!summary || !container) return;
-
-  // 기존 월별 리스트 제거 (요약/필터는 유지)
-  container.querySelectorAll("details").forEach(el => el.remove());
-  container.querySelectorAll(".emptyMsg").forEach(el => el.remove());
-
-  const keys = getAllKeys();
-  const groups = {}; // { YYYY-MM: [...] }
-  let total=0, pass=0, mid=0, rest=0;
-
-  keys.forEach(k=>{
-    const s = getStateForKey(k);
-    if(!s) return;
-
-    const st = calcStats(s, k);
-    const v  = verdictFromRatio(st.ratio);
-
-    // ✅ 필터는 여기서!
-    if(modeF !== "all" && (st.mode || "base") !== modeF) return;
-    if(verF  !== "all" && v.key !== verF) return;
-
-    total++;
-    if(v.key==="pass") pass++;
-    else if(v.key==="mid") mid++;
-    else rest++;
-
-    const ym = k.slice(0,7);
-    groups[ym] = groups[ym] || [];
-
-    const protein = s.proteinG ? `${s.proteinG}g` : "-";
-    const water   = s.waterMl ? `${(s.waterMl/1000).toFixed(1)}L` : "-";
-    const wAvg = avg2(s.weight1, s.weight2);
-    const waAvg = avg2(s.waist1, s.waist2);
-    const weightAvg = (wAvg==null) ? "-" : wAvg.toFixed(1);
-    const waistAvg  = (waAvg==null) ? "-" : waAvg.toFixed(1);
-
-    let fasting = "-";
-    if(s.fastingMinutes){
-      const h = Math.floor(s.fastingMinutes/60);
-      const m = s.fastingMinutes % 60;
-      fasting = `${h}:${String(m).padStart(2,"0")}`;
-    }
-
-    let sleep = "-";
-    if(s.sleepMinutes){
-      const h = Math.floor(s.sleepMinutes/60);
-      const m = s.sleepMinutes % 60;
-      sleep = `${h}:${String(m).padStart(2,"0")}`;
-    }
-
-    groups[ym].push({
-      date:k,
-      mode:st.mode,
-      verdict:v,
-      protein, water, fasting, sleep, weightAvg, waistAvg
-    });
-  });
-
-  summary.innerText = `총 ${total}일 · 합격 ${pass} · 보통 ${mid} · 회복 ${rest}`;
-
-  const months = Object.keys(groups).sort((a,b)=> b.localeCompare(a));
-  if(months.length === 0){
-    container.insertAdjacentHTML(
-      "beforeend",
-      `<div class="section emptyMsg"><div class="small">기록이 없어.</div></div>`
-    );
-    return;
-  }
-
-  months.forEach((ym, idx)=>{
-    const rows = groups[ym];
-
-    let mp=0, mm=0, mr=0;
-    rows.forEach(r=>{
-      if(r.verdict.key==="pass") mp++;
-      else if(r.verdict.key==="mid") mm++;
-      else mr++;
-    });
-
-    const det = document.createElement("details");
-    if(idx===0) det.open = true;
-
-    det.innerHTML = `
-      <summary>
-        <div class="summaryRow">
-          <div>${ym} <span class="small">(합격 ${mp} · 보통 ${mm} · 회복 ${mr})</span></div>
-          <div class="small">눌러서 펼치기</div>
-        </div>
-      </summary>
-      <div style="overflow:auto; margin-top:8px;">
-        <table>
-          <thead>
-            <tr>
-              <th>날짜</th>
-              <th>모드</th>
-              <th>판정</th>
-              <th>단백질</th>
-              <th>물</th>
-              <th>단식</th>
-              <th>수면</th>
-              <th>몸무게</th>
-              <th>허리</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${rows.map(r=>`
-              <tr>
-                <td>${r.date}</td>
-                <td>${modeLabel(r.mode)}</td>
-                <td><span class="badge ${r.verdict.cls}">${r.verdict.txt}</span></td>
-                <td class="mono">${r.protein}</td>
-                <td class="mono">${r.water}</td>
-                <td class="mono">${r.fasting}</td>
-                <td class="mono">${r.sleep}</td>
-                <td class="mono">${r.weightAvg}</td>
-                <td class="mono">${r.waistAvg}</td>    
-              </tr>
-            `).join("")}
-          </tbody>
-        </table>
-      </div>
-    `;
-    container.appendChild(det);
-  });
-}
-
-document.getElementById("allModeFilter_v2").onchange = renderAll_v2;
-document.getElementById("allVerdictFilter_v2").onchange = renderAll_v2;
+function renderAll_v2(){renderRecordDashboard();}
 
 /* =========================
    백업 / 복원
@@ -2035,52 +2244,10 @@ function makeAutoBackup(){
   // 이미 같은 키가 있으면 중복 저장 안 함
   if(localStorage.getItem(key)) return;
 
-  // ✅ 1) 먼저 오래된 자동백업을 정리 (저장 전에!)
+  const data = JSON.stringify(localStorage);
+  localStorage.setItem(key, data);
+
   cleanupOldAutoBackups();
-
-  // ✅ 2) "백업을 백업하는" 폭발을 막기 위해 자동백업 키는 제외하고 저장
-  const dataObj = {};
-  for(let i=0;i<localStorage.length;i++){
-    const k = localStorage.key(i);
-    if(!k) continue;
-    if(k.startsWith(AUTO_BACKUP_PREFIX)) continue; // 자동백업 제외
-    dataObj[k] = localStorage.getItem(k);
-  }
-  const data = JSON.stringify(dataObj);
-
-  // ✅ 3) 용량 초과 시: 자동백업을 더 지우고 1회 재시도 (앱이 죽지 않게)
-  try{
-    localStorage.setItem(key, data);
-  }catch(e){
-    if(e && String(e.name).includes("QuotaExceeded")){
-      // 최근 7개 제한으로도 부족하면 더 공격적으로 줄임
-      forceCleanupAutoBackups(3); // 최근 3개만 유지
-      try{
-        localStorage.setItem(key, data);
-      }catch(e2){
-        // 그래도 안 되면 자동백업 포기(앱 작동이 우선)
-        console.warn("Auto backup skipped due to quota.", e2);
-      }
-    }else{
-      throw e;
-    }
-  }
-
-  // ✅ 마지막으로 한 번 더 정리
-  cleanupOldAutoBackups();
-}
-
-// ✅ 쿼터 초과 시 강제 정리(최근 n개만 남김)
-function forceCleanupAutoBackups(keepN){
-  const keys = [];
-  for(let i=0;i<localStorage.length;i++){
-    const k = localStorage.key(i);
-    if(k && k.startsWith(AUTO_BACKUP_PREFIX)) keys.push(k);
-  }
-  keys.sort(); // 오래된 것부터
-  while(keys.length > keepN){
-    localStorage.removeItem(keys.shift());
-  }
 }
 
 function cleanupOldAutoBackups(){
@@ -2136,6 +2303,1508 @@ function restoreLatestAutoBackup(){
 }
 
   
+
+/* =========================
+   LIFE GUIDE v1 - Phase 1
+   별도 localStorage key만 사용하여 기존 날짜별 건강 기록과 분리
+========================= */
+const LIFE_ROUTINES_KEY = "routineDefinitions_v1";
+const LIFE_LOGS_KEY = "dailyActivityLogs_v1";
+const DAILY_NOTES_KEY = "dailyNotes_v1";
+const ACTIVITY_TIMER_KEY = "activityTimerSession_v1";
+const LEGACY_MIGRATION_KEY = "legacyBaseRoutineMigration_v1";
+const ROUTINE_LAYOUT_V2_KEY = "routineLayoutV2";
+const ROUTINE_SEMANTICS_V3_KEY = "routineSemanticsV3";
+const ROUTINE_SEMANTICS_V4_KEY = "routineSemanticsV4";
+const ROUTINE_CLEANUP_V5_KEY = "routineCleanupV5";
+
+const LIFE_DEFAULT_ROUTINES = [
+  {id:"breakfast_brush",name:"양치",icon:"🪥",type:"check",block:"breakfast",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:10,legacyKey:"아침_🪥 양치"},
+  {id:"breakfast_probiotic",name:"유산균",icon:"🦠",type:"check",block:"breakfast",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:20,legacyKey:"아침_💊 유산균"},
+  {id:"breakfast_meal",name:"아침식사",icon:"🍳",type:"free",block:"breakfast",recurrence:"daily",days:[],target:null,unit:"",defaultNote:"계란 · 두유 · 견과",maxDuration:null,enabled:true,order:30},
+  {id:"breakfast_collagen",name:"콜라겐",icon:"✨",type:"check",block:"breakfast",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:40},
+  {id:"breakfast_lemon",name:"레몬수",icon:"🍋",type:"check",block:"breakfast",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:50,legacyKey:"점심_🍋 레몬물"},
+
+  {id:"morning_vocab",name:"써보카",icon:"📝",type:"time",block:"morning",recurrence:"daily",days:[],target:20,unit:"분",maxDuration:20,enabled:true,order:10},
+  {id:"morning_speak",name:"말해영어",icon:"🗣️",type:"time",block:"morning",recurrence:"daily",days:[],target:20,unit:"분",maxDuration:20,enabled:true,order:20},
+  {id:"morning_japanese",name:"기초일본어",icon:"🇯🇵",type:"time",block:"morning",recurrence:"daily",days:[],target:20,unit:"분",maxDuration:20,enabled:true,order:30},
+
+  {id:"lunch_meal",name:"점심은 든든히",icon:"🍚",type:"check",block:"lunch",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:10},
+  {id:"lunch_walk",name:"식후 걷기",icon:"🚶",type:"time",block:"lunch",recurrence:"daily",days:[],target:20,unit:"분",maxDuration:20,enabled:true,order:20},
+  {id:"lunch_vitamin",name:"비타민",icon:"💊",type:"check",block:"lunch",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:30,legacyKey:"점심_💊 비타민"},
+
+  {id:"afternoon_work",name:"업무 / 연구",icon:"💻",type:"check",block:"afternoon",recurrence:"weekday",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:10},
+
+  {id:"evening_dinner",name:"간단한 저녁",icon:"🥗",type:"check",block:"evening",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:10},
+  {id:"evening_shoulder",name:"어깨마사지",icon:"💆",type:"check",block:"evening",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:20},
+
+  {id:"mon_polepractice",name:"17:00–18:00 폴 연습",icon:"🌹",type:"check",block:"evening",recurrence:"days",days:[1],target:null,unit:"",maxDuration:60,enabled:true,order:110},
+  {id:"mon_poleclass",name:"18:30–19:20 폴 강의",icon:"💃",type:"check",block:"evening",recurrence:"days",days:[1],target:null,unit:"",maxDuration:50,enabled:true,order:120},
+  {id:"mon_rope",name:"줄넘기",icon:"🪢",type:"check",block:"evening",recurrence:"days",days:[1],target:null,unit:"",maxDuration:null,enabled:true,order:130},
+
+  {id:"tue_polepractice",name:"18:30–19:30 폴 연습",icon:"🌹",type:"check",block:"evening",recurrence:"days",days:[2],target:null,unit:"",maxDuration:60,enabled:true,order:110},
+  {id:"tue_poleclass",name:"20:30–21:20 폴 강의",icon:"💃",type:"check",block:"evening",recurrence:"days",days:[2],target:null,unit:"",maxDuration:50,enabled:true,order:120},
+  {id:"tue_rope",name:"줄넘기",icon:"🪢",type:"check",block:"evening",recurrence:"days",days:[2],target:null,unit:"",maxDuration:null,enabled:true,order:130},
+
+  {id:"wed_baha",name:"바하",icon:"🧴",type:"check",block:"evening",recurrence:"days",days:[3],target:null,unit:"",maxDuration:null,enabled:true,order:110},
+  {id:"wed_mask",name:"팩",icon:"🧖",type:"check",block:"evening",recurrence:"days",days:[3],target:null,unit:"",maxDuration:null,enabled:true,order:120},
+
+  {id:"thu_polepractice",name:"18:30–19:30 폴 연습",icon:"🌹",type:"check",block:"evening",recurrence:"days",days:[4],target:null,unit:"",maxDuration:60,enabled:true,order:110},
+  {id:"thu_poleclass",name:"20:30–21:20 폴 강의",icon:"💃",type:"check",block:"evening",recurrence:"days",days:[4],target:null,unit:"",maxDuration:50,enabled:true,order:120},
+  {id:"thu_rope",name:"줄넘기",icon:"🪢",type:"check",block:"evening",recurrence:"days",days:[4],target:null,unit:"",maxDuration:null,enabled:true,order:130},
+
+  {id:"sat_mask",name:"팩",icon:"🧖",type:"check",block:"evening",recurrence:"days",days:[6],target:null,unit:"",maxDuration:null,enabled:true,order:110},
+
+  {id:"free_read",name:"독서",icon:"📚",type:"time",block:"free",recurrence:"free",days:[],target:null,unit:"분",maxDuration:null,enabled:true,order:10},
+  {id:"free_knit",name:"뜨개질",icon:"🧶",type:"time",block:"free",recurrence:"free",days:[],target:null,unit:"분",maxDuration:null,enabled:true,order:20},
+  {id:"free_rope",name:"줄넘기",icon:"🪢",type:"check",block:"free",recurrence:"free",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:30},
+  {id:"free_english",name:"영어",icon:"🔤",type:"check",block:"free",recurrence:"free",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:40},
+  {id:"free_japanese",name:"일본어",icon:"🇯🇵",type:"check",block:"free",recurrence:"free",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:50},
+  {id:"free_pole",name:"폴",icon:"💃",type:"check",block:"free",recurrence:"free",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:60},
+  {id:"free_walk",name:"산책",icon:"🌳",type:"time",block:"free",recurrence:"free",days:[],target:null,unit:"분",maxDuration:null,enabled:true,order:70},
+  {id:"free_boardgame",name:"보드게임",icon:"🎲",type:"free",block:"free",recurrence:"free",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:80},
+  {id:"free_rest",name:"그냥 쉬기",icon:"☁️",type:"check",block:"free",recurrence:"free",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:90}
+];
+
+const LEGACY_BASE_ROUTINES = [
+  {id:"legacy_morning_breath",name:"복식호흡",icon:"🌬️",type:"check",block:"morning",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:1,legacyKey:"아침_🌬️ 복식호흡"},
+  {id:"legacy_morning_core",name:"하복부힘",icon:"🦭",type:"check",block:"morning",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:2,legacyKey:"아침_🦭 하복부힘"},
+  {id:"legacy_morning_brush",name:"양치",icon:"🪥",type:"check",block:"morning",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:3,legacyKey:"아침_🪥 양치"},
+  {id:"legacy_morning_probiotic",name:"유산균",icon:"💊",type:"check",block:"morning",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:4,legacyKey:"아침_💊 유산균"},
+  {id:"legacy_lunch_vitamin",name:"비타민",icon:"💊",type:"check",block:"lunch",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:1,legacyKey:"점심_💊 비타민"},
+  {id:"legacy_lunch_lemon",name:"레몬물",icon:"🍋",type:"check",block:"lunch",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:2,legacyKey:"점심_🍋 레몬물"},
+  {id:"legacy_lunch_air",name:"환기",icon:"🍃",type:"check",block:"lunch",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:3,legacyKey:"점심_🍃 환기"},
+  {id:"legacy_lunch_activity",name:"가벼운 활동",icon:"🎠",type:"check",block:"lunch",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:4,legacyKey:"점심_🎠 가벼운 활동"},
+  {id:"legacy_evening_lymph",name:"림프 마사지",icon:"🪆",type:"check",block:"evening",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:1,legacyKey:"저녁_🪆 림프 마사지"},
+  {id:"legacy_evening_breath",name:"복식호흡",icon:"🌬️",type:"check",block:"evening",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:2,legacyKey:"저녁_🌬️ 복식호흡"},
+  {id:"legacy_workout_sun_back",name:"Back",icon:"🪽",type:"check",block:"lunch",recurrence:"days",days:[0],target:null,unit:"",maxDuration:null,enabled:true,order:80,legacyKey:"운동_점심 · 🪽 Back"},
+  {id:"legacy_workout_sun_stretch",name:"Stretching",icon:"🐙",type:"check",block:"evening",recurrence:"days",days:[0],target:null,unit:"",maxDuration:null,enabled:true,order:80,legacyKey:"운동_저녁 · 🐙 Stretching"},
+  {id:"legacy_workout_mon_abs",name:"Abs",icon:"🦭",type:"check",block:"lunch",recurrence:"days",days:[1],target:null,unit:"",maxDuration:null,enabled:true,order:80,legacyKey:"운동_점심 · 🦭 Abs"},
+  {id:"legacy_workout_mon_pole",name:"Pole + Protein 10g",icon:"🌹",type:"check",block:"evening",recurrence:"days",days:[1],target:null,unit:"",maxDuration:null,enabled:true,order:80,legacyKey:"운동_저녁 · 🌹 Pole +Protein 10g"},
+  {id:"legacy_workout_tue_hip",name:"Hip",icon:"🍑",type:"check",block:"lunch",recurrence:"days",days:[2],target:null,unit:"",maxDuration:null,enabled:true,order:80,legacyKey:"운동_점심 · 🍑 Hip"},
+  {id:"legacy_workout_tue_foam",name:"Foam Roller",icon:"🦵",type:"check",block:"lunch",recurrence:"days",days:[2],target:null,unit:"",maxDuration:null,enabled:true,order:81,legacyKey:"운동_점심 · 🦵 Foam Roller"},
+  {id:"legacy_workout_wed_back",name:"Back",icon:"🪽",type:"check",block:"lunch",recurrence:"days",days:[3],target:null,unit:"",maxDuration:null,enabled:true,order:80,legacyKey:"운동_점심 · 🪽 Back"},
+  {id:"legacy_workout_wed_pole",name:"Pole + Protein 10g",icon:"🌹",type:"check",block:"evening",recurrence:"days",days:[3],target:null,unit:"",maxDuration:null,enabled:true,order:80,legacyKey:"운동_저녁 · 🌹 Pole +Protein 10g"},
+  {id:"legacy_workout_thu_abs",name:"Abs",icon:"🦭",type:"check",block:"lunch",recurrence:"days",days:[4],target:null,unit:"",maxDuration:null,enabled:true,order:80,legacyKey:"운동_점심 · 🦭 Abs"},
+  {id:"legacy_workout_thu_foam",name:"Foam Roller",icon:"💪",type:"check",block:"lunch",recurrence:"days",days:[4],target:null,unit:"",maxDuration:null,enabled:true,order:81,legacyKey:"운동_점심 · 💪 Foam Roller"},
+  {id:"legacy_workout_fri_pole",name:"Pole + Protein 10g",icon:"🌹",type:"check",block:"morning",recurrence:"days",days:[5],target:null,unit:"",maxDuration:null,enabled:true,order:80,legacyKey:"운동_아침 · 🌹 Pole +Protein 10g"},
+  {id:"legacy_workout_fri_hip",name:"Hip",icon:"🍑",type:"check",block:"lunch",recurrence:"days",days:[5],target:null,unit:"",maxDuration:null,enabled:true,order:80,legacyKey:"운동_점심 · 🍑 Hip"},
+  {id:"legacy_workout_sat_pole",name:"Pole + Protein 10g",icon:"🌹",type:"check",block:"morning",recurrence:"days",days:[6],target:null,unit:"",maxDuration:null,enabled:true,order:80,legacyKey:"운동_아침 · 🌹 Pole +Protein 10g"}
+];
+
+function lifeClone(v){ return JSON.parse(JSON.stringify(v)); }
+function ensureLegacyBaseRoutines(list){
+  if(localStorage.getItem(LEGACY_MIGRATION_KEY)==='done') return list;
+  const byId=new Set(list.map(r=>r.id));
+  let changed=false;
+  LEGACY_BASE_ROUTINES.forEach(r=>{ if(!byId.has(r.id)){ list.push(lifeClone(r)); changed=true; } });
+  if(changed) saveLifeRoutines(list);
+  localStorage.setItem(LEGACY_MIGRATION_KEY,'done');
+  return list;
+}
+
+const BOOKS_KEY="books_v1";
+const READING_LOGS_KEY="readingLogs_v1";
+const BOOK_IMPORT_KEY="bookExcelImport_v1";
+const BOOK_EXCEL_SEED=[{"id":"excel_1","title":"눈물을 마시는 새 1-4권","author":"이영도","publisher":"황금가지","startDate":"2025-07-24","finishDate":"2025-08-20","status":"완독","format":"전자책","source":"교보","ownership":"구매","genre":"소설","detail":"판타지","rating":"★★★★★","highlight":"\"좋은 꿈들 꾸셨습니까!\n행운이 노력하는 자의 위대함을 깎아내리지는 않는다는 말도 된다.\n\"사랑하기 위해 사는 삶\"","memo":"영광이 추천"},{"id":"excel_2","title":"얼굴들","author":"이동원","publisher":"라곰","startDate":"2026-09-01","finishDate":"2026-09-08","status":"완독","format":"전자책","source":"윌라","ownership":"대여","genre":"소설","detail":"추리","rating":"★★★★★","highlight":"사랑을 하면 눈이 먼다고 한다. 하지만 사랑은 눈을 멀게 하지 않는다. 오히려 눈을 밝힌다. 분별하는 지혜를 주고, 두려움에 맞설 용기를 준다. 제멋대로 불타오느는 감정은 자신뿐 아니라 상대까지도 다치게 하지만 사랑은 가장 사람다운 온도로 서로의 마음을 감싸둔다.","memo":"완이님 추천"},{"id":"excel_3","title":"리볼브 1-2권","author":"이종관","publisher":"고즈넉이텐티","startDate":"","finishDate":"","status":"읽고있어","format":"전자책, 오디오북","source":"","ownership":"","genre":"","detail":"","rating":"","highlight":"","memo":"진향쌤 추천"},{"id":"excel_4","title":"모순","author":"양귀자","publisher":"쓰다","startDate":"","finishDate":"","status":"읽고싶어","format":"종이책","source":"","ownership":"","genre":"","detail":"","rating":"","highlight":"","memo":"진향쌤 추천"},{"id":"excel_5","title":"홍학의 자리","author":"정해연","publisher":"엘릭시르","startDate":"","finishDate":"","status":"읽고싶어","format":"종이책","source":"","ownership":"","genre":"","detail":"","rating":"","highlight":"","memo":"유명한 반전"},{"id":"excel_6","title":"개미 1-5권","author":"베르나르베르베르","publisher":"열린책들","startDate":"","finishDate":"","status":"읽고싶어","format":"전자책","source":"","ownership":"","genre":"","detail":"","rating":"","highlight":"","memo":"어릴 때 읽은 책"},{"id":"excel_7","title":"트로피컬 나이트","author":"조예은","publisher":"한겨레출판사","startDate":"","finishDate":"","status":"읽고싶어","format":"전자책","source":"","ownership":"","genre":"","detail":"","rating":"","highlight":"","memo":"윌라에 있어서"},{"id":"excel_8","title":"환상서점","author":"소서림","publisher":"해피북스투유","startDate":"","finishDate":"","status":"읽고싶어","format":"전자책","source":"","ownership":"","genre":"","detail":"","rating":"","highlight":"","memo":"윌라에 있어서"},{"id":"excel_9","title":"해리포터","author":"조앤 K. 롤링","publisher":"문학수첩","startDate":"","finishDate":"","status":"읽고싶어","format":"종이책","source":"","ownership":"","genre":"","detail":"","rating":"","highlight":"","memo":"영준이 추천"},{"id":"excel_10","title":"야수의 산","author":"홍진희","publisher":"클레이하우스","startDate":"","finishDate":"","status":"","format":"","source":"","ownership":"","genre":"","detail":"","rating":"","highlight":"","memo":""},{"id":"excel_11","title":"아ㅣ저드 베이커리","author":"구창모","publisher":"창비","startDate":"","finishDate":"","status":"","format":"","source":"","ownership":"","genre":"","detail":"","rating":"","highlight":"","memo":""}];
+let bookLibraryFilter="읽고있어";
+let recordPeriod="week";
+let pendingReadingTimer=null;
+
+function loadBooks(){try{return JSON.parse(localStorage.getItem(BOOKS_KEY)||"[]")||[];}catch(e){return [];}}
+function saveBooks(v){localStorage.setItem(BOOKS_KEY,JSON.stringify(v));}
+function loadReadingLogs(){try{return JSON.parse(localStorage.getItem(READING_LOGS_KEY)||"{}")||{};}catch(e){return {};}}
+function saveReadingLogs(v){localStorage.setItem(READING_LOGS_KEY,JSON.stringify(v));}
+function importExcelBooksOnce(){
+  if(localStorage.getItem(BOOK_IMPORT_KEY)==='done')return;
+  const current=loadBooks();
+  const sig=new Set(current.map(b=>`${b.title}|${b.author}`));
+  BOOK_EXCEL_SEED.forEach(b=>{if(!sig.has(`${b.title}|${b.author}`))current.push(b);});
+  saveBooks(current);localStorage.setItem(BOOK_IMPORT_KEY,'done');
+}
+function ratingNumber(v){return String(v||'').split('').filter(x=>x==='★').length;}
+function setBookLibraryFilter(v){bookLibraryFilter=v;renderBooks();}
+function normalizeCoverUrl(url){
+  return String(url||'').replace(/^http:\/\//i,'https://');
+}
+
+const BOOK_COVER_DB_NAME='routineBookCoverDB_v1';
+const BOOK_COVER_STORE='bookCovers';
+let pendingBookCoverBlob=null;
+let pendingBookCoverRemove=false;
+let pendingBookCoverObjectUrl='';
+
+function openBookCoverDB(){
+  return new Promise((resolve,reject)=>{
+    if(!('indexedDB' in window))return reject(new Error('IndexedDB unsupported'));
+    const req=indexedDB.open(BOOK_COVER_DB_NAME,1);
+    req.onupgradeneeded=()=>{
+      const db=req.result;
+      if(!db.objectStoreNames.contains(BOOK_COVER_STORE))db.createObjectStore(BOOK_COVER_STORE);
+    };
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error||new Error('IndexedDB open failed'));
+  });
+}
+async function getBookCoverBlob(bookId){
+  if(!bookId)return null;
+  const db=await openBookCoverDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(BOOK_COVER_STORE,'readonly');
+    const req=tx.objectStore(BOOK_COVER_STORE).get(bookId);
+    req.onsuccess=()=>resolve(req.result||null);
+    req.onerror=()=>reject(req.error||new Error('cover read failed'));
+    tx.oncomplete=()=>db.close();
+  });
+}
+async function putBookCoverBlob(bookId,blob){
+  if(!bookId||!blob)return;
+  const db=await openBookCoverDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(BOOK_COVER_STORE,'readwrite');
+    tx.objectStore(BOOK_COVER_STORE).put(blob,bookId);
+    tx.oncomplete=()=>{db.close();resolve();};
+    tx.onerror=()=>{db.close();reject(tx.error||new Error('cover save failed'));};
+  });
+}
+async function deleteBookCoverBlob(bookId){
+  if(!bookId)return;
+  const db=await openBookCoverDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(BOOK_COVER_STORE,'readwrite');
+    tx.objectStore(BOOK_COVER_STORE).delete(bookId);
+    tx.oncomplete=()=>{db.close();resolve();};
+    tx.onerror=()=>{db.close();reject(tx.error||new Error('cover delete failed'));};
+  });
+}
+function resetPendingBookCover(){
+  if(pendingBookCoverObjectUrl){
+    URL.revokeObjectURL(pendingBookCoverObjectUrl);
+    pendingBookCoverObjectUrl='';
+  }
+  pendingBookCoverBlob=null;
+  pendingBookCoverRemove=false;
+  const file=document.getElementById('bookCoverFile');
+  if(file)file.value='';
+  const btn=document.getElementById('bookCoverRemoveBtn');
+  if(btn)btn.classList.add('hide');
+}
+function bookCoverImg(book,cls='bookCover'){
+  const fallback=normalizeCoverUrl(book?.coverUrl);
+  if(book?.customCover&&book?.id){
+    return `<img class="${cls}" data-book-cover-id="${escapeLife(book.id)}" data-cover-fallback="${escapeLife(fallback)}" alt="" loading="lazy" referrerpolicy="no-referrer" style="display:none">`;
+  }
+  return fallback?`<img class="${cls}" src="${escapeLife(fallback)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">`:'';
+}
+async function hydrateCustomBookCovers(root=document){
+  const imgs=[...(root||document).querySelectorAll?.('img[data-book-cover-id]')||[]];
+  await Promise.all(imgs.map(async img=>{
+    const id=img.dataset.bookCoverId||'';
+    try{
+      const blob=await getBookCoverBlob(id);
+      if(blob){
+        const url=URL.createObjectURL(blob);
+        img.onload=()=>URL.revokeObjectURL(url);
+        img.onerror=()=>{URL.revokeObjectURL(url);img.style.display='none';};
+        img.src=url;
+        img.style.display='';
+        return;
+      }
+    }catch(_){}
+    const fallback=normalizeCoverUrl(img.dataset.coverFallback||'');
+    if(fallback){
+      img.src=fallback;
+      img.style.display='';
+      img.onerror=()=>{img.style.display='none';};
+    }
+  }));
+}
+function chooseBookCoverFile(){
+  document.getElementById('bookCoverFile')?.click();
+}
+function handleBookCoverFile(event){
+  const file=event?.target?.files?.[0];
+  if(!file)return;
+  if(!String(file.type||'').startsWith('image/')){
+    alert('이미지 파일만 업로드할 수 있어요.');
+    event.target.value='';
+    return;
+  }
+  if(file.size>10*1024*1024){
+    alert('표지 이미지는 10MB 이하 파일을 사용해 주세요.');
+    event.target.value='';
+    return;
+  }
+  if(pendingBookCoverObjectUrl)URL.revokeObjectURL(pendingBookCoverObjectUrl);
+  pendingBookCoverBlob=file;
+  pendingBookCoverRemove=false;
+  pendingBookCoverObjectUrl=URL.createObjectURL(file);
+  renderUploadedBookCoverPreview(pendingBookCoverObjectUrl);
+}
+function renderUploadedBookCoverPreview(url){
+  const root=document.getElementById('bookCoverPreview');if(!root)return;
+  root.innerHTML=`<img src="${escapeLife(url)}" alt=""><span>선택된 표지</span>`;
+  root.classList.remove('hide');
+  root.classList.add('customCoverPreview');
+  document.getElementById('bookCoverRemoveBtn')?.classList.remove('hide');
+}
+async function loadUploadedBookCoverPreview(book){
+  const root=document.getElementById('bookCoverPreview');
+  if(!root)return;
+  if(!book?.customCover||!book?.id){
+    renderBookCoverPreview(book?.coverUrl||'');
+    return;
+  }
+  try{
+    const blob=await getBookCoverBlob(book.id);
+    if(blob){
+      pendingBookCoverBlob=blob;
+      pendingBookCoverRemove=false;
+      if(pendingBookCoverObjectUrl)URL.revokeObjectURL(pendingBookCoverObjectUrl);
+      pendingBookCoverObjectUrl=URL.createObjectURL(blob);
+      renderUploadedBookCoverPreview(pendingBookCoverObjectUrl);
+      return;
+    }
+  }catch(_){}
+  renderBookCoverPreview(book?.coverUrl||'');
+}
+function removeUploadedBookCover(){
+  pendingBookCoverBlob=null;
+  pendingBookCoverRemove=true;
+  if(pendingBookCoverObjectUrl){
+    URL.revokeObjectURL(pendingBookCoverObjectUrl);
+    pendingBookCoverObjectUrl='';
+  }
+  const btn=document.getElementById('bookCoverRemoveBtn');
+  if(btn)btn.classList.add('hide');
+  renderBookCoverPreview(document.getElementById('bookCoverUrl')?.value||'');
+}
+function renderBooks(){
+  const root=document.getElementById('bookList');if(!root)return;
+  const books=loadBooks();
+  document.querySelectorAll('#bookLibraryFilters .bookPeriodTab').forEach(x=>x.classList.toggle('on',x.dataset.filter===bookLibraryFilter));
+  const rows=bookLibraryFilter==='전체'?books:books.filter(b=>b.status===bookLibraryFilter);
+  root.innerHTML=rows.length?rows.map(b=>`<div class="bookCard" onclick="openBookModal('${b.id}')">
+    <div class="bookCardTop">
+      <div class="bookCardMain">${bookCoverImg(b)}<div class="bookCardText"><div class="bookName">${escapeLife(b.title)}</div><div class="bookAuthor">${escapeLife(b.author||'')}</div></div></div>
+      <div class="bookCardActions"><button class="bookSmallBtn lifeMiniBtn" onclick="event.stopPropagation();copyBook('${b.id}')">복사</button><button class="bookSmallBtn lifeMiniBtn" onclick="event.stopPropagation();openBookModal('${b.id}')">편집</button></div>
+    </div>
+    <div class="bookTags">${[b.status,b.format,b.source,b.ownership,b.genre,b.rating].filter(Boolean).map(v=>`<span class="bookTag">${escapeLife(v)}</span>`).join('')}</div>
+    ${b.startDate||b.finishDate?`<div class="bookDates">${escapeLife(b.startDate||'')}${b.finishDate?` → ${escapeLife(b.finishDate)}`:''}</div>`:''}
+  </div>`).join(''):'<div class="bookEmpty">이 상태의 책이 아직 없어요.</div>';
+  hydrateCustomBookCovers(root);
+}
+
+function recordSelectedYear(){return document.getElementById('recordStatsYear')?.value||String(new Date().getFullYear());}
+function recordPeriodBounds(period=recordPeriod){
+  const now=new Date(),today=getLocalDateKey(now);
+  if(period==='all')return {start:'0000-00-00',end:'9999-99-99',label:'누적'};
+  if(period==='year'){const y=recordSelectedYear();return {start:`${y}-01-01`,end:`${y}-12-31`,label:`${y}년`};}
+  if(period==='month'){const y=now.getFullYear(),m=String(now.getMonth()+1).padStart(2,'0');return {start:`${y}-${m}-01`,end:today,label:'이번 달'};}
+  const d=new Date(now);const day=d.getDay();const diff=day===0?-6:1-day;d.setDate(d.getDate()+diff);
+  return {start:getLocalDateKey(d),end:today,label:'이번 주'};
+}
+function setRecordPeriod(v){recordPeriod=v;renderRecordDashboard();}
+function dashboardBarRows(rows,valueFn,labelFn){
+  if(!rows.length)return '<div class="dashEmpty">이 기간의 기록이 아직 없어요.</div>';
+  const max=Math.max(1,...rows.map(valueFn));
+  return `<div class="dashBars">${rows.map(x=>`<div class="dashBarRow"><div class="dashBarName">${escapeLife(labelFn(x))}</div><div class="dashBarTrack"><div class="dashBarFill" style="width:${Math.round(valueFn(x)/max*100)}%"></div></div><div class="dashBarValue">${escapeLife(String(valueFn(x)))}</div></div>`).join('')}</div>`;
+}
+function getRoutineStats(start,end){
+  const all=loadLifeLogs(),routines=loadLifeRoutines(),by={},blocks={};
+  Object.keys(all).filter(k=>k>=start&&k<=end).forEach(k=>{
+    (Array.isArray(all[k])?all[k]:[]).forEach(x=>{
+      const r=routines.find(y=>y.id===x.routineId);if(!r)return;
+      const item=by[r.id]||(by[r.id]={r,count:0,minutes:0});
+      item.count++;item.minutes+=Number(x.duration)||0;
+      const block=r.block||'other';blocks[block]=(blocks[block]||0)+1;
+    });
+  });
+  const items=Object.values(by).sort((a,b)=>(b.minutes-a.minutes)||(b.count-a.count));
+  return {items,blocks,totalCount:items.reduce((a,x)=>a+x.count,0),totalMinutes:items.reduce((a,x)=>a+x.minutes,0)};
+}
+function renderRoutineDashboard(){
+  const root=document.getElementById('routineDashboard');if(!root)return;
+  const {start,end,label}=recordPeriodBounds(),st=getRoutineStats(start,end);
+  document.getElementById('routinePeriodLabel').textContent=label;
+  const top=st.items[0];
+  const blockNames={breakfast:'BREAKFAST',morning:'MORNING',lunch:'LUNCH',afternoon:'AFTERNOON',evening:'EVENING',free:'FREE TIME',other:'OTHER'};
+  const blockRows=Object.entries(st.blocks).map(([name,count])=>({name:blockNames[name]||name,count})).sort((a,b)=>b.count-a.count);
+  const activityRows=st.items.slice(0,7).map(x=>({name:`${x.r.icon||''} ${x.r.name}`.trim(),count:x.count,minutes:x.minutes}));
+  root.innerHTML=`<div class="dashMetrics"><div class="dashMetric"><div class="dashMetricValue">${st.totalCount}</div><div class="dashMetricLabel">활동 기록</div></div><div class="dashMetric"><div class="dashMetricValue">${formatDurationMin(st.totalMinutes)}</div><div class="dashMetricLabel">활동 시간</div></div><div class="dashMetric"><div class="dashMetricValue">${top?escapeLife(top.r.name):'-'}</div><div class="dashMetricLabel">많이 한 활동</div></div></div>
+  <div class="dashSectionLabel">시간 블록별 활동</div>${dashboardBarRows(blockRows,x=>x.count,x=>x.name)}
+  <div class="dashSectionLabel">활동별 현황</div>${activityRows.length?`<div class="dashBars">${activityRows.map(x=>`<div class="dashBarRow"><div class="dashBarName">${escapeLife(x.name)}</div><div class="dashBarTrack"><div class="dashBarFill" style="width:${Math.round(x.count/Math.max(...activityRows.map(y=>y.count))*100)}%"></div></div><div class="dashBarValue">${x.count}회${x.minutes?` · ${formatDurationMin(x.minutes)}`:''}</div></div>`).join('')}</div>`:'<div class="dashEmpty">이 기간의 활동 기록이 아직 없어요.</div>'}`;
+}
+function getHealthKeysInPeriod(start,end){
+  const out=[];
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(/^\d{4}-\d{2}-\d{2}$/.test(k)&&k>=start&&k<=end)out.push(k);
+  }
+  return out.sort();
+}
+function getDailyCareStatsForPeriod(start,end){
+  const keys=getHealthKeysInPeriod(start,end);
+  const p=[],w=[],sl=[];
+  keys.forEach(k=>{
+    const st=getStateForKey(k);
+    if(Number(st.proteinG)>0)p.push(Number(st.proteinG));
+    if(Number(st.waterMl)>0)w.push(Number(st.waterMl));
+    if(Number(st.sleepMinutes)>0)sl.push(Number(st.sleepMinutes));
+  });
+  const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
+  return {
+    protein:avg(p),water:avg(w),sleep:avg(sl),
+    proteinCount:p.length,waterCount:w.length,sleepCount:sl.length
+  };
+}
+function dailyCareCompareText(current,previous,previousCount,label,kind){
+  if(!previousCount)return `${label.replace(' 대비','')} 기록 없음`;
+  const diff=current-previous;
+  const rounded=kind==='water'?Math.round(diff/100)/10:Math.round(diff);
+  if(Math.abs(rounded)<0.0001)return `${label} 동일`;
+  const arrow=rounded>0?'▲':'▼';
+  const amount=Math.abs(rounded);
+  if(kind==='protein')return `${label} ${arrow} ${amount}g`;
+  if(kind==='water')return `${label} ${arrow} ${amount.toFixed(1)}L`;
+  return `${label} ${arrow} ${formatDurationMin(amount)}`;
+}
+function renderDailyCareDashboard(){
+  const root=document.getElementById('dailyCareDashboard');if(!root)return;
+  const {start,end}=recordPeriodBounds();
+  const cur=getDailyCareStatsForPeriod(start,end);
+  const compare=recordComparisonBounds();
+
+  let prev={protein:0,water:0,sleep:0,proteinCount:0,waterCount:0,sleepCount:0};
+  if(compare)prev=getDailyCareStatsForPeriod(compare.start,compare.end);
+
+  const protein=Math.round(cur.protein);
+  const water=(cur.water/1000).toFixed(1);
+  const sleep=Math.round(cur.sleep);
+
+  const compareProtein=compare?dailyCareCompareText(cur.protein,prev.protein,prev.proteinCount,compare.label,'protein'):'';
+  const compareWater=compare?dailyCareCompareText(cur.water,prev.water,prev.waterCount,compare.label,'water'):'';
+  const compareSleep=compare?dailyCareCompareText(cur.sleep,prev.sleep,prev.sleepCount,compare.label,'sleep'):'';
+
+  const cmp=text=>text?`<div class="dashCompare">${text}</div>`:'';
+  root.innerHTML=`<div class="dashMetrics">
+    <div class="dashMetric"><div class="dashMetricValue">${protein||0}g</div><div class="dashMetricLabel">평균 단백질</div>${cmp(compareProtein)}</div>
+    <div class="dashMetric"><div class="dashMetricValue">${water}L</div><div class="dashMetricLabel">평균 물</div>${cmp(compareWater)}</div>
+    <div class="dashMetric"><div class="dashMetricValue">${sleep?formatDurationMin(sleep):'0분'}</div><div class="dashMetricLabel">평균 수면</div>${cmp(compareSleep)}</div>
+  </div>`;
+}
+function isoLocalDate(d){
+  const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function parseLocalDateKey(k){
+  const [y,m,d]=String(k).split('-').map(Number);
+  return new Date(y,m-1,d);
+}
+function recordComparisonBounds(){
+  if(recordPeriod==='all')return null;
+  const cur=recordPeriodBounds();
+  const curStart=parseLocalDateKey(cur.start);
+  const curEnd=parseLocalDateKey(cur.end);
+  let start,end,label;
+
+  if(recordPeriod==='week'){
+    start=new Date(curStart);start.setDate(start.getDate()-7);
+    end=new Date(curEnd);end.setDate(end.getDate()-7);
+    label='지난주 대비';
+  }else if(recordPeriod==='month'){
+    const todayDay=curEnd.getDate();
+    start=new Date(curStart.getFullYear(),curStart.getMonth()-1,1);
+    const lastDay=new Date(start.getFullYear(),start.getMonth()+1,0).getDate();
+    end=new Date(start.getFullYear(),start.getMonth(),Math.min(todayDay,lastDay));
+    label='전월 대비';
+  }else if(recordPeriod==='year'){
+    start=new Date(curStart.getFullYear()-1,0,1);
+    const y=curEnd.getFullYear()-1,m=curEnd.getMonth(),d=curEnd.getDate();
+    const lastDay=new Date(y,m+1,0).getDate();
+    end=new Date(y,m,Math.min(d,lastDay));
+    label='전년 대비';
+  }
+  return {start:isoLocalDate(start),end:isoLocalDate(end),label};
+}
+function readingCompareText(current,previous,label){
+  if(previous===0&&current===0)return `${label} 동일`;
+  if(previous===0&&current>0)return `${label} ▲ ${current}`;
+  const diff=current-previous;
+  if(diff>0)return `${label} ▲ ${diff}`;
+  if(diff<0)return `${label} ▼ ${Math.abs(diff)}`;
+  return `${label} 동일`;
+}
+function getCompletedBooksForRecordPeriod(start,end){
+  const books=loadBooks();
+  return books.filter(b=>{
+    if(b.status!=='완독')return false;
+    if(!b.finishDate){
+      return recordPeriod==='all';
+    }
+    return b.finishDate>=start&&b.finishDate<=end;
+  });
+}
+function getVisibleReadingBooksForPeriod(start,end){
+  const books=loadBooks();
+  return books.filter(b=>{
+    if(!['완독','읽고있어'].includes(b.status))return false;
+    if(recordPeriod==='all')return true;
+
+    // 완독: 완독일이 있으면 해당 기간 기준
+    if(b.status==='완독'){
+      if(b.finishDate)return b.finishDate>=start&&b.finishDate<=end;
+      // 완독일이 없으면 시작일이 기간 안에 있을 때만 표시
+      return !!b.startDate&&b.startDate>=start&&b.startDate<=end;
+    }
+
+    // 읽고있어: 읽기 시작한 책이 해당 기간과 겹치면 표시
+    if(!b.startDate)return true;
+    return b.startDate<=end;
+  });
+}
+function getReadingDaysForPeriod(start,end){
+  const logs=loadReadingLogs();
+  return Object.entries(logs).filter(([k,rows])=>{
+    if(k<start||k>end)return false;
+    return Array.isArray(rows)&&rows.length>0;
+  }).length;
+}
+function getTodayReadingDaysForPeriod(start,end){
+  const readingIds=new Set(
+    loadLifeRoutines()
+      .filter(r=>r.id==='free_read'||String(r.name||'').trim()==='독서')
+      .map(r=>r.id)
+  );
+  const days=new Set();
+  Object.entries(loadLifeLogs()).forEach(([date,rows])=>{
+    if(date<start||date>end||!Array.isArray(rows))return;
+    const hasReading=rows.some(x=>{
+      if(!readingIds.has(x.routineId))return false;
+      return x.completed===true||x.done===true||Number(x.duration)>0;
+    });
+    if(hasReading)days.add(date);
+  });
+  return days.size;
+}
+function getReadingBookCountForPeriod(start,end){
+  return getVisibleReadingBooksForPeriod(start,end).length;
+}
+function renderGenreSegmentBar(books){
+  if(!books.length)return '<div class="dashEmpty">이 기간의 장르 정보가 아직 없어요.</div>';
+  const counts={};
+  books.forEach(b=>{
+    const g=(b.genre||'미분류').trim()||'미분류';
+    counts[g]=(counts[g]||0)+1;
+  });
+  const rows=Object.entries(counts).map(([name,count])=>({name,count})).sort((a,b)=>b.count-a.count);
+  const total=rows.reduce((n,x)=>n+x.count,0)||1;
+  return `<div class="genreSegmentBar" aria-label="장르 구성 100%">
+    ${rows.map((x,i)=>{
+      const pct=x.count/total*100;
+      return `<span class="genreSegment genreSegment${i%8}" style="width:${pct.toFixed(2)}%" title="${escapeLife(x.name)} ${x.count}권 (${Math.round(pct)}%)">${pct>=9?`<span class="genreSegmentPct">${Math.round(pct)}%</span>`:''}</span>`;
+    }).join('')}
+  </div>
+  <div class="genreLegend">${rows.map((x,i)=>{
+    const pct=Math.round(x.count/total*100);
+    return `<span><i class="genreDot genreSegment${i%8}"></i>${escapeLife(x.name)} ${x.count}권 · ${pct}%</span>`;
+  }).join('')}</div>`;
+}
+function renderReadingDashboard(){
+  const root=document.getElementById('readingDashboard');if(!root)return;
+  const {start,end,label}=recordPeriodBounds();
+  document.getElementById('readingPeriodLabel').textContent=label;
+
+  const visibleBooks=getVisibleReadingBooksForPeriod(start,end);
+  const totalBooks=getReadingBookCountForPeriod(start,end);
+  const readingDays=getTodayReadingDaysForPeriod(start,end);
+
+  const compare=recordComparisonBounds();
+  let compareBooks=0,compareReadingDays=0;
+  if(compare){
+    compareBooks=getReadingBookCountForPeriod(compare.start,compare.end);
+    compareReadingDays=getTodayReadingDaysForPeriod(compare.start,compare.end);
+  }
+  const cmp=(current,previous)=>compare
+    ? `<div class="dashCompare">${readingCompareText(current,previous,compare.label)}</div>`
+    : '';
+
+  const sortedBooks=[...visibleBooks].sort((a,b)=>{
+    if(a.status!==b.status)return a.status==='읽고있어'?-1:1;
+    return String(b.finishDate||b.startDate||'').localeCompare(String(a.finishDate||a.startDate||''));
+  });
+
+  root.innerHTML=`<div class="dashMetrics dashMetricsTwo">
+    <div class="dashMetric"><div class="dashMetricValue">${totalBooks}권</div><div class="dashMetricLabel">총 독서권수</div>${cmp(totalBooks,compareBooks)}</div>
+    <div class="dashMetric"><div class="dashMetricValue">${readingDays}일</div><div class="dashMetricLabel">총 독서일수</div>${cmp(readingDays,compareReadingDays)}</div>
+  </div>
+  <div class="dashSectionLabel">카테고리 현황</div>
+  ${renderGenreSegmentBar(visibleBooks)}
+  <div class="dashSectionLabel">읽은 책</div>
+  ${sortedBooks.length
+    ? `<div class="readingBookMini">${sortedBooks.map(b=>`<div class="readingBookMiniRow"><div class="readingBookMiniMain">${bookCoverImg(b,'readingBookCover')}<span class="readingBookTitle">${escapeLife(b.title)}</span></div><span class="bookTag">${escapeLife(b.status)}</span></div>`).join('')}</div>`
+    : '<div class="dashEmpty">이 기간에 읽고 있거나 완독한 책이 아직 없어요.</div>'}`;
+  hydrateCustomBookCovers(root);
+}
+function renderRecordDashboard(){
+  const ys=document.getElementById('recordStatsYear'),yr=document.getElementById('recordYearRow');if(!ys||!yr)return;
+  const books=loadBooks(),now=new Date(),years=[...new Set(books.map(b=>(b.finishDate||b.startDate||'').slice(0,4)).filter(Boolean).concat(String(now.getFullYear())))].sort().reverse();
+  const prev=ys.value||String(now.getFullYear());ys.innerHTML=years.map(y=>`<option ${y===prev?'selected':''}>${y}</option>`).join('');
+  yr.classList.toggle('hide',recordPeriod!=='year');
+  document.querySelectorAll('[data-rperiod]').forEach(x=>x.classList.toggle('on',x.dataset.rperiod===recordPeriod));
+  renderDailyCareDashboard();renderReadingDashboard();
+}
+let bookSearchResultsCache=[];
+function clearBookSearchUI(){
+  bookSearchResultsCache=[];
+  const q=document.getElementById('bookSearchQuery');if(q)q.value='';
+  const st=document.getElementById('bookSearchStatus');if(st)st.textContent='';
+  const rs=document.getElementById('bookSearchResults');if(rs)rs.innerHTML='';
+}
+function renderBookCoverPreview(url){
+  const root=document.getElementById('bookCoverPreview');if(!root)return;
+  const u=normalizeCoverUrl(url);
+  root.classList.remove('customCoverPreview');
+  if(!u){root.innerHTML='';root.classList.add('hide');return;}
+  root.innerHTML=`<img src="${escapeLife(u)}" alt="" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('hide')"><span>선택된 표지</span>`;
+  root.classList.remove('hide');
+}
+function stripHtmlText(v){
+  const box=document.createElement('div');box.innerHTML=String(v||'');return (box.textContent||'').trim();
+}
+
+function firstArrayValue(v){
+  return Array.isArray(v)&&v.length?v[0]:'';
+}
+function openLibraryCoverUrl(doc){
+  if(doc?.cover_i)return `https://covers.openlibrary.org/b/id/${encodeURIComponent(doc.cover_i)}-M.jpg?default=false`;
+  if(Array.isArray(doc?.covers)&&doc.covers.length)return `https://covers.openlibrary.org/b/id/${encodeURIComponent(doc.covers[0])}-M.jpg?default=false`;
+  const isbn=firstArrayValue(doc?.isbn)||firstArrayValue(doc?.isbn_13)||firstArrayValue(doc?.isbn_10);
+  return isbn?`https://covers.openlibrary.org/b/isbn/${encodeURIComponent(isbn)}-M.jpg?default=false`:'';
+}
+function normalizeOpenLibraryWorkKey(key){
+  const raw=String(key||'').trim();
+  if(!raw)return '';
+  if(raw.startsWith('/works/'))return raw;
+  return raw.startsWith('OL')?`/works/${raw}`:raw;
+}
+function mapOpenLibraryDocs(data){
+  return (data?.docs||[]).map(doc=>{
+    const subjects=Array.isArray(doc.subject)?doc.subject.filter(Boolean):[];
+    const publishers=Array.isArray(doc.publisher)?doc.publisher.filter(Boolean):[];
+    const isbns=Array.isArray(doc.isbn)?doc.isbn.filter(Boolean):[];
+    return {
+      title:doc.title||'',
+      author:(doc.author_name||[]).join(', '),
+      publisher:publishers[0]||'',
+      genre:subjects[0]||'',
+      detail:subjects.slice(1,4).join(' · '),
+      coverUrl:normalizeCoverUrl(openLibraryCoverUrl(doc)),
+      isbn:isbns.find(x=>String(x).replace(/[-\s]/g,'').length===13)||isbns[0]||'',
+      description:'',
+      source:'Open Library',
+      workKey:normalizeOpenLibraryWorkKey(doc.key),
+      publishDate:doc.first_publish_year?String(doc.first_publish_year):''
+    };
+  }).filter(x=>x.title);
+}
+async function openLibrarySearch(query){
+  const isbnOnly=String(query||'').replace(/[-\s]/g,'');
+  const params=new URLSearchParams({
+    q:/^\d{10}(\d{3})?$/.test(isbnOnly)?`isbn:${isbnOnly}`:String(query||'').trim(),
+    fields:'title,author_name,publisher,isbn,cover_i,subject,first_publish_year,key,edition_key',
+    limit:'8'
+  });
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),9000);
+  try{
+    const res=await fetch(`https://openlibrary.org/search.json?${params.toString()}`,{
+      method:'GET',
+      mode:'cors',
+      credentials:'omit',
+      signal:controller.signal,
+      headers:{'Accept':'application/json'}
+    });
+    if(!res.ok)throw new Error(`openlibrary-${res.status}`);
+    return await res.json();
+  }finally{
+    clearTimeout(timer);
+  }
+}
+function mapOpenLibraryEditionRow(row,work){
+  const isbn13=Array.isArray(row?.isbn_13)?row.isbn_13.filter(Boolean):[];
+  const isbn10=Array.isArray(row?.isbn_10)?row.isbn_10.filter(Boolean):[];
+  const isbn=isbn13[0]||isbn10[0]||'';
+  const publishers=Array.isArray(row?.publishers)?row.publishers.filter(Boolean):[];
+  const languages=(Array.isArray(row?.languages)?row.languages:[]).map(x=>{
+    if(typeof x==='string')return x.replace('/languages/','');
+    return String(x?.key||'').replace('/languages/','');
+  }).filter(Boolean);
+  return {
+    title:row?.title||work?.title||'',
+    author:work?.author||'',
+    publisher:publishers[0]||work?.publisher||'',
+    genre:work?.genre||'',
+    detail:work?.detail||'',
+    coverUrl:normalizeCoverUrl(openLibraryCoverUrl({...row,isbn:[isbn]}))||work?.coverUrl||'',
+    isbn,
+    description:'',
+    source:'Open Library 판본',
+    workKey:work?.workKey||'',
+    editionKey:String(row?.key||''),
+    publishDate:String(row?.publish_date||''),
+    languages
+  };
+}
+async function openLibraryEditionsForWork(work,limit=8){
+  const workKey=normalizeOpenLibraryWorkKey(work?.workKey);
+  if(!workKey)return [];
+  const params=new URLSearchParams();
+  params.set('type','/type/edition');
+  params.set('works',workKey);
+  params.set('title','');
+  params.set('publishers','');
+  params.set('isbn_13','');
+  params.set('isbn_10','');
+  params.set('covers','');
+  params.set('publish_date','');
+  params.set('languages','');
+  params.set('limit',String(limit));
+
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),9000);
+  try{
+    const res=await fetch(`https://openlibrary.org/query.json?${params.toString()}`,{
+      method:'GET',
+      mode:'cors',
+      credentials:'omit',
+      signal:controller.signal,
+      headers:{'Accept':'application/json'}
+    });
+    if(!res.ok)throw new Error(`openlibrary-editions-${res.status}`);
+    const rows=await res.json();
+    return (Array.isArray(rows)?rows:[]).map(row=>mapOpenLibraryEditionRow(row,work)).filter(x=>x.title);
+  }finally{
+    clearTimeout(timer);
+  }
+}
+function rankOpenLibraryEditions(rows){
+  return [...(rows||[])].sort((a,b)=>{
+    const ak=a.languages?.includes('kor')?1:0;
+    const bk=b.languages?.includes('kor')?1:0;
+    if(ak!==bk)return bk-ak;
+    const ap=a.publisher?1:0,bp=b.publisher?1:0;
+    if(ap!==bp)return bp-ap;
+    const ai=a.isbn?1:0,bi=b.isbn?1:0;
+    return bi-ai;
+  });
+}
+async function expandOpenLibraryEditions(data){
+  const works=mapOpenLibraryDocs(data);
+  if(!works.length)return [];
+  const targetWorks=works.slice(0,3);
+  const settled=await Promise.allSettled(targetWorks.map(w=>openLibraryEditionsForWork(w,8)));
+  let editions=[];
+  settled.forEach((r,i)=>{
+    if(r.status==='fulfilled'&&r.value.length)editions.push(...r.value);
+    else editions.push(targetWorks[i]);
+  });
+  const ranked=rankOpenLibraryEditions(editions);
+  return mergeBookSearchResults(ranked,[]).slice(0,12);
+}
+function mergeBookSearchResults(primary,secondary){
+  const seen=new Set();
+  return [...(primary||[]),...(secondary||[])].filter(b=>{
+    const key=[String(b.isbn||'').replace(/[-\s]/g,''),String(b.title||'').trim().toLowerCase(),String(b.author||'').trim().toLowerCase()].join('|');
+    if(seen.has(key))return false;
+    seen.add(key);
+    return true;
+  }).slice(0,12);
+}
+function mapGoogleBookItems(data){
+  return (data?.items||[]).map(item=>{
+    const v=item.volumeInfo||{};
+    const categories=Array.isArray(v.categories)?v.categories.filter(Boolean):[];
+    const isbn=(v.industryIdentifiers||[]).find(x=>x.type==='ISBN_13')?.identifier
+      ||(v.industryIdentifiers||[]).find(x=>x.type==='ISBN_10')?.identifier||'';
+    return {
+      title:v.title||'',
+      author:(v.authors||[]).join(', '),
+      publisher:v.publisher||'',
+      genre:v.mainCategory||categories[0]||'',
+      detail:v.subtitle||categories.slice(1).join(' · ')||'',
+      coverUrl:normalizeCoverUrl(v.imageLinks?.thumbnail||v.imageLinks?.smallThumbnail||''),
+      isbn,
+      description:stripHtmlText(v.description||''),
+      source:'Google Books'
+    };
+  });
+}
+function googleBooksJsonpSearch(query){
+  return new Promise((resolve,reject)=>{
+    const callbackName='__routineBooksCb_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+    const script=document.createElement('script');
+    let settled=false;
+    const cleanup=()=>{
+      try{delete window[callbackName]}catch(_){window[callbackName]=undefined}
+      script.remove();
+    };
+    const timer=setTimeout(()=>{
+      if(settled)return;
+      settled=true;cleanup();reject(new Error('timeout'));
+    },10000);
+    window[callbackName]=(data)=>{
+      if(settled)return;
+      settled=true;clearTimeout(timer);cleanup();resolve(data||{});
+    };
+    script.onerror=()=>{
+      if(settled)return;
+      settled=true;clearTimeout(timer);cleanup();reject(new Error('network'));
+    };
+    script.src=`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&printType=books&maxResults=12&callback=${encodeURIComponent(callbackName)}`;
+    document.head.appendChild(script);
+  });
+}
+async function searchBookOnline(){
+  const input=document.getElementById('bookSearchQuery');
+  const status=document.getElementById('bookSearchStatus');
+  const root=document.getElementById('bookSearchResults');
+  const q=input?.value.trim()||'';
+  if(!q){if(status)status.textContent='제목이나 ISBN을 입력해 주세요.';return;}
+  if(status)status.textContent='검색 중…';
+  if(root)root.innerHTML='';
+  bookSearchResultsCache=[];
+
+  const isbnOnly=q.replace(/[-\s]/g,'');
+  const isIsbn=/^\d{10}(\d{3})?$/.test(isbnOnly);
+  const googleQuery=isIsbn?`isbn:${isbnOnly}`:q;
+
+  // 한 검색원에 특정 국내 판본이 빠져 있어도 놓치지 않도록 두 소스를 항상 함께 조회한다.
+  const [openResult,googleResult]=await Promise.allSettled([
+    openLibrarySearch(isIsbn?isbnOnly:q),
+    googleBooksJsonpSearch(googleQuery)
+  ]);
+
+  let openRows=[];
+  let googleRows=[];
+  let openError=null;
+  let googleError=null;
+
+  if(openResult.status==='fulfilled'){
+    try{
+      openRows=await expandOpenLibraryEditions(openResult.value);
+      // ISBN 직접 검색에서는 exact ISBN과 다른 판본이 섞이지 않도록 다시 제한한다.
+      if(isIsbn){
+        openRows=openRows.filter(b=>String(b.isbn||'').replace(/[-\s]/g,'')===isbnOnly);
+        if(!openRows.length){
+          openRows=mapOpenLibraryDocs(openResult.value).filter(b=>String(b.isbn||'').replace(/[-\s]/g,'')===isbnOnly);
+        }
+      }
+    }catch(e){openError=e;}
+  }else{
+    openError=openResult.reason;
+  }
+
+  if(googleResult.status==='fulfilled'){
+    googleRows=mapGoogleBookItems(googleResult.value);
+    if(isIsbn){
+      googleRows=googleRows.filter(b=>String(b.isbn||'').replace(/[-\s]/g,'')===isbnOnly);
+    }
+  }else{
+    googleError=googleResult.reason;
+  }
+
+  bookSearchResultsCache=mergeBookSearchResults(openRows,googleRows);
+
+  if(status){
+    if(bookSearchResultsCache.length){
+      const sources=[
+        openRows.length?'Open Library':'',
+        googleRows.length?'Google Books':''
+      ].filter(Boolean).join(' + ');
+      status.textContent=`${bookSearchResultsCache.length}개 결과 · ${sources} · 선택하면 자동 입력됩니다.`;
+    }else if(openError&&googleError){
+      status.textContent='온라인 도서 검색에 실패했어요. 잠시 후 다시 검색하거나 직접 입력해 주세요.';
+    }else{
+      status.textContent=isIsbn
+        ?'해당 ISBN의 검색 결과가 없어요. ISBN을 확인하거나 제목으로 검색해 주세요.'
+        :'검색 결과가 없어요. 제목을 조금 다르게 입력하거나 ISBN으로 검색해 주세요.';
+    }
+  }
+
+  if(root)root.innerHTML=bookSearchResultsCache.map((b,i)=>`<button class="bookSearchResult" onclick="applyBookSearchResult(${i})">
+    ${b.coverUrl?`<img src="${escapeLife(b.coverUrl)}" alt="" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">`:''}
+    <div class="bookSearchResultText">
+      <div class="bookSearchResultTitle">${escapeLife(b.title||'제목 없음')}</div>
+      <div class="bookSearchResultMeta">${escapeLife([b.author,b.publisher,b.publishDate,b.isbn?`ISBN ${b.isbn}`:''].filter(Boolean).join(' · '))}</div>
+    </div>
+  </button>`).join('');
+}
+function applyBookSearchResult(i){
+  const b=bookSearchResultsCache[i];if(!b)return;
+  const set=(id,v)=>{const el=document.getElementById(id);if(el&&v!==undefined)el.value=v||'';};
+  set('bookTitle',b.title);set('bookAuthor',b.author);set('bookPublisher',b.publisher);
+  set('bookGenre',b.genre);set('bookDetail',b.detail);
+  set('bookCoverUrl',b.coverUrl);set('bookIsbn',b.isbn);
+  if(!pendingBookCoverBlob&&!pendingBookCoverRemove)renderBookCoverPreview(b.coverUrl);
+  const status=document.getElementById('bookSearchStatus');
+  if(status)status.textContent='책 정보를 불러왔어요. 필요한 항목만 확인해 주세요.';
+}
+async function copyBook(id){
+  const booksView=document.getElementById('viewBooks');if(!booksView||booksView.classList.contains('hide'))return;
+  const b=loadBooks().find(x=>x.id===id);if(!b)return;
+
+  document.getElementById('bookModalTitle').textContent='책 복사';
+  document.getElementById('bookId').value='';
+
+  // 서지/분류 정보는 복사하고, 새 권의 독서 기록은 비워 둔다.
+  const copied={
+    bookTitle:b.title||'',
+    bookAuthor:b.author||'',
+    bookPublisher:b.publisher||'',
+    bookCoverUrl:b.coverUrl||'',
+    bookIsbn:b.isbn||'',
+    bookStatus:b.status||'읽고싶어',
+    bookFormat:b.format||'',
+    bookSource:b.source||'',
+    bookOwnership:b.ownership||'',
+    bookStartDate:b.startDate||'',
+    bookFinishDate:b.finishDate||'',
+    bookGenre:b.genre||'',
+    bookDetail:b.detail||'',
+    bookRating:b.rating||'',
+    bookHighlight:b.highlight||'',
+    bookMemo:b.memo||''
+  };
+  Object.entries(copied).forEach(([eid,v])=>{const el=document.getElementById(eid);if(el)el.value=v;});
+  resetPendingBookCover();
+  clearBookSearchUI();
+  if(b.customCover){
+    try{
+      const blob=await getBookCoverBlob(b.id);
+      if(blob){
+        pendingBookCoverBlob=blob;
+        pendingBookCoverObjectUrl=URL.createObjectURL(blob);
+        renderUploadedBookCoverPreview(pendingBookCoverObjectUrl);
+      }else renderBookCoverPreview(b.coverUrl||'');
+    }catch(_){renderBookCoverPreview(b.coverUrl||'');}
+  }else renderBookCoverPreview(b.coverUrl||'');
+  document.getElementById('bookDeleteBtn').style.display='none';
+  showBookModal();
+}async function openBookModal(id){
+  const booksView=document.getElementById('viewBooks');if(!booksView||booksView.classList.contains('hide'))return;
+  const b=id?loadBooks().find(x=>x.id===id):null;
+  document.getElementById('bookModalTitle').textContent=b?'책 수정':'책 추가';document.getElementById('bookId').value=b?.id||'';
+  const map={bookTitle:'title',bookAuthor:'author',bookPublisher:'publisher',bookCoverUrl:'coverUrl',bookIsbn:'isbn',bookStatus:'status',bookFormat:'format',bookSource:'source',bookOwnership:'ownership',bookStartDate:'startDate',bookFinishDate:'finishDate',bookGenre:'genre',bookDetail:'detail',bookRating:'rating',bookHighlight:'highlight',bookMemo:'memo'};
+  Object.entries(map).forEach(([eid,k])=>document.getElementById(eid).value=b?.[k]|| (eid==='bookStatus'?'읽고싶어':''));
+  resetPendingBookCover();
+  clearBookSearchUI();
+  await loadUploadedBookCoverPreview(b);
+  document.getElementById('bookDeleteBtn').style.display=b?'inline-block':'none';showBookModal();
+}
+let bookModalHistoryToken='';
+let bookModalClosingFromHistory=false;
+function showBookModal(){
+  const modal=document.getElementById('bookModal');
+  if(!modal)return;
+  const wasHidden=modal.classList.contains('hide');
+  modal.classList.remove('hide');
+  if(wasHidden){
+    bookModalHistoryToken=`bookModal_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    try{
+      history.pushState({...history.state,__routineBookModal:bookModalHistoryToken},'',location.href);
+    }catch(_){}
+  }
+}
+function bindBookModalHistory(){
+  if(window.__routineBookModalHistoryBound)return;
+  window.addEventListener('popstate',()=>{
+    const modal=document.getElementById('bookModal');
+    if(modal&&!modal.classList.contains('hide')){
+      bookModalClosingFromHistory=true;
+      modal.classList.add('hide');
+      resetPendingBookCover();
+      bookModalHistoryToken='';
+      setTimeout(()=>{bookModalClosingFromHistory=false;},0);
+    }
+  });
+  window.__routineBookModalHistoryBound=true;
+}
+function bindBookModalBackdrop(){
+  const modal=document.getElementById('bookModal');
+  if(modal&&!modal.dataset.backdropBound){
+    modal.addEventListener('click',e=>{if(e.target===modal)closeBookModal();});
+    modal.dataset.backdropBound='1';
+  }
+}
+function closeBookModal(){
+  const modal=document.getElementById('bookModal');
+  if(!modal||modal.classList.contains('hide'))return;
+  modal.classList.add('hide');
+  resetPendingBookCover();
+  const token=bookModalHistoryToken;
+  bookModalHistoryToken='';
+  if(!bookModalClosingFromHistory&&token&&history.state?.__routineBookModal===token){
+    history.back();
+  }
+}
+async function saveBook(){
+  const title=document.getElementById('bookTitle').value.trim();if(!title){alert('책 제목을 입력해 주세요.');return;}
+  const id=document.getElementById('bookId').value||`book_${Date.now()}`;const books=loadBooks();const old=books.find(x=>x.id===id)||{id};
+  const val=e=>document.getElementById(e).value.trim();
+
+  let customCover=Boolean(old.customCover);
+  if(pendingBookCoverRemove){
+    try{await deleteBookCoverBlob(id);}catch(_){}
+    customCover=false;
+  }else if(pendingBookCoverBlob){
+    try{
+      await putBookCoverBlob(id,pendingBookCoverBlob);
+      customCover=true;
+    }catch(e){
+      alert('표지 이미지 저장에 실패했어요. 책 정보는 저장하지만 직접 업로드한 표지는 적용되지 않습니다.');
+      customCover=false;
+    }
+  }
+
+  Object.assign(old,{title,author:val('bookAuthor'),publisher:val('bookPublisher'),coverUrl:val('bookCoverUrl'),isbn:val('bookIsbn'),status:val('bookStatus'),format:val('bookFormat'),source:val('bookSource'),ownership:val('bookOwnership'),startDate:val('bookStartDate'),finishDate:val('bookFinishDate'),genre:val('bookGenre'),detail:val('bookDetail'),rating:val('bookRating'),highlight:val('bookHighlight'),memo:val('bookMemo'),customCover});
+  const i=books.findIndex(x=>x.id===id);if(i>=0)books[i]=old;else books.unshift(old);
+  saveBooks(books);
+  resetPendingBookCover();
+  closeBookModal();
+  renderBooks();
+}
+async function deleteBook(){
+  const id=document.getElementById('bookId').value;if(!id||!confirm('이 책을 목록에서 삭제할까요? 날짜별 독서기록은 유지됩니다.'))return;
+  saveBooks(loadBooks().filter(x=>x.id!==id));
+  try{await deleteBookCoverBlob(id);}catch(_){}
+  resetPendingBookCover();
+  closeBookModal();
+  renderBooks();
+}
+function addReadingLog(dateKey,bookId,minutes,memo=''){
+  const all=loadReadingLogs(),rows=Array.isArray(all[dateKey])?all[dateKey]:[],i=rows.findIndex(x=>x.bookId===bookId);
+  if(i>=0){rows[i].minutes=(Number(rows[i].minutes)||0)+minutes;if(memo)rows[i].memo=memo;}
+  else rows.push({bookId,minutes,memo,loggedAt:new Date().toISOString()});
+  all[dateKey]=rows;saveReadingLogs(all);
+}
+function chooseBookForReadingTimer(dateKey,minutes){
+  pendingReadingTimer={dateKey,minutes};
+  const books=loadBooks().filter(b=>b.status==='읽고있어');
+  const list=document.getElementById('readingPickList');document.getElementById('readingBookDuration').textContent=`독서 ${formatDurationMin(minutes)}`;
+  list.innerHTML=books.map(b=>`<button class="readingPickBtn" onclick="linkPendingReading('${b.id}')">📚 ${escapeLife(b.title)}<div class="bookAuthor">${escapeLife(b.author||'')}</div></button>`).join('')+`<button class="readingPickBtn readingPickSkip" onclick="closeReadingBookModal()">책 연결 없이 기록</button>`;
+  document.getElementById('readingBookModal').classList.remove('hide');
+}
+function linkPendingReading(bookId){if(!pendingReadingTimer)return;addReadingLog(pendingReadingTimer.dateKey,bookId,pendingReadingTimer.minutes);closeReadingBookModal();renderLifeCalendar();}
+function closeReadingBookModal(){document.getElementById('readingBookModal').classList.add('hide');pendingReadingTimer=null;}
+function renderCalendarReading(k){
+  const rows=loadReadingLogs()[k]||[],books=loadBooks();if(!rows.length)return '';
+  return `<div class="calendarReadingCard"><div class="calendarReadingTitle">읽은 책</div>${rows.map(x=>{const b=books.find(y=>y.id===x.bookId);return `<div class="calendarReadingRow">📚 ${escapeLife(b?.title||'삭제된 책')} · ${formatDurationMin(x.minutes)}${x.memo?` · ${escapeLife(x.memo)}`:''}</div>`;}).join('')}</div>`;
+}
+function loadLifeRoutines(){
+  if(localStorage.getItem(ROUTINE_LAYOUT_V2_KEY)!=='done'){
+    const initial=lifeClone(LIFE_DEFAULT_ROUTINES);
+    localStorage.setItem(LIFE_ROUTINES_KEY,JSON.stringify(initial));
+    localStorage.setItem(LEGACY_MIGRATION_KEY,'done');
+    localStorage.setItem(ROUTINE_LAYOUT_V2_KEY,'done');
+    return initial;
+  }
+  try{
+    const saved=JSON.parse(localStorage.getItem(LIFE_ROUTINES_KEY)||"null");
+    if(Array.isArray(saved)) return saved;
+  }catch(e){}
+  const initial=lifeClone(LIFE_DEFAULT_ROUTINES);
+  localStorage.setItem(LIFE_ROUTINES_KEY,JSON.stringify(initial));
+  return initial;
+}
+function saveLifeRoutines(list){localStorage.setItem(LIFE_ROUTINES_KEY,JSON.stringify(list));}
+
+function applyRoutineSemanticsV3(){
+  if(localStorage.getItem(ROUTINE_SEMANTICS_V3_KEY)==='done')return;
+  const list=loadLifeRoutines();
+  const breakfast=list.find(r=>r.id==='breakfast_meal');
+  if(breakfast){
+    breakfast.name='아침식사';
+    breakfast.type='free';
+    breakfast.target=null;
+    breakfast.unit='';
+    breakfast.defaultNote='계란 · 두유 · 견과';
+  }
+  saveLifeRoutines(list);
+  localStorage.setItem(ROUTINE_SEMANTICS_V3_KEY,'done');
+}
+
+function applyFreeTimeSemanticsV4(){
+  if(localStorage.getItem(ROUTINE_SEMANTICS_V4_KEY)==='done')return;
+  const list=loadLifeRoutines();
+  const updates={
+    free_read:{type:'time',target:null,unit:'분',defaultNote:''},
+    free_knit:{type:'time',target:null,unit:'분',defaultNote:''},
+    free_rope:{type:'check',target:null,unit:'',defaultNote:''},
+    free_english:{type:'check',target:null,unit:'',defaultNote:''},
+    free_japanese:{type:'check',target:null,unit:'',defaultNote:''},
+    free_pole:{type:'check',target:null,unit:'',defaultNote:''},
+    free_walk:{type:'time',target:null,unit:'분',defaultNote:''},
+    free_boardgame:{type:'free',target:null,unit:'',defaultNote:''},
+    free_rest:{type:'check',target:null,unit:'',defaultNote:''}
+  };
+  list.forEach(r=>{
+    const u=updates[r.id];if(!u)return;
+    r.type=u.type;r.target=u.target;r.unit=u.unit;r.defaultNote=u.defaultNote;r.maxDuration=null;
+  });
+  saveLifeRoutines(list);
+  localStorage.setItem(ROUTINE_SEMANTICS_V4_KEY,'done');
+}
+
+function applyRoutineCleanupV5(){
+  if(localStorage.getItem(ROUTINE_CLEANUP_V5_KEY)==='done')return;
+  let list=loadLifeRoutines();
+  const canonical=list.find(r=>r.id==='thu_rope');
+  if(canonical){
+    canonical.name='줄넘기';canonical.icon='🪢';canonical.type='check';canonical.block='evening';
+    canonical.recurrence='days';canonical.days=[4];canonical.target=null;canonical.unit='';
+    canonical.enabled=true;canonical.order=130;
+  }
+  const duplicates=list.filter(r=>{
+    if(r.id==='thu_rope'||r.id==='free_rope')return false;
+    const name=String(r.name||'').replace(/\s+/g,'').toLowerCase();
+    return (name==='줄넘기'||name==='jumprope')&&r.block==='evening'&&r.recurrence==='days'&&Array.isArray(r.days)&&r.days.includes(4);
+  });
+  if(duplicates.length&&canonical){
+    const duplicateIds=new Set(duplicates.map(r=>r.id));
+    const all=loadLifeLogs();
+    Object.keys(all).forEach(k=>{
+      const rows=Array.isArray(all[k])?all[k]:[];
+      const dupRows=rows.filter(x=>duplicateIds.has(x.routineId));
+      if(!dupRows.length)return;
+      let target=rows.find(x=>x.routineId==='thu_rope');
+      if(!target){target={...dupRows[0],routineId:'thu_rope'};rows.push(target);}
+      else{
+        target.completed=true;
+        const extra=dupRows.reduce((sum,x)=>sum+(Number(x.duration)||0),0);
+        if(extra>0)target.duration=(Number(target.duration)||0)+extra;
+        if(!target.memo){const memo=dupRows.map(x=>x.memo||'').find(Boolean);if(memo)target.memo=memo;}
+      }
+      all[k]=rows.filter(x=>!duplicateIds.has(x.routineId));
+    });
+    saveLifeLogs(all);
+    list=list.filter(r=>!duplicateIds.has(r.id));
+  }
+  saveLifeRoutines(list);
+  localStorage.setItem(ROUTINE_CLEANUP_V5_KEY,'done');
+}
+
+function loadLifeLogs(){try{return JSON.parse(localStorage.getItem(LIFE_LOGS_KEY)||"{}")||{};}catch(e){return {};}}
+function saveLifeLogs(v){localStorage.setItem(LIFE_LOGS_KEY,JSON.stringify(v));}
+function lifeLogKey(){return activeDateKey || getLocalDateKey(new Date());}
+function getLifeDayLogs(){const all=loadLifeLogs();return Array.isArray(all[lifeLogKey()])?all[lifeLogKey()]:[];}
+function setLifeDayLogs(logs){const all=loadLifeLogs();all[lifeLogKey()]=logs;saveLifeLogs(all);}
+function lifeApplies(r,day){if(!r.enabled)return false;if(r.recurrence==='daily')return true;if(r.recurrence==='weekday')return day>=1&&day<=5;if(r.recurrence==='weekend')return day===0||day===6;if(r.recurrence==='days')return Array.isArray(r.days)&&r.days.includes(day);if(r.recurrence==='free')return true;return true;}
+function lifeDayFromKey(k){return parseDateKeyLocal(k).getDay();}
+function legacyRoutineChecked(r){
+  if(!r?.legacyKey) return null;
+  const dayState=getStateForKey(lifeLogKey());
+  return !!dayState.checks?.[r.legacyKey];
+}
+function lifeDone(rid){
+  const r=loadLifeRoutines().find(x=>x.id===rid);
+  if(r?.legacyKey) return legacyRoutineChecked(r);
+  return getLifeDayLogs().some(x=>x.routineId===rid);
+}
+function lifeMeta(r){
+  const running=timerElapsedForRoutine(r.id);
+  if(running)return `측정 중 · ${running}`;
+  const a=[];const log=getLifeDayLogs().find(x=>x.routineId===r.id);
+  if(r.type==='free'){
+    const note=(log?.memo||r.defaultNote||'').trim();if(note)a.push(note);
+  }else if(log&&Number(log.duration)>0)a.push(`기록 ${formatDurationMin(log.duration)}`);
+  else if(r.type==='time'&&r.target)a.push(`목표 ${r.target}${r.unit||'분'}`);
+  else if(r.type==='number'&&r.target)a.push(`${r.target}${r.unit||''}`);
+  return a.join(' · ');
+}
+
+function recordFreeRoutine(id){
+  const r=loadLifeRoutines().find(x=>x.id===id);if(!r)return;
+  let logs=getLifeDayLogs();
+  const idx=logs.findIndex(x=>x.routineId===id);
+  const existing=idx>=0?(logs[idx].memo||''):'';
+  const initial=existing||r.defaultNote||'';
+  const raw=prompt(`${r.name}\n오늘 기록할 내용을 적어 주세요.`,initial);
+  if(raw===null)return;
+  const memo=raw.trim();
+  if(idx>=0){
+    logs[idx].completed=true;logs[idx].memo=memo;logs[idx].loggedAt=new Date().toISOString();
+  }else{
+    logs.push({routineId:id,completed:true,value:null,duration:null,memo,loggedAt:new Date().toISOString()});
+  }
+  setLifeDayLogs(logs);renderLifeGuide();renderLifeCalendar();
+}
+function editFreeRoutineRecord(id){recordFreeRoutine(id);}
+
+function toggleLifeRoutine(id){
+  const r=loadLifeRoutines().find(x=>x.id===id);if(!r)return;
+  if(r.legacyKey){
+    const k=lifeLogKey(); const s=getStateForKey(k);
+    s.checks[r.legacyKey]=!s.checks[r.legacyKey];
+    saveStateForKey(k,s);
+    if(k===activeDateKey) state=s;
+    renderLifeGuide();
+    return;
+  }
+  if(r.type==='free'){recordFreeRoutine(id);return;}
+  let logs=getLifeDayLogs();const idx=logs.findIndex(x=>x.routineId===id);
+  if(idx>=0){logs.splice(idx,1);}else{
+    let value=null,duration=null;
+    if(r.type==='number'){
+      const raw=prompt(`${r.name}${r.target?` (기본 ${r.target}${r.unit||''})`:''}\n오늘 기록할 값을 입력해줘.`,r.target??'');
+      if(raw===null)return; value=raw===''?null:Number(raw); if(raw!==''&&!Number.isFinite(value))return;
+    }else if(r.type==='time'){
+      manualActivityDuration(id);return;
+    }
+    logs.push({routineId:id,completed:true,value,duration,memo:'',loggedAt:new Date().toISOString()});
+  }
+  setLifeDayLogs(logs);renderLifeGuide();
+}
+
+
+function loadActivityTimer(){
+  try{return JSON.parse(localStorage.getItem(ACTIVITY_TIMER_KEY)||"null");}catch(e){return null;}
+}
+function saveActivityTimer(v){
+  if(v) localStorage.setItem(ACTIVITY_TIMER_KEY,JSON.stringify(v));
+  else localStorage.removeItem(ACTIVITY_TIMER_KEY);
+}
+function isTimerRunningFor(id){
+  const t=loadActivityTimer();return !!(t&&t.routineId===id&&t.startedAt);
+}
+function startActivityTimer(id){
+  const r=loadLifeRoutines().find(x=>x.id===id);if(!r)return;
+  const current=loadActivityTimer();
+  if(current&&current.startedAt){
+    const cr=loadLifeRoutines().find(x=>x.id===current.routineId);
+    alert(`${cr?.name||'다른 활동'} 타이머가 이미 진행 중이에요.`);
+    return;
+  }
+  saveActivityTimer({routineId:id,startedAt:new Date().toISOString(),dateKey:lifeLogKey()});
+  renderActivityTimerBanner();renderLifeGuide();
+}
+function stopActivityTimer(){
+  const t=loadActivityTimer();if(!t||!t.startedAt)return;
+  const end=new Date(),start=new Date(t.startedAt);
+  const elapsedMs=Math.max(0,end.getTime()-start.getTime());
+  const minutes=elapsedMs/60000;
+  if(minutes<=0){saveActivityTimer(null);renderActivityTimerBanner();renderLifeGuide();return;}
+  const key=t.dateKey||lifeLogKey();
+  const all=loadLifeLogs();const logs=Array.isArray(all[key])?all[key]:[];
+  const idx=logs.findIndex(x=>x.routineId===t.routineId);
+  if(idx>=0){
+    logs[idx].completed=true;
+    logs[idx].duration=(Number(logs[idx].duration)||0)+minutes;
+    logs[idx].loggedAt=end.toISOString();
+  }else{
+    logs.push({routineId:t.routineId,completed:true,value:null,duration:minutes,memo:'',loggedAt:end.toISOString()});
+  }
+  all[key]=logs;saveLifeLogs(all);saveActivityTimer(null);
+  const finishedRoutine=loadLifeRoutines().find(x=>x.id===t.routineId);
+  renderActivityTimerBanner();renderLifeGuide();renderLifeCalendar();
+  if(t.routineId==='free_read'||finishedRoutine?.name==='독서')chooseBookForReadingTimer(key,minutes);
+}
+function cancelActivityTimer(){
+  if(!loadActivityTimer())return;
+  if(!confirm('진행 중인 타이머를 취소할까요? 기록은 저장되지 않아요.'))return;
+  saveActivityTimer(null);renderActivityTimerBanner();renderLifeGuide();
+}
+function manualActivityDuration(id){
+  const r=loadLifeRoutines().find(x=>x.id===id);if(!r)return;
+  const k=lifeLogKey();
+  const all=loadLifeLogs();
+  const logs=Array.isArray(all[k])?all[k]:[];
+  let idx=logs.findIndex(x=>x.routineId===id);
+  const current=idx>=0?(Number(logs[idx].duration)||0):0;
+  const raw=prompt(`${r.name} 시간을 분 단위로 입력하세요.\n0을 입력하면 오늘 기록이 삭제됩니다.`,current||'');
+  if(raw===null)return;
+  const minutes=Number(raw);
+  if(!Number.isFinite(minutes)||minutes<0){alert('0 이상의 숫자를 입력해 주세요.');return;}
+
+  if(minutes===0){
+    if(idx>=0)logs.splice(idx,1);
+    if(logs.length)all[k]=logs;else delete all[k];
+    saveLifeLogs(all);
+    const timer=loadActivityTimer();
+    if(timer&&(timer.dateKey||lifeLogKey())===k&&timer.routineId===id){
+      saveActivityTimer(null);
+      renderActivityTimerBanner();
+    }
+    renderLifeGuide();renderLifeCalendar();renderRecordDashboard();
+    return;
+  }
+
+  if(idx<0){
+    logs.push({routineId:id,completed:true,value:null,duration:minutes,memo:'',loggedAt:new Date().toISOString()});
+  }else{
+    logs[idx].completed=true;
+    logs[idx].duration=minutes;
+    logs[idx].loggedAt=new Date().toISOString();
+  }
+  all[k]=logs;
+  saveLifeLogs(all);
+  renderLifeGuide();renderLifeCalendar();renderRecordDashboard();
+}
+function formatDurationMin(mins){
+  const totalSeconds=Math.max(0,Math.round((Number(mins)||0)*60));
+  const h=Math.floor(totalSeconds/3600),m=Math.floor((totalSeconds%3600)/60),s=totalSeconds%60;
+  if(h)return `${h}시간 ${m}분${s?` ${s}초`:''}`;
+  if(m)return `${m}분${s?` ${s}초`:''}`;
+  return `${s}초`;
+}
+function formatTimerElapsed(mins){
+  const totalSeconds=Math.max(0,Math.floor((Number(mins)||0)*60));
+  const h=Math.floor(totalSeconds/3600),m=Math.floor((totalSeconds%3600)/60),s=totalSeconds%60;
+  return h?`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function timerElapsedForRoutine(id){
+  const t=loadActivityTimer();
+  if(!t||!t.startedAt||t.routineId!==id)return '';
+  return formatTimerElapsed((Date.now()-new Date(t.startedAt).getTime())/60000);
+}
+function renderActivityTimerBanner(){
+  const el=document.getElementById('activityTimerBanner'),floatEl=document.getElementById('activityTimerFloat');
+  const t=loadActivityTimer();
+  if(!t||!t.startedAt){
+    if(el){el.classList.add('hide');el.innerHTML='';}
+    if(floatEl){floatEl.classList.add('hide');floatEl.innerHTML='';}
+    return;
+  }
+  const r=loadLifeRoutines().find(x=>x.id===t.routineId);
+  const clock=formatTimerElapsed(Math.max(0,(Date.now()-new Date(t.startedAt).getTime())/60000));
+  if(el){
+    el.classList.remove('hide');
+    el.innerHTML=`<div class="activityTimerMain"><div class="activityTimerName">🕒 ${escapeLife(r?.name||'활동 진행 중')}</div><div class="activityTimerElapsed">${clock} 진행 중</div></div><div style="display:flex;gap:6px"><button class="activityTimerStop" onclick="cancelActivityTimer()">취소</button><button class="activityTimerStop" onclick="stopActivityTimer()">종료</button></div>`;
+  }
+  if(floatEl){
+    floatEl.classList.remove('hide');
+    floatEl.innerHTML=`<span>${escapeLife(r?.icon||'🕒')} ${escapeLife(r?.name||'활동')}</span><span>${clock}</span>`;
+  }
+}
+function weekBounds(base=new Date()){
+  const d=new Date(base.getFullYear(),base.getMonth(),base.getDate());
+  const day=d.getDay(),diff=day===0?-6:1-day;
+  const start=new Date(d);start.setDate(d.getDate()+diff);
+  const end=new Date(start);end.setDate(start.getDate()+6);
+  return {start,end};
+}
+function renderWeeklyActivitySummary(){
+  const root=document.getElementById('weeklyActivitySummary'),range=document.getElementById('weeklyActivityRange');
+  if(!root||!range)return;
+  const {start,end}=weekBounds(new Date());
+  const startKey=getLocalDateKey(start),endKey=getLocalDateKey(end);
+  range.textContent=`${startKey} – ${endKey}`;
+  const all=loadLifeLogs(),routines=loadLifeRoutines(),totals={};
+  Object.keys(all).filter(k=>k>=startKey&&k<=endKey).forEach(k=>{
+    const rows=Array.isArray(all[k])?all[k]:[];
+    rows.forEach(x=>{
+      const mins=Number(x.duration)||0;if(mins<=0)return;
+      totals[x.routineId]=(totals[x.routineId]||0)+mins;
+    });
+  });
+  const rows=Object.entries(totals).map(([id,minutes])=>({r:routines.find(x=>x.id===id),minutes}))
+    .filter(x=>x.r).sort((a,b)=>b.minutes-a.minutes);
+  if(!rows.length){root.innerHTML='<div class="weeklyActivityEmpty">이번 주에 기록한 활동 시간이 아직 없어요.</div>';return;}
+  root.innerHTML=`<div class="weeklyActivityList">${rows.map(x=>`<div class="weeklyActivityRow"><div class="weeklyActivityName">${escapeLife(x.r.icon||'')} ${escapeLife(x.r.name)}</div><div class="weeklyActivityTime">${formatDurationMin(x.minutes)}</div></div>`).join('')}</div>`;
+}
+
+function loadDailyNotes(){try{return JSON.parse(localStorage.getItem(DAILY_NOTES_KEY)||"{}")||{};}catch(e){return {};}}
+function saveDailyNotes(v){localStorage.setItem(DAILY_NOTES_KEY,JSON.stringify(v));}
+function saveTodayNote(){
+  const el=document.getElementById('todayNote');if(!el)return;
+  const notes=loadDailyNotes();const k=lifeLogKey();const v=el.value;
+  if(v.trim()) notes[k]=v; else delete notes[k];
+  saveDailyNotes(notes);
+}
+function resetDayRecords(){
+  const k=lifeLogKey();
+  if(!confirm(`${k}\n\n이 날짜에 기록한 루틴, FREE TIME, DAILY CARE, 오늘 한 줄을 모두 초기화할까요?\n루틴 설정과 다른 날짜 기록은 그대로 유지됩니다.`))return;
+
+  const allLogs=loadLifeLogs();
+  delete allLogs[k];
+  saveLifeLogs(allLogs);
+
+  const notes=loadDailyNotes();
+  delete notes[k];
+  saveDailyNotes(notes);
+
+  const reading=loadReadingLogs();delete reading[k];saveReadingLogs(reading);
+
+  localStorage.removeItem(k);
+
+  const timer=loadActivityTimer();
+  if(timer&&timer.dateKey===k)saveActivityTimer(null);
+
+  if(k===activeDateKey)state=getStateForKey(k);
+
+  renderLifeGuide();
+  update();
+  renderLifeCalendar();
+  renderCalendarDetail(k);
+}
+
+function renderTodayNote(){
+  const el=document.getElementById('todayNote');if(!el)return;
+  el.value=loadDailyNotes()[lifeLogKey()]||'';
+}
+let calendarCursor=new Date(parseDateKeyLocal(getLocalDateKey(new Date())).getFullYear(),parseDateKeyLocal(getLocalDateKey(new Date())).getMonth(),1);
+let calendarSelectedKey=getLocalDateKey(new Date());
+function pad2(n){return String(n).padStart(2,'0');}
+function calendarKey(y,m,d){return `${y}-${pad2(m+1)}-${pad2(d)}`;}
+function hasLifeRecord(k){
+  if((loadReadingLogs()[k]||[]).length)return true;
+  const logs=loadLifeLogs()[k];const note=loadDailyNotes()[k];
+  let health=false;try{health=localStorage.getItem(k)!==null;}catch(e){}
+  return (Array.isArray(logs)&&logs.length>0)||!!String(note||'').trim()||health;
+}
+function renderLifeCalendar(){
+  const grid=document.getElementById('calendarGrid'),title=document.getElementById('calendarTitle');if(!grid||!title)return;
+  const y=calendarCursor.getFullYear(),m=calendarCursor.getMonth();
+  title.textContent=`${y}년 ${m+1}월`;
+  const first=new Date(y,m,1).getDay(),last=new Date(y,m+1,0).getDate(),today=getLocalDateKey(new Date());
+  let html='';for(let i=0;i<first;i++)html+='<button class="calDay blank" tabindex="-1"></button>';
+  for(let d=1;d<=last;d++){
+    const k=calendarKey(y,m,d);
+    html+=`<button class="calDay ${k===today?'today':''} ${k===calendarSelectedKey?'selected':''}" onclick="selectCalendarDate('${k}')">${d}${hasLifeRecord(k)?'<span class="calDot"></span>':''}</button>`;
+  }
+  grid.innerHTML=html;renderCalendarDetail(calendarSelectedKey);
+}
+function moveCalendarMonth(delta){calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+delta,1);calendarSelectedKey=calendarKey(calendarCursor.getFullYear(),calendarCursor.getMonth(),1);renderLifeCalendar();}
+function calendarGoToday(){const d=new Date();calendarCursor=new Date(d.getFullYear(),d.getMonth(),1);calendarSelectedKey=getLocalDateKey(d);renderLifeCalendar();}
+function selectCalendarDate(k){calendarSelectedKey=k;renderLifeCalendar();}
+function healthSummaryForDate(k){
+  let s={};try{s=JSON.parse(localStorage.getItem(k)||"{}")||{};}catch(e){}
+  const bits=[];
+  if(Number(s.proteinG)>0)bits.push(`단백질 ${s.proteinG}g`);
+  if(Number(s.waterMl)>0)bits.push(`물 ${s.waterMl}ml`);
+  if(typeof s.sleepMinutes==='number'){const h=Math.floor(s.sleepMinutes/60),m=s.sleepMinutes%60;bits.push(`수면 ${h}시간 ${m}분`);}
+  return bits;
+}
+function dedupeCalendarRoutines(rows){
+  const seen=new Set();
+  return rows.filter(r=>{
+    const key=`${r.block||''}|${String(r.name||'').replace(/\s+/g,'').toLowerCase()}`;
+    if(seen.has(key))return false;seen.add(key);return true;
+  });
+}
+function renderCalendarDetail(k){
+  const root=document.getElementById('calendarDetail');if(!root)return;
+  const routines=loadLifeRoutines(),logs=loadLifeLogs()[k]||[],note=loadDailyNotes()[k]||'';
+  const completed=logs.map(x=>routines.find(r=>r.id===x.routineId)).filter(Boolean);
+  let legacyDone=[];let health={};try{health=JSON.parse(localStorage.getItem(k)||"{}")||{};}catch(e){}
+  if(health.checks) legacyDone=routines.filter(r=>r.legacyKey&&health.checks[r.legacyKey]);
+  const merged=dedupeCalendarRoutines([...completed,...legacyDone.filter(r=>!completed.some(x=>x.id===r.id))]);
+  const blockDefs=[
+    ['breakfast','BREAKFAST'],['morning','MORNING'],['lunch','LUNCH'],
+    ['afternoon','AFTERNOON'],['evening','EVENING'],['free','FREE TIME']
+  ];
+  const chip=r=>{
+    const log=logs.find(x=>x.routineId===r.id);
+    const details=[];
+    if(r.type==='free'){
+      const memo=(log?.memo||'').trim();
+      if(memo)details.push(memo);
+    }
+    if(r.type==='time'&&Number(log?.duration)>0)details.push(formatDurationMin(log.duration));
+    if(r.type==='number'&&log?.value!==null&&log?.value!==undefined&&log?.value!=='')details.push(`${log.value}${r.unit||''}`);
+    return `<span class="calRoutineChip">${escapeLife(r.icon||'')} ${escapeLife(r.name)}${details.length?` · ${details.map(escapeLife).join(' · ')}`:''}</span>`;
+  };
+  const calendarBlockGroups=blockDefs.map(([key,label])=>{
+    const rows=merged.filter(r=>r.block===key);
+    return rows.length?`<div class="calBlockGroup"><div class="calBlockTitle">${label}</div><div class="calRoutineChips">${rows.map(chip).join('')}</div></div>`:'';
+  }).join('');
+  const hs=healthSummaryForDate(k);
+  root.innerHTML=`<h3>${escapeLife(k)} 기록</h3>
+    ${calendarBlockGroups||'<div class="calDetailItem small">체크한 루틴이 없어요.</div>'}
+    ${renderCalendarReading(k)}
+    <div class="calInfoCard"><div class="calDetailLabel">오늘 한 줄</div><div class="calDetailItem">${note?escapeLife(note):'<span class="small">기록 없음</span>'}</div></div>
+    <div class="calInfoCard"><div class="calDetailLabel">건강 기록</div><div class="calDetailItem">${hs.length?hs.map(escapeLife).join(' · '):'<span class="small">기록 없음</span>'}</div></div>`;
+}
+function renderLifeGuide(){
+  const root=document.getElementById('lifeGuide');if(!root)return;
+  const routines=loadLifeRoutines();const day=lifeDayFromKey(lifeLogKey());
+  const d=parseDateKeyLocal(lifeLogKey());
+  const dayNames=['일','월','화','수','목','금','토'];
+  const dateLine=document.getElementById('lifeDateLine');if(dateLine)dateLine.textContent=`${lifeLogKey()} (${dayNames[day]})`;
+  const blocks=[['breakfast','BREAKFAST','기상 후 아침 루틴'],['morning','MORNING','점심 전 오전 루틴'],['lunch','LUNCH','점심과 식후 루틴'],['afternoon','AFTERNOON','평일 업무 · 연구'],['evening','EVENING','하루 마무리 루틴']];
+  const renderRow=r=>{
+    const running=isTimerRunningFor(r.id);
+    const lead=r.type==='time'
+      ? `<button class="lifeTimerBtn ${running?'running':''}" onclick="${running?'stopActivityTimer()':`startActivityTimer('${r.id}')`}">${running?'종료':'시작'}</button>`
+      : `<button class="lifeCheck ${lifeDone(r.id)?'done':''}" onclick="toggleLifeRoutine('${r.id}')">${lifeDone(r.id)?'✓':''}</button>`;
+    const timerActions=r.type==='time'
+      ? `<div class="lifeRoutineTimerActions"><button class="lifeManualBtn" onclick="manualActivityDuration('${r.id}')">직접</button><button class="lifeMiniBtn" onclick="openRoutineModal('${r.id}')">편집</button></div>`
+      : r.type==='free'
+        ? `<div class="lifeRoutineTimerActions"><button class="lifeManualBtn" onclick="editFreeRoutineRecord('${r.id}')">기록</button><button class="lifeMiniBtn" onclick="openRoutineModal('${r.id}')">편집</button></div>`
+        : `<button class="lifeMiniBtn" onclick="openRoutineModal('${r.id}')">편집</button>`;
+    return `<div class="lifeRoutine">${lead}<div class="lifeRoutineMain"><div class="lifeRoutineName">${escapeLife(r.icon||'')} ${escapeLife(r.name)}</div>${lifeMeta(r)?`<div class="lifeRoutineMeta">${escapeLife(lifeMeta(r))}</div>`:''}</div>${timerActions}</div>`;
+  };
+  let html='';
+  for(const [key,title,hint] of blocks){
+    const applicable=routines.filter(r=>r.block===key&&lifeApplies(r,day)).sort((a,b)=>(a.order||0)-(b.order||0));
+    const common=applicable.filter(r=>r.recurrence!=='days');
+    const dayOnly=applicable.filter(r=>r.recurrence==='days');
+    let body=common.length?common.map(renderRow).join(''):'';
+    if(dayOnly.length){
+      body+=`<div class="lifeBlockHint" style="margin:12px 2px 6px;font-weight:800;">${dayNames[day]}요일 루틴</div>${dayOnly.map(renderRow).join('')}`;
+    }
+    if(!body) body='<div class="lifeBlockHint">오늘은 정해진 기본 일정이 없어요.</div>';
+    html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">${title}</div><div class="lifeBlockHint">${hint}</div></div></div><div>${body}</div><button class="lifeAddBtn" onclick="openRoutineModal(null,'${key}')">+ 이 블록에 루틴 추가</button></section>`;
+  }
+  const free=routines.filter(r=>r.block==='free'&&r.enabled).sort((a,b)=>(a.order||0)-(b.order||0));
+  html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">FREE TIME</div><div class="lifeBlockHint">해야 할 일이 아니라, 오늘 여유가 있을 때 고르는 활동</div></div><button class="lifeMiniBtn" onclick="openRoutineModal(null,'free')">+ 추가</button></div><div class="freeGrid">${free.map(r=>`<div class="freeChipWrap"><button class="freeChip ${lifeDone(r.id)?'done':''}" onclick="toggleLifeRoutine('${r.id}')"><span class="ico">${escapeLife(r.icon||'·')}</span>${escapeLife(r.name)}</button>${r.type==='time'?`<button class="freeTimerBtn ${isTimerRunningFor(r.id)?'running':''}" aria-label="${escapeLife(r.name)} 시간 기록" onclick="event.stopPropagation();${isTimerRunningFor(r.id)?'stopActivityTimer()':`startActivityTimer('${r.id}')`}">⏱</button>`:r.type==='free'?`<button class="freeTimerBtn" aria-label="${escapeLife(r.name)} 자유 기록" onclick="event.stopPropagation();recordFreeRoutine('${r.id}')">✎</button>`:''}<button class="freeEditBtn" aria-label="${escapeLife(r.name)} 편집" onclick="event.stopPropagation();openRoutineModal('${r.id}')">⋯</button></div>`).join('')}</div><div class="lifeBlockHint" style="margin-top:9px">하지 않은 활동은 아무 표시도 남기지 않아요.</div></section>`;
+  root.innerHTML=html;
+  renderTodayNote();
+  renderActivityTimerBanner();
+}
+function escapeLife(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function openRoutineModal(id,block){
+  const list=loadLifeRoutines();const r=id?list.find(x=>x.id===id):null;
+  document.getElementById('routineModalTitle').textContent=r?'루틴 수정':'루틴 추가';
+  document.getElementById('rId').value=r?.id||'';document.getElementById('rName').value=r?.name||'';document.getElementById('rIcon').value=r?.icon||'';
+  document.getElementById('rType').value=r?.type||(block==='free'?'free':'check');document.getElementById('rBlock').value=r?.block||block||'morning';document.getElementById('rRecurrence').value=r?.recurrence||(block==='free'?'free':'daily');
+  document.getElementById('rTarget').value=r?.type==='time'?(r?.target??''):'';document.getElementById('rNumberTarget').value=r?.type==='number'?(r?.target??''):'';document.getElementById('rUnit').value=r?.type==='number'?(r?.unit||''):'';document.getElementById('rDefaultNote').value=r?.type==='free'?(r?.defaultNote||''):'';document.getElementById('rOrder').value=r?.order??10;document.getElementById('rEnabled').checked=r?.enabled??true;
+  document.querySelectorAll('input[name="rDay"]').forEach(x=>x.checked=!!r?.days?.includes(Number(x.value)));
+  document.getElementById('routineDeleteBtn').classList.toggle('hide',!r);toggleRoutineDays();toggleRoutineTypeFields();document.getElementById('routineModal').classList.remove('hide');
+}
+function closeRoutineModal(){document.getElementById('routineModal').classList.add('hide');}
+function toggleRoutineDays(){document.getElementById('rDaysWrap').classList.toggle('hide',document.getElementById('rRecurrence').value!=='days');}
+function toggleRoutineTypeFields(){
+  const type=document.getElementById('rType').value;
+  document.getElementById('rTimeOptions').classList.toggle('hide',type!=='time');
+  document.getElementById('rNumberOptions').classList.toggle('hide',type!=='number');
+  document.getElementById('rFreeOptions').classList.toggle('hide',type!=='free');
+}
+function saveRoutineFromModal(){
+  const name=document.getElementById('rName').value.trim();if(!name){alert('루틴 이름을 입력해줘.');return;}
+  const id=document.getElementById('rId').value||`life_${Date.now()}_${Math.random().toString(36).slice(2,6)}`;
+  const recurrence=document.getElementById('rRecurrence').value;const days=[...document.querySelectorAll('input[name="rDay"]:checked')].map(x=>Number(x.value));
+  if(recurrence==='days'&&!days.length){alert('표시할 요일을 하나 이상 선택해줘.');return;}
+  const num=id=>{const v=document.getElementById(id).value.trim();return v===''?null:Number(v)};
+  const type=document.getElementById('rType').value;
+  const target=type==='time'?num('rTarget'):(type==='number'?num('rNumberTarget'):null);
+  const unit=type==='time'?'분':(type==='number'?document.getElementById('rUnit').value.trim():'');
+  const r={id,name,icon:document.getElementById('rIcon').value.trim(),type,block:document.getElementById('rBlock').value,recurrence,days,target,unit,defaultNote:type==='free'?document.getElementById('rDefaultNote').value.trim():'',maxDuration:null,enabled:document.getElementById('rEnabled').checked,order:num('rOrder')??10};
+  const list=loadLifeRoutines();const idx=list.findIndex(x=>x.id===id);if(idx>=0)list[idx]=r;else list.push(r);saveLifeRoutines(list);closeRoutineModal();renderLifeGuide();
+}
+function deleteRoutineFromModal(){const id=document.getElementById('rId').value;if(!id)return;if(!confirm('이 루틴을 목록에서 삭제할까? 과거 생활 로그는 그대로 보관해요.'))return;saveLifeRoutines(loadLifeRoutines().filter(x=>x.id!==id));closeRoutineModal();renderLifeGuide();}
+function lifeNavigate(where){
+  if(where!=='books'){closeBookModal();closeReadingBookModal();}
+  ['navToday','navCalendar','navBooks','navRecord','navBackup'].forEach(id=>document.getElementById(id)?.classList.remove('on'));
+  const map={today:'navToday',calendar:'navCalendar',books:'navBooks',record:'navRecord',backup:'navBackup'};document.getElementById(map[where])?.classList.add('on');
+  const views=[document.getElementById('viewToday'),document.getElementById('viewCalendar'),document.getElementById('viewBooks'),document.getElementById('viewAll_v2'),document.getElementById('viewBackup')];views.forEach(v=>v?.classList.add('hide'));
+  if(where==='today'){document.getElementById('viewToday')?.classList.remove('hide');renderLifeGuide();}
+  if(where==='calendar'){document.getElementById('viewCalendar')?.classList.remove('hide');renderLifeCalendar();}
+  if(where==='books'){document.getElementById('viewBooks')?.classList.remove('hide');renderBooks();}
+  if(where==='record'){document.getElementById('viewAll_v2')?.classList.remove('hide');renderRecordDashboard();}
+  if(where==='backup')document.getElementById('viewBackup')?.classList.remove('hide');
+}
+
 makeAutoBackup();
 
   
@@ -2145,6 +3814,11 @@ makeAutoBackup();
 render();
 bindMeasureInputs();
 renderMeasures();
+applyRoutineSemanticsV3();
+applyFreeTimeSemanticsV4();
+applyRoutineCleanupV5();
+importExcelBooksOnce();bindBookModalBackdrop();bindBookModalHistory();
+lifeNavigate('today');
   
 // ✅ 앱 다시 열었을 때(복원/재진입) 화면 재렌더
 window.addEventListener("pageshow", () => { render(); });
@@ -2153,7 +3827,7 @@ document.addEventListener("visibilitychange", () => {
 });
 window.addEventListener("focus", () => { render(); });
   
-setInterval(()=>{ renderFasting(); }, 60*1000);
+setInterval(()=>{ renderFasting(); renderActivityTimerBanner(); if(loadActivityTimer())renderLifeGuide(); }, 1000);
 
 // PWA
 if("serviceWorker" in navigator){
