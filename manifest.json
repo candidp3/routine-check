@@ -1,6 +1,8 @@
 {
   "name": "Routine Check",
   "short_name": "Routine Check",
+  "description": "하루의 균형을 기록하는 개인 생활 가이드",
+  "lang": "ko",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
