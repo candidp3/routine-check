@@ -386,6 +386,34 @@ button,input,select,textarea{font:inherit}
 .calInfoCard{background:#f7f8f5;border-radius:13px;padding:11px 12px;margin-top:9px}
 .calInfoCard .calDetailLabel{margin-bottom:5px}
 
+.calSearchPanel{margin-bottom:10px;padding:13px 14px}
+.calSearchRow{position:relative;display:flex;align-items:center}
+.calSearchInput{width:100%;border:1px solid #e3e7e1;background:#f8faf7;border-radius:12px;padding:10px 34px 10px 11px;font-size:12px;color:#343a35;outline:none}
+.calSearchInput:focus{border-color:#b9c6ba;background:#fff}
+.calSearchClear{position:absolute;right:7px;width:25px;height:25px;border:0;border-radius:50%;background:#ecefeb;color:#667068;font-size:16px;line-height:1}
+.calSearchClear.hide{display:none}
+.calSearchLabel{font-size:10px;font-weight:750;color:#8a928b;margin:11px 0 6px}
+
+.calSearchLabelRow{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+.calSearchLabelRow .calSearchLabel{margin:0}
+.calendarChipEditBtn{border:0;background:transparent;color:#7b857d;font-size:10px;font-weight:700;padding:4px 2px}
+.calendarChipSelectList{display:flex;flex-direction:column;gap:7px;max-height:55vh;overflow:auto;margin-top:10px}
+.calendarChipSelectItem{display:flex;align-items:center;gap:9px;padding:10px 11px;border:1px solid #e5e9e4;border-radius:12px;background:#fafbf9;font-size:12px;color:#4d574f}
+.calendarChipSelectItem input{width:auto;margin:0}
+.calendarChipSelectHint{font-size:10px;color:#89928b;line-height:1.55;margin-top:4px}
+
+.calendarRoutineChips{display:flex;flex-wrap:wrap;gap:6px;max-height:96px;overflow:auto}
+.calendarRoutineChip{border:1px solid #e3e7e1;background:#f7f8f5;border-radius:999px;padding:6px 9px;font-size:11px;color:#59625b;font-weight:500}
+.calendarRoutineChip.on{background:#e7eee7;border-color:#b6c5b8;color:#34473a}
+.calendarRoutineSummary{margin-top:10px;background:#f2f6f1;border:1px solid #e1e9df;border-radius:13px;padding:10px 11px}
+.calendarRoutineSummary.hide{display:none}
+.calSummaryName{font-size:12px;font-weight:750;color:#3f4b42;margin-bottom:5px}
+.calSummaryLine{font-size:11px;color:#677168;line-height:1.65}
+.calDay.filterMiss{opacity:.26;background:#fafafa}
+.calDay.filterHit{background:#edf4ec;border-color:#9fb29f;font-weight:800;box-shadow:inset 0 0 0 1px #c8d6c8}
+.calDay.filterHit .calDot{background:#48624d;width:6px;height:6px}
+
+
 
 /* ===== Phase 3: lighter typography + activity timer ===== */
 .lifeRoutineName{font-size:13px!important;font-weight:400!important;line-height:1.35}
@@ -759,6 +787,18 @@ button,input,select,textarea{font:inherit}
 
 <!-- CALENDAR / BOOKS placeholders: Phase 2/4 -->
 <div id="viewCalendar" class="hide">
+  <div class="section calSearchPanel">
+    <div class="calSearchRow">
+      <input id="calendarSearchInput" class="calSearchInput" type="search" placeholder="오늘 한 줄 · 자유기록 · 루틴 이름 검색" oninput="setCalendarTextSearch(this.value)">
+      <button id="calendarSearchClear" class="calSearchClear hide" onclick="clearCalendarSearch()" aria-label="검색 초기화">×</button>
+    </div>
+    <div class="calSearchLabelRow">
+      <div class="calSearchLabel">루틴으로 보기</div>
+      <button id="calendarChipEditBtn" class="calendarChipEditBtn" onclick="openCalendarChipSelectModal()">편집</button>
+    </div>
+    <div id="calendarRoutineChips" class="calendarRoutineChips"></div>
+    <div id="calendarRoutineSummary" class="calendarRoutineSummary hide"></div>
+  </div>
   <div class="section calWrap">
     <div class="calHead">
       <button onclick="moveCalendarMonth(-1)">‹</button>
@@ -1013,6 +1053,15 @@ button,input,select,textarea{font:inherit}
     </div>
     <div class="sleepManualHint">새벽 0시~5시 59분에 잠들면 기본적으로 전날 수면으로 기록합니다. 예: 토요일 02:00 취침 → 금요일 기록.</div>
     <div class="lifeActions"><button class="lifeDelete" onclick="closeSleepManualModal()">취소</button><button class="lifeSave" onclick="saveManualSleepFromModal()">저장</button></div>
+  </div>
+</div>
+
+<div id="calendarChipSelectModal" class="lifeModal hide" onclick="if(event.target===this) closeCalendarChipSelectModal()">
+  <div class="lifeSheet">
+    <div class="lifeSheetHead"><b>캘린더 검색 칩 선택</b><button class="lifeClose" onclick="closeCalendarChipSelectModal()">×</button></div>
+    <div class="calendarChipSelectHint">체크한 항목만 CALENDAR의 ‘루틴으로 보기’에 표시됩니다. 같은 이름의 루틴은 하나로 묶어 보여요.</div>
+    <div id="calendarChipSelectList" class="calendarChipSelectList"></div>
+    <div class="lifeActions"><button class="lifeSave" onclick="saveCalendarChipSelection()">저장</button></div>
   </div>
 </div>
 
@@ -3884,15 +3933,292 @@ function hasLifeRecord(k){
   let health=false;try{health=localStorage.getItem(k)!==null;}catch(e){}
   return (Array.isArray(logs)&&logs.length>0)||!!String(note||'').trim()||health;
 }
+
+let calendarSearchText='';
+let calendarRoutineFilterId=null;
+const CALENDAR_ROUTINE_CHIP_LABELS_KEY='calendarRoutineChipLabels_v1';
+const CALENDAR_ROUTINE_CHIP_SELECTION_KEY='calendarRoutineChipSelection_v1';
+const DEFAULT_CALENDAR_CHIP_KEYS=[
+  'breakfast_lemon','free_read','free_knit',
+  'mon_rope','tue_rope','thu_rope','free_rope',
+  'free_japanese','free_boardgame','wed_baha','wed_mask','sat_mask'
+];
+const CALENDAR_SPECIAL_GROUPS=[
+  {key:'special:rope',fallbackName:'줄넘기',routineIds:['mon_rope','tue_rope','thu_rope','free_rope']},
+  {key:'special:mask',fallbackName:'팩',routineIds:['wed_mask','sat_mask']}
+];
+
+function loadCalendarRoutineChipLabels(){
+  try{return JSON.parse(localStorage.getItem(CALENDAR_ROUTINE_CHIP_LABELS_KEY)||'{}')||{};}catch(e){return {};}
+}
+function saveCalendarRoutineChipLabels(v){
+  localStorage.setItem(CALENDAR_ROUTINE_CHIP_LABELS_KEY,JSON.stringify(v||{}));
+}
+function loadCalendarRoutineChipSelection(){
+  try{
+    const raw=localStorage.getItem(CALENDAR_ROUTINE_CHIP_SELECTION_KEY);
+    if(raw===null)return [...DEFAULT_CALENDAR_CHIP_KEYS];
+    const arr=JSON.parse(raw);
+    return Array.isArray(arr)?arr:[...DEFAULT_CALENDAR_CHIP_KEYS];
+  }catch(e){return [...DEFAULT_CALENDAR_CHIP_KEYS];}
+}
+function saveCalendarRoutineChipSelectionIds(ids){
+  localStorage.setItem(CALENDAR_ROUTINE_CHIP_SELECTION_KEY,JSON.stringify([...new Set(ids)]));
+}
+function getCalendarSelectableGroups(){
+  const routines=loadLifeRoutines().filter(r=>r.enabled!==false);
+  const byId=new Map(routines.map(r=>[r.id,r]));
+  const used=new Set();
+  const groups=[];
+
+  CALENDAR_SPECIAL_GROUPS.forEach(s=>{
+    const members=s.routineIds.map(id=>byId.get(id)).filter(Boolean);
+    if(!members.length)return;
+    members.forEach(r=>used.add(r.id));
+    groups.push({...s,routines:members,isSpecial:true});
+  });
+
+  const sameName=new Map();
+  routines.filter(r=>!used.has(r.id)).forEach(r=>{
+    const normalized=String(r.name||'').trim().toLocaleLowerCase('ko-KR')||r.id;
+    if(!sameName.has(normalized))sameName.set(normalized,[]);
+    sameName.get(normalized).push(r);
+  });
+  sameName.forEach(members=>{
+    const ids=members.map(r=>r.id).sort();
+    groups.push({
+      key:`auto:${ids.join('|')}`,
+      fallbackName:members[0]?.name||'',
+      routineIds:ids,
+      routines:members,
+      isSpecial:false
+    });
+  });
+
+  return groups.sort((a,b)=>{
+    const ar=a.routines?.[0],br=b.routines?.[0];
+    const ao=(ar?.block||'').localeCompare(br?.block||'');
+    return ao||((ar?.order||0)-(br?.order||0))||getCalendarRoutineGroupName(a).localeCompare(getCalendarRoutineGroupName(b),'ko');
+  });
+}
+function getCalendarSelectedGroups(){
+  const selected=new Set(loadCalendarRoutineChipSelection());
+  return getCalendarSelectableGroups().filter(g=>g.routineIds.some(id=>selected.has(id)));
+}
+function getCalendarRoutineGroup(key){
+  return getCalendarSelectableGroups().find(g=>g.key===key)||null;
+}
+function getCalendarRoutineGroupRoutines(group){
+  if(!group)return [];
+  if(Array.isArray(group.routines))return group.routines;
+  const all=loadLifeRoutines();
+  return group.routineIds.map(id=>all.find(r=>r.id===id)).filter(Boolean);
+}
+function getCalendarRoutineGroupName(group){
+  if(!group)return '';
+  if(group.isSpecial){
+    const labels=loadCalendarRoutineChipLabels();
+    if(labels[group.key])return labels[group.key];
+  }
+  const routines=getCalendarRoutineGroupRoutines(group);
+  return routines[0]?.name||group.fallbackName||'';
+}
+function getCalendarRoutineGroupIcon(group){
+  return getCalendarRoutineGroupRoutines(group)[0]?.icon||'';
+}
+function getCalendarRoutineGroupForRoutineId(id){
+  return getCalendarSelectableGroups().find(g=>g.routineIds.includes(id))||null;
+}
+function syncCalendarRoutineChipNameOnEdit(id,oldName,newName){
+  if(!id||!newName||oldName===newName)return;
+  const special=CALENDAR_SPECIAL_GROUPS.find(g=>g.routineIds.includes(id));
+  if(!special)return;
+  const labels=loadCalendarRoutineChipLabels();
+  labels[special.key]=newName;
+  saveCalendarRoutineChipLabels(labels);
+}
+function openCalendarChipSelectModal(){
+  const modal=document.getElementById('calendarChipSelectModal');
+  const list=document.getElementById('calendarChipSelectList');
+  if(!modal||!list)return;
+  const selected=new Set(loadCalendarRoutineChipSelection());
+  list.innerHTML=getCalendarSelectableGroups().map(group=>{
+    const checked=group.routineIds.some(id=>selected.has(id));
+    return `<label class="calendarChipSelectItem"><input type="checkbox" name="calendarChipChoice" value="${escapeLife(group.key)}" ${checked?'checked':''}><span>${escapeLife(getCalendarRoutineGroupIcon(group))} ${escapeLife(getCalendarRoutineGroupName(group))}</span></label>`;
+  }).join('');
+  modal.classList.remove('hide');
+}
+function closeCalendarChipSelectModal(){
+  document.getElementById('calendarChipSelectModal')?.classList.add('hide');
+}
+function saveCalendarChipSelection(){
+  const chosenKeys=[...document.querySelectorAll('input[name="calendarChipChoice"]:checked')].map(x=>x.value);
+  const allGroups=getCalendarSelectableGroups();
+  const ids=[];
+  chosenKeys.forEach(key=>{
+    const group=allGroups.find(g=>g.key===key);
+    if(group)ids.push(...group.routineIds);
+  });
+  saveCalendarRoutineChipSelectionIds(ids);
+  if(calendarRoutineFilterId&&!getCalendarSelectedGroups().some(g=>g.key===calendarRoutineFilterId)){
+    calendarRoutineFilterId=null;
+  }
+  closeCalendarChipSelectModal();
+  renderCalendarSearchControls();
+  renderLifeCalendar();
+}
+
+function calendarRoutineWasDoneOnDate(routine,dateKey){
+  if(!routine)return false;
+  const logs=loadLifeLogs()[dateKey]||[];
+  if(logs.some(x=>x.routineId===routine.id))return true;
+  if(routine.legacyKey){
+    try{
+      const s=JSON.parse(localStorage.getItem(dateKey)||"{}")||{};
+      return !!s.checks?.[routine.legacyKey];
+    }catch(e){}
+  }
+  return false;
+}
+function calendarRoutineDurationOnDate(routine,dateKey){
+  if(!routine||routine.type!=='time')return 0;
+  const logs=loadLifeLogs()[dateKey]||[];
+  return logs.filter(x=>x.routineId===routine.id).reduce((sum,x)=>sum+(Number(x.duration)||0),0);
+}
+function calendarRoutineGroupWasDoneOnDate(group,dateKey){
+  return getCalendarRoutineGroupRoutines(group).some(r=>calendarRoutineWasDoneOnDate(r,dateKey));
+}
+function calendarRoutineGroupDurationOnDate(group,dateKey){
+  return getCalendarRoutineGroupRoutines(group).reduce((sum,r)=>sum+calendarRoutineDurationOnDate(r,dateKey),0);
+}
+function calendarRoutineGroupHasTime(group){
+  return getCalendarRoutineGroupRoutines(group).some(r=>r.type==='time');
+}
+function calendarDateMatchesText(dateKey,rawQuery){
+  const q=String(rawQuery||'').trim().toLowerCase();
+  if(!q)return true;
+  const routines=loadLifeRoutines();
+  const logs=loadLifeLogs()[dateKey]||[];
+  const note=String(loadDailyNotes()[dateKey]||'');
+  const parts=[note];
+
+  for(const log of logs){
+    const r=routines.find(x=>x.id===log.routineId);
+    if(r)parts.push(r.name||'',r.icon||'');
+    if(log.memo)parts.push(log.memo);
+    if(log.value!==null&&log.value!==undefined)parts.push(String(log.value));
+  }
+
+  try{
+    const s=JSON.parse(localStorage.getItem(dateKey)||"{}")||{};
+    if(s.checks){
+      routines.filter(r=>r.legacyKey&&s.checks[r.legacyKey]).forEach(r=>parts.push(r.name||'',r.icon||''));
+    }
+  }catch(e){}
+
+  return parts.join(' ').toLowerCase().includes(q);
+}
+function calendarDateMatchesFilter(dateKey){
+  if(calendarRoutineFilterId){
+    return calendarRoutineGroupWasDoneOnDate(getCalendarRoutineGroup(calendarRoutineFilterId),dateKey);
+  }
+  if(calendarSearchText.trim())return calendarDateMatchesText(dateKey,calendarSearchText);
+  return null;
+}
+function setCalendarTextSearch(value){
+  calendarSearchText=String(value||'');
+  if(calendarSearchText.trim())calendarRoutineFilterId=null;
+  renderCalendarSearchControls();
+  renderLifeCalendar();
+}
+function setCalendarRoutineFilter(id){
+  calendarRoutineFilterId=(calendarRoutineFilterId===id?null:id);
+  calendarSearchText='';
+  const input=document.getElementById('calendarSearchInput');if(input)input.value='';
+  renderCalendarSearchControls();
+  renderLifeCalendar();
+}
+function clearCalendarSearch(){
+  calendarSearchText='';
+  calendarRoutineFilterId=null;
+  const input=document.getElementById('calendarSearchInput');if(input)input.value='';
+  renderCalendarSearchControls();
+  renderLifeCalendar();
+}
+function calendarSummaryPeriod(group,start,end){
+  let days=0,totalMinutes=0;
+  const d=new Date(start.getFullYear(),start.getMonth(),start.getDate());
+  while(d<=end){
+    const k=getLocalDateKey(d);
+    if(calendarRoutineGroupWasDoneOnDate(group,k)){
+      days++;
+      totalMinutes+=calendarRoutineGroupDurationOnDate(group,k);
+    }
+    d.setDate(d.getDate()+1);
+  }
+  return {days,totalMinutes};
+}
+function getCalendarRoutineGroupSummary(group){
+  if(!group)return null;
+  const y=calendarCursor.getFullYear(),m=calendarCursor.getMonth();
+  const monthStart=new Date(y,m,1),monthEnd=new Date(y,m+1,0);
+  const yearStart=new Date(y,0,1),yearEnd=new Date(y,11,31);
+  return {
+    month:calendarSummaryPeriod(group,monthStart,monthEnd),
+    year:calendarSummaryPeriod(group,yearStart,yearEnd),
+    yearValue:y,
+    monthValue:m+1
+  };
+}
+function formatCalendarSummaryDuration(mins){
+  const n=Math.max(0,Math.round(Number(mins)||0));
+  const h=Math.floor(n/60),m=n%60;
+  if(h&&m)return `${h}시간 ${m}분`;
+  if(h)return `${h}시간`;
+  return `${m}분`;
+}
+function renderCalendarSearchControls(){
+  const chips=document.getElementById('calendarRoutineChips');
+  const summary=document.getElementById('calendarRoutineSummary');
+  const clear=document.getElementById('calendarSearchClear');
+  if(clear)clear.classList.toggle('hide',!calendarSearchText.trim()&&!calendarRoutineFilterId);
+
+  if(chips){
+    chips.innerHTML=getCalendarSelectedGroups().map(group=>{
+      const name=getCalendarRoutineGroupName(group);
+      const icon=getCalendarRoutineGroupIcon(group);
+      return `<button class="calendarRoutineChip ${calendarRoutineFilterId===group.key?'on':''}" onclick="setCalendarRoutineFilter('${group.key}')">${escapeLife(icon)} ${escapeLife(name)}</button>`;
+    }).join('');
+  }
+
+  if(!summary)return;
+  const group=calendarRoutineFilterId?getCalendarRoutineGroup(calendarRoutineFilterId):null;
+  if(!group){
+    summary.classList.add('hide');summary.innerHTML='';return;
+  }
+  const s=getCalendarRoutineGroupSummary(group);
+  const hasTime=calendarRoutineGroupHasTime(group);
+  const monthExtra=hasTime?` · 총 ${formatCalendarSummaryDuration(s.month.totalMinutes)}`:'';
+  const yearExtra=hasTime?` · 총 ${formatCalendarSummaryDuration(s.year.totalMinutes)}`:'';
+  summary.innerHTML=`<div class="calSummaryName">${escapeLife(getCalendarRoutineGroupIcon(group))} ${escapeLife(getCalendarRoutineGroupName(group))}</div>
+    <div class="calSummaryLine">${s.monthValue}월 ${s.month.days}일${monthExtra}</div>
+    <div class="calSummaryLine">${s.yearValue}년 ${s.year.days}일${yearExtra}</div>`;
+  summary.classList.remove('hide');
+}
+
 function renderLifeCalendar(){
   const grid=document.getElementById('calendarGrid'),title=document.getElementById('calendarTitle');if(!grid||!title)return;
+  renderCalendarSearchControls();
   const y=calendarCursor.getFullYear(),m=calendarCursor.getMonth();
   title.textContent=`${y}년 ${m+1}월`;
   const first=new Date(y,m,1).getDay(),last=new Date(y,m+1,0).getDate(),today=getLocalDateKey(new Date());
+  const filtering=!!calendarRoutineFilterId||!!calendarSearchText.trim();
   let html='';for(let i=0;i<first;i++)html+='<button class="calDay blank" tabindex="-1"></button>';
   for(let d=1;d<=last;d++){
     const k=calendarKey(y,m,d);
-    html+=`<button class="calDay ${k===today?'today':''} ${k===calendarSelectedKey?'selected':''}" onclick="selectCalendarDate('${k}')">${d}${hasLifeRecord(k)?'<span class="calDot"></span>':''}</button>`;
+    const match=filtering?calendarDateMatchesFilter(k):null;
+    const filterClass=filtering?(match?'filterHit':'filterMiss'):'';
+    html+=`<button class="calDay ${k===today?'today':''} ${k===calendarSelectedKey?'selected':''} ${filterClass}" onclick="selectCalendarDate('${k}')">${d}${hasLifeRecord(k)?'<span class="calDot"></span>':''}</button>`;
   }
   grid.innerHTML=html;renderCalendarDetail(calendarSelectedKey);
 }
@@ -4010,7 +4336,11 @@ function saveRoutineFromModal(){
   const target=type==='time'?num('rTarget'):null;
   const unit=type==='time'?'분':'';
   const r={id,name,icon:document.getElementById('rIcon').value.trim(),type,block:document.getElementById('rBlock').value,recurrence,days,target,unit,defaultNote:type==='free'?document.getElementById('rDefaultNote').value.trim():'',maxDuration:null,enabled:document.getElementById('rEnabled').checked,order:num('rOrder')??10};
-  const list=loadLifeRoutines();const idx=list.findIndex(x=>x.id===id);if(idx>=0)list[idx]=r;else list.push(r);saveLifeRoutines(list);closeRoutineModal();renderLifeGuide();
+  const list=loadLifeRoutines();const idx=list.findIndex(x=>x.id===id);const oldName=idx>=0?(list[idx].name||''):'';
+  if(idx>=0)list[idx]=r;else list.push(r);
+  saveLifeRoutines(list);
+  syncCalendarRoutineChipNameOnEdit(id,oldName,name);
+  closeRoutineModal();renderLifeGuide();renderCalendarSearchControls();
 }
 function deleteRoutineFromModal(){const id=document.getElementById('rId').value;if(!id)return;if(!confirm('이 루틴을 목록에서 삭제할까? 과거 생활 로그는 그대로 보관해요.'))return;saveLifeRoutines(loadLifeRoutines().filter(x=>x.id!==id));closeRoutineModal();renderLifeGuide();}
 function lifeNavigate(where){
