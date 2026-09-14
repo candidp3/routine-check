@@ -13,31 +13,50 @@
 
 <style>
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f6f6f6;margin:0;padding:14px;color:#222}
+
+.settingsRow{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:9px}
+.settingsLabel{font-size:0.62500rem;color:#7f8781;min-width:64px}
+.settingsInput{flex:1;min-width:160px;border:1px solid #dfe4dd;border-radius:10px;padding:9px 10px;background:#fff;color:#343a35;font:inherit}
+.settingsBtn{border:0;background:#f1f3f0;border-radius:10px;padding:8px 10px;color:#5b645d;font:inherit}
+.settingsBtn.on{background:#dfe9df;color:#31483a;font-weight:700}
+.settingsDanger{color:#8b6662}
+.settingsStatus{margin-top:8px;padding:8px 9px;border-radius:9px;background:#fafbf9;font-size:0.56250rem;line-height:1.5;color:#7d847e}
+.fontScaleButtons{display:flex;gap:6px;flex-wrap:wrap}
+.bookCoverFrame{position:relative;width:46px;height:64px;border-radius:6px;background:#f2f3f0;flex:0 0 auto;overflow:hidden}
+.bookCoverFrame .bookCover{position:absolute;inset:0;width:100%;height:100%;z-index:2}
+.readingBookCoverFrame{width:30px;height:42px;border-radius:4px}
+.readingBookCoverFrame .readingBookCover{position:absolute;inset:0;width:100%;height:100%;z-index:2}
+.bookSearchCoverFrame{position:relative;width:34px;height:48px;border-radius:4px;background:#f1f2ef;flex:0 0 auto;overflow:hidden}
+.bookSearchCoverFrame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2}
+.bookCoverPlaceholder{position:absolute;inset:0;display:grid;place-items:center;z-index:1}
+.bookCoverPlaceholder::before{content:"";width:46%;height:54%;border:1.5px solid #aeb6af;border-radius:2px 4px 4px 2px;background:#fafbf9;box-shadow:inset 4px 0 0 #e6eae5}
+.bookCoverPlaceholder::after{content:"";position:absolute;width:27%;height:1px;background:#bdc4be;transform:translate(5px,-4px);box-shadow:0 5px 0 #bdc4be}
+
 h1{text-align:center;margin:6px 0}
-.small{font-size:13px;color:#666}
+.small{font-size:0.81250rem;color:#666}
 .tabs,.modes{display:flex;gap:8px;margin:12px 0}
-.tab,.mode{flex:1;padding:10px;border-radius:12px;border:none;background:#e6e6e6;font-size:14px}
+.tab,.mode{flex:1;padding:10px;border-radius:12px;border:none;background:#e6e6e6;font-size:0.87500rem}
 .tab.active,.mode.on{background:#cfcfcf;font-weight:700}
 .section{background:#fff;border-radius:14px;padding:12px;margin-bottom:10px}
-.section h2{margin:0 0 8px;font-size:16px}
+.section h2{margin:0 0 8px;font-size:1.00000rem}
 label{display:flex;align-items:center;gap:8px;padding:6px 0}
-.result{text-align:center;font-size:20px;font-weight:800;margin:14px 0}
+.result{text-align:center;font-size:1.25000rem;font-weight:800;margin:14px 0}
 .pass{color:#1fa16f}.mid{color:#2494bd}.rest{color:#facc00}
-.btn{width:100%;padding:10px;border-radius:12px;border:none;background:#e6e6e6;font-size:14px}
+.btn{width:100%;padding:10px;border-radius:12px;border:none;background:#e6e6e6;font-size:0.87500rem}
 .btn:active{background:#cfcfcf}
 .hide{display:none}
 
 table{width:100%;border-collapse:collapse}
-th,td{padding:8px;border-bottom:1px solid #eee;font-size:13px}
+th,td{padding:8px;border-bottom:1px solid #eee;font-size:0.81250rem}
 th{text-align:left;color:#666}
-.badge{padding:2px 8px;border-radius:999px;font-size:12px;font-weight:700}
+.badge{padding:2px 8px;border-radius:999px;font-size:0.75000rem;font-weight:700}
 .ok{background:#e7f6ea;color:#2e7d32}
 .midb{background:#fff4d6;color:#f9a825}
 .restb{background:#fde7e7;color:#c62828}
 
 .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 select,.textin{
-  padding:8px 10px;border-radius:10px;border:1px solid #ddd;background:#fff;font-size:14px;
+  padding:8px 10px;border-radius:10px;border:1px solid #ddd;background:#fff;font-size:0.87500rem;
 }
 .textin{min-width:160px}
 details{background:#fff;border-radius:14px;padding:10px 12px;margin-bottom:10px}
@@ -60,14 +79,14 @@ th:nth-child(4), td:nth-child(4){ min-width:60px; } /* 판정 */
 th:nth-child(5), td:nth-child(5){ min-width:70px; } /* 단백질 */
 th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 @media (max-width:420px){
-  th, td{ font-size:12px; padding:6px 8px; }
-  .tab, .mode{ font-size:13px; padding:9px; }
+  th, td{ font-size:0.75000rem; padding:6px 8px; }
+  .tab, .mode{ font-size:0.81250rem; padding:9px; }
 }
 
 /* ===== BONUS 배지 ===== */
 .bonusTag{
   margin-left:8px;
-  font-size:10px;
+  font-size:0.62500rem;
   padding:2px 8px;
   border-radius:999px;
   background:#f1f1f1;
@@ -97,17 +116,17 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   border-radius:10px;
   padding:6px 8px;
   background:#e6e6e6;
-  font-size:13px;
+  font-size:0.81250rem;
 }
 .trackBtns button:active{background:#cfcfcf}
-.trackStat{font-size:13px;color:#444}
+.trackStat{font-size:0.81250rem;color:#444}
 .good{font-weight:800;color:#2e7d32}
 .need{font-weight:800;color:#c62828}
-.hint{font-size:12px;color:#777;margin-top:6px;line-height:1.35}
+.hint{font-size:0.75000rem;color:#777;margin-top:6px;line-height:1.35}
 
 .trackBtns button.reset{
   background:#f1f1f1;
-  font-size:11px;
+  font-size:0.68750rem;
   opacity:0.7;
 }
   
@@ -120,7 +139,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 }
 
 .dateTitle{
-  font-size:13px;
+  font-size:0.81250rem;
   color:#666;
   white-space:nowrap;
 }
@@ -131,7 +150,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   border-radius:10px;
   border:1px solid #ddd;
   background:#fff;
-  font-size:14px;
+  font-size:0.87500rem;
 }
 
 .dateBtn{
@@ -139,7 +158,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   border-radius:12px;
   border:none;
   background:#e6e6e6;
-  font-size:12px;
+  font-size:0.75000rem;
   white-space:nowrap;
 }
 
@@ -172,7 +191,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   width:65px;          /* ✅ 넑이 강제 고정 */
   height:27px;          /* ✅ 높이 강제 고정 */
   padding:0;
-  font-size:12px;
+  font-size:0.75000rem;
   text-align:center;
     line-height:1;
 }
@@ -182,7 +201,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   
 #deleteFastingBtn{
   padding:4px 6px;
-  font-size:11px;
+  font-size:0.68750rem;
   opacity:0.6;
 }
 #deleteFastingBtn:hover{
@@ -194,14 +213,14 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   display:flex;
   align-items:center;
   gap:8px;
-  font-size:15px;   /* ← 이전 크기로 */
+  font-size:0.93750rem;   /* ← 이전 크기로 */
   color:#222;
   margin:6px 0;
 }
 
 .sectionTitle{
   font-weight:700;
-  font-size:14px;
+  font-size:0.87500rem;
   margin-bottom:6px;
 }
 
@@ -214,7 +233,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 @media (max-width: 480px){
   .trackBtns button{
     padding:5px 7px;
-    font-size:11px;
+    font-size:0.68750rem;
   }
 }
 
@@ -225,7 +244,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   gap:8px;
   padding:6px 0;
   align-items:center;
-  font-size:14px;
+  font-size:0.87500rem;
 }
 .mealItem .protein{
   font-weight:700;
@@ -238,7 +257,7 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
   margin-top:8px;
 }
 .optionTitle{
-  font-size:12px;
+  font-size:0.75000rem;
   font-weight:700;
   color:#666;
   margin-bottom:4px;
@@ -279,59 +298,59 @@ th:nth-child(6), td:nth-child(6){ min-width:70px; } /* 물 */
 :root{--life-bg:#f7f8f6;--life-card:#fff;--life-line:#e8e9e5;--life-muted:#777;--life-soft:#f0f3ed;--life-accent:#496451}
 body{padding-bottom:86px;background:var(--life-bg)}
 .lifeTop{margin:4px 0 14px}
-.lifeTitle{font-size:24px;font-weight:850;letter-spacing:-.4px;margin:0 0 3px}
-.lifeSub{font-size:13px;color:var(--life-muted);line-height:1.45}
+.lifeTitle{font-size:1.50000rem;font-weight:850;letter-spacing:-.4px;margin:0 0 3px}
+.lifeSub{font-size:0.81250rem;color:var(--life-muted);line-height:1.45}
 .lifeBlock{background:var(--life-card);border:1px solid var(--life-line);border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:0 1px 0 rgba(0,0,0,.02)}
 .lifeBlockHead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:9px}
-.lifeBlockTitle{font-size:12px;font-weight:850;letter-spacing:.08em;color:#4f5b52}
-.lifeBlockHint{font-size:12px;color:#8a8f8b;margin-top:3px}
+.lifeBlockTitle{font-size:0.75000rem;font-weight:850;letter-spacing:.08em;color:#4f5b52}
+.lifeBlockHint{font-size:0.75000rem;color:#8a8f8b;margin-top:3px}
 .lifeRoutine{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid #f0f1ee}
 .lifeRoutine:first-child{border-top:0}
-.lifeCheck{width:24px;height:24px;border-radius:9px;border:1px solid #cfd5ce;background:#fff;font-size:14px;display:grid;place-items:center;flex:0 0 24px}
+.lifeCheck{width:24px;height:24px;border-radius:9px;border:1px solid #cfd5ce;background:#fff;font-size:0.87500rem;display:grid;place-items:center;flex:0 0 24px}
 .lifeCheck.done{background:#e7eee7;border-color:#b9c9bb}
 .lifeRoutineMain{min-width:0;flex:1}
-.lifeRoutineName{font-size:15px;font-weight:700;line-height:1.25}
-.lifeRoutineMeta{font-size:11px;color:#8a8f8b;margin-top:3px}
-.lifeMiniBtn{border:0;background:#f2f3f0;border-radius:10px;padding:7px 9px;font-size:12px;color:#555}
-.lifeAddBtn{width:100%;border:1px dashed #cfd5ce;background:#fafbf9;border-radius:12px;padding:10px;font-size:13px;color:#657066;margin-top:7px}
+.lifeRoutineName{font-size:0.93750rem;font-weight:700;line-height:1.25}
+.lifeRoutineMeta{font-size:0.68750rem;color:#8a8f8b;margin-top:3px}
+.lifeMiniBtn{border:0;background:#f2f3f0;border-radius:10px;padding:7px 9px;font-size:0.75000rem;color:#555}
+.lifeAddBtn{width:100%;border:1px dashed #cfd5ce;background:#fafbf9;border-radius:12px;padding:10px;font-size:0.81250rem;color:#657066;margin-top:7px}
 .freeGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.freeChip{border:1px solid #e0e4df;background:#fafbf9;border-radius:13px;padding:11px 6px;text-align:center;font-size:13px;min-height:42px}
+.freeChip{border:1px solid #e0e4df;background:#fafbf9;border-radius:13px;padding:11px 6px;text-align:center;font-size:0.81250rem;min-height:42px}
 .freeChip.done{background:#e9f0e9;border-color:#c4d2c5}
-.freeChip .ico{display:block;font-size:19px;margin-bottom:3px}
+.freeChip .ico{display:block;font-size:1.18750rem;margin-bottom:3px}
 .legacyHealth{margin-top:14px;background:#f3f4f1;border-radius:16px;padding:0 12px}
-.legacyHealth>summary{padding:13px 2px;font-size:14px;font-weight:800;color:#59615b;cursor:pointer}
+.legacyHealth>summary{padding:13px 2px;font-size:0.87500rem;font-weight:800;color:#59615b;cursor:pointer}
 .bottomNav{position:fixed;left:0;right:0;bottom:0;z-index:100;background:rgba(255,255,255,.96);border-top:1px solid #e5e7e3;display:grid;grid-template-columns:repeat(5,1fr);padding:7px max(8px,env(safe-area-inset-right)) calc(7px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));backdrop-filter:blur(10px)}
-.bottomNav button{border:0;background:transparent;padding:6px 2px;font-size:10px;color:#858985;min-width:0}
-.bottomNav button span{display:block;font-size:18px;margin-bottom:2px}.bottomNav button.on{color:#314b38;font-weight:800}
+.bottomNav button{border:0;background:transparent;padding:6px 2px;font-size:0.62500rem;color:#858985;min-width:0}
+.bottomNav button span{display:block;font-size:1.12500rem;margin-bottom:2px}.bottomNav button.on{color:#314b38;font-weight:800}
 .lifeModal{position:fixed;inset:0;z-index:300;background:rgba(25,30,27,.36);display:flex;align-items:flex-end;justify-content:center}
 .lifeModal.hide{display:none}.lifeSheet{background:#fff;width:min(100%,560px);max-height:90vh;overflow:auto;border-radius:22px 22px 0 0;padding:18px 16px calc(22px + env(safe-area-inset-bottom));box-sizing:border-box}
-.lifeSheetHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.lifeSheetHead b{font-size:18px}.lifeClose{border:0;background:#f1f2ef;border-radius:50%;width:34px;height:34px}
-.lifeField{margin:11px 0}.lifeField label{display:block;padding:0;margin-bottom:5px;font-size:12px;font-weight:750;color:#666}.lifeField input,.lifeField select{width:100%;box-sizing:border-box;padding:11px;border:1px solid #dadeda;border-radius:11px;font-size:14px;background:#fff}
-.life2col{display:grid;grid-template-columns:1fr 1fr;gap:9px}.dayPills{display:flex;gap:5px;flex-wrap:wrap}.dayPills label{display:flex!important;align-items:center;gap:3px!important;padding:6px 7px!important;margin:0!important;background:#f4f5f2;border-radius:9px;font-size:12px!important}.dayPills input{width:auto!important}
+.lifeSheetHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.lifeSheetHead b{font-size:1.12500rem}.lifeClose{border:0;background:#f1f2ef;border-radius:50%;width:34px;height:34px}
+.lifeField{margin:11px 0}.lifeField label{display:block;padding:0;margin-bottom:5px;font-size:0.75000rem;font-weight:750;color:#666}.lifeField input,.lifeField select{width:100%;box-sizing:border-box;padding:11px;border:1px solid #dadeda;border-radius:11px;font-size:0.87500rem;background:#fff}
+.life2col{display:grid;grid-template-columns:1fr 1fr;gap:9px}.dayPills{display:flex;gap:5px;flex-wrap:wrap}.dayPills label{display:flex!important;align-items:center;gap:3px!important;padding:6px 7px!important;margin:0!important;background:#f4f5f2;border-radius:9px;font-size:0.75000rem!important}.dayPills input{width:auto!important}
 .lifeActions{display:flex;gap:8px;margin-top:16px}.lifeActions button{flex:1;border:0;border-radius:12px;padding:12px;font-weight:750}.lifeSave{background:#dfe9df}.lifeDelete{background:#f1f1ef;color:#777}
-.placeholderView{padding:70px 18px;text-align:center;color:#888}.placeholderView b{display:block;color:#555;font-size:18px;margin-bottom:8px}
+.placeholderView{padding:70px 18px;text-align:center;color:#888}.placeholderView b{display:block;color:#555;font-size:1.12500rem;margin-bottom:8px}
 @media(max-width:380px){.freeGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.life2col{grid-template-columns:1fr}}
 
 
 /* ===== Phase 2: daily note + calendar ===== */
 .freeChipWrap{position:relative;min-width:0}
 .freeChipWrap .freeChip{width:100%;padding-right:28px;height:100%}
-.freeEditBtn{position:absolute;right:4px;top:4px;border:0;background:rgba(255,255,255,.86);border-radius:9px;width:25px;height:25px;font-size:16px;line-height:1;color:#687068;z-index:2}
+.freeEditBtn{position:absolute;right:4px;top:4px;border:0;background:rgba(255,255,255,.86);border-radius:9px;width:25px;height:25px;font-size:1.00000rem;line-height:1;color:#687068;z-index:2}
 .todayNoteBox{margin-top:14px}
 .todayNoteBox textarea{width:100%;box-sizing:border-box;min-height:76px;resize:vertical;border:1px solid #dfe3dd;border-radius:13px;padding:11px 12px;font:inherit;background:#fff}
 .calWrap{padding:12px}
 .calHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
 .calHead button{border:0;background:#f1f3ef;border-radius:10px;padding:8px 11px}
-.calTitle{font-size:18px;font-weight:850}
+.calTitle{font-size:1.12500rem;font-weight:850}
 .calWeek,.calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
-.calWeek div{text-align:center;font-size:11px;color:#888;padding:5px 0}
-.calDay{position:relative;border:1px solid #edf0eb;background:#fff;border-radius:11px;min-height:48px;padding:7px 4px;text-align:center;font-size:13px}
+.calWeek div{text-align:center;font-size:0.68750rem;color:#888;padding:5px 0}
+.calDay{position:relative;border:1px solid #edf0eb;background:#fff;border-radius:11px;min-height:48px;padding:7px 4px;text-align:center;font-size:0.81250rem}
 .calDay.blank{visibility:hidden}.calDay.today{font-weight:900;border-color:#aebdaf}.calDay.selected{background:#eef3ed;border-color:#aebdaf}
 .calDot{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:#667b69}
-.calDetail{margin-top:12px}.calDetail h3{margin:0 0 8px;font-size:16px}
+.calDetail{margin-top:12px}.calDetail h3{margin:0 0 8px;font-size:1.00000rem}
 .calDetailGroup{padding:9px 0;border-top:1px solid #eef0ed}.calDetailGroup:first-of-type{border-top:0}
-.calDetailLabel{font-size:11px;font-weight:800;color:#7b827c;margin-bottom:5px}
-.calDetailItem{font-size:13px;line-height:1.55}
+.calDetailLabel{font-size:0.68750rem;font-weight:800;color:#7b827c;margin-bottom:5px}
+.calDetailItem{font-size:0.81250rem;line-height:1.55}
 
 
 /* ===== UI polish ===== */
@@ -342,18 +361,18 @@ button,input,select,textarea{font:inherit}
 .todayHealthCore{padding:14px 14px 10px}
 .todayHealthCore .trackRow{padding:13px 0;border-bottom:1px solid #eef0ec}
 .todayHealthCore .trackRow:last-child{border-bottom:0}
-.todayHealthCore .trackStat{font-size:15px;font-weight:760;color:#303631;letter-spacing:-.01em}
-.todayHealthCore .hint{font-size:11px;color:#899088;margin-bottom:3px}
+.todayHealthCore .trackStat{font-size:0.93750rem;font-weight:760;color:#303631;letter-spacing:-.01em}
+.todayHealthCore .hint{font-size:0.68750rem;color:#899088;margin-bottom:3px}
 .todayHealthCore .trackBtns{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
-.todayHealthCore .trackBtns button{border:1px solid #e1e6df;background:#f8faf7;color:#4b554d;border-radius:11px;padding:8px 11px;font-size:12px;font-weight:680;box-shadow:none}
+.todayHealthCore .trackBtns button{border:1px solid #e1e6df;background:#f8faf7;color:#4b554d;border-radius:11px;padding:8px 11px;font-size:0.75000rem;font-weight:680;box-shadow:none}
 .todayHealthCore .trackBtns button:active{background:#e9eee8;transform:translateY(1px)}
-.todayHealthCore .trackBtns button.reset{background:transparent;border-color:transparent;color:#9a9f9a;font-size:11px;padding-left:2px;padding-right:4px}
+.todayHealthCore .trackBtns button.reset{background:transparent;border-color:transparent;color:#9a9f9a;font-size:0.68750rem;padding-left:2px;padding-right:4px}
 .todayHealthCore .proteinBtns .proteinBtn{background:#f5f8f3}
 .dateBtn{background:#f0f3ef!important;color:#536057!important;border:0!important;font-weight:700}
 .lifeSheet{font-family:inherit;background:#fbfcfa;padding:20px 17px calc(24px + env(safe-area-inset-bottom))}
-.lifeSheetHead b{font-size:19px;letter-spacing:-.025em}
-.lifeField label{font-size:12px;font-weight:750;color:#707771;letter-spacing:-.01em}
-.lifeField input,.lifeField select{border:1px solid #dfe4dd;border-radius:12px;background:#fff;padding:12px 13px;font-size:14px;color:#272d28;outline:none}
+.lifeSheetHead b{font-size:1.18750rem;letter-spacing:-.025em}
+.lifeField label{font-size:0.75000rem;font-weight:750;color:#707771;letter-spacing:-.01em}
+.lifeField input,.lifeField select{border:1px solid #dfe4dd;border-radius:12px;background:#fff;padding:12px 13px;font-size:0.87500rem;color:#272d28;outline:none}
 .lifeField input:focus,.lifeField select:focus{border-color:#aebcaf;box-shadow:0 0 0 3px rgba(121,145,125,.09)}
 .fieldHint{font-weight:500;color:#a0a5a0;margin-left:4px}
 .lifeSave{background:#405a46!important;border-radius:12px!important;font-weight:800}
@@ -365,50 +384,50 @@ button,input,select,textarea{font:inherit}
 .healthMetricCard{padding:15px 0;border-bottom:1px solid #edf0ec}
 .healthMetricCard:last-child{border-bottom:0}
 .healthMetricHead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
-.healthMetricText{font-size:14px;font-weight:760;line-height:1.45;color:#303631;min-width:0}
+.healthMetricText{font-size:0.87500rem;font-weight:760;line-height:1.45;color:#303631;min-width:0}
 .healthReset,.healthDelete,.healthActionGrid button{
   border:0;background:#f2f3f0;color:#555;border-radius:10px;font-family:inherit;font-weight:650;
   box-shadow:none
 }
-.healthReset{font-size:11px;padding:6px 8px;flex:0 0 auto;color:#858b85}
-.healthDelete{font-size:11px;padding:7px 9px;margin-top:8px}
+.healthReset{font-size:0.68750rem;padding:6px 8px;flex:0 0 auto;color:#858b85}
+.healthDelete{font-size:0.68750rem;padding:7px 9px;margin-top:8px}
 .healthActionGrid{display:grid;gap:7px}
 .healthActionGrid.proteinActions{grid-template-columns:repeat(4,1fr)}
 .healthActionGrid.twoActions{grid-template-columns:repeat(2,1fr)}
 .healthActionGrid.threeActions{grid-template-columns:repeat(3,1fr)}
-.healthActionGrid button{height:38px;padding:0 6px;font-size:12px}
+.healthActionGrid button{height:38px;padding:0 6px;font-size:0.75000rem}
 .healthActionGrid button:active,.healthReset:active{background:#e7e9e5}
-.healthHint{font-size:10px;line-height:1.4;color:#a0a5a0;margin-top:8px}
+.healthHint{font-size:0.62500rem;line-height:1.4;color:#a0a5a0;margin-top:8px}
 .calBlockGroup{margin:11px 0 14px}
-.calBlockTitle{font-size:10px;font-weight:850;letter-spacing:.07em;color:#8a918b;margin-bottom:7px}
+.calBlockTitle{font-size:0.62500rem;font-weight:850;letter-spacing:.07em;color:#8a918b;margin-bottom:7px}
 .calRoutineChips{display:flex;flex-wrap:wrap;gap:6px}
-.calRoutineChip{display:inline-flex;align-items:center;gap:4px;background:#f2f3f0;border-radius:10px;padding:7px 9px;font-size:12px;font-weight:650;color:#4d554f;line-height:1.2}
+.calRoutineChip{display:inline-flex;align-items:center;gap:4px;background:#f2f3f0;border-radius:10px;padding:7px 9px;font-size:0.75000rem;font-weight:650;color:#4d554f;line-height:1.2}
 .calInfoCard{background:#f7f8f5;border-radius:13px;padding:11px 12px;margin-top:9px}
 .calInfoCard .calDetailLabel{margin-bottom:5px}
 
 .calSearchPanel{margin-bottom:10px;padding:13px 14px}
 .calSearchRow{position:relative;display:flex;align-items:center}
-.calSearchInput{width:100%;border:1px solid #e3e7e1;background:#f8faf7;border-radius:12px;padding:10px 34px 10px 11px;font-size:12px;color:#343a35;outline:none}
+.calSearchInput{width:100%;border:1px solid #e3e7e1;background:#f8faf7;border-radius:12px;padding:10px 34px 10px 11px;font-size:0.75000rem;color:#343a35;outline:none}
 .calSearchInput:focus{border-color:#b9c6ba;background:#fff}
-.calSearchClear{position:absolute;right:7px;width:25px;height:25px;border:0;border-radius:50%;background:#ecefeb;color:#667068;font-size:16px;line-height:1}
+.calSearchClear{position:absolute;right:7px;width:25px;height:25px;border:0;border-radius:50%;background:#ecefeb;color:#667068;font-size:1.00000rem;line-height:1}
 .calSearchClear.hide{display:none}
-.calSearchLabel{font-size:10px;font-weight:750;color:#8a928b;margin:11px 0 6px}
+.calSearchLabel{font-size:0.62500rem;font-weight:750;color:#8a928b;margin:11px 0 6px}
 
 .calSearchLabelRow{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
 .calSearchLabelRow .calSearchLabel{margin:0}
-.calendarChipEditBtn{border:0;background:transparent;color:#7b857d;font-size:10px;font-weight:700;padding:4px 2px}
+.calendarChipEditBtn{border:0;background:transparent;color:#7b857d;font-size:0.62500rem;font-weight:700;padding:4px 2px}
 .calendarChipSelectList{display:flex;flex-direction:column;gap:7px;max-height:55vh;overflow:auto;margin-top:10px}
-.calendarChipSelectItem{display:flex;align-items:center;gap:9px;padding:10px 11px;border:1px solid #e5e9e4;border-radius:12px;background:#fafbf9;font-size:12px;color:#4d574f}
+.calendarChipSelectItem{display:flex;align-items:center;gap:9px;padding:10px 11px;border:1px solid #e5e9e4;border-radius:12px;background:#fafbf9;font-size:0.75000rem;color:#4d574f}
 .calendarChipSelectItem input{width:auto;margin:0}
-.calendarChipSelectHint{font-size:10px;color:#89928b;line-height:1.55;margin-top:4px}
+.calendarChipSelectHint{font-size:0.62500rem;color:#89928b;line-height:1.55;margin-top:4px}
 
 .calendarRoutineChips{display:flex;flex-wrap:wrap;gap:6px;max-height:96px;overflow:auto}
-.calendarRoutineChip{border:1px solid #e3e7e1;background:#f7f8f5;border-radius:999px;padding:6px 9px;font-size:11px;color:#59625b;font-weight:500}
+.calendarRoutineChip{border:1px solid #e3e7e1;background:#f7f8f5;border-radius:999px;padding:6px 9px;font-size:0.68750rem;color:#59625b;font-weight:500}
 .calendarRoutineChip.on{background:#e7eee7;border-color:#b6c5b8;color:#34473a}
 .calendarRoutineSummary{margin-top:10px;background:#f2f6f1;border:1px solid #e1e9df;border-radius:13px;padding:10px 11px}
 .calendarRoutineSummary.hide{display:none}
-.calSummaryName{font-size:12px;font-weight:750;color:#3f4b42;margin-bottom:5px}
-.calSummaryLine{font-size:11px;color:#677168;line-height:1.65}
+.calSummaryName{font-size:0.75000rem;font-weight:750;color:#3f4b42;margin-bottom:5px}
+.calSummaryLine{font-size:0.68750rem;color:#677168;line-height:1.65}
 .calDay.filterMiss{opacity:.26;background:#fafafa}
 .calDay.filterHit{background:#edf4ec;border-color:#9fb29f;font-weight:800;box-shadow:inset 0 0 0 1px #c8d6c8}
 .calDay.filterHit .calDot{background:#48624d;width:6px;height:6px}
@@ -416,26 +435,26 @@ button,input,select,textarea{font:inherit}
 
 
 /* ===== Phase 3: lighter typography + activity timer ===== */
-.lifeRoutineName{font-size:13px!important;font-weight:400!important;line-height:1.35}
-.lifeRoutineMeta{font-size:11px;font-weight:400}
+.lifeRoutineName{font-size:0.81250rem!important;font-weight:400!important;line-height:1.35}
+.lifeRoutineMeta{font-size:0.68750rem;font-weight:400}
 .calRoutineChip{font-weight:400!important}
 .calDetailItem{font-weight:400}
 .lifeRoutineTimerActions{display:flex;gap:6px;align-items:center;flex:0 0 auto}
 .lifeTimerBtn,.lifeManualBtn{
-  border:0;background:#f2f3f0;border-radius:10px;padding:7px 9px;font-size:11px;color:#555;font-weight:400
+  border:0;background:#f2f3f0;border-radius:10px;padding:7px 9px;font-size:0.68750rem;color:#555;font-weight:400
 }
 .lifeTimerBtn.running{background:#e6eee7;color:#35513d}
 .activityTimerBanner{
   background:#eef3ed;border:1px solid #dce5dc;border-radius:14px;padding:10px 12px;margin:0 0 10px;
-  display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px
+  display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:0.75000rem
 }
 .activityTimerBanner.hide{display:none}
-.activityTimerMain{min-width:0}.activityTimerName{font-size:13px;font-weight:400;color:#344238}
-.activityTimerElapsed{font-size:11px;color:#7d867f;margin-top:2px}
-.activityTimerStop{border:0;background:#f2f3f0;border-radius:10px;padding:7px 10px;font-size:11px;color:#555;font-weight:400}
+.activityTimerMain{min-width:0}.activityTimerName{font-size:0.81250rem;font-weight:400;color:#344238}
+.activityTimerElapsed{font-size:0.68750rem;color:#7d867f;margin-top:2px}
+.activityTimerStop{border:0;background:#f2f3f0;border-radius:10px;padding:7px 10px;font-size:0.68750rem;color:#555;font-weight:400}
 .freeTimerBtn{
   position:absolute;left:4px;top:4px;border:0;background:rgba(255,255,255,.86);border-radius:9px;
-  width:25px;height:25px;font-size:12px;color:#687068;z-index:2;font-weight:400
+  width:25px;height:25px;font-size:0.75000rem;color:#687068;z-index:2;font-weight:400
 }
 .freeTimerBtn.running{background:#e6eee7}
 .weeklyActivityCard{padding:16px}
@@ -443,9 +462,9 @@ button,input,select,textarea{font:inherit}
 .weeklyActivityList{display:flex;flex-direction:column;gap:8px}
 .weeklyActivityRow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid #eef0ed}
 .weeklyActivityRow:first-child{border-top:0}
-.weeklyActivityName{font-size:13px;font-weight:400;color:#3f4741}
-.weeklyActivityTime{font-size:12px;font-weight:400;color:#7b837d;white-space:nowrap}
-.weeklyActivityEmpty{font-size:12px;color:#939994;padding:6px 0}
+.weeklyActivityName{font-size:0.81250rem;font-weight:400;color:#3f4741}
+.weeklyActivityTime{font-size:0.75000rem;font-weight:400;color:#7b837d;white-space:nowrap}
+.weeklyActivityEmpty{font-size:0.75000rem;color:#939994;padding:6px 0}
 
 
 /* ===== DAILY CARE: FREE TIME-like full-width cards ===== */
@@ -459,9 +478,9 @@ button,input,select,textarea{font:inherit}
   min-width:0;border:1px solid #e0e4df;background:#fafbf9;border-radius:13px;
   padding:10px 6px 8px;text-align:center
 }
-.dailyCareName{font-size:13px;font-weight:400;line-height:1.35;color:#303630;white-space:nowrap}
+.dailyCareName{font-size:0.81250rem;font-weight:400;line-height:1.35;color:#303630;white-space:nowrap}
 .dailyCareMeta{
-  font-size:10.5px;font-weight:400;line-height:1.35;color:#8a8f8b;
+  font-size:0.65625rem;font-weight:400;line-height:1.35;color:#8a8f8b;
   margin-top:4px;min-height:29px;display:flex;align-items:flex-start;justify-content:center
 }
 .dailyCareMeta .good,.dailyCareMeta .need{font-weight:400!important;color:inherit!important}
@@ -472,55 +491,55 @@ button,input,select,textarea{font:inherit}
 .dailyCareActions button{
   border:0;background:#f2f3f0;border-radius:10px;min-width:0;width:100%;
   height:auto;min-height:0;padding:7px 4px;line-height:1.15;
-  font-family:inherit;font-size:12px;font-weight:400;color:#5e655f;box-shadow:none
+  font-family:inherit;font-size:0.75000rem;font-weight:400;color:#5e655f;box-shadow:none
 }
 .dailyCareActions button:active{background:#e7e9e5}
 .dailyCareActions .dailyCareMore{color:#8a8f8b}
 .dailyCareReset{
   display:inline-block;border:0;background:transparent;padding:5px 0 0;margin:0;
-  font-family:inherit;font-size:10px;font-weight:400;line-height:1.2;color:#a0a5a0
+  font-family:inherit;font-size:0.62500rem;font-weight:400;line-height:1.2;color:#a0a5a0
 }
 .dayResetBar{display:flex;justify-content:center;margin:10px 0 2px}
 .dayResetBtn{
   border:0;background:#f2f3f0;border-radius:10px;padding:7px 10px;
-  font-family:inherit;font-size:12px;font-weight:400;color:#777d78
+  font-family:inherit;font-size:0.75000rem;font-weight:400;color:#777d78
 }
 
 .proteinInlineActions{grid-template-columns:repeat(4,minmax(0,1fr))!important}
-.proteinInlineActions button{padding-left:2px;padding-right:2px;font-size:11px}
+.proteinInlineActions button{padding-left:2px;padding-right:2px;font-size:0.68750rem}
 
 .sleepManualSheet .lifeField{margin:10px 0}
 .sleepManualGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.sleepManualHint{font-size:10px;line-height:1.5;color:#8f9690;margin-top:4px}
-.sleepManualDateNote{font-size:11px;color:#657066;background:#f3f6f1;border-radius:10px;padding:9px 10px;margin:2px 0 8px}
+.sleepManualHint{font-size:0.62500rem;line-height:1.5;color:#8f9690;margin-top:4px}
+.sleepManualDateNote{font-size:0.68750rem;color:#657066;background:#f3f6f1;border-radius:10px;padding:9px 10px;margin:2px 0 8px}
 @media(max-width:380px){.sleepManualGrid{grid-template-columns:1fr}}
 
 @media(max-width:380px){
   .dailyCareGrid{gap:6px}
   .dailyCareItem{padding:9px 4px 7px}
-  .dailyCareName{font-size:12px}
-  .dailyCareMeta{font-size:9.5px}
+  .dailyCareName{font-size:0.75000rem}
+  .dailyCareMeta{font-size:0.59375rem}
   .dailyCareActions{gap:4px}
-  .dailyCareActions button{padding:7px 2px;font-size:11px}
-  .dailyCareReset{font-size:9px}
+  .dailyCareActions button{padding:7px 2px;font-size:0.68750rem}
+  .dailyCareReset{font-size:0.56250rem}
 }
 
 /* ===== compact floating activity timer ===== */
-.activityTimerFloat{position:fixed;right:14px;bottom:76px;z-index:70;display:flex;align-items:center;gap:6px;max-width:180px;padding:7px 10px;border:1px solid #e2e5e1;border-radius:999px;background:rgba(250,251,249,.96);box-shadow:0 3px 12px rgba(0,0,0,.07);font-family:inherit;font-size:11px;font-weight:400;color:#505650;white-space:nowrap}
+.activityTimerFloat{position:fixed;right:14px;bottom:76px;z-index:70;display:flex;align-items:center;gap:6px;max-width:180px;padding:7px 10px;border:1px solid #e2e5e1;border-radius:999px;background:rgba(250,251,249,.96);box-shadow:0 3px 12px rgba(0,0,0,.07);font-family:inherit;font-size:0.68750rem;font-weight:400;color:#505650;white-space:nowrap}
 .activityTimerFloat.hide{display:none}
 
 /* ===== PHASE 4 BOOKS ===== */
 .booksView{padding-bottom:62px}
 .booksHead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
-.booksTitle{font-size:18px;font-weight:700}.booksSub{font-size:11px;color:#929792;margin-top:3px}
-.bookAddBtn,.bookSmallBtn{border:0;background:#f2f3f0;border-radius:10px;padding:7px 9px;font:400 12px/1 inherit;color:#555}
+.booksTitle{font-size:1.12500rem;font-weight:700}.booksSub{font-size:0.68750rem;color:#929792;margin-top:3px}
+.bookAddBtn,.bookSmallBtn{border:0;background:#f2f3f0;border-radius:10px;padding:7px 9px;font:400 0.75000rem/1 inherit;color:#555}
 .bookFilters{display:flex;gap:6px;overflow:auto;margin:8px 0 12px;padding-bottom:2px}
 .bookFilter,.dateBtn{
   padding:6px 10px;
   border-radius:12px;
   border:none;
   background:#f0f3ef;
-  font-size:12px;
+  font-size:0.75000rem;
   font-weight:700;
   color:#536057;
   white-space:nowrap;
@@ -528,65 +547,65 @@ button,input,select,textarea{font:inherit}
 .bookFilter.on{background:#dfe6de;color:#364238}
 .bookStats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:12px}
 .bookStat{background:#fafbf9;border:1px solid #e5e8e3;border-radius:12px;padding:9px 5px;text-align:center}
-.bookStatVal{font-size:16px}.bookStatLabel{font-size:9px;color:#969b97;margin-top:3px}
-.bookYearRow{display:flex;justify-content:flex-end;align-items:center;gap:5px;margin-bottom:8px;font-size:10px;color:#8d938e}
+.bookStatVal{font-size:1.00000rem}.bookStatLabel{font-size:0.56250rem;color:#969b97;margin-top:3px}
+.bookYearRow{display:flex;justify-content:flex-end;align-items:center;gap:5px;margin-bottom:8px;font-size:0.62500rem;color:#8d938e}
 .bookYearRow select{border:1px solid #e3e6e1;border-radius:8px;background:#fff;padding:5px;font:inherit}
 .bookList{display:grid;gap:8px}.bookCard{border:1px solid #e3e6e1;background:#fff;border-radius:14px;padding:11px}
-.bookCardTop{display:flex;justify-content:space-between;gap:8px}.bookName{font-size:14px;font-weight:400}.bookAuthor{font-size:10px;color:#929792;margin-top:3px}
-.bookTags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.bookTag{font-size:9px;color:#777e78;background:#f5f6f3;border-radius:999px;padding:4px 6px}
-.bookDates{font-size:10px;color:#969b97;margin-top:7px}.bookEmpty{padding:22px 10px;text-align:center;color:#9ba09c;font-size:11px}
+.bookCardTop{display:flex;justify-content:space-between;gap:8px}.bookName{font-size:0.87500rem;font-weight:400}.bookAuthor{font-size:0.62500rem;color:#929792;margin-top:3px}
+.bookTags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.bookTag{font-size:0.56250rem;color:#777e78;background:#f5f6f3;border-radius:999px;padding:4px 6px}
+.bookDates{font-size:0.62500rem;color:#969b97;margin-top:7px}.bookEmpty{padding:22px 10px;text-align:center;color:#9ba09c;font-size:0.68750rem}
 .bookModalBox{max-height:88vh;overflow:auto}.bookFormGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.bookField{margin-top:8px}.bookField label{display:block;font-size:9px;color:#838984;margin-bottom:3px}
-.bookField input,.bookField select,.bookField textarea{width:100%;box-sizing:border-box;border:1px solid #dfe3dd;border-radius:9px;padding:7px 8px;font:400 10px/1.3 inherit;background:#fff;color:#343a35}
+.bookField{margin-top:8px}.bookField label{display:block;font-size:0.56250rem;color:#838984;margin-bottom:3px}
+.bookField input,.bookField select,.bookField textarea{width:100%;box-sizing:border-box;border:1px solid #dfe3dd;border-radius:9px;padding:7px 8px;font:400 0.62500rem/1.3 inherit;background:#fff;color:#343a35}
 .bookField textarea{min-height:65px;resize:vertical}.bookWide{grid-column:1/-1}
 .bookFormatMulti{display:flex;gap:5px;flex-wrap:wrap;min-height:29px;align-items:center}
-.bookFormatChoice{border:1px solid #dfe3dd;background:#fff;border-radius:10px;padding:7px 9px;font-size:12px;line-height:1;font-weight:400;color:#6d746e;min-height:0;height:auto}
+.bookFormatChoice{border:1px solid #dfe3dd;background:#fff;border-radius:10px;padding:7px 9px;font-size:0.75000rem;line-height:1;font-weight:400;color:#6d746e;min-height:0;height:auto}
 .bookFormatChoice.on{background:#edf1ed;border-color:#aeb9b0;color:#3f4941}
 
-.readingPickList{display:grid;gap:6px;margin-top:10px}.readingPickBtn{border:1px solid #e2e5e0;background:#fff;border-radius:11px;padding:9px;text-align:left;font:400 12px/1.25 inherit;color:#414742}
+.readingPickList{display:grid;gap:6px;margin-top:10px}.readingPickBtn{border:1px solid #e2e5e0;background:#fff;border-radius:11px;padding:9px;text-align:left;font:400 0.75000rem/1.25 inherit;color:#414742}
 .readingPickSkip{color:#929792}.calendarReadingCard{margin-top:9px;padding:10px;border:1px solid #e3e6e1;border-radius:12px;background:#fafbf9}
-.calendarReadingTitle{font-size:10px;color:#858b86;margin-bottom:6px}.calendarReadingRow{font-size:11px;color:#4f5650;margin-top:4px}
+.calendarReadingTitle{font-size:0.62500rem;color:#858b86;margin-bottom:6px}.calendarReadingRow{font-size:0.68750rem;color:#4f5650;margin-top:4px}
 
 /* ===== BOOKS Phase 4.1 reading dashboard ===== */
 .bookPeriodTabs{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid #eceeeb;margin:3px -2px 13px}
-.bookPeriodTab{border:0;background:transparent;padding:10px 4px 9px;font:400 12px/1 inherit;color:#737973;border-bottom:2px solid transparent}
+.bookPeriodTab{border:0;background:transparent;padding:10px 4px 9px;font:400 0.75000rem/1 inherit;color:#737973;border-bottom:2px solid transparent}
 .bookPeriodTab.on{color:#3d4740;border-bottom-color:#89968b}
 .bookOverviewCard,.bookCategoryCard{border:1px solid #e4e7e2;background:#fff;border-radius:15px;padding:13px;margin-bottom:10px}
-.bookOverviewTitle,.bookCategoryTitle,.bookShelfHead{font-size:13px;font-weight:600;color:#353c36}
+.bookOverviewTitle,.bookCategoryTitle,.bookShelfHead{font-size:0.81250rem;font-weight:600;color:#353c36}
 .bookStatsOverview{grid-template-columns:repeat(2,minmax(0,1fr));margin:13px 0 0;gap:8px}
 .bookStatsOverview .bookStat{padding:12px 7px;background:#fafbf9}
-.bookStatsOverview .bookStatVal{font-size:22px;font-weight:400}.bookStatsOverview .bookStatLabel{font-size:10px}
-.bookCategoryRows{margin-top:10px;display:grid;gap:8px}.bookCategoryRow{display:grid;grid-template-columns:70px 1fr 28px;align-items:center;gap:7px;font-size:10px;color:#656c66}
+.bookStatsOverview .bookStatVal{font-size:1.37500rem;font-weight:400}.bookStatsOverview .bookStatLabel{font-size:0.62500rem}
+.bookCategoryRows{margin-top:10px;display:grid;gap:8px}.bookCategoryRow{display:grid;grid-template-columns:70px 1fr 28px;align-items:center;gap:7px;font-size:0.62500rem;color:#656c66}
 .bookCategoryTrack{height:7px;border-radius:999px;background:#f0f2ef;overflow:hidden}.bookCategoryFill{height:100%;background:#aab5ac;border-radius:999px}
-.bookCategoryCount{text-align:right}.bookCategoryEmpty{font-size:10px;color:#999f9a;margin-top:8px}
-.bookShelfHead{display:flex;justify-content:space-between;align-items:center;padding:6px 2px 9px}.bookShelfHead span:last-child{font-size:10px;font-weight:400;color:#949a95}
+.bookCategoryCount{text-align:right}.bookCategoryEmpty{font-size:0.62500rem;color:#999f9a;margin-top:8px}
+.bookShelfHead{display:flex;justify-content:space-between;align-items:center;padding:6px 2px 9px}.bookShelfHead span:last-child{font-size:0.62500rem;font-weight:400;color:#949a95}
 .bookYearRow{margin:-3px 1px 9px}.bookYearRow.hide{display:none}
-.bookModalBox{padding:15px 14px 12px}.bookModalHead{padding:1px 1px 8px}.bookModalTitle{font-size:16px;font-weight:600;color:#353b36}
+.bookModalBox{padding:15px 14px 12px}.bookModalHead{padding:1px 1px 8px}.bookModalTitle{font-size:1.00000rem;font-weight:600;color:#353b36}
 .bookModalFooter{position:sticky;bottom:-12px;background:rgba(255,255,255,.97);display:flex;justify-content:space-between;align-items:center;gap:8px;margin:14px -2px -2px;padding:10px 2px 2px;border-top:1px solid #eef0ed}
-.bookModalFooterRight{display:flex;gap:6px;margin-left:auto}.bookCancelBtn,.bookSaveBtn{border:0;border-radius:10px;padding:7px 9px;font:400 12px/1 inherit}
-.bookCancelBtn{background:#f1f3f0;color:#6e756f}.bookSaveBtn{background:#555f57;color:#fff}.bookDeleteText{border:0;background:transparent;padding:7px 4px;font:400 11px/1 inherit;color:#9a817f}
+.bookModalFooterRight{display:flex;gap:6px;margin-left:auto}.bookCancelBtn,.bookSaveBtn{border:0;border-radius:10px;padding:7px 9px;font:400 0.75000rem/1 inherit}
+.bookCancelBtn{background:#f1f3f0;color:#6e756f}.bookSaveBtn{background:#555f57;color:#fff}.bookDeleteText{border:0;background:transparent;padding:7px 4px;font:400 0.68750rem/1 inherit;color:#9a817f}
 
 /* ===== Phase 5 Life Dashboard ===== */
 .recordDashboard{padding-bottom:88px}.recordHero{padding-bottom:10px}
 #recordPeriodTabs{grid-template-columns:repeat(4,1fr);margin-top:5px}
 #bookLibraryFilters{grid-template-columns:repeat(4,1fr);margin:7px -2px 12px}
-.dashboardCard{margin-top:10px}.dashboardCardTitle{font-size:14px;font-weight:600;color:#343b35}
+.dashboardCard{margin-top:10px}.dashboardCardTitle{font-size:0.87500rem;font-weight:600;color:#343b35}
 .dashMetrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:11px}
 .dashMetric{border:1px solid #e5e8e3;background:#fafbf9;border-radius:12px;padding:10px 5px;text-align:center}
-.dashMetricValue{font-size:18px;font-weight:400;color:#343a35;white-space:nowrap}.dashMetricLabel{font-size:9px;color:#949a95;margin-top:4px}
-.dashSectionLabel{font-size:10px;color:#8b918c;margin:13px 0 7px}.dashBars{display:grid;gap:7px}
-.dashBarRow{display:grid;grid-template-columns:minmax(72px,1.1fr) 2fr auto;gap:7px;align-items:center;font-size:10px;color:#5c635d}
+.dashMetricValue{font-size:1.12500rem;font-weight:400;color:#343a35;white-space:nowrap}.dashMetricLabel{font-size:0.56250rem;color:#949a95;margin-top:4px}
+.dashSectionLabel{font-size:0.62500rem;color:#8b918c;margin:13px 0 7px}.dashBars{display:grid;gap:7px}
+.dashBarRow{display:grid;grid-template-columns:minmax(72px,1.1fr) 2fr auto;gap:7px;align-items:center;font-size:0.62500rem;color:#5c635d}
 .dashBarName{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dashBarTrack{height:7px;border-radius:999px;background:#f0f2ef;overflow:hidden}.dashBarFill{height:100%;background:#aab5ac;border-radius:999px}.dashBarValue{color:#838984;white-space:nowrap}
-.dashEmpty{font-size:10px;color:#9a9f9b;padding:13px 2px 3px}.dashTopActivity{margin-top:10px;font-size:11px;color:#555c56}
-.readingBookMini{margin-top:9px;display:grid;gap:5px}.readingBookMiniRow{font-size:10px;color:#5d645e;padding:7px 8px;background:#fafbf9;border-radius:9px}
-@media(max-width:380px){.dashMetrics{gap:5px}.dashMetricValue{font-size:16px}.dashBarRow{grid-template-columns:minmax(65px,1fr) 1.6fr auto}}
+.dashEmpty{font-size:0.62500rem;color:#9a9f9b;padding:13px 2px 3px}.dashTopActivity{margin-top:10px;font-size:0.68750rem;color:#555c56}
+.readingBookMini{margin-top:9px;display:grid;gap:5px}.readingBookMiniRow{font-size:0.62500rem;color:#5d645e;padding:7px 8px;background:#fafbf9;border-radius:9px}
+@media(max-width:380px){.dashMetrics{gap:5px}.dashMetricValue{font-size:1.00000rem}.dashBarRow{grid-template-columns:minmax(65px,1fr) 1.6fr auto}}
 
 .readingBookMiniRow{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .readingBookMiniRow .bookTag{flex:0 0 auto}
 
 .bookCardActions{display:flex;align-items:center;gap:5px;flex:0 0 auto}
 
-.dashCompare{margin-top:5px;font-size:10px;line-height:1.25;color:var(--muted);white-space:normal}
+.dashCompare{margin-top:5px;font-size:0.62500rem;line-height:1.25;color:var(--muted);white-space:normal}
 
 .dashMetricsTwo{grid-template-columns:repeat(2,minmax(0,1fr))}
 .genreSegmentBar{display:flex;width:100%;height:14px;overflow:hidden;border-radius:999px;background:var(--line);margin:8px 0 12px}
@@ -596,7 +615,7 @@ button,input,select,textarea{font:inherit}
 .genreSegment2{background:color-mix(in srgb,var(--accent) 62%,var(--muted))}
 .genreSegment3{background:color-mix(in srgb,var(--accent) 45%,var(--line))}
 .genreSegment4{background:color-mix(in srgb,var(--accent) 28%,var(--line))}
-.genreLegend{display:flex;flex-wrap:wrap;gap:7px 12px;font-size:11px;color:var(--muted)}
+.genreLegend{display:flex;flex-wrap:wrap;gap:7px 12px;font-size:0.68750rem;color:var(--muted)}
 .genreLegend span{display:inline-flex;align-items:center;gap:5px}
 .genreDot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:0 0 auto}
 
@@ -604,7 +623,7 @@ button,input,select,textarea{font:inherit}
 .bookAddBtn,.bookSmallBtn,.bookCancelBtn,.bookSaveBtn,.bookDeleteBtn,.bookSearchBtn{
   border-radius:10px;
   padding:7px 9px;
-  font-size:12px;
+  font-size:0.75000rem;
   line-height:1;
   font-weight:400;
   min-height:0;
@@ -619,57 +638,57 @@ button,input,select,textarea{font:inherit}
 .bookCardText{min-width:0;flex:1}
 .bookCover{width:46px;height:64px;object-fit:cover;border-radius:6px;background:#f2f3f0;flex:0 0 auto}
 .bookSearchBox{margin:10px 0 3px;padding:10px;background:#fafbf9;border:1px solid #e5e8e3;border-radius:12px}
-.bookSearchLabel{font-size:10px;color:#4f5650;margin-bottom:6px}
-.bookSearchLabel span{font-size:9px;color:#969b97;margin-left:5px}
+.bookSearchLabel{font-size:0.62500rem;color:#4f5650;margin-bottom:6px}
+.bookSearchLabel span{font-size:0.56250rem;color:#969b97;margin-left:5px}
 .bookSearchRow{display:flex;gap:6px;align-items:center}
-.bookSearchRow input{flex:1;min-width:0;box-sizing:border-box;border:1px solid #dfe3dd;border-radius:9px;padding:7px 8px;font:400 10px/1.25 inherit;background:#fff;color:#343a35}
-.bookSearchStatus{font-size:9px;color:#919792;margin-top:6px}
+.bookSearchRow input{flex:1;min-width:0;box-sizing:border-box;border:1px solid #dfe3dd;border-radius:9px;padding:7px 8px;font:400 0.62500rem/1.25 inherit;background:#fff;color:#343a35}
+.bookSearchStatus{font-size:0.56250rem;color:#919792;margin-top:6px}
 .bookSearchResults{display:grid;gap:6px;margin-top:7px}
-.bookSearchResult{width:100%;border:1px solid #e3e6e1;background:#fff;border-radius:10px;padding:7px;text-align:left;display:flex;gap:8px;align-items:center;color:#424843;font:400 11px/1.3 inherit}
+.bookSearchResult{width:100%;border:1px solid #e3e6e1;background:#fff;border-radius:10px;padding:7px;text-align:left;display:flex;gap:8px;align-items:center;color:#424843;font:400 0.68750rem/1.3 inherit}
 .bookSearchResult img{width:34px;height:48px;object-fit:cover;border-radius:4px;background:#f1f2ef;flex:0 0 auto}
 .bookSearchResultText{min-width:0}
 .bookSearchResultTitle{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bookSearchResultMeta{font-size:9px;color:#919792;margin-top:2px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.bookCoverPreview{margin-top:8px;display:flex;gap:8px;align-items:center;font-size:10px;color:#7e857f}
+.bookSearchResultMeta{font-size:0.56250rem;color:#919792;margin-top:2px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bookCoverPreview{margin-top:8px;display:flex;gap:8px;align-items:center;font-size:0.62500rem;color:#7e857f}
 .bookCoverPreview img{width:42px;height:59px;object-fit:cover;border-radius:5px;background:#f1f2ef}
 .bookCoverManual{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:7px}
-.bookCoverManualLabel{font-size:9px;color:#929893;margin-right:2px}
-.bookCoverUploadBtn,.bookCoverRemoveBtn{border:0;background:#f2f3f0;border-radius:10px;padding:7px 9px;font-size:12px;line-height:1;font-weight:400;color:#555;min-height:0;height:auto}
+.bookCoverManualLabel{font-size:0.56250rem;color:#929893;margin-right:2px}
+.bookCoverUploadBtn,.bookCoverRemoveBtn{border:0;background:#f2f3f0;border-radius:10px;padding:7px 9px;font-size:0.75000rem;line-height:1;font-weight:400;color:#555;min-height:0;height:auto}
 .bookCoverRemoveBtn{color:#8b7673}
-.bookCoverManualNote{width:100%;font-size:8px;color:#a1a6a2;margin-top:1px}
+.bookCoverManualNote{width:100%;font-size:0.50000rem;color:#a1a6a2;margin-top:1px}
 .bookCoverPreview.customCoverPreview span::after{content:" · 직접 업로드";color:#929893}
 .readingBookMiniMain{display:flex;gap:8px;align-items:center;min-width:0}
 .readingBookCover{width:30px;height:42px;object-fit:cover;border-radius:4px;background:#f1f2ef;flex:0 0 auto}
 .readingBookTitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .genreSegmentBar{height:18px;margin:8px 0 10px;background:#eef0ed}
-.genreSegment{display:flex;align-items:center;justify-content:center;height:100%;min-width:2px;font-size:9px;font-weight:600;color:rgba(255,255,255,.95);overflow:hidden;white-space:nowrap}
+.genreSegment{display:flex;align-items:center;justify-content:center;height:100%;min-width:2px;font-size:0.56250rem;font-weight:600;color:rgba(255,255,255,.95);overflow:hidden;white-space:nowrap}
 .genreSegmentPct{padding:0 3px}
 .genreSegment0{background:#5d86b3}.genreSegment1{background:#70a5bf}.genreSegment2{background:#82bebf}.genreSegment3{background:#96c7ad}
 .genreSegment4{background:#9bb7d5}.genreSegment5{background:#7898c2}.genreSegment6{background:#91b2a0}.genreSegment7{background:#6e8fae}
-.genreLegend{gap:7px 11px}.genreLegend span{font-size:10px}.genreDot{width:7px;height:7px}
+.genreLegend{gap:7px 11px}.genreLegend span{font-size:0.62500rem}.genreDot{width:7px;height:7px}
 
 
 /* ===== Phase 6 data management ===== */
 .backupView{padding-bottom:88px}
 .backupHero{padding:4px 2px 2px}
-.backupTitle{font-size:19px;font-weight:600;color:#343a35}
-.backupIntro{font-size:11px;line-height:1.55;color:#858b86;margin-top:5px}
+.backupTitle{font-size:1.18750rem;font-weight:600;color:#343a35}
+.backupIntro{font-size:0.68750rem;line-height:1.55;color:#858b86;margin-top:5px}
 .backupCard{margin-top:10px;border:1px solid #e6e9e4;background:#fff;border-radius:15px;padding:14px 13px}
-.backupCardTitle{font-size:14px;font-weight:600;color:#3d443e}
-.backupCardText{font-size:10px;line-height:1.55;color:#8b918c;margin-top:5px}
-.backupPrimary,.backupSecondary,.backupDanger{width:100%;border:0;border-radius:11px;padding:9px 10px;margin-top:10px;font:500 9px/1.15 inherit}
+.backupCardTitle{font-size:0.87500rem;font-weight:600;color:#3d443e}
+.backupCardText{font-size:0.62500rem;line-height:1.55;color:#8b918c;margin-top:5px}
+.backupPrimary,.backupSecondary,.backupDanger{width:100%;border:0;border-radius:11px;padding:9px 10px;margin-top:10px;font:500 0.56250rem/1.15 inherit}
 .backupPrimary{background:#555f57;color:#fff}
 .backupSecondary{background:#f1f3f0;color:#606861}
 .backupDanger{background:#f7f1f0;color:#8d6461}
-.backupFilePicker{display:block;width:100%;box-sizing:border-box;margin-top:10px;padding:7px;border:1px solid #e1e5df;border-radius:10px;background:#fafbf9;font:400 9px/1.2 inherit;color:#666d67}
-.backupFilePicker::file-selector-button{border:0;border-radius:8px;background:#f1f3f0;color:#606861;padding:6px 8px;margin-right:7px;font:500 9px/1 inherit}
-.backupStatusBox{margin-top:8px;padding:9px 10px;border-radius:10px;background:#fafbf9;font-size:9px;line-height:1.5;color:#7d847e}
+.backupFilePicker{display:block;width:100%;box-sizing:border-box;margin-top:10px;padding:7px;border:1px solid #e1e5df;border-radius:10px;background:#fafbf9;font:400 0.56250rem/1.2 inherit;color:#666d67}
+.backupFilePicker::file-selector-button{border:0;border-radius:8px;background:#f1f3f0;color:#606861;padding:6px 8px;margin-right:7px;font:500 0.56250rem/1 inherit}
+.backupStatusBox{margin-top:8px;padding:9px 10px;border-radius:10px;background:#fafbf9;font-size:0.56250rem;line-height:1.5;color:#7d847e}
 .backupStatusStrong{font-weight:600;color:#555d56}
-.backupHint{margin-top:7px;font-size:9px;line-height:1.5;color:#9aa09b}
+.backupHint{margin-top:7px;font-size:0.56250rem;line-height:1.5;color:#9aa09b}
 .backupDangerCard{border-color:#eee2df;background:#fffdfc}
 .backupDangerActions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
 .backupDangerActions .backupSecondary,.backupDangerActions .backupDanger{margin-top:0}
-.backupDangerText{display:block;margin:8px auto 0;padding:4px 5px;border:0;background:transparent;color:#9a7d79;font:400 9px/1 inherit;text-decoration:underline;text-underline-offset:2px}
+.backupDangerText{display:block;margin:8px auto 0;padding:4px 5px;border:0;background:transparent;color:#9a7d79;font:400 0.56250rem/1 inherit;text-decoration:underline;text-underline-offset:2px}
 #backupInput{display:none}
 
 /* BOOKS / reading popup modals */
@@ -718,8 +737,7 @@ button,input,select,textarea{font:inherit}
     <div class="section">
       <div class="dateRow">
         <div class="dateTitle">📅</div>
-        <input type="date" id="datePicker">
-        <button class="dateBtn" onclick="loadDate()">확인</button>
+        <input type="date" id="datePicker" onchange="loadDate()">
         <button class="dateBtn" onclick="backToToday()">🦖 오늘</button>
       </div>
       <div class="small" id="editHint" style="margin-top:6px;color:#c62828;display:none;">⚠️ 과거 기록 수정 중</div>
@@ -999,6 +1017,31 @@ button,input,select,textarea{font:inherit}
     <div class="backupTitle">내 데이터 관리</div>
     <div class="backupIntro">오랜만에 열어도 헷갈리지 않도록, 저장·복원·자동 백업·초기화를 기능별로 나눴어요.</div>
   </div>
+
+  <section class="backupCard">
+    <div class="backupCardTitle">앱 설정</div>
+    <div class="backupCardText">글자 크기와 국립중앙도서관 ISBN 서지정보 API를 설정할 수 있어요.</div>
+
+    <div class="settingsRow">
+      <div class="settingsLabel">글자 크기</div>
+      <div class="fontScaleButtons">
+        <button id="fontSizeSmallBtn" class="settingsBtn" onclick="setFontSizeSetting('small')">작게</button>
+        <button id="fontSizeNormalBtn" class="settingsBtn" onclick="setFontSizeSetting('normal')">기본</button>
+        <button id="fontSizeLargeBtn" class="settingsBtn" onclick="setFontSizeSetting('large')">크게</button>
+      </div>
+    </div>
+
+    <div class="settingsRow">
+      <div class="settingsLabel">도서 API 키</div>
+      <input id="nlApiKeyInput" class="settingsInput" type="password" autocomplete="off" placeholder="국립중앙도서관 인증키">
+    </div>
+    <div class="settingsRow">
+      <button class="settingsBtn" onclick="saveNationalLibraryApiKey()">키 저장</button>
+      <button class="settingsBtn" onclick="testNationalLibraryApiKey()">연결 확인</button>
+      <button class="settingsBtn settingsDanger" onclick="deleteNationalLibraryApiKey()">키 삭제</button>
+    </div>
+    <div id="nlApiStatus" class="settingsStatus">API 키는 이 기기에만 저장되고 백업 파일에는 포함되지 않아요.</div>
+  </section>
 
   <section class="backupCard">
     <div class="backupCardTitle">내 데이터 보관하기</div>
@@ -2240,11 +2283,58 @@ function renderAll_v2(){renderRecordDashboard();}
    백업 / 복원
 ========================= */
 
+const NL_API_KEY_STORAGE='nationalLibraryApiKey_v1';
+const FONT_SIZE_KEY='fontSizeSetting_v1';
+const BACKUP_EXCLUDED_KEYS=new Set([NL_API_KEY_STORAGE]);
+const FONT_SIZE_ROOT_PX={small:14.72,normal:16,large:17.6};
+
+function getNationalLibraryApiKey(){
+  return String(localStorage.getItem(NL_API_KEY_STORAGE)||'').trim();
+}
+function renderNationalLibraryApiSetting(){
+  const input=document.getElementById('nlApiKeyInput');
+  if(input&&document.activeElement!==input)input.value=getNationalLibraryApiKey();
+  const status=document.getElementById('nlApiStatus');
+  if(status&&!getNationalLibraryApiKey())status.textContent='API 키는 이 기기에만 저장되고 백업 파일에는 포함되지 않아요.';
+}
+function saveNationalLibraryApiKey(){
+  const input=document.getElementById('nlApiKeyInput');
+  const key=String(input?.value||'').trim();
+  if(!key)return alert('발급받은 국립중앙도서관 API 키를 입력해 주세요.');
+  localStorage.setItem(NL_API_KEY_STORAGE,key);
+  const status=document.getElementById('nlApiStatus');
+  if(status)status.textContent='API 키를 이 기기에 저장했어요. 백업 파일에는 포함되지 않습니다.';
+}
+function deleteNationalLibraryApiKey(){
+  if(!getNationalLibraryApiKey())return;
+  if(!confirm('이 기기에 저장된 국립중앙도서관 API 키를 삭제할까요?'))return;
+  localStorage.removeItem(NL_API_KEY_STORAGE);
+  const input=document.getElementById('nlApiKeyInput');if(input)input.value='';
+  const status=document.getElementById('nlApiStatus');
+  if(status)status.textContent='저장된 API 키를 삭제했어요.';
+}
+function getFontSizeSetting(){
+  const v=localStorage.getItem(FONT_SIZE_KEY)||'normal';
+  return Object.prototype.hasOwnProperty.call(FONT_SIZE_ROOT_PX,v)?v:'normal';
+}
+function applyFontSizeSetting(){
+  const setting=getFontSizeSetting();
+  document.documentElement.style.fontSize=`${FONT_SIZE_ROOT_PX[setting]}px`;
+  ['small','normal','large'].forEach(v=>{
+    document.getElementById(`fontSize${v[0].toUpperCase()+v.slice(1)}Btn`)?.classList.toggle('on',v===setting);
+  });
+}
+function setFontSizeSetting(setting){
+  if(!Object.prototype.hasOwnProperty.call(FONT_SIZE_ROOT_PX,setting))return;
+  localStorage.setItem(FONT_SIZE_KEY,setting);
+  applyFontSizeSetting();
+}
+
 function snapshotLocalStorage(){
   const out={};
   for(let i=0;i<localStorage.length;i++){
     const k=localStorage.key(i);
-    if(k!==null)out[k]=localStorage.getItem(k);
+    if(k!==null&&!BACKUP_EXCLUDED_KEYS.has(k))out[k]=localStorage.getItem(k);
   }
   return out;
 }
@@ -2378,10 +2468,13 @@ async function downloadBackup(){
 }
 
 function applyLocalStorageSnapshot(snapshot){
+  const localOnly={};
+  BACKUP_EXCLUDED_KEYS.forEach(k=>{const v=localStorage.getItem(k);if(v!==null)localOnly[k]=v;});
   localStorage.clear();
   Object.entries(snapshot||{}).forEach(([k,v])=>{
-    if(v!==null&&v!==undefined)localStorage.setItem(k,String(v));
+    if(v!==null&&v!==undefined&&!BACKUP_EXCLUDED_KEYS.has(k))localStorage.setItem(k,String(v));
   });
+  Object.entries(localOnly).forEach(([k,v])=>localStorage.setItem(k,v));
 }
 
 async function importBackup(){
@@ -2729,10 +2822,16 @@ function resetPendingBookCover(){
 }
 function bookCoverImg(book,cls='bookCover'){
   const fallback=normalizeCoverUrl(book?.coverUrl);
+  const frameClass=cls==='readingBookCover'?'bookCoverFrame readingBookCoverFrame':'bookCoverFrame';
+  const placeholder='<span class="bookCoverPlaceholder" aria-hidden="true"></span>';
   if(book?.customCover&&book?.id){
-    return `<img class="${cls}" data-book-cover-id="${escapeLife(book.id)}" data-cover-fallback="${escapeLife(fallback)}" alt="" loading="lazy" referrerpolicy="no-referrer" style="display:none">`;
+    return `<span class="${frameClass}">${placeholder}<img class="${cls}" data-book-cover-id="${escapeLife(book.id)}" data-cover-fallback="${escapeLife(fallback)}" alt="" loading="lazy" referrerpolicy="no-referrer" style="display:none"></span>`;
   }
-  return fallback?`<img class="${cls}" src="${escapeLife(fallback)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">`:'';
+  return `<span class="${frameClass}">${placeholder}${fallback?`<img class="${cls}" src="${escapeLife(fallback)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">`:''}</span>`;
+}
+function bookSearchCoverHtml(url){
+  const u=normalizeCoverUrl(url);
+  return `<span class="bookSearchCoverFrame"><span class="bookCoverPlaceholder" aria-hidden="true"></span>${u?`<img src="${escapeLife(u)}" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none'">`:''}</span>`;
 }
 async function hydrateCustomBookCovers(root=document){
   const imgs=[...(root||document).querySelectorAll?.('img[data-book-cover-id]')||[]];
@@ -3126,6 +3225,95 @@ function normalizeOpenLibraryWorkKey(key){
   if(raw.startsWith('/works/'))return raw;
   return raw.startsWith('OL')?`/works/${raw}`:raw;
 }
+function nationalLibraryDocs(data){
+  const raw=data?.docs??data?.DOCS??data?.o?.docs??data?.response?.docs??[];
+  if(Array.isArray(raw))return raw;
+  if(Array.isArray(raw?.e))return raw.e;
+  if(raw&&typeof raw==='object'&&raw.e)return Array.isArray(raw.e)?raw.e:[raw.e];
+  return [];
+}
+function nationalLibraryErrorCode(data){
+  return String(data?.ERROR_CODE??data?.error_code??data?.code??'').trim();
+}
+function mapNationalLibraryData(data){
+  return nationalLibraryDocs(data).map(row=>{
+    const title=[row?.TITLE,row?.VOL].filter(Boolean).join(' ').trim();
+    return {
+      title,
+      author:String(row?.AUTHOR||'').trim(),
+      publisher:String(row?.PUBLISHER||'').trim(),
+      genre:String(row?.SUBJECT||'').trim(),
+      detail:String(row?.FORM||'').trim(),
+      coverUrl:normalizeCoverUrl(row?.TITLE_URL||''),
+      isbn:String(row?.EA_ISBN||row?.ISBN||'').replace(/[^0-9Xx]/g,''),
+      description:'',
+      source:'국립중앙도서관',
+      publishDate:String(row?.PUBLISH_PREDATE||'').trim()
+    };
+  }).filter(x=>x.title);
+}
+async function nationalLibrarySearch(query,keyOverride=''){
+  const key=String(keyOverride||getNationalLibraryApiKey()).trim();
+  if(!key)return {_skipped:true,docs:[]};
+  const raw=String(query||'').trim();
+  const isbnOnly=raw.replace(/[-\s]/g,'');
+  const isIsbn=/^\d{10}(\d{3})?$/.test(isbnOnly);
+  const params=new URLSearchParams({
+    cert_key:key,
+    result_style:'json',
+    page_no:'1',
+    page_size:'12'
+  });
+  params.set(isIsbn?'isbn':'title',isIsbn?isbnOnly:raw);
+
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),10000);
+  try{
+    const res=await fetch(`https://www.nl.go.kr/seoji/SearchApi.do?${params.toString()}`,{
+      method:'GET',mode:'cors',credentials:'omit',signal:controller.signal,
+      headers:{'Accept':'application/json,text/plain,*/*'}
+    });
+    if(!res.ok)throw new Error(`national-library-${res.status}`);
+    const text=await res.text();
+    let data;
+    try{data=JSON.parse(text);}catch(e){throw new Error('national-library-invalid-json');}
+    const code=nationalLibraryErrorCode(data);
+    if(code&&code!=='200'&&code!=='0')throw new Error(`national-library-api-${code}`);
+    return data;
+  }finally{
+    clearTimeout(timer);
+  }
+}
+async function testNationalLibraryApiKey(){
+  const input=document.getElementById('nlApiKeyInput');
+  const key=String(input?.value||getNationalLibraryApiKey()).trim();
+  const status=document.getElementById('nlApiStatus');
+  if(!key){if(status)status.textContent='먼저 API 키를 입력해 주세요.';return;}
+  if(status)status.textContent='국립중앙도서관 API 연결을 확인하는 중이에요…';
+  try{
+    const data=await nationalLibrarySearch('토지',key);
+    const rows=mapNationalLibraryData(data);
+    if(status)status.textContent=`연결 성공 · 검색 응답 ${rows.length}건 확인 · 저장하려면 ‘키 저장’을 눌러 주세요.`;
+  }catch(e){
+    if(status)status.textContent='직접 연결에 실패했어요. 브라우저의 CORS 제한 또는 API 키 상태를 확인해 주세요. BOOKS 검색은 Google Books와 Open Library로 계속 동작합니다.';
+  }
+}
+
+function mergeManyBookSearchResults(...groups){
+  const seen=new Set();
+  const out=[];
+  for(const group of groups){
+    for(const b of (group||[])){
+      const isbn=String(b.isbn||'').replace(/[-\s]/g,'');
+      const key=isbn?`isbn:${isbn}`:`meta:${String(b.title||'').trim().toLowerCase()}|${String(b.author||'').trim().toLowerCase()}`;
+      if(seen.has(key))continue;
+      seen.add(key);out.push(b);
+      if(out.length>=12)return out;
+    }
+  }
+  return out;
+}
+
 function mapOpenLibraryDocs(data){
   return (data?.docs||[]).map(doc=>{
     const subjects=Array.isArray(doc.subject)?doc.subject.filter(Boolean):[];
@@ -3316,22 +3504,34 @@ async function searchBookOnline(){
   const isbnOnly=q.replace(/[-\s]/g,'');
   const isIsbn=/^\d{10}(\d{3})?$/.test(isbnOnly);
   const googleQuery=isIsbn?`isbn:${isbnOnly}`:q;
+  const hasNlKey=!!getNationalLibraryApiKey();
 
-  // 한 검색원에 특정 국내 판본이 빠져 있어도 놓치지 않도록 두 소스를 항상 함께 조회한다.
-  const [openResult,googleResult]=await Promise.allSettled([
-    openLibrarySearch(isIsbn?isbnOnly:q),
-    googleBooksJsonpSearch(googleQuery)
+  const [nlResult,googleResult,openResult]=await Promise.allSettled([
+    hasNlKey?nationalLibrarySearch(isIsbn?isbnOnly:q):Promise.resolve({_skipped:true,docs:[]}),
+    googleBooksJsonpSearch(googleQuery),
+    openLibrarySearch(isIsbn?isbnOnly:q)
   ]);
 
-  let openRows=[];
-  let googleRows=[];
-  let openError=null;
-  let googleError=null;
+  let nlRows=[],googleRows=[],openRows=[];
+  let nlError=null,googleError=null,openError=null;
+
+  if(nlResult.status==='fulfilled'){
+    nlRows=mapNationalLibraryData(nlResult.value);
+    if(isIsbn)nlRows=nlRows.filter(b=>String(b.isbn||'').replace(/[-\s]/g,'')===isbnOnly);
+  }else if(hasNlKey){
+    nlError=nlResult.reason;
+  }
+
+  if(googleResult.status==='fulfilled'){
+    googleRows=mapGoogleBookItems(googleResult.value);
+    if(isIsbn)googleRows=googleRows.filter(b=>String(b.isbn||'').replace(/[-\s]/g,'')===isbnOnly);
+  }else{
+    googleError=googleResult.reason;
+  }
 
   if(openResult.status==='fulfilled'){
     try{
       openRows=await expandOpenLibraryEditions(openResult.value);
-      // ISBN 직접 검색에서는 exact ISBN과 다른 판본이 섞이지 않도록 다시 제한한다.
       if(isIsbn){
         openRows=openRows.filter(b=>String(b.isbn||'').replace(/[-\s]/g,'')===isbnOnly);
         if(!openRows.length){
@@ -3343,38 +3543,33 @@ async function searchBookOnline(){
     openError=openResult.reason;
   }
 
-  if(googleResult.status==='fulfilled'){
-    googleRows=mapGoogleBookItems(googleResult.value);
-    if(isIsbn){
-      googleRows=googleRows.filter(b=>String(b.isbn||'').replace(/[-\s]/g,'')===isbnOnly);
-    }
-  }else{
-    googleError=googleResult.reason;
-  }
-
-  bookSearchResultsCache=mergeBookSearchResults(openRows,googleRows);
+  // 국내 서지정보를 우선하고, Google Books → Open Library 순서로 보완한다.
+  bookSearchResultsCache=mergeManyBookSearchResults(nlRows,googleRows,openRows);
 
   if(status){
     if(bookSearchResultsCache.length){
       const sources=[
-        openRows.length?'Open Library':'',
-        googleRows.length?'Google Books':''
+        nlRows.length?'국립중앙도서관':'',
+        googleRows.length?'Google Books':'',
+        openRows.length?'Open Library':''
       ].filter(Boolean).join(' + ');
-      status.textContent=`${bookSearchResultsCache.length}개 결과 · ${sources} · 선택하면 자동 입력됩니다.`;
-    }else if(openError&&googleError){
-      status.textContent='온라인 도서 검색에 실패했어요. 잠시 후 다시 검색하거나 직접 입력해 주세요.';
+      const nlNote=nlError?' · 국립중앙도서관 직접 연결 실패':''; 
+      status.textContent=`${bookSearchResultsCache.length}개 결과 · ${sources||'온라인 검색'}${nlNote} · 선택하면 자동 입력됩니다.`;
+    }else if((!hasNlKey||nlError)&&googleError&&openError){
+      status.textContent='온라인 도서 검색에 실패했어요. API 설정 또는 네트워크를 확인하거나 직접 입력해 주세요.';
     }else{
-      status.textContent=isIsbn
+      const nlNote=nlError?' 국립중앙도서관 직접 연결은 브라우저 제한으로 실패했어요.':'';
+      status.textContent=(isIsbn
         ?'해당 ISBN의 검색 결과가 없어요. ISBN을 확인하거나 제목으로 검색해 주세요.'
-        :'검색 결과가 없어요. 제목을 조금 다르게 입력하거나 ISBN으로 검색해 주세요.';
+        :'검색 결과가 없어요. 제목을 조금 다르게 입력하거나 ISBN으로 검색해 주세요.')+nlNote;
     }
   }
 
   if(root)root.innerHTML=bookSearchResultsCache.map((b,i)=>`<button class="bookSearchResult" onclick="applyBookSearchResult(${i})">
-    ${b.coverUrl?`<img src="${escapeLife(b.coverUrl)}" alt="" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">`:''}
+    ${bookSearchCoverHtml(b.coverUrl)}
     <div class="bookSearchResultText">
       <div class="bookSearchResultTitle">${escapeLife(b.title||'제목 없음')}</div>
-      <div class="bookSearchResultMeta">${escapeLife([b.author,b.publisher,b.publishDate,b.isbn?`ISBN ${b.isbn}`:''].filter(Boolean).join(' · '))}</div>
+      <div class="bookSearchResultMeta">${escapeLife([b.source,b.author,b.publisher,b.publishDate,b.isbn?`ISBN ${b.isbn}`:''].filter(Boolean).join(' · '))}</div>
     </div>
   </button>`).join('');
 }
@@ -4279,7 +4474,7 @@ function renderLifeGuide(){
   const d=parseDateKeyLocal(lifeLogKey());
   const dayNames=['일','월','화','수','목','금','토'];
   const dateLine=document.getElementById('lifeDateLine');if(dateLine)dateLine.textContent=`${lifeLogKey()} (${dayNames[day]})`;
-  const blocks=[['breakfast','BREAKFAST','기상 후 아침 루틴'],['morning','MORNING','점심 전 오전 루틴'],['lunch','LUNCH','점심과 식후 루틴'],['afternoon','AFTERNOON','평일 업무 · 연구'],['evening','EVENING','하루 마무리 루틴']];
+  const blocks=[['breakfast','BREAKFAST','기상 후 아침 루틴'],['morning','MORNING','점심 전 오전 루틴'],['lunch','LUNCH','점심과 식후 루틴'],['afternoon','AFTERNOON','점심 후 오후 루틴'],['evening','EVENING','하루 마무리 루틴']];
   const renderRow=r=>{
     const running=isTimerRunningFor(r.id);
     const lead=`<button class="lifeCheck ${lifeDone(r.id)?'done':''}" onclick="toggleLifeRoutine('${r.id}')">${lifeDone(r.id)?'✓':''}</button>`;
@@ -4352,7 +4547,7 @@ function lifeNavigate(where){
   if(where==='calendar'){document.getElementById('viewCalendar')?.classList.remove('hide');renderLifeCalendar();}
   if(where==='books'){document.getElementById('viewBooks')?.classList.remove('hide');renderBooks();}
   if(where==='record'){document.getElementById('viewAll_v2')?.classList.remove('hide');renderRecordDashboard();}
-  if(where==='backup'){document.getElementById('viewBackup')?.classList.remove('hide');renderBackupStatus();}
+  if(where==='backup'){document.getElementById('viewBackup')?.classList.remove('hide');renderBackupStatus();renderNationalLibraryApiSetting();applyFontSizeSetting();}
 }
 
 makeAutoBackup();
@@ -4361,6 +4556,7 @@ makeAutoBackup();
 /* =========================
    init + 단식 텍스트 주기 갱신
 ========================= */
+applyFontSizeSetting();
 render();
 bindMeasureInputs();
 renderMeasures();

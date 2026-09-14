@@ -1,4 +1,4 @@
-const CACHE_NAME='routine-check-phase6-7-v1';
+const CACHE_NAME='routine-check-phase6-8-v1';
 const APP_SHELL=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
 
 self.addEventListener('install',event=>{
