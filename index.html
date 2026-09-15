@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🍎루틴 체크 · 6.11</title>
+<title>🍎루틴 체크 · 6.11.1</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#222222">
 
@@ -348,7 +348,7 @@ body{padding-bottom:86px;background:var(--life-bg)}
 
 /* ===== Phase 2: daily note + calendar ===== */
 .freeChipWrap{position:relative;min-width:0}
-.freeChipWrap .freeChip{width:100%;padding-right:28px;height:100%}
+.freeChipWrap .freeChip{position:relative;width:100%;padding:0;height:100%}
 .freeEditBtn{position:absolute;right:4px;top:4px;border:0;background:rgba(255,255,255,.86);border-radius:9px;width:25px;height:25px;font-size:1.00000rem;line-height:1;color:#687068;z-index:2}
 .todayNoteBox{margin-top:14px}
 .todayNoteBox textarea{width:100%;box-sizing:border-box;min-height:76px;resize:vertical;border:1px solid #dfe3dd;border-radius:13px;padding:11px 12px;font:inherit;background:#fff}
@@ -817,6 +817,37 @@ button,input,select,textarea{font-family:inherit}
 .dailyCareSettingRow{padding:7px 8px!important}
 .dailyCareSettingName{font-size:var(--font-control)!important}
 .dailyCareSettingsBtn{border:1px solid #e2e5e1!important;background:#fff!important;color:#737a74!important}
+
+
+/* 6.11.1 — TODAY is the visual source of truth */
+.bookCardActionTodayStyle{
+  border:0!important;
+  background:#f1f2ef!important;
+  color:#5f665f!important;
+  border-radius:10px!important;
+  min-height:34px!important;
+  padding:7px 9px!important;
+  font-size:.75rem!important;
+  line-height:1.15!important;
+  font-weight:500!important;
+}
+/* FREE TIME: center the activity itself independently of left/right utility controls */
+.freeCard{position:relative!important}
+.freeMainCentered{
+  position:absolute!important;
+  left:50%!important;
+  top:50%!important;
+  transform:translate(-50%,-50%)!important;
+  width:max-content!important;
+  max-width:68%!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  pointer-events:none;
+}
+.freeMainCentered .freeEmoji,.freeMainCentered .freeName{text-align:center!important;margin-left:auto!important;margin-right:auto!important}
 
 </style>
 </head>
@@ -3200,7 +3231,7 @@ function renderBooks(){
   root.innerHTML=rows.length?rows.map(b=>`<div class="bookCard" onclick="openBookModal('${b.id}')">
     <div class="bookCardTop">
       <div class="bookCardMain">${bookCoverImg(b)}<div class="bookCardText"><div class="bookName">${escapeLife(b.title)}</div><div class="bookAuthor">${escapeLife(b.author||'')}</div></div></div>
-      <div class="bookCardActions"><button class="bookSmallBtn lifeMiniBtn uiCompactBtn" onclick="event.stopPropagation();copyBook('${b.id}')">복사</button><button class="bookSmallBtn lifeMiniBtn uiCompactBtn" onclick="event.stopPropagation();openBookModal('${b.id}')">편집</button></div>
+      <div class="bookCardActions"><button class="bookCardActionTodayStyle bookSmallBtn lifeMiniBtn uiCompactBtn bookCardActionTodayStyle" onclick="event.stopPropagation();copyBook('${b.id}')">복사</button><button class="bookCardActionTodayStyle bookSmallBtn lifeMiniBtn uiCompactBtn bookCardActionTodayStyle" onclick="event.stopPropagation();openBookModal('${b.id}')">편집</button></div>
     </div>
     <div class="bookTags">${[b.status,b.format,b.source,b.ownership,b.genre,b.detail,b.rating].filter(Boolean).map(v=>`<span class="bookTag">${escapeLife(v)}</span>`).join('')}</div>
     ${b.startDate||b.finishDate?`<div class="bookDates">${escapeLife(b.startDate||'')}${b.finishDate?` → ${escapeLife(b.finishDate)}`:''}</div>`:''}
@@ -5074,7 +5105,7 @@ function renderLifeGuide(){
     html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">${title}</div><div class="lifeBlockHint">${hint}</div></div></div><div>${body}</div><button class="lifeAddBtn" onclick="openRoutineModal(null,'${key}')">+ 이 블록에 루틴 추가</button></section>`;
   }
   const free=routines.filter(r=>r.block==='free'&&r.enabled).sort((a,b)=>(a.order||0)-(b.order||0));
-  html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">FREE TIME</div><div class="lifeBlockHint">해야 할 일이 아니라, 오늘 여유가 있을 때 고르는 활동</div></div><button class="lifeMiniBtn" onclick="openRoutineModal(null,'free')">+ 추가</button></div><div class="freeGrid">${free.map(r=>`<div class="freeChipWrap"><button class="freeChip ${lifeDone(r.id)?'done':''}" onclick="toggleLifeRoutine('${r.id}')"><span class="ico">${escapeLife(r.icon||'·')}</span>${escapeLife(r.name)}</button>${r.type==='time'?`<button class="freeTimerBtn ${isTimerRunningFor(r.id)?'running':''}" aria-label="${escapeLife(r.name)} 시간 기록" onclick="event.stopPropagation();${isTimerRunningFor(r.id)?'stopActivityTimer()':`startActivityTimer('${r.id}')`}">⏱</button>`:r.type==='free'?`<button class="freeTimerBtn" aria-label="${escapeLife(r.name)} 자유 기록 수정" onclick="event.stopPropagation();editFreeRoutineRecord('${r.id}')">✎</button>`:''}<button class="freeEditBtn" aria-label="${escapeLife(r.name)} 편집" onclick="event.stopPropagation();openRoutineModal('${r.id}')">⋯</button></div>`).join('')}</div><div class="lifeBlockHint" style="margin-top:9px">하지 않은 활동은 아무 표시도 남기지 않아요.</div></section>`;
+  html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">FREE TIME</div><div class="lifeBlockHint">해야 할 일이 아니라, 오늘 여유가 있을 때 고르는 활동</div></div><button class="lifeMiniBtn" onclick="openRoutineModal(null,'free')">+ 추가</button></div><div class="freeGrid">${free.map(r=>`<div class="freeChipWrap"><button class="freeChip ${lifeDone(r.id)?'done':''}" onclick="toggleLifeRoutine('${r.id}')"><span class="freeMainCentered"><span class="ico freeEmoji">${escapeLife(r.icon||'·')}</span><span class="freeName">${escapeLife(r.name)}</span></span></button>${r.type==='time'?`<button class="freeTimerBtn ${isTimerRunningFor(r.id)?'running':''}" aria-label="${escapeLife(r.name)} 시간 기록" onclick="event.stopPropagation();${isTimerRunningFor(r.id)?'stopActivityTimer()':`startActivityTimer('${r.id}')`}">⏱</button>`:r.type==='free'?`<button class="freeTimerBtn" aria-label="${escapeLife(r.name)} 자유 기록 수정" onclick="event.stopPropagation();editFreeRoutineRecord('${r.id}')">✎</button>`:''}<button class="freeEditBtn" aria-label="${escapeLife(r.name)} 편집" onclick="event.stopPropagation();openRoutineModal('${r.id}')">⋯</button></div>`).join('')}</div><div class="lifeBlockHint" style="margin-top:9px">하지 않은 활동은 아무 표시도 남기지 않아요.</div></section>`;
   root.innerHTML=html;
   renderTodayNote();
   renderActivityTimerBanner();
