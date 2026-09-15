@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🍎루틴 체크 · 6.10</title>
+<title>🍎루틴 체크 · 6.11</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#222222">
 
@@ -784,6 +784,40 @@ button,input,select,textarea{font:inherit}
   .modal{align-items:center}
   .modalBox{border-radius:20px}
 }
+
+:root{
+  --font-body:1rem;
+  --font-title:1.125rem;
+  --font-section:.8125rem;
+  --font-caption:.6875rem;
+  --font-control:.75rem;
+  --font-compact:.625rem;
+  --btn-compact-h:26px;
+  --btn-normal-h:34px;
+  --ui-radius:9px;
+}
+body{font-size:var(--font-body)}
+.lifeBlockTitle,.booksTitle,.recordTitle,.backupTitle,.calendarTitle{font-size:var(--font-title)!important;line-height:1.25!important;font-weight:650!important}
+.lifeBlockHint,.booksSub,.recordSub,.backupSub,.calendarSub,.calendarChipSelectHint,.bookSearchHint,.dailyCareSettingMeta{font-size:var(--font-caption)!important;line-height:1.45!important;font-weight:400!important}
+.lifeSectionTitle,.recordSectionTitle,.settingsSectionTitle,.bookSectionTitle{font-size:var(--font-section)!important;font-weight:600!important}
+button,input,select,textarea{font-family:inherit}
+.uiCompactBtn,.dailyCareSettingsBtn,.dailyCareSettingActions button,.bookSmallBtn,.settingsBtnCompact{
+  min-height:var(--btn-compact-h)!important;height:auto!important;
+  padding:4px 7px!important;border-radius:7px!important;
+  font-size:var(--font-compact)!important;line-height:1.15!important;font-weight:500!important;
+}
+.uiPrimaryBtn,.uiSecondaryBtn{
+  min-height:var(--btn-normal-h)!important;padding:7px 12px!important;border-radius:var(--ui-radius)!important;
+  font-size:var(--font-control)!important;line-height:1.2!important;font-weight:600!important;
+}
+.uiPrimaryBtn{border:0!important;background:#586a5c!important;color:#fff!important}
+.uiSecondaryBtn{border:1px solid #dfe4df!important;background:#fff!important;color:#687169!important}
+.uiDangerText{border:0!important;background:transparent!important;color:#a76868!important;padding:5px 3px!important;font-size:var(--font-compact)!important;font-weight:500!important}
+.lifeModalActions{align-items:center!important;gap:7px!important}
+.dailyCareSettingRow{padding:7px 8px!important}
+.dailyCareSettingName{font-size:var(--font-control)!important}
+.dailyCareSettingsBtn{border:1px solid #e2e5e1!important;background:#fff!important;color:#737a74!important}
+
 </style>
 </head>
 
@@ -813,7 +847,7 @@ button,input,select,textarea{font:inherit}
           <div class="lifeBlockTitle">DAILY CARE</div>
           <div class="lifeBlockHint">오늘의 기본 컨디션 관리</div>
         </div>
-        <button class="dailyCareSettingsBtn" onclick="openDailyCareSettings()">설정</button>
+        <button class="dailyCareSettingsBtn uiCompactBtn" onclick="openDailyCareSettings()">설정</button>
       </div>
       <div class="dailyCareGrid">
         <div class="dailyCareItem dailyCareItemCard">
@@ -897,7 +931,7 @@ button,input,select,textarea{font:inherit}
   <div class="section calDetail" id="calendarDetail"></div>
 </div>
 <div id="viewBooks" class="hide section booksView">
-  <div class="booksHead"><div><div class="booksTitle">BOOKS</div><div class="booksSub">내 책 목록과 독서 상태 관리</div></div><div style="display:flex;gap:5px"><button class="bookSmallBtn lifeMiniBtn" onclick="openBookDiscoverModal()">추천도서</button><button class="bookAddBtn lifeMiniBtn" onclick="openBookModal()">+ 책 추가</button></div></div>
+  <div class="booksHead"><div><div class="booksTitle">BOOKS</div><div class="booksSub">내 책 목록과 독서 상태 관리</div></div><button class="bookAddBtn lifeMiniBtn uiPrimaryBtn" onclick="openBookModal()">+ 책 추가</button></div>
   <div id="bookLibraryFilters" class="bookPeriodTabs">
     <button class="bookPeriodTab on" data-filter="읽고있어" onclick="setBookLibraryFilter('읽고있어')">읽고있어</button>
     <button class="bookPeriodTab" data-filter="읽고싶어" onclick="setBookLibraryFilter('읽고싶어')">읽고싶어</button>
@@ -1208,7 +1242,7 @@ button,input,select,textarea{font:inherit}
         <select id="dailyCareEditEnabled"><option value="true">표시</option><option value="false">숨김</option></select>
       </label>
     </div>
-    <div class="lifeModalActions"><button class="lifeSecondary" onclick="closeDailyCareItemEditor()">취소</button><button class="lifePrimary" onclick="saveDailyCareItemEditor()">저장</button></div>
+    <div class="lifeModalActions"><button id="dailyCareDeleteBtn" class="uiDangerText hide" onclick="deleteEditingDailyCareItem()">삭제</button><span style="flex:1"></span><button class="uiSecondaryBtn" onclick="closeDailyCareItemEditor()">취소</button><button class="uiPrimaryBtn" onclick="saveDailyCareItemEditor()">저장</button></div>
   </div>
 </div>
 
@@ -1299,10 +1333,6 @@ button,input,select,textarea{font:inherit}
     <button class="bookDeleteBtn lifeMiniBtn" id="bookDeleteBtn" onclick="deleteBook()">삭제</button>
     <div class="bookModalFooterRight"><button class="bookCancelBtn lifeMiniBtn" onclick="closeBookModal()">취소</button><button class="bookSaveBtn lifeMiniBtn" id="bookModalSave" onclick="saveBook()">저장</button></div>
   </div>
-</div></div>
-<div id="bookDiscoverModal" class="modal hide" onclick="if(event.target===this)closeBookDiscoverModal()"><div class="modalBox bookModalBox">
-  <div class="modalHead"><b>추천도서</b><button onclick="closeBookDiscoverModal()">×</button></div>
-  <div id="bookDiscoverModalRoot"></div>
 </div></div>
 <div id="readingBookModal" class="modal hide"><div class="modalBox">
   <div class="modalHead"><b>어떤 책을 읽었나요?</b><button onclick="closeReadingBookModal()">×</button></div>
@@ -1963,7 +1993,7 @@ function openDailyCareSettings(){renderDailyCareSettings();document.getElementBy
 function closeDailyCareSettings(){document.getElementById('dailyCareSettingsModal')?.classList.add('hide');}
 function renderDailyCareSettings(){
   const root=document.getElementById('dailyCareSettingsList');if(!root)return;
-  root.innerHTML=loadDailyCareDefinitions().map(d=>`<div class="dailyCareSettingRow"><div class="dailyCareSettingMain"><div class="dailyCareSettingName">${escapeLife(d.icon||'')} ${escapeLife(d.name)}</div><div class="dailyCareSettingMeta">목표 ${formatDailyCareNumber(Number(d.target)||0)}${escapeLife(d.unit||'')} · ${d.enabled===false?'숨김':'표시'}</div></div><div class="dailyCareSettingActions"><button onclick="openDailyCareItemEditor('${d.id}')">편집</button>${d.builtin?'':`<button onclick="deleteDailyCareItem('${d.id}')">삭제</button>`}</div></div>`).join('');
+  root.innerHTML=loadDailyCareDefinitions().map(d=>`<div class="dailyCareSettingRow"><div class="dailyCareSettingMain"><div class="dailyCareSettingName">${escapeLife(d.icon||'')} ${escapeLife(d.name)}</div><div class="dailyCareSettingMeta">목표 ${formatDailyCareNumber(Number(d.target)||0)}${escapeLife(d.unit||'')} · ${d.enabled===false?'숨김':'표시'}</div></div><div class="dailyCareSettingActions"><button class="uiCompactBtn" onclick="openDailyCareItemEditor('${d.id}')">편집</button>${d.builtin?'':`<button class="uiDangerText" onclick="deleteDailyCareItem('${d.id}')">삭제</button>`}</div></div>`).join('');
 }
 function openDailyCareItemEditor(id=''){
   const d=id?dailyCareDef(id):{id:'',icon:'✨',name:'',unit:'분',target:20,quickValues:[5,10],enabled:true};
@@ -1975,6 +2005,7 @@ function openDailyCareItemEditor(id=''){
   document.getElementById('dailyCareQuickValues').value=(d.quickValues||[]).map(v=>v>0?`+${v}`:v).join(', ');
   document.getElementById('dailyCareEditEnabled').value=d.enabled===false?'false':'true';
   document.getElementById('dailyCareItemEditorTitle').textContent=id?'목표 항목 편집':'목표 항목 추가';
+  const del=document.getElementById('dailyCareDeleteBtn');if(del)del.classList.toggle('hide',!id||!!d.builtin);
   document.getElementById('dailyCareItemModal')?.classList.remove('hide');
 }
 function closeDailyCareItemEditor(){document.getElementById('dailyCareItemModal')?.classList.add('hide');}
@@ -1988,6 +2019,10 @@ function saveDailyCareItemEditor(){
   if(!d){d={id:'care_'+Date.now(),builtin:false};defs.push(d);}
   Object.assign(d,{icon:document.getElementById('dailyCareEditIcon').value.trim()||'✨',name,unit,target,quickValues,enabled:document.getElementById('dailyCareEditEnabled').value==='true'});
   saveDailyCareDefinitions(defs);closeDailyCareItemEditor();renderDailyCareSettings();update();
+}
+function deleteEditingDailyCareItem(){
+  const id=document.getElementById('dailyCareEditId')?.value||'';
+  if(!id)return;closeDailyCareItemEditor();deleteDailyCareItem(id);
 }
 function deleteDailyCareItem(id){
   const d=dailyCareDef(id);if(!d||d.builtin)return;
@@ -3165,7 +3200,7 @@ function renderBooks(){
   root.innerHTML=rows.length?rows.map(b=>`<div class="bookCard" onclick="openBookModal('${b.id}')">
     <div class="bookCardTop">
       <div class="bookCardMain">${bookCoverImg(b)}<div class="bookCardText"><div class="bookName">${escapeLife(b.title)}</div><div class="bookAuthor">${escapeLife(b.author||'')}</div></div></div>
-      <div class="bookCardActions"><button class="bookSmallBtn lifeMiniBtn" onclick="event.stopPropagation();copyBook('${b.id}')">복사</button><button class="bookSmallBtn lifeMiniBtn" onclick="event.stopPropagation();openBookModal('${b.id}')">편집</button></div>
+      <div class="bookCardActions"><button class="bookSmallBtn lifeMiniBtn uiCompactBtn" onclick="event.stopPropagation();copyBook('${b.id}')">복사</button><button class="bookSmallBtn lifeMiniBtn uiCompactBtn" onclick="event.stopPropagation();openBookModal('${b.id}')">편집</button></div>
     </div>
     <div class="bookTags">${[b.status,b.format,b.source,b.ownership,b.genre,b.detail,b.rating].filter(Boolean).map(v=>`<span class="bookTag">${escapeLife(v)}</span>`).join('')}</div>
     ${b.startDate||b.finishDate?`<div class="bookDates">${escapeLife(b.startDate||'')}${b.finishDate?` → ${escapeLife(b.finishDate)}`:''}</div>`:''}
@@ -4022,157 +4057,6 @@ function applyBookSearchResult(i){
 }
 
 
-let bookDiscoverMode='popular';
-let bookDiscoverResultsCache=[];
-
-function data4LibraryDateKey(date=new Date()){
-  const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,'0'),d=String(date.getDate()).padStart(2,'0');
-  return `${y}-${m}-${d}`;
-}
-function bookDiscoverStartDate(months){
-  const d=new Date();
-  d.setMonth(d.getMonth()-Number(months||3));
-  return data4LibraryDateKey(d);
-}
-function setBookDiscoverMode(mode){
-  bookDiscoverMode=mode;
-  bookDiscoverResultsCache=[];
-  renderBookDiscover();
-}
-function renderBookDiscover(){
-  const root=document.getElementById('bookDiscoverModalRoot');if(!root)return;
-  const keyReady=!!getData4LibraryApiKey();
-  const isbnBooks=loadBooks().filter(b=>/^\d{13}$/.test(cleanIsbn(b.isbn)));
-  const modes=[['popular','요즘 인기'],['hot','급상승'],['recommend','내 책 기반 추천']];
-  let controls='';
-  if(bookDiscoverMode==='popular'){
-    controls=`<div class="bookDiscoverControls">
-      <div class="bookDiscoverRow">
-        <label>기간</label>
-        <select id="discoverPopularMonths"><option value="1">최근 1개월</option><option value="3" selected>최근 3개월</option><option value="12">최근 1년</option></select>
-        <label>분야</label>
-        <select id="discoverPopularKdc">
-          <option value="">전체</option><option value="0">총류</option><option value="1">철학</option><option value="2">종교</option>
-          <option value="3">사회과학</option><option value="4">자연과학</option><option value="5">기술과학</option>
-          <option value="6">예술</option><option value="7">언어</option><option value="8">문학</option><option value="9">역사</option>
-        </select>
-        <button class="lifeMiniBtn" onclick="loadPopularBooks()">찾기</button>
-      </div>
-      <div class="bookDiscoverStatus" id="bookDiscoverStatus">기간과 분야를 골라 많이 빌린 책을 찾아보세요.</div>
-    </div>`;
-  }else if(bookDiscoverMode==='hot'){
-    controls=`<div class="bookDiscoverControls">
-      <div class="bookDiscoverRow"><button class="lifeMiniBtn" onclick="loadHotTrendBooks()">요즘 급상승 책 보기</button></div>
-      <div class="bookDiscoverStatus" id="bookDiscoverStatus">최근 대출 순위가 빠르게 오른 책을 보여줍니다.</div>
-    </div>`;
-  }else{
-    controls=`<div class="bookDiscoverControls">
-      ${isbnBooks.length?`<div class="bookDiscoverRow">
-        <label>기준 책</label>
-        <select id="discoverRecommendBook">${isbnBooks.map(b=>`<option value="${escapeLife(cleanIsbn(b.isbn))}">${escapeLife(b.title)}${b.author?` · ${escapeLife(b.author)}`:''}</option>`).join('')}</select>
-        <label>추천 방식</label>
-        <select id="discoverRecommendType"><option value="mania">취향이 비슷한 독자</option><option value="reader">다독자</option></select>
-        <button class="lifeMiniBtn" onclick="loadBookRecommendations()">추천 보기</button>
-      </div>`:'<div class="bookDiscoverEmpty">ISBN이 저장된 내 책이 아직 없어요.<br>책 검색으로 등록한 뒤 추천을 사용할 수 있어요.</div>'}
-      <div class="bookDiscoverStatus" id="bookDiscoverStatus">${isbnBooks.length?'내가 읽은/저장한 책 한 권을 기준으로 다음 책을 찾아보세요.':''}</div>
-    </div>`;
-  }
-  root.innerHTML=`<div class="bookDiscover">
-    <div class="bookDiscoverIntro">${keyReady?'도서관 정보나루의 실제 대출·추천 데이터를 이용해 읽을 책을 찾아요.':'BACKUP → 앱 설정에서 <b>도서관 정보나루 API 키</b>를 먼저 저장해 주세요.'}</div>
-    <div class="bookDiscoverModes">${modes.map(([id,label])=>`<button class="bookDiscoverMode ${bookDiscoverMode===id?'on':''}" onclick="setBookDiscoverMode('${id}')">${label}</button>`).join('')}</div>
-    ${controls}
-    <div id="bookDiscoverResults" class="bookDiscoverResults"></div>
-  </div>`;
-}
-
-function renderBookDiscoverResults(rows){
-  const root=document.getElementById('bookDiscoverResults');if(!root)return;
-  bookDiscoverResultsCache=(rows||[]).slice(0,20);
-  root.innerHTML=bookDiscoverResultsCache.length?bookDiscoverResultsCache.map((b,i)=>`<div class="bookDiscoverCard">
-    <div class="bookSearchResultMain" onclick="addDiscoveredBook(${i})">
-      ${bookSearchCoverHtml(b.coverUrl)}
-      <div class="bookDiscoverInfo">
-        ${b.ranking?`<div class="bookDiscoverRank">${escapeLife(String(b.ranking))}위${b.loan_count?` · 대출 ${escapeLife(String(b.loan_count))}회`:''}</div>`:''}
-        <div class="bookDiscoverTitle">${escapeLife(b.title||'제목 없음')}</div>
-        <div class="bookDiscoverMeta">${escapeLife([b.author,b.publisher,b.publishDate,b.genre,b.isbn?`ISBN ${b.isbn}`:''].filter(Boolean).join(' · '))}</div>
-      </div>
-    </div>
-    <button type="button" class="bookDiscoverAdd" onclick="event.stopPropagation();quickAddDiscoveredBook(${i},this)">+ 추가</button>
-  </div>`).join(''):'<div class="bookDiscoverEmpty">조건에 맞는 책을 찾지 못했어요.</div>';
-}
-function addDiscoveredBook(index){
-  const b=bookDiscoverResultsCache[index];if(!b)return;
-  closeBookDiscoverModal();
-  openBookModal().then(()=>openSelectedBookForEdit(b));
-}
-async function loadPopularBooks(){
-  const status=document.getElementById('bookDiscoverStatus');
-  if(!getData4LibraryApiKey()){if(status)status.textContent='먼저 BACKUP → 앱 설정에서 정보나루 API 키를 저장해 주세요.';return;}
-  if(status)status.textContent='인기대출도서를 불러오는 중…';
-  try{
-    const months=document.getElementById('discoverPopularMonths')?.value||'3';
-    const kdc=document.getElementById('discoverPopularKdc')?.value||'';
-    const params={startDt:bookDiscoverStartDate(months),endDt:data4LibraryDateKey(),pageNo:'1',pageSize:'20'};
-    if(kdc)params.kdc=kdc;
-    const data=await data4LibraryFetch('loanItemSrch',params);
-    const rows=mapData4LibraryRows(data);
-    if(status)status.textContent=`${rows.length}권을 찾았어요. 실제 도서관 대출 데이터를 기준으로 한 목록입니다.`;
-    renderBookDiscoverResults(rows);
-  }catch(e){
-    if(status)status.textContent='인기대출도서를 불러오지 못했어요. API 키 또는 연결 상태를 확인해 주세요.';
-  }
-}
-async function loadHotTrendBooks(){
-  const status=document.getElementById('bookDiscoverStatus');
-  if(!getData4LibraryApiKey()){if(status)status.textContent='먼저 BACKUP → 앱 설정에서 정보나루 API 키를 저장해 주세요.';return;}
-  if(status)status.textContent='급상승 도서를 불러오는 중…';
-  try{
-    const data=await data4LibraryFetch('hotTrend',{searchDt:data4LibraryDateKey()});
-    const rows=mapData4LibraryRows(data);
-    if(status)status.textContent=`${rows.length}권을 찾았어요. 최근 대출 순위가 크게 오른 책입니다.`;
-    renderBookDiscoverResults(rows);
-  }catch(e){
-    if(status)status.textContent='급상승 도서를 불러오지 못했어요. API 키 또는 연결 상태를 확인해 주세요.';
-  }
-}
-function parseData4LibraryRecommendations(data){
-  const response=data?.response;
-  if(!response||!Array.isArray(response.docs))throw new Error('recommendation-parse-error');
-  const declared=Number(response.resultNum);
-  const books=response.docs.map(entry=>entry?.book).filter(book=>book&&typeof book==='object');
-  if(response.docs.length&&books.length===0)throw new Error('recommendation-parse-error');
-  return {
-    declaredCount:Number.isFinite(declared)?declared:books.length,
-    rows:mapData4LibraryRows({response:{docs:books.map(book=>({book}))}})
-  };
-}
-
-async function loadBookRecommendations(){
-  const status=document.getElementById('bookDiscoverStatus');
-  if(!getData4LibraryApiKey()){if(status)status.textContent='먼저 BACKUP → 앱 설정에서 정보나루 API 키를 저장해 주세요.';return;}
-  const isbn=document.getElementById('discoverRecommendBook')?.value||'';
-  const type=document.getElementById('discoverRecommendType')?.value||'mania';
-  if(!isbn){if(status)status.textContent='추천 기준으로 사용할 책을 선택해 주세요.';return;}
-  if(status)status.textContent='추천도서를 불러오는 중…';
-  try{
-    const data=await data4LibraryFetch('recommandList',{isbn13:isbn,type});
-    const parsed=parseData4LibraryRecommendations(data);
-    const rows=parsed.rows.filter(b=>cleanIsbn(b.isbn)!==cleanIsbn(isbn));
-    if(rows.length){
-      if(status)status.textContent=`${rows.length}권의 추천 책을 찾았어요. · ${type==='mania'?'마니아 추천':'다독자 추천'}`;
-      renderBookDiscoverResults(rows);
-    }else{
-      if(status)status.textContent='이 ISBN을 기준으로 제공되는 추천도서가 없어요. 다른 책이나 추천 방식을 선택해 보세요.';
-      renderBookDiscoverResults([]);
-    }
-  }catch(e){
-    if(status)status.textContent=e?.message==='recommendation-parse-error'
-      ?'추천 데이터 응답은 받았지만 형식을 해석하지 못했어요. 정보나루 응답 형식을 확인해 주세요.'
-      :'추천도서를 불러오지 못했어요. API 키 또는 연결 상태를 확인해 주세요.';
-    const root=document.getElementById('bookDiscoverResults');if(root)root.innerHTML='';
-  }
-}
-
 function normalizeBookFormats(value){
   const raw=String(value||'').trim();
   if(!raw)return [];
@@ -4247,15 +4131,8 @@ function searchBookMetadata(){
   if(q)q.value=[title,author].filter(Boolean).join(' - ');
   searchBookOnline();
 }
-function openBookDiscoverModal(){
-  bookDiscoverMode='recommend';
-  bookDiscoverResultsCache=[];
-  renderBookDiscover();
-  document.getElementById('bookDiscoverModal')?.classList.remove('hide');
-}
-function closeBookDiscoverModal(){
-  document.getElementById('bookDiscoverModal')?.classList.add('hide');
-}
+
+
 function openSelectedBookForEdit(book){
   if(!book)return;
   const set=(id,v)=>{const el=document.getElementById(id);if(el&&v!==undefined)el.value=v||'';};
