@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Routine Check</title>
+<title>🍎루틴 체크 · 6.10</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#222222">
 
@@ -13,7 +13,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 .settingsRow{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:9px}
 .settingsLabel{font-size:0.62500rem;color:#7f8781;min-width:64px}
 .settingsInput{flex:1;min-width:160px;border:1px solid #dfe4dd;border-radius:10px;padding:9px 10px;background:#fff;color:#343a35;font:inherit}
-.settingsBtn{border:0;background:#f1f3f0;border-radius:10px;padding:8px 10px;color:#5b645d;font:inherit}
+.settingsBtn{border:0;background:#f1f3f0;border-radius:8px;padding:5px 7px;color:#5b645d;font:400 .625rem/1.15 inherit;min-height:0}
+.settingsBtnCompact{padding:5px 7px!important;font-size:.625rem!important;border-radius:8px!important}
 .settingsBtn.on{background:#dfe9df;color:#31483a;font-weight:700}
 .settingsDanger{color:#8b6662}
 .settingsStatus{margin-top:8px;padding:8px 9px;border-radius:9px;background:#fafbf9;font-size:0.56250rem;line-height:1.5;color:#7d847e}
@@ -300,6 +301,23 @@ body{padding-bottom:86px;background:var(--life-bg)}
 .lifeBlockHead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:9px}
 .lifeBlockTitle{font-size:0.75000rem;font-weight:850;letter-spacing:.08em;color:#4f5b52}
 .lifeBlockHint{font-size:0.75000rem;color:#8a8f8b;margin-top:3px}
+.routineManageBar{display:flex;justify-content:flex-end;margin:-2px 2px 9px}
+.routineManageBtn{border:1px solid #dfe4df;background:#fff;color:#687069;border-radius:10px;padding:7px 10px;font:inherit;font-size:.6875rem}
+.routineManagerTabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.routineManagerTab{border:1px solid #e0e4df;background:#f7f8f6;color:#737a74;border-radius:10px;padding:8px;font:inherit;font-size:.6875rem}
+.routineManagerTab.on{background:#e8eee8;border-color:#ccd8cd;color:#405646;font-weight:700}
+.routineManagerList{display:grid;gap:8px;max-height:56vh;overflow:auto}
+.routineManagerGroup{border:1px solid #e7eae6;border-radius:12px;padding:8px 10px}
+.routineManagerGroupTitle{font-size:.625rem;font-weight:700;color:#858c86;margin-bottom:3px}
+.routineManagerRow{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid #f0f1ee}
+.routineManagerRow:first-of-type{border-top:0}
+.routineManagerMain{min-width:0;flex:1}
+.routineManagerName{font-size:.75rem;color:#3f4640}
+.routineManagerMeta{font-size:.5625rem;color:#949a95;margin-top:2px}
+.routineManagerActions{display:flex;gap:5px;flex:0 0 auto}
+.routineManagerActions button{border:0;border-radius:8px;padding:6px 7px;font:inherit;font-size:.59375rem;background:#eef2ee;color:#59675c}
+.routineManagerActions .routineManagerDelete{background:#f5eeee;color:#8b6262}
+.routineManagerEmpty{padding:20px 8px;text-align:center;color:#969d97;font-size:.6875rem}
 .lifeRoutine{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid #f0f1ee}
 .lifeRoutine:first-child{border-top:0}
 .lifeCheck{width:24px;height:24px;border-radius:9px;border:1px solid #cfd5ce;background:#fff;font-size:0.87500rem;display:grid;place-items:center;flex:0 0 24px}
@@ -462,6 +480,21 @@ button,input,select,textarea{font:inherit}
 .weeklyActivityTime{font-size:0.75000rem;font-weight:400;color:#7b837d;white-space:nowrap}
 .weeklyActivityEmpty{font-size:0.75000rem;color:#939994;padding:6px 0}
 
+
+
+.dailyCareSettingsBtn{border:1px solid #e2e5e1;background:#fff;border-radius:8px;padding:5px 7px;font:400 .625rem/1.15 inherit;color:#737a74}
+.dailyCareCustomGrid{display:contents}
+.dailyCareSettingsList{display:grid;gap:7px;max-height:44vh;overflow:auto;margin-top:8px}
+.dailyCareSettingRow{display:flex;align-items:center;gap:7px;padding:8px;border:1px solid #e7eae6;border-radius:10px}
+.dailyCareSettingMain{flex:1;min-width:0}
+.dailyCareSettingName{font-size:.6875rem;color:#3e463f}
+.dailyCareSettingMeta{font-size:.5625rem;color:#929993;margin-top:2px}
+.dailyCareSettingActions{display:flex;gap:4px}
+.dailyCareSettingActions button{border:0;border-radius:7px;padding:5px 6px;font:400 .5625rem/1.1 inherit;background:#eef2ee;color:#59675c}
+.dailyCareFormGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.dailyCareFormGrid label{display:grid;gap:4px;font-size:.59375rem;color:#7d847e}
+.dailyCareFormGrid input,.dailyCareFormGrid select{width:100%;box-sizing:border-box;border:1px solid #e0e4df;border-radius:8px;padding:7px 8px;font:inherit;color:#3e453f;background:#fff}
+.dailyCareFormWide{grid-column:1/-1}
 
 /* ===== DAILY CARE: FREE TIME-like full-width cards ===== */
 .todayHealthCore{display:none!important}
@@ -780,6 +813,7 @@ button,input,select,textarea{font:inherit}
           <div class="lifeBlockTitle">DAILY CARE</div>
           <div class="lifeBlockHint">오늘의 기본 컨디션 관리</div>
         </div>
+        <button class="dailyCareSettingsBtn" onclick="openDailyCareSettings()">설정</button>
       </div>
       <div class="dailyCareGrid">
         <div class="dailyCareItem dailyCareItemCard">
@@ -815,12 +849,14 @@ button,input,select,textarea{font:inherit}
           <button class="dailyCareReset sleepReset" onclick="deleteSleepRecord()">기록 삭제</button>
           <button id="deleteSleepBtn" onclick="deleteSleepRecord()" class="hide" style="display:none"></button>
         </div>
+        <div id="customDailyCareGrid" class="dailyCareCustomGrid"></div>
       </div>
     </section>
   </div>
 
   <div id="activityTimerBanner" class="activityTimerBanner hide"></div>
   <div id="activityTimerFloat" class="activityTimerFloat hide"></div>
+  <div class="routineManageBar"><button class="routineManageBtn" onclick="openInactiveRoutineManager()">루틴 관리</button></div>
   <div id="lifeGuide"></div>
   <div class="section todayNoteBox">
     <h2>📝 오늘 한 줄</h2>
@@ -861,7 +897,7 @@ button,input,select,textarea{font:inherit}
   <div class="section calDetail" id="calendarDetail"></div>
 </div>
 <div id="viewBooks" class="hide section booksView">
-  <div class="booksHead"><div><div class="booksTitle">BOOKS</div><div class="booksSub">내 책 목록과 독서 상태 관리</div></div><button class="bookAddBtn lifeMiniBtn" onclick="openBookModal()">+ 책 추가</button></div>
+  <div class="booksHead"><div><div class="booksTitle">BOOKS</div><div class="booksSub">내 책 목록과 독서 상태 관리</div></div><div style="display:flex;gap:5px"><button class="bookSmallBtn lifeMiniBtn" onclick="openBookDiscoverModal()">추천도서</button><button class="bookAddBtn lifeMiniBtn" onclick="openBookModal()">+ 책 추가</button></div></div>
   <div id="bookLibraryFilters" class="bookPeriodTabs">
     <button class="bookPeriodTab on" data-filter="읽고있어" onclick="setBookLibraryFilter('읽고있어')">읽고있어</button>
     <button class="bookPeriodTab" data-filter="읽고싶어" onclick="setBookLibraryFilter('읽고싶어')">읽고싶어</button>
@@ -1056,9 +1092,9 @@ button,input,select,textarea{font:inherit}
     <div class="settingsRow">
       <div class="settingsLabel">글자 크기</div>
       <div class="fontScaleButtons">
-        <button id="fontSizeSmallBtn" class="settingsBtn" onclick="setFontSizeSetting('small')">작게</button>
-        <button id="fontSizeNormalBtn" class="settingsBtn" onclick="setFontSizeSetting('normal')">기본</button>
-        <button id="fontSizeLargeBtn" class="settingsBtn" onclick="setFontSizeSetting('large')">크게</button>
+        <button id="fontSizeSmallBtn" class="settingsBtn settingsBtnCompact" onclick="setFontSizeSetting('small')">작게</button>
+        <button id="fontSizeNormalBtn" class="settingsBtn settingsBtnCompact" onclick="setFontSizeSetting('normal')">기본</button>
+        <button id="fontSizeLargeBtn" class="settingsBtn settingsBtnCompact" onclick="setFontSizeSetting('large')">크게</button>
       </div>
     </div>
 
@@ -1067,9 +1103,9 @@ button,input,select,textarea{font:inherit}
       <input id="nlApiKeyInput" class="settingsInput" type="password" autocomplete="off" placeholder="국립중앙도서관 인증키">
     </div>
     <div class="settingsRow">
-      <button class="settingsBtn" onclick="saveNationalLibraryApiKey()">키 저장</button>
-      <button class="settingsBtn" onclick="testNationalLibraryApiKey()">연결 확인</button>
-      <button class="settingsBtn settingsDanger" onclick="deleteNationalLibraryApiKey()">키 삭제</button>
+      <button class="settingsBtn settingsBtnCompact" onclick="saveNationalLibraryApiKey()">키 저장</button>
+      <button class="settingsBtn settingsBtnCompact" onclick="testNationalLibraryApiKey()">연결 확인</button>
+      <button class="settingsBtn settingsBtnCompact settingsDanger" onclick="deleteNationalLibraryApiKey()">키 삭제</button>
     </div>
     <div id="nlApiStatus" class="settingsStatus">API 키는 이 기기에만 저장되고 백업 파일에는 포함되지 않아요.</div>
 
@@ -1078,9 +1114,9 @@ button,input,select,textarea{font:inherit}
       <input id="data4LibApiKeyInput" class="settingsInput" type="password" autocomplete="off" placeholder="도서관 정보나루 인증키">
     </div>
     <div class="settingsRow">
-      <button class="settingsBtn" onclick="saveData4LibraryApiKey()">키 저장</button>
-      <button class="settingsBtn" onclick="testData4LibraryApiKey()">연결 확인</button>
-      <button class="settingsBtn settingsDanger" onclick="deleteData4LibraryApiKey()">키 삭제</button>
+      <button class="settingsBtn settingsBtnCompact" onclick="saveData4LibraryApiKey()">키 저장</button>
+      <button class="settingsBtn settingsBtnCompact" onclick="testData4LibraryApiKey()">연결 확인</button>
+      <button class="settingsBtn settingsBtnCompact settingsDanger" onclick="deleteData4LibraryApiKey()">키 삭제</button>
     </div>
     <div id="data4LibApiStatus" class="settingsStatus">정보나루 키도 백업 파일에는 포함되지 않아요.</div>
   </section>
@@ -1150,6 +1186,44 @@ button,input,select,textarea{font:inherit}
   </div>
 </div>
 
+<div id="dailyCareSettingsModal" class="lifeModal hide" onclick="if(event.target===this)closeDailyCareSettings()">
+  <div class="lifeSheet">
+    <div class="lifeSheetHead"><b>DAILY CARE 설정</b><button class="lifeClose" onclick="closeDailyCareSettings()">×</button></div>
+    <div class="calendarChipSelectHint">목표치·단위·빠른 입력값을 바꾸거나 새로운 하루 목표 항목을 추가할 수 있어요.</div>
+    <div id="dailyCareSettingsList" class="dailyCareSettingsList"></div>
+    <button class="lifeMiniBtn" style="margin-top:9px" onclick="openDailyCareItemEditor()">+ 목표 항목 추가</button>
+  </div>
+</div>
+<div id="dailyCareItemModal" class="lifeModal hide" onclick="if(event.target===this)closeDailyCareItemEditor()">
+  <div class="lifeSheet">
+    <div class="lifeSheetHead"><b id="dailyCareItemEditorTitle">목표 항목</b><button class="lifeClose" onclick="closeDailyCareItemEditor()">×</button></div>
+    <input id="dailyCareEditId" type="hidden">
+    <div class="dailyCareFormGrid">
+      <label>아이콘<input id="dailyCareEditIcon" maxlength="4" placeholder="✨"></label>
+      <label>항목명<input id="dailyCareEditName" placeholder="스트레칭"></label>
+      <label>단위<input id="dailyCareEditUnit" placeholder="분"></label>
+      <label>하루 목표<input id="dailyCareEditTarget" type="number" min="0" step="any" placeholder="20"></label>
+      <label class="dailyCareFormWide">빠른 입력값 <input id="dailyCareQuickValues" placeholder="-5, +5, +10"></label>
+      <label class="dailyCareFormWide">TODAY 표시
+        <select id="dailyCareEditEnabled"><option value="true">표시</option><option value="false">숨김</option></select>
+      </label>
+    </div>
+    <div class="lifeModalActions"><button class="lifeSecondary" onclick="closeDailyCareItemEditor()">취소</button><button class="lifePrimary" onclick="saveDailyCareItemEditor()">저장</button></div>
+  </div>
+</div>
+
+<div id="inactiveRoutineManagerModal" class="lifeModal hide" onclick="if(event.target===this) closeInactiveRoutineManager()">
+  <div class="lifeSheet">
+    <div class="lifeSheetHead"><b>루틴 관리</b><button class="lifeClose" onclick="closeInactiveRoutineManager()">×</button></div>
+    <div class="calendarChipSelectHint">TODAY에 표시할 루틴을 정리할 수 있어요. 비활성화해도 과거 기록은 그대로 남습니다.</div>
+    <div class="routineManagerTabs">
+      <button id="routineManagerActiveTab" class="routineManagerTab on" onclick="setRoutineManagerMode('active')">활성 루틴</button>
+      <button id="routineManagerInactiveTab" class="routineManagerTab" onclick="setRoutineManagerMode('inactive')">비활성 루틴</button>
+    </div>
+    <div id="inactiveRoutineManagerList" class="routineManagerList"></div>
+  </div>
+</div>
+
 <div id="routineModal" class="lifeModal hide" onclick="if(event.target===this) closeRoutineModal()">
   <div class="lifeSheet">
     <div class="lifeSheetHead"><b id="routineModalTitle">루틴 추가</b><button class="lifeClose" onclick="closeRoutineModal()">×</button></div>
@@ -1180,42 +1254,29 @@ button,input,select,textarea{font:inherit}
   <input type="hidden" id="bookCoverUrl">
   <input type="hidden" id="bookIsbn">
 
-  <div id="bookAddModeTabs" class="bookAddModeTabs">
-    <button id="bookAddModeSearch" type="button" class="bookAddModeTab on" onclick="setBookAddMode('search')">검색해서 추가</button>
-    <button id="bookAddModeManual" type="button" class="bookAddModeTab" onclick="setBookAddMode('manual')">직접 입력</button>
+  <div id="bookCoverPreview" class="bookCoverPreview hide"></div>
+  <div class="bookCoverManual bookManualCoverBox">
+    <span class="bookCoverManualLabel">표지 직접 설정</span>
+    <input id="bookCoverFile" type="file" accept="image/*" hidden onchange="handleBookCoverFile(event)">
+    <button type="button" class="bookCoverUploadBtn" onclick="chooseBookCoverFile()">이미지 업로드</button>
+    <button type="button" id="bookCoverRemoveBtn" class="bookCoverRemoveBtn hide" onclick="removeUploadedBookCover()">업로드 표지 삭제</button>
+    <div class="bookCoverManualNote">자동 표지가 없거나 다른 표지를 쓰고 싶을 때만 업로드해 주세요.</div>
   </div>
-
-  <div id="bookAddSearchPane" class="bookAddPane">
-    <div class="bookSearchBox">
-      <div class="bookSearchLabel">책 검색 <span>제목 · 제목 - 작가명 · ISBN</span></div>
-      <div class="bookSearchRow">
-        <input id="bookSearchQuery" placeholder="예: 미 비포 유 - 조조 모예스" onkeydown="if(event.key==='Enter'){event.preventDefault();searchBookOnline();}">
-        <button class="lifeMiniBtn bookSearchBtn" onclick="searchBookOnline()">검색</button>
-      </div>
-      <div class="bookSearchHint">작가까지 아는 경우 <b>책제목 - 작가명</b>으로 입력하면 더 정확하게 찾습니다.</div>
-      <div id="bookSearchStatus" class="bookSearchStatus"></div>
-      <div id="bookSearchResults" class="bookSearchResults"></div>
-    </div>
-
-    <div id="bookDiscoverPanel" class="bookDiscoverInModal">
-      <div class="bookDiscoverInModalTitle">읽을 책 찾기</div>
-      <div id="bookDiscoverModalRoot"></div>
-    </div>
-  </div>
-
-  <div id="bookAddManualPane" class="bookAddPane hide">
-    <div id="bookCoverPreview" class="bookCoverPreview hide"></div>
-    <div class="bookCoverManual bookManualCoverBox">
-      <span class="bookCoverManualLabel">표지 직접 설정</span>
-      <input id="bookCoverFile" type="file" accept="image/*" hidden onchange="handleBookCoverFile(event)">
-      <button type="button" class="bookCoverUploadBtn" onclick="chooseBookCoverFile()">이미지 업로드</button>
-      <button type="button" id="bookCoverRemoveBtn" class="bookCoverRemoveBtn hide" onclick="removeUploadedBookCover()">업로드 표지 삭제</button>
-      <div class="bookCoverManualNote">자동 표지가 없거나 다른 표지를 쓰고 싶을 때만 업로드해 주세요.</div>
-    </div>
 
     <div class="bookFormGrid">
       <div class="bookField bookWide"><label>책 제목</label><input id="bookTitle"></div>
       <div class="bookField"><label>저자</label><input id="bookAuthor"></div><div class="bookField"><label>출판사</label><input id="bookPublisher"></div>
+      <div class="bookField bookWide">
+        <div class="bookSearchBox" style="margin:2px 0 0">
+          <div class="bookSearchRow">
+            <button type="button" class="lifeMiniBtn bookSearchBtn" onclick="searchBookMetadata()">도서 정보 찾기</button>
+            <span class="bookSearchHint" style="margin:0">제목·저자를 바탕으로 표지, 출판사, ISBN, 장르를 찾아요.</span>
+          </div>
+          <input id="bookSearchQuery" type="hidden">
+          <div id="bookSearchStatus" class="bookSearchStatus"></div>
+          <div id="bookSearchResults" class="bookSearchResults"></div>
+        </div>
+      </div>
       <div class="bookField"><label>독서상태</label><select id="bookStatus"><option>읽고싶어</option><option>읽고있어</option><option>완독</option><option>중단</option></select></div>
       <div class="bookField"><label>형태</label>
         <input type="hidden" id="bookFormat">
@@ -1234,11 +1295,14 @@ button,input,select,textarea{font:inherit}
       <div class="bookField bookWide"><label>하이라이트</label><textarea id="bookHighlight"></textarea></div>
       <div class="bookField bookWide"><label>메모</label><textarea id="bookMemo"></textarea></div>
     </div>
-  </div>
   <div id="bookModalFooter" class="bookModalFooter">
     <button class="bookDeleteBtn lifeMiniBtn" id="bookDeleteBtn" onclick="deleteBook()">삭제</button>
     <div class="bookModalFooterRight"><button class="bookCancelBtn lifeMiniBtn" onclick="closeBookModal()">취소</button><button class="bookSaveBtn lifeMiniBtn" id="bookModalSave" onclick="saveBook()">저장</button></div>
   </div>
+</div></div>
+<div id="bookDiscoverModal" class="modal hide" onclick="if(event.target===this)closeBookDiscoverModal()"><div class="modalBox bookModalBox">
+  <div class="modalHead"><b>추천도서</b><button onclick="closeBookDiscoverModal()">×</button></div>
+  <div id="bookDiscoverModalRoot"></div>
 </div></div>
 <div id="readingBookModal" class="modal hide"><div class="modalBox">
   <div class="modalHead"><b>어떤 책을 읽었나요?</b><button onclick="closeReadingBookModal()">×</button></div>
@@ -1849,6 +1913,88 @@ function manualSleep(){
    단백질 트래킹
 ========================= */
   
+
+const DAILY_CARE_DEFS_KEY='dailyCareDefinitions_v1';
+const DAILY_CARE_VALUES_KEY='dailyCareValues_v1';
+const DEFAULT_DAILY_CARE_DEFS=[
+  {id:'protein',icon:'🥩',name:'단백질',unit:'g',target:80,quickValues:[-5,-10,10,20],enabled:true,builtin:true},
+  {id:'water',icon:'💧',name:'물',unit:'ml',target:2000,quickValues:[-120,120],enabled:true,builtin:true},
+  {id:'sleep',icon:'💤',name:'수면',unit:'시간',target:7,quickValues:[],enabled:true,builtin:true,special:'sleep'}
+];
+function loadDailyCareDefinitions(){
+  let saved=[];try{saved=JSON.parse(localStorage.getItem(DAILY_CARE_DEFS_KEY)||'[]')}catch(e){}
+  const byId=new Map((Array.isArray(saved)?saved:[]).map(x=>[x.id,x]));
+  const builtins=DEFAULT_DAILY_CARE_DEFS.map(d=>({...d,...(byId.get(d.id)||{}),builtin:true}));
+  const custom=(Array.isArray(saved)?saved:[]).filter(d=>!['protein','water','sleep'].includes(d.id));
+  return [...builtins,...custom];
+}
+function saveDailyCareDefinitions(defs){localStorage.setItem(DAILY_CARE_DEFS_KEY,JSON.stringify(defs));}
+function dailyCareDef(id){return loadDailyCareDefinitions().find(d=>d.id===id);}
+function getDailyCareValues(){
+  let all={};try{all=JSON.parse(localStorage.getItem(DAILY_CARE_VALUES_KEY)||'{}')}catch(e){}
+  return all&&typeof all==='object'?all:{};
+}
+function getDailyCareValue(dateKey,id){
+  const all=getDailyCareValues();return Number(all?.[dateKey]?.[id]||0);
+}
+function setDailyCareValue(dateKey,id,value){
+  const all=getDailyCareValues();if(!all[dateKey])all[dateKey]={};
+  all[dateKey][id]=Math.max(0,Number(value)||0);localStorage.setItem(DAILY_CARE_VALUES_KEY,JSON.stringify(all));
+}
+function dailyCareTarget(id,fallback){
+  const d=dailyCareDef(id);return Number(d?.target)>0?Number(d.target):fallback;
+}
+function dailyCareQuickValues(id,fallback){
+  const d=dailyCareDef(id);return Array.isArray(d?.quickValues)&&d.quickValues.length?d.quickValues:fallback;
+}
+function formatDailyCareNumber(v){return Number.isInteger(v)?String(v):String(Math.round(v*10)/10);}
+function renderCustomDailyCare(){
+  const root=document.getElementById('customDailyCareGrid');if(!root)return;
+  const defs=loadDailyCareDefinitions().filter(d=>!d.builtin&&d.enabled!==false);
+  root.innerHTML=defs.map(d=>{
+    const v=getDailyCareValue(currentKey,d.id),target=Number(d.target)||0,left=Math.max(0,target-v);
+    const meta=target?(v>=target?`${formatDailyCareNumber(v)}${escapeLife(d.unit||'')} · 오늘 기준 ${formatDailyCareNumber(target)}${escapeLife(d.unit||'')}`:`${formatDailyCareNumber(v)}${escapeLife(d.unit||'')} · ${formatDailyCareNumber(left)}${escapeLife(d.unit||'')} 남음`):`${formatDailyCareNumber(v)}${escapeLife(d.unit||'')}`;
+    return `<div class="dailyCareItem dailyCareItemCard"><div class="dailyCareName">${escapeLife(d.icon||'✨')} ${escapeLife(d.name)}</div><div class="dailyCareMeta">${meta}</div><div class="dailyCareActions">${(d.quickValues||[]).map(q=>`<button onclick="addCustomDailyCare('${d.id}',${Number(q)||0})">${Number(q)>0?'+':''}${formatDailyCareNumber(Number(q)||0)}</button>`).join('')}</div><button class="dailyCareReset" onclick="resetCustomDailyCare('${d.id}')">초기화</button></div>`;
+  }).join('');
+}
+function addCustomDailyCare(id,delta){setDailyCareValue(currentKey,id,getDailyCareValue(currentKey,id)+delta);renderCustomDailyCare();renderDailyCareDashboard();}
+function resetCustomDailyCare(id){setDailyCareValue(currentKey,id,0);renderCustomDailyCare();renderDailyCareDashboard();}
+function openDailyCareSettings(){renderDailyCareSettings();document.getElementById('dailyCareSettingsModal')?.classList.remove('hide');}
+function closeDailyCareSettings(){document.getElementById('dailyCareSettingsModal')?.classList.add('hide');}
+function renderDailyCareSettings(){
+  const root=document.getElementById('dailyCareSettingsList');if(!root)return;
+  root.innerHTML=loadDailyCareDefinitions().map(d=>`<div class="dailyCareSettingRow"><div class="dailyCareSettingMain"><div class="dailyCareSettingName">${escapeLife(d.icon||'')} ${escapeLife(d.name)}</div><div class="dailyCareSettingMeta">목표 ${formatDailyCareNumber(Number(d.target)||0)}${escapeLife(d.unit||'')} · ${d.enabled===false?'숨김':'표시'}</div></div><div class="dailyCareSettingActions"><button onclick="openDailyCareItemEditor('${d.id}')">편집</button>${d.builtin?'':`<button onclick="deleteDailyCareItem('${d.id}')">삭제</button>`}</div></div>`).join('');
+}
+function openDailyCareItemEditor(id=''){
+  const d=id?dailyCareDef(id):{id:'',icon:'✨',name:'',unit:'분',target:20,quickValues:[5,10],enabled:true};
+  document.getElementById('dailyCareEditId').value=d.id||'';
+  document.getElementById('dailyCareEditIcon').value=d.icon||'';
+  document.getElementById('dailyCareEditName').value=d.name||'';
+  document.getElementById('dailyCareEditUnit').value=d.unit||'';
+  document.getElementById('dailyCareEditTarget').value=d.target??'';
+  document.getElementById('dailyCareQuickValues').value=(d.quickValues||[]).map(v=>v>0?`+${v}`:v).join(', ');
+  document.getElementById('dailyCareEditEnabled').value=d.enabled===false?'false':'true';
+  document.getElementById('dailyCareItemEditorTitle').textContent=id?'목표 항목 편집':'목표 항목 추가';
+  document.getElementById('dailyCareItemModal')?.classList.remove('hide');
+}
+function closeDailyCareItemEditor(){document.getElementById('dailyCareItemModal')?.classList.add('hide');}
+function saveDailyCareItemEditor(){
+  const oldId=document.getElementById('dailyCareEditId').value;
+  const name=document.getElementById('dailyCareEditName').value.trim();if(!name)return alert('항목명을 입력해 주세요.');
+  const unit=document.getElementById('dailyCareEditUnit').value.trim();
+  const target=Math.max(0,Number(document.getElementById('dailyCareEditTarget').value)||0);
+  const quickValues=document.getElementById('dailyCareQuickValues').value.split(',').map(v=>Number(v.trim().replace('+',''))).filter(Number.isFinite);
+  let defs=loadDailyCareDefinitions();let d=oldId?defs.find(x=>x.id===oldId):null;
+  if(!d){d={id:'care_'+Date.now(),builtin:false};defs.push(d);}
+  Object.assign(d,{icon:document.getElementById('dailyCareEditIcon').value.trim()||'✨',name,unit,target,quickValues,enabled:document.getElementById('dailyCareEditEnabled').value==='true'});
+  saveDailyCareDefinitions(defs);closeDailyCareItemEditor();renderDailyCareSettings();update();
+}
+function deleteDailyCareItem(id){
+  const d=dailyCareDef(id);if(!d||d.builtin)return;
+  if(!confirm(`'${d.name}' 목표 항목을 삭제할까요? 기존 기록은 백업 호환을 위해 데이터에 남겨둡니다.`))return;
+  saveDailyCareDefinitions(loadDailyCareDefinitions().filter(x=>x.id!==id));renderDailyCareSettings();update();
+}
+
 function addProtein(delta){
   const next = Math.max(0, (state.proteinG||0) + delta);
   state.proteinG = next;
@@ -1860,7 +2006,7 @@ function resetProtein(){
 }
 function renderProtein(){
   const g=state.proteinG||0;
-  const target=getProteinTarget(state.mode||"base");
+  const target=dailyCareTarget("protein",getProteinTarget(state.mode||"base"));
   const left=Math.max(0,target-g);
   const el=document.getElementById("proteinTrackText");
   if(el) el.textContent=g>=target?`${g}g · 오늘 기준 ${target}g`:`${g}g · ${left}g 남음`;
@@ -1882,9 +2028,10 @@ function resetWater(){
 }
 function renderWater(){
   const ml=state.waterMl||0;
-  const left=Math.max(0,WATER_TARGET-ml);
+  const target=dailyCareTarget("water",WATER_TARGET);
+  const left=Math.max(0,target-ml);
   const el=document.getElementById("waterText");
-  if(el) el.textContent=ml>=WATER_TARGET?`${ml.toLocaleString()}ml · 오늘 기준 ${WATER_TARGET.toLocaleString()}ml`:`${ml.toLocaleString()}ml · ${left.toLocaleString()}ml 남음`;
+  if(el) el.textContent=ml>=target?`${ml.toLocaleString()}ml · 오늘 기준 ${target.toLocaleString()}ml`:`${ml.toLocaleString()}ml · ${left.toLocaleString()}ml 남음`;
 }
 
 function nOrNull(v){
@@ -2263,10 +2410,17 @@ function calcStats(s, dateKey){
    업데이트/초기화
 ========================= */
 function update(){
+  const proteinDef=dailyCareDef('protein'),waterDef=dailyCareDef('water'),sleepDef=dailyCareDef('sleep');
+  const pActions=document.querySelector('.proteinInlineActions');if(pActions&&proteinDef)pActions.innerHTML=dailyCareQuickValues('protein',[-5,-10,10,20]).map(v=>`<button onclick="addProtein(${Number(v)||0})">${Number(v)>0?'+':''}${formatDailyCareNumber(Number(v)||0)}</button>`).join('');
+  const wActions=document.querySelector('.waterInlineActions');if(wActions&&waterDef)wActions.innerHTML=dailyCareQuickValues('water',[-120,120]).map(v=>`<button onclick="addWater(${Number(v)||0})">${Number(v)>0?'+':''}${formatDailyCareNumber(Number(v)||0)}</button>`).join('');
+  document.querySelector('.proteinInlineActions')?.closest('.dailyCareItem')?.classList.toggle('hide',proteinDef?.enabled===false);
+  document.querySelector('.waterInlineActions')?.closest('.dailyCareItem')?.classList.toggle('hide',waterDef?.enabled===false);
+  document.querySelector('.sleepInlineAction')?.closest('.dailyCareItem')?.classList.toggle('hide',sleepDef?.enabled===false);
+
   renderFasting();
   renderSleep();
   renderProtein();
-  renderWater();
+  renderWater();renderCustomDailyCare();
   renderMeasures();
   renderLifeGuide();
 }
@@ -2347,7 +2501,7 @@ const NL_API_KEY_STORAGE='nationalLibraryApiKey_v1';
 const DATA4LIB_API_KEY_STORAGE='data4LibraryApiKey_v1';
 const FONT_SIZE_KEY='fontSizeSetting_v1';
 const BACKUP_EXCLUDED_KEYS=new Set([NL_API_KEY_STORAGE,DATA4LIB_API_KEY_STORAGE]);
-const FONT_SIZE_ROOT_PX={small:14.72,normal:16,large:17.6};
+const FONT_SIZE_ROOT_PX={small:14,normal:16,large:19};
 
 function getNationalLibraryApiKey(){
   return String(localStorage.getItem(NL_API_KEY_STORAGE)||'').trim();
@@ -3023,7 +3177,7 @@ function recordSelectedYear(){return document.getElementById('recordStatsYear')?
 function recordPeriodBounds(period=recordPeriod){
   const now=new Date(),today=getLocalDateKey(now);
   if(period==='all')return {start:'0000-00-00',end:'9999-99-99',label:'누적'};
-  if(period==='year'){const y=recordSelectedYear();return {start:`${y}-01-01`,end:`${y}-12-31`,label:`${y}년`};}
+  if(period==='year'){const y=recordSelectedYear(),cy=String(now.getFullYear());return {start:`${y}-01-01`,end:y===cy?today:`${y}-12-31`,label:`${y}년`};}
   if(period==='month'){const y=now.getFullYear(),m=String(now.getMonth()+1).padStart(2,'0');return {start:`${y}-${m}-01`,end:today,label:'이번 달'};}
   const d=new Date(now);const day=d.getDay();const diff=day===0?-6:1-day;d.setDate(d.getDate()+diff);
   return {start:getLocalDateKey(d),end:today,label:'이번 주'};
@@ -3082,6 +3236,17 @@ function getDailyCareStatsForPeriod(start,end){
     proteinCount:p.length,waterCount:w.length,sleepCount:sl.length
   };
 }
+
+function customDailyCareStats(start,end){
+  const defs=loadDailyCareDefinitions().filter(d=>!d.builtin&&d.enabled!==false);
+  const values=getDailyCareValues();
+  const result={};
+  defs.forEach(d=>{
+    const nums=Object.keys(values).filter(k=>k>=start&&k<=end).map(k=>Number(values?.[k]?.[d.id]||0)).filter(v=>v>0);
+    result[d.id]={avg:nums.length?nums.reduce((a,b)=>a+b,0)/nums.length:0,count:nums.length,def:d};
+  });
+  return result;
+}
 function dailyCareCompareText(current,previous,previousCount,label,kind){
   if(!previousCount)return `${label.replace(' 대비','')} 기록 없음`;
   const diff=current-previous;
@@ -3116,6 +3281,15 @@ function renderDailyCareDashboard(){
     <div class="dashMetric"><div class="dashMetricValue">${water}L</div><div class="dashMetricLabel">평균 물</div>${cmp(compareWater)}</div>
     <div class="dashMetric"><div class="dashMetricValue">${sleep?formatDurationMin(sleep):'0분'}</div><div class="dashMetricLabel">평균 수면</div>${cmp(compareSleep)}</div>
   </div>`;
+  const customCur=customDailyCareStats(start,end);
+  const customPrev=compare?customDailyCareStats(compare.start,compare.end):{};
+  const customCards=Object.values(customCur).map(x=>{
+    const p=customPrev[x.def.id]||{avg:0,count:0};
+    const compareText=compare?(p.count?`${compare.label} ${x.avg-p.avg>=0?'▲':'▼'} ${formatDailyCareNumber(Math.abs(x.avg-p.avg))}${escapeLife(x.def.unit||'')}`:`${compare.label.replace(' 대비','')} 기록 없음`):'';
+    return `<div class="dashMetric"><div class="dashMetricValue">${formatDailyCareNumber(x.avg)}${escapeLife(x.def.unit||'')}</div><div class="dashMetricLabel">평균 ${escapeLife(x.def.name)}</div>${cmp(compareText)}</div>`;
+  }).join('');
+  if(customCards)root.innerHTML+=`<div class="dashMetrics" style="margin-top:8px">${customCards}</div>`;
+
 }
 function isoLocalDate(d){
   const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
@@ -3125,32 +3299,39 @@ function parseLocalDateKey(k){
   const [y,m,d]=String(k).split('-').map(Number);
   return new Date(y,m-1,d);
 }
+function previousFullWeek(curStart){
+  const start=new Date(curStart);start.setDate(start.getDate()-7);
+  const end=new Date(curStart);end.setDate(end.getDate()-1);
+  return {start,end};
+}
+function previousFullMonth(curStart){
+  const start=new Date(curStart.getFullYear(),curStart.getMonth()-1,1);
+  const end=new Date(curStart.getFullYear(),curStart.getMonth(),0);
+  return {start,end};
+}
+function previousYearSameDate(curStart,curEnd){
+  const start=new Date(curStart.getFullYear()-1,0,1);
+  const y=curEnd.getFullYear()-1,m=curEnd.getMonth(),d=curEnd.getDate();
+  const lastDay=new Date(y,m+1,0).getDate();
+  const end=new Date(y,m,Math.min(d,lastDay));
+  return {start,end};
+}
 function recordComparisonBounds(){
   if(recordPeriod==='all')return null;
   const cur=recordPeriodBounds();
   const curStart=parseLocalDateKey(cur.start);
   const curEnd=parseLocalDateKey(cur.end);
-  let start,end,label;
-
-  if(recordPeriod==='week'){
-    start=new Date(curStart);start.setDate(start.getDate()-7);
-    end=new Date(curEnd);end.setDate(end.getDate()-7);
-    label='지난주 대비';
-  }else if(recordPeriod==='month'){
-    const todayDay=curEnd.getDate();
-    start=new Date(curStart.getFullYear(),curStart.getMonth()-1,1);
-    const lastDay=new Date(start.getFullYear(),start.getMonth()+1,0).getDate();
-    end=new Date(start.getFullYear(),start.getMonth(),Math.min(todayDay,lastDay));
-    label='전월 대비';
-  }else if(recordPeriod==='year'){
-    start=new Date(curStart.getFullYear()-1,0,1);
-    const y=curEnd.getFullYear()-1,m=curEnd.getMonth(),d=curEnd.getDate();
-    const lastDay=new Date(y,m+1,0).getDate();
-    end=new Date(y,m,Math.min(d,lastDay));
+  let bounds,label;
+  if(recordPeriod==='week'){bounds=previousFullWeek(curStart);label='지난주 대비';}
+  else if(recordPeriod==='month'){bounds=previousFullMonth(curStart);label='전월 대비';}
+  else if(recordPeriod==='year'){
+    const selected=recordSelectedYear(),currentYear=String(new Date().getFullYear());
+    bounds=selected===currentYear?previousYearSameDate(curStart,curEnd):{start:new Date(Number(selected)-1,0,1),end:new Date(Number(selected)-1,11,31)};
     label='전년 대비';
   }
-  return {start:isoLocalDate(start),end:isoLocalDate(end),label};
+  return {start:isoLocalDate(bounds.start),end:isoLocalDate(bounds.end),label};
 }
+
 function readingCompareText(current,previous,label){
   if(previous===0&&current===0)return `${label} 동일`;
   if(previous===0&&current>0)return `${label} ▲ ${current}`;
@@ -3818,29 +3999,28 @@ async function searchBookOnline(){
     }
   }
 
-  if(root)root.innerHTML=bookSearchResultsCache.map((b,i)=>`<div class="bookSearchResult">
-    <div class="bookSearchResultMain" onclick="applyBookSearchResult(${i})">
+  if(root)root.innerHTML=bookSearchResultsCache.map((b,i)=>`<button type="button" class="bookSearchResult" onclick="applyBookSearchResult(${i})">
       ${bookSearchCoverHtml(b.coverUrl)}
-      <div class="bookSearchResultText">
-        <div class="bookSearchResultTitle">${escapeLife(b.title||'제목 없음')}</div>
-        <div class="bookSearchResultMeta">${escapeLife([b.author,b.publisher,b.publishDate,b.isbn?`ISBN ${b.isbn}`:'',b.source].filter(Boolean).join(' · '))}</div>
-      </div>
-    </div>
-    <button type="button" class="bookSearchQuickAdd" onclick="event.stopPropagation();quickAddSearchBook(${i},this)">+ 추가</button>
-  </div>`).join('');
+      <span class="bookSearchResultText">
+        <span class="bookSearchResultTitle">${escapeLife(b.title||'제목 없음')}</span>
+        <span class="bookSearchResultMeta">${escapeLife([b.author,b.publisher,b.publishDate,b.isbn?`ISBN ${b.isbn}`:'',b.source].filter(Boolean).join(' · '))}</span>
+      </span>
+  </button>`).join('');
 }
 
 function applyBookSearchResult(i){
   const b=bookSearchResultsCache[i];if(!b)return;
-  const set=(id,v)=>{const el=document.getElementById(id);if(el&&v!==undefined)el.value=v||'';};
-  set('bookTitle',b.title);set('bookAuthor',b.author);set('bookPublisher',b.publisher);
-  set('bookGenre',b.genre);set('bookDetail',b.detail);
-  set('bookCoverUrl',b.coverUrl);set('bookIsbn',b.isbn);
-  if(!pendingBookCoverBlob&&!pendingBookCoverRemove)renderBookCoverPreview(b.coverUrl);
+  const setIf=(id,v)=>{const el=document.getElementById(id);if(el&&String(v||'').trim())el.value=v;};
+  setIf('bookTitle',b.title);setIf('bookAuthor',b.author);setIf('bookPublisher',b.publisher);
+  setIf('bookGenre',b.genre);
+  setIf('bookCoverUrl',b.coverUrl);setIf('bookIsbn',b.isbn);
+  // 세부장르는 신뢰 가능한 세부분류가 확인된 경우에만 채운다. 검색 대분류/KDC는 넣지 않는다.
+  if(String(b.detail||'').trim())setIf('bookDetail',b.detail);
+  if(!pendingBookCoverBlob&&!pendingBookCoverRemove&&b.coverUrl)renderBookCoverPreview(b.coverUrl);
   const status=document.getElementById('bookSearchStatus');
-  if(status)status.textContent='책 정보를 불러왔어요. 필요한 항목만 확인해 주세요.';
-  setBookAddMode('manual');
+  if(status)status.textContent='확인 가능한 도서 정보를 보완했어요. 직접 입력한 값은 결과에 정보가 없으면 유지됩니다.';
 }
+
 
 let bookDiscoverMode='popular';
 let bookDiscoverResultsCache=[];
@@ -3922,8 +4102,8 @@ function renderBookDiscoverResults(rows){
 }
 function addDiscoveredBook(index){
   const b=bookDiscoverResultsCache[index];if(!b)return;
-  openSelectedBookForEdit(b);
-  const q=document.getElementById('bookSearchQuery');if(q)q.value=[b.title,b.author].filter(Boolean).join(' - ');
+  closeBookDiscoverModal();
+  openBookModal().then(()=>openSelectedBookForEdit(b));
 }
 async function loadPopularBooks(){
   const status=document.getElementById('bookDiscoverStatus');
@@ -3955,6 +4135,18 @@ async function loadHotTrendBooks(){
     if(status)status.textContent='급상승 도서를 불러오지 못했어요. API 키 또는 연결 상태를 확인해 주세요.';
   }
 }
+function parseData4LibraryRecommendations(data){
+  const response=data?.response;
+  if(!response||!Array.isArray(response.docs))throw new Error('recommendation-parse-error');
+  const declared=Number(response.resultNum);
+  const books=response.docs.map(entry=>entry?.book).filter(book=>book&&typeof book==='object');
+  if(response.docs.length&&books.length===0)throw new Error('recommendation-parse-error');
+  return {
+    declaredCount:Number.isFinite(declared)?declared:books.length,
+    rows:mapData4LibraryRows({response:{docs:books.map(book=>({book}))}})
+  };
+}
+
 async function loadBookRecommendations(){
   const status=document.getElementById('bookDiscoverStatus');
   if(!getData4LibraryApiKey()){if(status)status.textContent='먼저 BACKUP → 앱 설정에서 정보나루 API 키를 저장해 주세요.';return;}
@@ -3964,11 +4156,20 @@ async function loadBookRecommendations(){
   if(status)status.textContent='추천도서를 불러오는 중…';
   try{
     const data=await data4LibraryFetch('recommandList',{isbn13:isbn,type});
-    const rows=mapData4LibraryRows(data).filter(b=>cleanIsbn(b.isbn)!==cleanIsbn(isbn));
-    if(status)status.textContent=`${rows.length}권의 추천 책을 찾았어요.`;
-    renderBookDiscoverResults(rows);
+    const parsed=parseData4LibraryRecommendations(data);
+    const rows=parsed.rows.filter(b=>cleanIsbn(b.isbn)!==cleanIsbn(isbn));
+    if(rows.length){
+      if(status)status.textContent=`${rows.length}권의 추천 책을 찾았어요. · ${type==='mania'?'마니아 추천':'다독자 추천'}`;
+      renderBookDiscoverResults(rows);
+    }else{
+      if(status)status.textContent='이 ISBN을 기준으로 제공되는 추천도서가 없어요. 다른 책이나 추천 방식을 선택해 보세요.';
+      renderBookDiscoverResults([]);
+    }
   }catch(e){
-    if(status)status.textContent='추천도서를 불러오지 못했어요. API 키 또는 연결 상태를 확인해 주세요.';
+    if(status)status.textContent=e?.message==='recommendation-parse-error'
+      ?'추천 데이터 응답은 받았지만 형식을 해석하지 못했어요. 정보나루 응답 형식을 확인해 주세요.'
+      :'추천도서를 불러오지 못했어요. API 키 또는 연결 상태를 확인해 주세요.';
+    const root=document.getElementById('bookDiscoverResults');if(root)root.innerHTML='';
   }
 }
 
@@ -4035,20 +4236,25 @@ async function copyBook(id){
   document.getElementById('bookDeleteBtn').style.display='none';
   showBookModal();
 }
-let bookAddMode='search';
-function setBookAddMode(mode){
-  bookAddMode=mode==='manual'?'manual':'search';
-  const searchPane=document.getElementById('bookAddSearchPane');
-  const manualPane=document.getElementById('bookAddManualPane');
-  const searchBtn=document.getElementById('bookAddModeSearch');
-  const manualBtn=document.getElementById('bookAddModeManual');
-  const footer=document.getElementById('bookModalFooter');
-  searchPane?.classList.toggle('hide',bookAddMode!=='search');
-  manualPane?.classList.toggle('hide',bookAddMode!=='manual');
-  searchBtn?.classList.toggle('on',bookAddMode==='search');
-  manualBtn?.classList.toggle('on',bookAddMode==='manual');
-  if(footer)footer.style.display=bookAddMode==='manual'?'flex':'none';
-  if(bookAddMode==='search')renderBookDiscover();
+let bookAddMode='manual';
+function setBookAddMode(){bookAddMode='manual';}
+function searchBookMetadata(){
+  const title=document.getElementById('bookTitle')?.value.trim()||'';
+  const author=document.getElementById('bookAuthor')?.value.trim()||'';
+  const q=document.getElementById('bookSearchQuery');
+  const status=document.getElementById('bookSearchStatus');
+  if(!title){if(status)status.textContent='먼저 책 제목을 입력해 주세요.';return;}
+  if(q)q.value=[title,author].filter(Boolean).join(' - ');
+  searchBookOnline();
+}
+function openBookDiscoverModal(){
+  bookDiscoverMode='recommend';
+  bookDiscoverResultsCache=[];
+  renderBookDiscover();
+  document.getElementById('bookDiscoverModal')?.classList.remove('hide');
+}
+function closeBookDiscoverModal(){
+  document.getElementById('bookDiscoverModal')?.classList.add('hide');
 }
 function openSelectedBookForEdit(book){
   if(!book)return;
@@ -4123,7 +4329,7 @@ async function openBookModal(id){
   await loadUploadedBookCoverPreview(b);
   document.getElementById('bookDeleteBtn').style.display=b?'inline-block':'none';
   showBookModal();
-  setBookAddMode(b?'manual':'search');
+  setBookAddMode('manual');
 }
 let bookModalHistoryToken='';
 let bookModalClosingFromHistory=false;
@@ -4569,6 +4775,10 @@ function resetDayRecords(){
 
   const reading=loadReadingLogs();delete reading[k];saveReadingLogs(reading);
 
+  const careValues=getDailyCareValues();
+  delete careValues[k];
+  localStorage.setItem(DAILY_CARE_VALUES_KEY,JSON.stringify(careValues));
+
   localStorage.removeItem(k);
 
   const timer=loadActivityTimer();
@@ -4936,6 +5146,27 @@ function renderCalendarDetail(k){
     <div class="calInfoCard"><div class="calDetailLabel">오늘 한 줄</div><div class="calDetailItem">${note?escapeLife(note):'<span class="small">기록 없음</span>'}</div></div>
     <div class="calInfoCard"><div class="calDetailLabel">건강 기록</div><div class="calDetailItem">${hs.length?hs.map(escapeLife).join(' · '):'<span class="small">기록 없음</span>'}</div></div>`;
 }
+let routineManagerMode='active';
+function routineManagerBlockName(block){return {breakfast:'BREAKFAST',morning:'MORNING',lunch:'LUNCH',afternoon:'AFTERNOON',evening:'EVENING',free:'FREE TIME'}[block]||'OTHER';}
+function routineManagerRecurrenceText(r){
+  if(r.recurrence==='daily')return '매일';if(r.recurrence==='weekday')return '평일';if(r.recurrence==='weekend')return '주말';if(r.recurrence==='free')return '자유 활동';
+  if(r.recurrence==='days'){const names=['일','월','화','수','목','금','토'];return (r.days||[]).map(d=>names[d]).join('·')+'요일';}return '';
+}
+function openInactiveRoutineManager(){routineManagerMode='active';renderInactiveRoutineManager();document.getElementById('inactiveRoutineManagerModal')?.classList.remove('hide');}
+function closeInactiveRoutineManager(){document.getElementById('inactiveRoutineManagerModal')?.classList.add('hide');}
+function setRoutineManagerMode(mode){routineManagerMode=mode==='inactive'?'inactive':'active';renderInactiveRoutineManager();}
+function renderInactiveRoutineManager(){
+  document.getElementById('routineManagerActiveTab')?.classList.toggle('on',routineManagerMode==='active');
+  document.getElementById('routineManagerInactiveTab')?.classList.toggle('on',routineManagerMode==='inactive');
+  const root=document.getElementById('inactiveRoutineManagerList');if(!root)return;
+  const wantEnabled=routineManagerMode==='active';const rows=loadLifeRoutines().filter(r=>(r.enabled!==false)===wantEnabled);const blocks=['breakfast','morning','lunch','afternoon','evening','free'];
+  const html=blocks.map(block=>{const items=rows.filter(r=>r.block===block).sort((a,b)=>(a.order||0)-(b.order||0));if(!items.length)return '';return `<div class="routineManagerGroup"><div class="routineManagerGroupTitle">${routineManagerBlockName(block)}</div>${items.map(r=>`<div class="routineManagerRow"><div class="routineManagerMain"><div class="routineManagerName">${escapeLife(r.icon||'')} ${escapeLife(r.name)}</div><div class="routineManagerMeta">${escapeLife(routineManagerRecurrenceText(r))}</div></div><div class="routineManagerActions"><button onclick="setRoutineEnabledFromManager('${r.id}',${wantEnabled?'false':'true'})">${wantEnabled?'비활성':'활성화'}</button><button onclick="editRoutineFromManager('${r.id}')">편집</button><button class="routineManagerDelete" onclick="deleteRoutineFromManager('${r.id}')">삭제</button></div></div>`).join('')}</div>`;}).join('');
+  root.innerHTML=html||`<div class="routineManagerEmpty">${wantEnabled?'활성':'비활성'} 루틴이 없어요.</div>`;
+}
+function setRoutineEnabledFromManager(id,enabled){const list=loadLifeRoutines();const r=list.find(x=>x.id===id);if(!r)return;r.enabled=!!enabled;saveLifeRoutines(list);renderInactiveRoutineManager();renderLifeGuide();renderCalendarSearchControls();}
+function editRoutineFromManager(id){closeInactiveRoutineManager();openRoutineModal(id);}
+function deleteRoutineFromManager(id){const r=loadLifeRoutines().find(x=>x.id===id);if(!r)return;if(!confirm(`'${r.name}' 루틴을 삭제할까요? 과거 생활 로그는 그대로 보관해요.`))return;saveLifeRoutines(loadLifeRoutines().filter(x=>x.id!==id));renderInactiveRoutineManager();renderLifeGuide();renderCalendarSearchControls();}
+
 function renderLifeGuide(){
   const root=document.getElementById('lifeGuide');if(!root)return;
   const routines=loadLifeRoutines();const day=lifeDayFromKey(lifeLogKey());
