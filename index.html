@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🍎루틴 체크 · 6.11.1</title>
+<title>🍎루틴 체크 · 6.11.2</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#222222">
 
@@ -819,18 +819,6 @@ button,input,select,textarea{font-family:inherit}
 .dailyCareSettingsBtn{border:1px solid #e2e5e1!important;background:#fff!important;color:#737a74!important}
 
 
-/* 6.11.1 — TODAY is the visual source of truth */
-.bookCardActionTodayStyle{
-  border:0!important;
-  background:#f1f2ef!important;
-  color:#5f665f!important;
-  border-radius:10px!important;
-  min-height:34px!important;
-  padding:7px 9px!important;
-  font-size:.75rem!important;
-  line-height:1.15!important;
-  font-weight:500!important;
-}
 /* FREE TIME: center the activity itself independently of left/right utility controls */
 .freeCard{position:relative!important}
 .freeMainCentered{
@@ -848,6 +836,50 @@ button,input,select,textarea{font-family:inherit}
   pointer-events:none;
 }
 .freeMainCentered .freeEmoji,.freeMainCentered .freeName{text-align:center!important;margin-left:auto!important;margin-right:auto!important}
+
+
+/* 6.11.2 — exact shared control system; TODAY is the source of truth */
+:root{
+  --action-sm-height:36px;
+  --action-sm-pad-x:10px;
+  --action-sm-font:.75rem;
+  --action-sm-radius:11px;
+  --wide-action-font:.875rem;
+  --free-card-min-height:108px;
+}
+.uiActionSm{
+  box-sizing:border-box!important;
+  height:var(--action-sm-height)!important;
+  min-height:var(--action-sm-height)!important;
+  max-height:var(--action-sm-height)!important;
+  padding:0 var(--action-sm-pad-x)!important;
+  border:0!important;
+  border-radius:var(--action-sm-radius)!important;
+  background:#f1f2ef!important;
+  color:#5f665f!important;
+  font-family:inherit!important;
+  font-size:var(--action-sm-font)!important;
+  font-weight:500!important;
+  line-height:1!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  white-space:nowrap!important;
+  vertical-align:middle!important;
+}
+.uiActionSm.uiActionOutline{border:1px solid #dfe3de!important;background:#fff!important}
+.uiActionSm.uiActionDanger{color:#9a6666!important}
+.uiWideAction{
+  font-family:inherit!important;
+  font-size:var(--wide-action-font)!important;
+  font-weight:500!important;
+  line-height:1.25!important;
+}
+/* TODAY block-add text is the exact typography reference for wide actions */
+.lifeAddRoutineBtn,.lifeAddBtn,.addRoutineBtn{font-size:var(--wide-action-font)!important;font-weight:500!important;line-height:1.25!important}
+/* FREE TIME keeps true centering but restores comfortable vertical breathing room */
+.freeChipWrap{min-height:var(--free-card-min-height)!important}
+.freeChipWrap .freeChip{position:relative!important;width:100%!important;height:100%!important;min-height:var(--free-card-min-height)!important;padding:14px 28px!important;box-sizing:border-box!important}
 
 </style>
 </head>
@@ -878,7 +910,7 @@ button,input,select,textarea{font-family:inherit}
           <div class="lifeBlockTitle">DAILY CARE</div>
           <div class="lifeBlockHint">오늘의 기본 컨디션 관리</div>
         </div>
-        <button class="dailyCareSettingsBtn uiCompactBtn" onclick="openDailyCareSettings()">설정</button>
+        <button class="dailyCareSettingsBtn uiActionSm uiActionOutline" onclick="openDailyCareSettings()">설정</button>
       </div>
       <div class="dailyCareGrid">
         <div class="dailyCareItem dailyCareItemCard">
@@ -1157,9 +1189,9 @@ button,input,select,textarea{font-family:inherit}
     <div class="settingsRow">
       <div class="settingsLabel">글자 크기</div>
       <div class="fontScaleButtons">
-        <button id="fontSizeSmallBtn" class="settingsBtn settingsBtnCompact" onclick="setFontSizeSetting('small')">작게</button>
-        <button id="fontSizeNormalBtn" class="settingsBtn settingsBtnCompact" onclick="setFontSizeSetting('normal')">기본</button>
-        <button id="fontSizeLargeBtn" class="settingsBtn settingsBtnCompact" onclick="setFontSizeSetting('large')">크게</button>
+        <button id="fontSizeSmallBtn" class="settingsBtn uiActionSm" onclick="setFontSizeSetting('small')">작게</button>
+        <button id="fontSizeNormalBtn" class="settingsBtn uiActionSm" onclick="setFontSizeSetting('normal')">기본</button>
+        <button id="fontSizeLargeBtn" class="settingsBtn uiActionSm" onclick="setFontSizeSetting('large')">크게</button>
       </div>
     </div>
 
@@ -1168,9 +1200,9 @@ button,input,select,textarea{font-family:inherit}
       <input id="nlApiKeyInput" class="settingsInput" type="password" autocomplete="off" placeholder="국립중앙도서관 인증키">
     </div>
     <div class="settingsRow">
-      <button class="settingsBtn settingsBtnCompact" onclick="saveNationalLibraryApiKey()">키 저장</button>
-      <button class="settingsBtn settingsBtnCompact" onclick="testNationalLibraryApiKey()">연결 확인</button>
-      <button class="settingsBtn settingsBtnCompact settingsDanger" onclick="deleteNationalLibraryApiKey()">키 삭제</button>
+      <button class="settingsBtn uiActionSm" onclick="saveNationalLibraryApiKey()">키 저장</button>
+      <button class="settingsBtn uiActionSm" onclick="testNationalLibraryApiKey()">연결 확인</button>
+      <button class="settingsBtn uiActionSm uiActionDanger" onclick="deleteNationalLibraryApiKey()">키 삭제</button>
     </div>
     <div id="nlApiStatus" class="settingsStatus">API 키는 이 기기에만 저장되고 백업 파일에는 포함되지 않아요.</div>
 
@@ -1179,9 +1211,9 @@ button,input,select,textarea{font-family:inherit}
       <input id="data4LibApiKeyInput" class="settingsInput" type="password" autocomplete="off" placeholder="도서관 정보나루 인증키">
     </div>
     <div class="settingsRow">
-      <button class="settingsBtn settingsBtnCompact" onclick="saveData4LibraryApiKey()">키 저장</button>
-      <button class="settingsBtn settingsBtnCompact" onclick="testData4LibraryApiKey()">연결 확인</button>
-      <button class="settingsBtn settingsBtnCompact settingsDanger" onclick="deleteData4LibraryApiKey()">키 삭제</button>
+      <button class="settingsBtn uiActionSm" onclick="saveData4LibraryApiKey()">키 저장</button>
+      <button class="settingsBtn uiActionSm" onclick="testData4LibraryApiKey()">연결 확인</button>
+      <button class="settingsBtn uiActionSm uiActionDanger" onclick="deleteData4LibraryApiKey()">키 삭제</button>
     </div>
     <div id="data4LibApiStatus" class="settingsStatus">정보나루 키도 백업 파일에는 포함되지 않아요.</div>
   </section>
@@ -1189,7 +1221,7 @@ button,input,select,textarea{font-family:inherit}
   <section class="backupCard">
     <div class="backupCardTitle">내 데이터 보관하기</div>
     <div class="backupCardText">현재 기록과 BOOKS의 직접 업로드 표지를 하나의 백업 파일로 저장합니다.</div>
-    <button class="backupPrimary" onclick="downloadBackup()">백업 파일 저장</button>
+    <button class="backupPrimary uiWideAction" onclick="downloadBackup()">백업 파일 저장</button>
     <div class="backupHint">저장 위치는 브라우저의 기본 다운로드 폴더입니다. 갤럭시에서는 보통 <b>내 파일 → 다운로드</b>에서 찾을 수 있어요.</div>
     <div id="backupSaveStatus" class="backupStatusBox">아직 이번 접속에서 저장한 백업 파일이 없어요.</div>
   </section>
@@ -2024,7 +2056,7 @@ function openDailyCareSettings(){renderDailyCareSettings();document.getElementBy
 function closeDailyCareSettings(){document.getElementById('dailyCareSettingsModal')?.classList.add('hide');}
 function renderDailyCareSettings(){
   const root=document.getElementById('dailyCareSettingsList');if(!root)return;
-  root.innerHTML=loadDailyCareDefinitions().map(d=>`<div class="dailyCareSettingRow"><div class="dailyCareSettingMain"><div class="dailyCareSettingName">${escapeLife(d.icon||'')} ${escapeLife(d.name)}</div><div class="dailyCareSettingMeta">목표 ${formatDailyCareNumber(Number(d.target)||0)}${escapeLife(d.unit||'')} · ${d.enabled===false?'숨김':'표시'}</div></div><div class="dailyCareSettingActions"><button class="uiCompactBtn" onclick="openDailyCareItemEditor('${d.id}')">편집</button>${d.builtin?'':`<button class="uiDangerText" onclick="deleteDailyCareItem('${d.id}')">삭제</button>`}</div></div>`).join('');
+  root.innerHTML=loadDailyCareDefinitions().map(d=>`<div class="dailyCareSettingRow"><div class="dailyCareSettingMain"><div class="dailyCareSettingName">${escapeLife(d.icon||'')} ${escapeLife(d.name)}</div><div class="dailyCareSettingMeta">목표 ${formatDailyCareNumber(Number(d.target)||0)}${escapeLife(d.unit||'')} · ${d.enabled===false?'숨김':'표시'}</div></div><div class="dailyCareSettingActions"><button class="uiActionSm" onclick="openDailyCareItemEditor('${d.id}')">편집</button>${d.builtin?'':`<button class="uiDangerText" onclick="deleteDailyCareItem('${d.id}')">삭제</button>`}</div></div>`).join('');
 }
 function openDailyCareItemEditor(id=''){
   const d=id?dailyCareDef(id):{id:'',icon:'✨',name:'',unit:'분',target:20,quickValues:[5,10],enabled:true};
@@ -3231,7 +3263,7 @@ function renderBooks(){
   root.innerHTML=rows.length?rows.map(b=>`<div class="bookCard" onclick="openBookModal('${b.id}')">
     <div class="bookCardTop">
       <div class="bookCardMain">${bookCoverImg(b)}<div class="bookCardText"><div class="bookName">${escapeLife(b.title)}</div><div class="bookAuthor">${escapeLife(b.author||'')}</div></div></div>
-      <div class="bookCardActions"><button class="bookCardActionTodayStyle bookSmallBtn lifeMiniBtn uiCompactBtn bookCardActionTodayStyle" onclick="event.stopPropagation();copyBook('${b.id}')">복사</button><button class="bookCardActionTodayStyle bookSmallBtn lifeMiniBtn uiCompactBtn bookCardActionTodayStyle" onclick="event.stopPropagation();openBookModal('${b.id}')">편집</button></div>
+      <div class="bookCardActions"><button class="uiActionSm bookSmallBtn lifeMiniBtn uiCompactBtn" onclick="event.stopPropagation();copyBook('${b.id}')">복사</button><button class="uiActionSm bookSmallBtn lifeMiniBtn uiCompactBtn" onclick="event.stopPropagation();openBookModal('${b.id}')">편집</button></div>
     </div>
     <div class="bookTags">${[b.status,b.format,b.source,b.ownership,b.genre,b.detail,b.rating].filter(Boolean).map(v=>`<span class="bookTag">${escapeLife(v)}</span>`).join('')}</div>
     ${b.startDate||b.finishDate?`<div class="bookDates">${escapeLife(b.startDate||'')}${b.finishDate?` → ${escapeLife(b.finishDate)}`:''}</div>`:''}
@@ -5086,10 +5118,10 @@ function renderLifeGuide(){
     const running=isTimerRunningFor(r.id);
     const lead=`<button class="lifeCheck ${lifeDone(r.id)?'done':''}" onclick="toggleLifeRoutine('${r.id}')">${lifeDone(r.id)?'✓':''}</button>`;
     const timerActions=r.type==='time'
-      ? `<div class="lifeRoutineTimerActions"><button class="lifeManualBtn ${running?'running':''}" onclick="${running?'stopActivityTimer()':`startActivityTimer('${r.id}')`}">${running?'종료':'타이머'}</button><button class="lifeMiniBtn" onclick="openRoutineModal('${r.id}')">편집</button></div>`
+      ? `<div class="lifeRoutineTimerActions"><button class="lifeManualBtn uiActionSm ${running?'running':''}" onclick="${running?'stopActivityTimer()':`startActivityTimer('${r.id}')`}">${running?'종료':'타이머'}</button><button class="lifeMiniBtn uiActionSm" onclick="openRoutineModal('${r.id}')">편집</button></div>`
       : r.type==='free'
-        ? `<div class="lifeRoutineTimerActions"><button class="lifeManualBtn" onclick="editFreeRoutineRecord('${r.id}')">기록</button><button class="lifeMiniBtn" onclick="openRoutineModal('${r.id}')">편집</button></div>`
-        : `<button class="lifeMiniBtn" onclick="openRoutineModal('${r.id}')">편집</button>`;
+        ? `<div class="lifeRoutineTimerActions"><button class="lifeManualBtn uiActionSm" onclick="editFreeRoutineRecord('${r.id}')">기록</button><button class="lifeMiniBtn uiActionSm" onclick="openRoutineModal('${r.id}')">편집</button></div>`
+        : `<button class="lifeMiniBtn uiActionSm" onclick="openRoutineModal('${r.id}')">편집</button>`;
     return `<div class="lifeRoutine">${lead}<div class="lifeRoutineMain"><div class="lifeRoutineName">${escapeLife(r.icon||'')} ${escapeLife(r.name)}</div>${lifeMeta(r)?`<div class="lifeRoutineMeta">${escapeLife(lifeMeta(r))}</div>`:''}</div>${timerActions}</div>`;
   };
   let html='';
@@ -5102,7 +5134,7 @@ function renderLifeGuide(){
       body+=`<div class="lifeBlockHint" style="margin:12px 2px 6px;font-weight:800;">${dayNames[day]}요일 루틴</div>${dayOnly.map(renderRow).join('')}`;
     }
     if(!body) body='<div class="lifeBlockHint">오늘은 정해진 기본 일정이 없어요.</div>';
-    html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">${title}</div><div class="lifeBlockHint">${hint}</div></div></div><div>${body}</div><button class="lifeAddBtn" onclick="openRoutineModal(null,'${key}')">+ 이 블록에 루틴 추가</button></section>`;
+    html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">${title}</div><div class="lifeBlockHint">${hint}</div></div></div><div>${body}</div><button class="lifeAddBtn lifeAddRoutineBtn" onclick="openRoutineModal(null,'${key}')">+ 이 블록에 루틴 추가</button></section>`;
   }
   const free=routines.filter(r=>r.block==='free'&&r.enabled).sort((a,b)=>(a.order||0)-(b.order||0));
   html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">FREE TIME</div><div class="lifeBlockHint">해야 할 일이 아니라, 오늘 여유가 있을 때 고르는 활동</div></div><button class="lifeMiniBtn" onclick="openRoutineModal(null,'free')">+ 추가</button></div><div class="freeGrid">${free.map(r=>`<div class="freeChipWrap"><button class="freeChip ${lifeDone(r.id)?'done':''}" onclick="toggleLifeRoutine('${r.id}')"><span class="freeMainCentered"><span class="ico freeEmoji">${escapeLife(r.icon||'·')}</span><span class="freeName">${escapeLife(r.name)}</span></span></button>${r.type==='time'?`<button class="freeTimerBtn ${isTimerRunningFor(r.id)?'running':''}" aria-label="${escapeLife(r.name)} 시간 기록" onclick="event.stopPropagation();${isTimerRunningFor(r.id)?'stopActivityTimer()':`startActivityTimer('${r.id}')`}">⏱</button>`:r.type==='free'?`<button class="freeTimerBtn" aria-label="${escapeLife(r.name)} 자유 기록 수정" onclick="event.stopPropagation();editFreeRoutineRecord('${r.id}')">✎</button>`:''}<button class="freeEditBtn" aria-label="${escapeLife(r.name)} 편집" onclick="event.stopPropagation();openRoutineModal('${r.id}')">⋯</button></div>`).join('')}</div><div class="lifeBlockHint" style="margin-top:9px">하지 않은 활동은 아무 표시도 남기지 않아요.</div></section>`;
