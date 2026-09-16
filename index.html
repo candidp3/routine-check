@@ -995,6 +995,14 @@ body{background:var(--warm-bg);color:var(--text)}
 .bookCard .bookDates{font-size:0.6875rem}
 .bookCard .bookTag{font-size:0.625rem}
 
+
+/* Step 8 — recorded/running time stays as small secondary text; no overlap */
+.freeChipWrap .freeChip{padding:10px 7px 8px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important}
+.freeChip .freeMainCentered{position:static!important;left:auto!important;top:auto!important;transform:none!important;width:100%!important;max-width:100%!important}
+.freeChip .freeMeta{display:block;position:static!important;width:100%;margin-top:5px;font-size:.6875rem;line-height:1.25;color:#858c84;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lifeRoutineMeta{font-size:.6875rem;line-height:1.3;color:#858c84}
+.lifeMiniBtn.routineEditDots,.freeEditBtn.routineEditDots{font-family:inherit!important;font-size:.875rem!important;line-height:1!important;letter-spacing:-1px!important;font-weight:400!important}
+
 </style>
 </head>
 
@@ -5399,7 +5407,7 @@ function renderLifeGuide(){
   const blocks=[['breakfast','BREAKFAST','기상 후 아침 루틴'],['morning','MORNING','점심 전 오전 루틴'],['lunch','LUNCH','점심과 식후 루틴'],['afternoon','AFTERNOON','점심 후 오후 루틴'],['evening','EVENING','하루 마무리 루틴']];
   const renderRow=r=>{
     const lead=`<button class="lifeCheck ${lifeDone(r.id)?'done':''}" onclick="event.stopPropagation();handleRoutineRowTap(null,'${r.id}')">${lifeDone(r.id)?'✓':''}</button>`;
-    const edit=`<button class="lifeMiniBtn uiActionSm" onclick="event.stopPropagation();openRoutineModal('${r.id}')"><span class="actionGlyph">✎</span></button>`;
+    const edit=`<button class="lifeMiniBtn uiActionSm routineEditDots" aria-label="${escapeLife(r.name)} 편집" onclick="event.stopPropagation();openRoutineModal('${r.id}')">···</button>`;
     return `<div class="lifeRoutine" onclick="handleRoutineRowTap(event,'${r.id}')">${lead}<div class="lifeRoutineMain"><div class="lifeRoutineName">${escapeLife(r.icon||'')} ${escapeLife(r.name)}</div>${lifeMeta(r)?`<div class="lifeRoutineMeta">${escapeLife(lifeMeta(r))}</div>`:''}</div>${edit}</div>`;
   };
   let html='';
@@ -5415,7 +5423,7 @@ function renderLifeGuide(){
     html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">${title}</div><div class="lifeBlockHint">${hint}</div></div></div><div>${body}</div><button class="lifeAddBtn lifeAddRoutineBtn" onclick="openRoutineModal(null,'${key}')">+ 이 블록에 루틴 추가</button></section>`;
   }
   const free=routines.filter(r=>r.block==='free'&&r.enabled).sort((a,b)=>(a.order||0)-(b.order||0));
-  html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">FREE TIME</div><div class="lifeBlockHint">해야 할 일이 아니라, 오늘 여유가 있을 때 고르는 활동</div></div><button class="lifeMiniBtn" onclick="openRoutineModal(null,'free')">+ 추가</button></div><div class="freeGrid">${free.map(r=>`<div class="freeChipWrap"><button class="freeChip ${lifeDone(r.id)?'done':''}" onclick="handleRoutineRowTap(null,'${r.id}')"><span class="freeMainCentered"><span class="ico freeEmoji">${escapeLife(r.icon||'·')}</span><span class="freeName">${escapeLife(r.name)}</span></span>${lifeMeta(r)?`<span class="freeMeta">${escapeLife(lifeMeta(r))}</span>`:''}</button><button class="freeEditBtn" aria-label="${escapeLife(r.name)} 편집" onclick="event.stopPropagation();openRoutineModal('${r.id}')">✎</button></div>`).join('')}</div><div class="lifeBlockHint" style="margin-top:9px">하지 않은 활동은 아무 표시도 남기지 않아요.</div></section>`;
+  html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">FREE TIME</div><div class="lifeBlockHint">해야 할 일이 아니라, 오늘 여유가 있을 때 고르는 활동</div></div><button class="lifeMiniBtn" onclick="openRoutineModal(null,'free')">+ 추가</button></div><div class="freeGrid">${free.map(r=>`<div class="freeChipWrap"><button class="freeChip ${lifeDone(r.id)?'done':''}" onclick="handleRoutineRowTap(null,'${r.id}')"><span class="freeMainCentered"><span class="ico freeEmoji">${escapeLife(r.icon||'·')}</span><span class="freeName">${escapeLife(r.name)}</span></span>${lifeMeta(r)?`<span class="freeMeta">${escapeLife(lifeMeta(r))}</span>`:''}</button><button class="freeEditBtn routineEditDots" aria-label="${escapeLife(r.name)} 편집" onclick="event.stopPropagation();openRoutineModal('${r.id}')">···</button></div>`).join('')}</div><div class="lifeBlockHint" style="margin-top:9px">하지 않은 활동은 아무 표시도 남기지 않아요.</div></section>`;
   root.innerHTML=html;
   renderTodayNote();
   renderActivityTimerBanner();
