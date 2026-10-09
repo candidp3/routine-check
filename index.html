@@ -6010,7 +6010,7 @@ async function saveBook(){
   }
 
   Object.assign(old,{title,author:val('bookAuthor'),publisher:val('bookPublisher'),coverUrl:val('bookCoverUrl'),isbn:val('bookIsbn'),status:val('bookStatus'),format:val('bookFormat'),source:val('bookSource'),ownership:val('bookOwnership'),startDate:val('bookStartDate'),finishDate:val('bookFinishDate'),genre:val('bookGenre'),detail:String(old.detail||''),rating:val('bookRating'),highlight:val('bookHighlight'),memo:val('bookMemo'),customCover});
-  const i=books.findIndex(x=>x.id===id);if(i>=0)books[i]=old;else books.unshift(old);
+  const i=books.findIndex(x=>x.id===id);if(i>=0)books[i]=old;else books.push(old);
   saveBooks(books);
   resetPendingBookCover();
   closeBookModal();
@@ -8579,13 +8579,13 @@ async function deleteSelectedBooks(){
 })();
 
 /* ===== 책 정렬: 같은 기준 다시 누르면 오름/내림 전환 ===== */
-let bookSortDir='desc';
+let bookSortDir='asc';
 const BOOK_SORTS={registered:'등록순',start:'읽기 시작일순',finish:'완독일순',title:'제목순'};
-const BOOK_SORT_DEF={registered:'desc',start:'desc',finish:'desc',title:'asc'};
+const BOOK_SORT_DEF={registered:'asc',start:'desc',finish:'desc',title:'asc'};
 function bookSortLabel(){const d=bookSortDir==='asc';return BOOK_SORTS[bookSortMode]+' '+(d?'↑':'↓');}
 function bookSortHint(m,d){
   if(m==='title')return d==='asc'?'ㄱ→ㅎ':'ㅎ→ㄱ';
-  if(m==='registered')return d==='desc'?'최근':'오래된';
+  if(m==='registered')return d==='asc'?'오래된':'최근';
   return d==='desc'?'최근':'오래된';
 }
 function renderBookSortMenu(){
@@ -8610,6 +8610,7 @@ sortBookRows=function(rows){
     if(bookSortMode==='start'){const av=String(a.book.startDate||''),bv=String(b.book.startDate||'');if(av!==bv)return bv.localeCompare(av);}
     else if(bookSortMode==='finish'){const av=latestBookFinishDate(a.book),bv=latestBookFinishDate(b.book);if(av!==bv)return bv.localeCompare(av);}
     else if(bookSortMode==='title'){const c=String(a.book.title||'').localeCompare(String(b.book.title||''),'ko');if(c)return c;}
+    else if(bookSortMode==='registered'){const c=bookRegKey(a.book,a.index)-bookRegKey(b.book,b.index);if(c)return c;}
     return a.index-b.index;
   };
   // 기준 비교는 "자연 순서"(날짜=최근 먼저, 제목=ㄱ먼저, 등록=저장 순서)를 내림/기본으로 보고, 방향이 반대면 뒤집음
@@ -8676,6 +8677,26 @@ editRoutineFromManager=function(id){openRoutineModal(id);};
   }
   window.addEventListener('scroll',upd,{passive:true});
   const o=lifeNavigate;lifeNavigate=function(){const r=o.apply(this,arguments);setTimeout(upd,30);return r;};
+})();
+
+/* ===== 책 등록 순서: 오래된 등록이 앞, 최근 등록이 맨 뒤 ===== */
+function bookRegKey(b,idx){
+  const id=String(b&&b.id||'');
+  let m=id.match(/^excel_(\d+)$/);if(m)return Number(m[1]);
+  m=id.match(/^book_(\d{10,})$/);if(m)return Number(m[1]);
+  const t=Date.parse(b&&b.createdAt||'');if(!isNaN(t))return t;
+  return 1e6+(idx||0);
+}
+(function migrateBookOrder(){
+  try{
+    if(localStorage.getItem('bookOrderMigrated_v1')==='done')return;
+    const list=loadBooks();
+    if(Array.isArray(list)&&list.length>1){
+      const sorted=list.map((b,i)=>({b,i,k:bookRegKey(b,i)})).sort((x,y)=>x.k-y.k||x.i-y.i).map(x=>x.b);
+      saveBooks(sorted);
+    }
+    localStorage.setItem('bookOrderMigrated_v1','done');
+  }catch(e){}
 })();
 </script>
 
