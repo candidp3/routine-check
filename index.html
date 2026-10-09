@@ -1559,6 +1559,11 @@ body{background:var(--rc-bg)}
 .lifeCheck::after{content:"";position:absolute;inset:-10px -8px}
 .freeEditBtn::after{inset:-10px -8px}
 @media (prefers-color-scheme:dark){:root{--rc-soft:#252d2a;--rc-soft2:#212825}}
+
+/* Phase 6.60 — helper text sizes */
+.fieldHint{font-size:var(--fs-1)!important;font-weight:var(--fw-1)!important;line-height:1.45;color:var(--rc-mu)}
+.lifeField .fieldHint:not(label *){display:block}
+label .fieldHint{display:inline}
 </style>
 </head>
 
@@ -7856,6 +7861,25 @@ function rrMonthFactsHTML(){
     base.apply(this,arguments);
     try{const out=document.getElementById('rrOut');const h=rrMonthFactsHTML();if(out&&h)out.insertAdjacentHTML('beforeend',h);}catch(e){}
   };
+})();
+
+/* builtin daily-care card names follow edited definitions */
+function syncBuiltinDailyCareNames(){
+  ['protein','water','sleep'].forEach(id=>{
+    try{
+      const def=dailyCareDef(id);if(!def)return;
+      const el=document.querySelector(`[data-daily-care-id="${id}"] .dailyCareName`);if(!el)return;
+      const icon=String(def.icon??'').trim(),name=String(def.name||'').trim();
+      if(!name)return;
+      const txt=(icon?icon+' ':'')+name;
+      if(el.textContent!==txt)el.textContent=txt;
+    }catch(e){}
+  });
+}
+(function(){
+  const u=update;
+  update=function(){const r=u.apply(this,arguments);syncBuiltinDailyCareNames();return r;};
+  syncBuiltinDailyCareNames();
 })();
 </script>
 
