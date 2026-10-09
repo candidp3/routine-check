@@ -1725,6 +1725,32 @@ body.noMealProtein #proteinSourceText{display:none!important}
 }
 @keyframes calSlideNext{from{opacity:.4;transform:translateX(26px)}to{opacity:1;transform:none}}
 @keyframes calSlidePrev{from{opacity:.4;transform:translateX(-26px)}to{opacity:1;transform:none}}
+
+/* 책 목록 일괄 편집 */
+.bookEditRow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 0 8px;min-height:34px}
+.bookEditInfo{font-size:var(--fs-1);color:var(--rc-mu)}
+.bookEditBtns{display:flex;align-items:center;gap:6px}
+.bookEditBtns button{border:0;background:var(--rc-soft);color:var(--rc-tx2);font:inherit;font-size:var(--fs-1);min-height:32px;padding:0 12px;border-radius:9px;cursor:pointer}
+.bookEditBtns button.bookEditDone{background:var(--rc-solid);color:#fff}
+.bookEditBtns button.bookEditDelete{background:transparent;color:var(--rc-pd)}
+.bookEditBtns button:disabled{opacity:.4}
+.bookEditing .bookCard{position:relative;cursor:pointer}
+.bookEditing .bookCard .bookCardActions{visibility:hidden}
+.bookEditing .bookCard.bookSel{border-color:var(--rc-gs)!important;outline:2px solid var(--rc-gs);outline-offset:-2px}
+.bookSelMark{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--rc-line2);background:var(--rc-card);color:#fff;display:flex;align-items:center;justify-content:center;font-size:var(--fs-1);z-index:2;box-sizing:border-box}
+.bookSel .bookSelMark{background:var(--rc-solid);border-color:var(--rc-solid)}
+
+/* 정렬 + 편집 한 줄 */
+.bookSortRow{display:flex;align-items:center;justify-content:flex-start;gap:8px;position:relative}
+.bookSortRow.hide{display:flex}
+.bookSortRow .bookEditBtns{margin-left:auto}
+.bookSortRow.noSort .bookSortWrap,.bookSortRow.editing .bookSortWrap{display:none}
+.bookSortWrap{position:relative}
+.bookSortBtn{height:32px;border:1px solid rgba(0,0,0,.09);border-radius:10px;background:var(--rc-card);padding:0 12px;font:inherit;font-size:var(--fs-1);color:var(--muted);cursor:pointer}
+.bookSortMenu{position:absolute;top:36px;left:0;z-index:30;min-width:170px;background:var(--rc-card);border:1px solid rgba(0,0,0,.09);border-radius:12px;padding:4px;box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.bookSortMenu.hide{display:none}
+.bookSortMenu button{display:flex;justify-content:space-between;width:100%;border:0;background:transparent;font:inherit;font-size:var(--fs-2);color:var(--rc-tx2);padding:10px 10px;border-radius:8px;cursor:pointer;text-align:left}
+.bookSortMenu button.on{background:var(--rc-soft);color:var(--rc-tx)}
 </style>
 </head>
 
@@ -1851,12 +1877,12 @@ body.noMealProtein #proteinSourceText{display:none!important}
     <button class="bookPeriodTab" data-filter="전체" onclick="setBookLibraryFilter('전체')">전체</button>
   </div>
   <div id="bookSortRow" class="bookSortRow">
-    <select id="bookSortSelect" class="bookSortSelect" onchange="setBookSort(this.value)" aria-label="책 정렬">
-      <option value="registered">등록순</option>
-      <option value="start">읽기 시작일순</option>
-      <option value="finish">완독일순</option>
-      <option value="title">제목순</option>
-    </select>
+    <span id="bookEditInfo" class="bookEditInfo"></span>
+    <div class="bookSortWrap" id="bookSortWrap">
+      <button type="button" id="bookSortBtn" class="bookSortBtn" onclick="toggleBookSortMenu(event)" aria-haspopup="true"></button>
+      <div id="bookSortMenu" class="bookSortMenu hide"></div>
+    </div>
+    <div id="bookEditBtns" class="bookEditBtns"></div>
   </div>
   <div id="bookList" class="bookList"></div>
 </div>
@@ -8043,7 +8069,7 @@ function renderTodaySummary(){
     {sel:'.lifeRoutine[data-routine-id]',skip:'.lifeCheck,.routineEditDots,.lifeMiniBtn',start:e=>startTodayRoutineDrag(e),move:e=>moveTodayRoutineDrag(e),end:e=>endTodayRoutineDrag(e),state:()=>todayRoutineDragState},
     {sel:'.freeChipWrap[data-routine-id]',skip:'.freeEditBtn',start:e=>startFreeTimeDrag(e),move:e=>moveFreeTimeDrag(e),end:e=>endFreeTimeDrag(e),state:()=>freeTimeDragState},
     {sel:'.dailyCareItemCard[data-daily-care-id]',skip:'button',start:e=>startDcDrag(e),move:e=>moveDcDrag(e),end:e=>endDcDrag(e),state:()=>dcDragState},
-    {sel:'.bookCard[data-book-id]',skip:'button',start:e=>startBookWantDrag(e),move:e=>moveBookWantDrag(e),end:e=>endBookWantDrag(e),state:()=>bookWantDragState,ok:()=>bookLibraryFilter==='읽고싶어'}
+    {sel:'.bookCard[data-book-id]',skip:'button',start:e=>startBookWantDrag(e),move:e=>moveBookWantDrag(e),end:e=>endBookWantDrag(e),state:()=>bookWantDragState,ok:()=>bookLibraryFilter==='읽고싶어'&&!bookEditMode}
   ];
   function cancelPress(){if(press){clearTimeout(press.t);press=null;}}
   document.addEventListener('pointerdown',ev=>{
@@ -8473,6 +8499,98 @@ function endDcDrag(ev){
   },{passive:true});
   document.addEventListener('touchcancel',()=>{st=null;},{passive:true});
   window.calendarShiftDay=shiftDay;
+})();
+
+/* ===== 책 목록: 여러 권 선택해서 삭제 ===== */
+let bookEditMode=false;const bookSelected=new Set();
+function visibleBookIds(){return [...document.querySelectorAll('#bookList .bookCard[data-book-id]')].map(c=>c.dataset.bookId);}
+function toggleBookEditMode(){bookEditMode=!bookEditMode;bookSelected.clear();renderBooks();}
+function toggleBookSelect(id){if(bookSelected.has(id))bookSelected.delete(id);else bookSelected.add(id);renderBooks();}
+function selectAllBooks(){
+  const ids=visibleBookIds(),all=ids.length&&ids.every(id=>bookSelected.has(id));
+  ids.forEach(id=>{if(all)bookSelected.delete(id);else bookSelected.add(id);});renderBooks();
+}
+async function deleteSelectedBooks(){
+  const ids=[...bookSelected];if(!ids.length)return;
+  if(!await appConfirm(`선택한 ${ids.length}권을 목록에서 삭제할까요? 날짜별 독서기록은 유지됩니다.`))return;
+  saveBooks(loadBooks().filter(x=>!bookSelected.has(x.id)));
+  for(const id of ids){try{await deleteBookCoverBlob(id);}catch(_){}}
+  bookSelected.clear();renderBooks();appToast(`${ids.length}권을 삭제했어요`);
+}
+(function(){
+  const o=renderBooks;
+  renderBooks=function(){
+    const r=o.apply(this,arguments);
+    const view=document.getElementById('viewBooks');
+    view?.classList.toggle('bookEditing',bookEditMode);
+    const have=new Set(loadBooks().map(b=>b.id));[...bookSelected].forEach(id=>{if(!have.has(id))bookSelected.delete(id);});
+    const cards=[...document.querySelectorAll('#bookList .bookCard[data-book-id]')];
+    if(bookEditMode)cards.forEach(c=>{
+      const id=c.dataset.bookId;c.setAttribute('onclick',`toggleBookSelect('${id}')`);
+      c.classList.toggle('bookSel',bookSelected.has(id));
+      c.insertAdjacentHTML('afterbegin',`<span class="bookSelMark" aria-hidden="true">${bookSelected.has(id)?'✓':''}</span>`);
+    });
+    const info=document.getElementById('bookEditInfo'),btns=document.getElementById('bookEditBtns');
+    if(info)info.textContent=bookEditMode?`${bookSelected.size}권 선택`:(cards.length?`${cards.length}권`:'');
+    if(btns)btns.innerHTML=bookEditMode
+      ?`<button type="button" onclick="selectAllBooks()">${cards.length&&cards.every(c=>bookSelected.has(c.dataset.bookId))?'선택 해제':'전체 선택'}</button><button type="button" class="bookEditDelete" ${bookSelected.size?'':'disabled'} onclick="deleteSelectedBooks()">삭제${bookSelected.size?` (${bookSelected.size})`:''}</button><button type="button" class="bookEditDone" onclick="toggleBookEditMode()">완료</button>`
+      :(cards.length?`<button type="button" onclick="toggleBookEditMode()">편집</button>`:'');
+    return r;
+  };
+  const f=setBookLibraryFilter;
+  setBookLibraryFilter=function(){bookSelected.clear();return f.apply(this,arguments);};
+})();
+
+/* ===== 책 정렬: 같은 기준 다시 누르면 오름/내림 전환 ===== */
+let bookSortDir='desc';
+const BOOK_SORTS={registered:'등록순',start:'읽기 시작일순',finish:'완독일순',title:'제목순'};
+const BOOK_SORT_DEF={registered:'desc',start:'desc',finish:'desc',title:'asc'};
+function bookSortLabel(){const d=bookSortDir==='asc';return BOOK_SORTS[bookSortMode]+' '+(d?'↑':'↓');}
+function bookSortHint(m,d){
+  if(m==='title')return d==='asc'?'ㄱ→ㅎ':'ㅎ→ㄱ';
+  if(m==='registered')return d==='desc'?'최근':'오래된';
+  return d==='desc'?'최근':'오래된';
+}
+function renderBookSortMenu(){
+  const menu=document.getElementById('bookSortMenu');if(!menu)return;
+  menu.innerHTML=Object.keys(BOOK_SORTS).map(m=>{const on=m===bookSortMode;const d=on?bookSortDir:BOOK_SORT_DEF[m];
+    return `<button type="button" class="${on?'on':''}" onclick="pickBookSort('${m}',event)"><span>${BOOK_SORTS[m]}</span><span>${bookSortHint(m,d)} ${d==='asc'?'↑':'↓'}</span></button>`;}).join('');
+  const b=document.getElementById('bookSortBtn');if(b)b.textContent=bookSortLabel();
+}
+function toggleBookSortMenu(e){e?.stopPropagation();const m=document.getElementById('bookSortMenu');renderBookSortMenu();m.classList.toggle('hide');}
+function pickBookSort(m,e){
+  e?.stopPropagation();
+  if(m===bookSortMode)bookSortDir=bookSortDir==='asc'?'desc':'asc';
+  else{bookSortMode=m;bookSortDir=BOOK_SORT_DEF[m];}
+  renderBooks();renderBookSortMenu();
+}
+document.addEventListener('click',e=>{if(!e.target.closest('#bookSortWrap'))document.getElementById('bookSortMenu')?.classList.add('hide');});
+setBookSort=function(mode){pickBookSort(mode);};
+(function(){const f=setBookLibraryFilter;setBookLibraryFilter=function(v){if(v==='완독')bookSortDir='desc';return f.apply(this,arguments);};})();
+sortBookRows=function(rows){
+  const indexed=rows.map((book,index)=>({book,index}));
+  const cmp=(a,b)=>{
+    if(bookSortMode==='start'){const av=String(a.book.startDate||''),bv=String(b.book.startDate||'');if(av!==bv)return bv.localeCompare(av);}
+    else if(bookSortMode==='finish'){const av=latestBookFinishDate(a.book),bv=latestBookFinishDate(b.book);if(av!==bv)return bv.localeCompare(av);}
+    else if(bookSortMode==='title'){const c=String(a.book.title||'').localeCompare(String(b.book.title||''),'ko');if(c)return c;}
+    return a.index-b.index;
+  };
+  // 기준 비교는 "자연 순서"(날짜=최근 먼저, 제목=ㄱ먼저, 등록=저장 순서)를 내림/기본으로 보고, 방향이 반대면 뒤집음
+  indexed.sort(cmp);
+  if(bookSortDir!==BOOK_SORT_DEF[bookSortMode])indexed.reverse();
+  return indexed.map(x=>x.book);
+};
+(function(){
+  const o=renderBooks;
+  renderBooks=function(){
+    const r=o.apply(this,arguments);
+    const row=document.getElementById('bookSortRow');
+    row?.classList.remove('hide');
+    row?.classList.toggle('noSort',bookLibraryFilter==='읽고싶어');
+    row?.classList.toggle('editing',!!bookEditMode);
+    renderBookSortMenu();
+    return r;
+  };
 })();
 </script>
 
