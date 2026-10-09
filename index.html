@@ -1564,6 +1564,9 @@ body{background:var(--rc-bg)}
 .fieldHint{font-size:var(--fs-1)!important;font-weight:var(--fw-1)!important;line-height:1.45;color:var(--rc-mu)}
 .lifeField .fieldHint:not(label *){display:block}
 label .fieldHint{display:inline}
+
+.proteinSource{font-size:var(--fs-1);color:var(--rc-mu);margin-top:3px;line-height:1.3}
+.proteinSource:empty{display:none}
 </style>
 </head>
 
@@ -7881,6 +7884,35 @@ function syncBuiltinDailyCareNames(){
   update=function(){const r=u.apply(this,arguments);syncBuiltinDailyCareNames();return r;};
   syncBuiltinDailyCareNames();
 })();
+
+/* protein source breakdown */
+function proteinMealTotal(dateKey){
+  try{
+    const logs=loadLifeLogs()[dateKey];if(!Array.isArray(logs))return 0;
+    const meals=new Set(loadLifeRoutines().filter(isMealFreeRoutine).map(r=>r.id));
+    return logs.reduce((s,l)=>s+(meals.has(l.routineId)?getMealLogProtein(l):0),0);
+  }catch(e){return 0;}
+}
+function renderProteinSource(){
+  const meta=document.getElementById('proteinTrackText');if(!meta)return;
+  let el=document.getElementById('proteinSourceText');
+  if(!el){el=document.createElement('div');el.id='proteinSourceText';el.className='proteinSource';meta.insertAdjacentElement('afterend',el);}
+  const total=Number(state?.proteinG)||0,meal=proteinMealTotal(typeof lifeLogKey==='function'?lifeLogKey():activeDateKey);
+  if(meal<=0){el.textContent='';return;}
+  const manual=Math.round((total-meal)*10)/10,fmt=v=>formatDailyCareNumber(v);
+  el.textContent=`식사 ${fmt(meal)}g · 직접 ${manual>0?'+':manual<0?'−':''}${fmt(Math.abs(manual))}g`;
+}
+(function(){
+  const r=renderProtein;
+  renderProtein=function(){const v=r.apply(this,arguments);renderProteinSource();return v;};
+})();
+
+/* reset protein keeps meal-logged protein */
+resetProtein=function(){
+  const meal=proteinMealTotal(typeof lifeLogKey==='function'?lifeLogKey():activeDateKey);
+  state.proteinG=meal;
+  save();update();
+};
 </script>
 
 
