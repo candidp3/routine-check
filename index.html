@@ -1751,6 +1751,41 @@ body.noMealProtein #proteinSourceText{display:none!important}
 .bookSortMenu.hide{display:none}
 .bookSortMenu button{display:flex;justify-content:space-between;width:100%;border:0;background:transparent;font:inherit;font-size:var(--fs-2);color:var(--rc-tx2);padding:10px 10px;border-radius:8px;cursor:pointer;text-align:left}
 .bookSortMenu button.on{background:var(--rc-soft);color:var(--rc-tx)}
+
+/* ===== 상단 틀 고정 ===== */
+:root{--topH:56px}
+#lifeBar{display:none!important}
+.lifeTop{position:sticky;top:0;z-index:50;background:var(--rc-bg);
+  margin:calc(-1 * (var(--sp-5) + env(safe-area-inset-top,0px))) calc(-1 * var(--sp-4)) 0!important;
+  padding:calc(var(--sp-5) + env(safe-area-inset-top,0px)) var(--sp-4) var(--sp-3)}
+#viewAll_v2 .recordHero{position:sticky;top:calc(var(--topH) + 4px);z-index:49;}
+#viewAll_v2 .recordHero::before,#viewAll_v2 .recordHero::after{content:'';position:absolute;left:0;right:0;background:var(--rc-bg);pointer-events:none}
+#viewAll_v2 .recordHero::after{top:100%;height:14px}
+#viewAll_v2 .recordHero::before{bottom:100%;height:6px}
+.booksFixed{position:sticky;top:var(--topH);z-index:49;background:var(--rc-card);margin:-4px -4px 0;padding:4px 4px 2px}
+.booksFixed .bookSortRow{margin-bottom:var(--sp-3)}
+
+/* ===== 버튼 크기 ===== */
+.dailyCareItemCard .dailyCareActions button,.dailyCareActions button,.dailyCareMore{height:24px!important;min-height:24px!important;padding-top:0!important;padding-bottom:0!important;font-size:var(--fs-1)!important;line-height:1;border-radius:8px!important}
+.dailyCareItemCard .dailyCareActions:has(button:nth-child(3)) button{font-size:10px!important}
+.dailyCareItemCard .dailyCareActions{padding-top:6px!important}
+.dailyCareReset{height:22px!important;min-height:22px!important;font-size:var(--fs-1)!important}
+/* ===== 스크롤하면 고정 영역 축소 ===== */
+body.scrolled .lifeTop{padding-top:calc(var(--sp-3) + env(safe-area-inset-top,0px));padding-bottom:var(--sp-2);margin-top:calc(-1 * (var(--sp-5) + env(safe-area-inset-top,0px)))!important}
+body.scrolled .lifeTitle{font-size:var(--fs-3)!important}
+body.scrolled .lifeDateShort{font-size:var(--fs-1)!important}
+body.scrolled .booksFixed .booksSub{display:none}
+body.scrolled .booksFixed .booksHead{margin-bottom:4px!important}
+body.scrolled .booksFixed .bookAddBtn{height:28px!important;min-height:28px!important;font-size:var(--fs-1)!important}
+body.scrolled .booksFixed .bookPeriodTab{padding-top:6px!important;padding-bottom:6px!important;font-size:var(--fs-2)!important}
+body.scrolled .booksFixed .bookSortRow{margin:4px 0!important}
+body.scrolled #viewAll_v2 .recordHero{padding:8px 12px 6px!important}
+body.scrolled #viewAll_v2 .recordHero .booksSub{display:none}
+body.scrolled #viewAll_v2 .recordHero .bookPeriodTab{padding-top:6px!important;padding-bottom:6px!important;font-size:var(--fs-2)!important}
+body.scrolled #viewAll_v2 .recordHero #rrNav{margin-top:4px!important}
+body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-height:28px!important;font-size:var(--fs-1)!important}
+.noStick{position:static!important}
+.noStick::before,.noStick::after{display:none!important}
 </style>
 </head>
 
@@ -1869,6 +1904,7 @@ body.noMealProtein #proteinSourceText{display:none!important}
   <div class="section calDetail" id="calendarDetail"></div>
 </div>
 <div id="viewBooks" class="hide section booksView">
+  <div class="booksFixed" id="booksFixed">
   <div class="booksHead"><div><div class="booksTitle">BOOKS</div><div class="booksSub">내 책 목록과 독서 상태 관리</div></div><button class="bookAddBtn lifeMiniBtn uiPrimaryBtn" onclick="openBookModal()">+ 책 추가</button></div>
   <div id="bookLibraryFilters" class="bookPeriodTabs">
     <button class="bookPeriodTab on" data-filter="읽고있어" onclick="setBookLibraryFilter('읽고있어')">읽고있어</button>
@@ -1883,6 +1919,7 @@ body.noMealProtein #proteinSourceText{display:none!important}
       <div id="bookSortMenu" class="bookSortMenu hide"></div>
     </div>
     <div id="bookEditBtns" class="bookEditBtns"></div>
+  </div>
   </div>
   <div id="bookList" class="bookList"></div>
 </div>
@@ -8591,6 +8628,54 @@ sortBookRows=function(rows){
     renderBookSortMenu();
     return r;
   };
+})();
+
+/* ===== 상단 고정 높이 측정 ===== */
+(function(){
+  function m(){const t=document.querySelector('.lifeTop');if(t)document.documentElement.style.setProperty('--topH',t.offsetHeight+'px');}
+  window.addEventListener('resize',m);window.addEventListener('load',m);
+  const o=lifeNavigate;lifeNavigate=function(){const r=o.apply(this,arguments);m();return r;};
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(m);
+  m();setTimeout(m,300);
+})();
+/* ===== 루틴 관리: 편집 후 목록으로 복귀 ===== */
+editRoutineFromManager=function(id){openRoutineModal(id);};
+(function(){
+  const c=closeRoutineModal;
+  closeRoutineModal=function(){
+    const r=c.apply(this,arguments);
+    const m=document.getElementById('inactiveRoutineManagerModal');
+    if(m&&!m.classList.contains('hide'))renderInactiveRoutineManager();
+    return r;
+  };
+})();
+
+/* 고정 영역이 화면의 45%보다 크면 고정 해제(아래 내용이 가려지지 않게) */
+(function(){
+  const sel=['#booksFixed','#viewAll_v2 .recordHero'];
+  function fit(){
+    const lim=window.innerHeight*0.6;const was=document.body.classList.contains('scrolled');document.body.classList.remove('scrolled');
+    sel.forEach(q=>{const e=document.querySelector(q);if(!e)return;
+      if(e.offsetParent===null)return;
+      e.classList.remove('noStick');
+      if(e.offsetHeight>lim)e.classList.add('noStick');});
+    if(was)document.body.classList.add('scrolled');
+  }
+  window.addEventListener('resize',fit);window.addEventListener('scroll',()=>{},{passive:true});
+  const o=lifeNavigate;lifeNavigate=function(){const r=o.apply(this,arguments);setTimeout(fit,0);return r;};
+  ['render','renderBooks','renderRecordDashboard','renderLifeGuide'].forEach(n=>{try{const f=window[n];if(typeof f==='function')window[n]=function(){const r=f.apply(this,arguments);setTimeout(fit,0);return r;};}catch(e){}});
+  setTimeout(fit,100);setInterval(fit,1500);
+})();
+
+(function(){
+  let on=false;
+  function upd(){
+    const y=window.scrollY;const n=on?(y>6):(y>40);
+    if(n!==on){on=n;document.body.classList.toggle('scrolled',on);
+      const t=document.querySelector('.lifeTop');if(t)document.documentElement.style.setProperty('--topH',t.offsetHeight+'px');}
+  }
+  window.addEventListener('scroll',upd,{passive:true});
+  const o=lifeNavigate;lifeNavigate=function(){const r=o.apply(this,arguments);setTimeout(upd,30);return r;};
 })();
 </script>
 
