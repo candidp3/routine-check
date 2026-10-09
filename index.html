@@ -1707,6 +1707,24 @@ body.noMealProtein #proteinSourceText{display:none!important}
 .mealExtraField{padding:0!important}
 .mealNumRow{align-items:flex-start}
 .mealRecallField>span{display:block;line-height:1.4;font-size:var(--fs-1);height:15.4px;overflow:hidden}
+
+/* 횟수형 루틴 */
+.countOptRow{display:flex;gap:8px}
+.countOptRow label{display:grid;gap:4px;font-size:var(--fs-1);color:var(--rc-mu);flex:1;min-width:0}
+.countOptRow label:last-child{flex:0 0 84px}
+.countOptRow input{width:100%;box-sizing:border-box;min-height:42px;padding:0 12px;border-radius:12px;border:1px solid var(--rc-line);background:var(--rc-soft);font:inherit;font-size:var(--fs-3);color:var(--rc-tx)}
+.countChips{display:flex;gap:6px;margin-top:8px}
+.countChips button{flex:1;border:0;border-radius:10px;background:var(--rc-soft);color:var(--rc-tx2);font:inherit;font-size:var(--fs-2);min-height:36px}
+.countChips button:last-child{color:var(--rc-mu);flex:0 0 auto;padding:0 12px}
+
+/* 캘린더 밀어서 이동 */
+.calWrap,.calDetail{touch-action:pan-y}
+@media (prefers-reduced-motion:no-preference){
+  .calSlideNext{animation:calSlideNext .2s ease-out}
+  .calSlidePrev{animation:calSlidePrev .2s ease-out}
+}
+@keyframes calSlideNext{from{opacity:.4;transform:translateX(26px)}to{opacity:1;transform:none}}
+@keyframes calSlidePrev{from{opacity:.4;transform:translateX(-26px)}to{opacity:1;transform:none}}
 </style>
 </head>
 
@@ -2296,7 +2314,7 @@ body.noMealProtein #proteinSourceText{display:none!important}
       <div class="lifeField"><label>아이콘 / 이모지</label><input id="rIcon" placeholder="📘"></div>
     </div>
     <div class="life2col">
-      <div class="lifeField"><label>활동 유형</label><select id="rType" onchange="toggleRoutineTypeFields()"><option value="check">체크형</option><option value="time">시간형</option><option value="free">자유 기록형</option></select></div>
+      <div class="lifeField"><label>활동 유형</label><select id="rType" onchange="toggleRoutineTypeFields()"><option value="check">체크형</option><option value="time">시간형</option><option value="free">자유 기록형</option><option value="count">횟수형</option></select></div>
       <div class="lifeField"><label>시간 블록</label><select id="rBlock"><option value="breakfast">BREAKFAST</option><option value="morning">MORNING</option><option value="lunch">LUNCH</option><option value="afternoon">AFTERNOON</option><option value="evening">EVENING</option><option value="free">FREE TIME</option></select></div>
     </div>
     <div class="lifeField"><label>반복 방식</label><select id="rRecurrence" onchange="toggleRoutineDays()"><option value="daily">매일</option><option value="weekdays">특정 요일</option><option value="intervalWeeks">매 N주</option><option value="intervalMonths">매 N개월</option><option value="free">자유 활동</option></select></div>
@@ -2306,6 +2324,7 @@ body.noMealProtein #proteinSourceText{display:none!important}
       <label><input type="checkbox" name="rDay" value="1">월</label><label><input type="checkbox" name="rDay" value="2">화</label><label><input type="checkbox" name="rDay" value="3">수</label><label><input type="checkbox" name="rDay" value="4">목</label><label><input type="checkbox" name="rDay" value="5">금</label><label><input type="checkbox" name="rDay" value="6">토</label><label><input type="checkbox" name="rDay" value="0">일</label>
     </div></div>
     <div id="rTimeOptions" class="lifeField hide"><label>목표 시간 <span class="fieldHint">분</span></label><input id="rTarget" type="number" min="1" step="1" placeholder="20"></div>
+    <div id="rCountOptions" class="lifeField hide"><div class="countOptRow"><label>하루 목표<input id="rCountTarget" type="number" inputmode="numeric" min="1" step="1" placeholder="예: 1000"></label><label>단위<input id="rCountUnit" maxlength="4" placeholder="개"></label></div><div class="fieldHint" style="margin-top:6px">목표를 채우면 체크 표시가 돼요. 하루 중 여러 번 나눠 더해도 돼요.</div></div>
     <div id="rFreeOptions" class="lifeField hide"><label>기본 기록 내용 <span class="fieldHint">선택</span></label><input id="rDefaultNote" placeholder="예: 계란 · 두유 · 견과"><div class="fieldHint" style="margin-top:5px">오늘 다른 내용을 기록하면 기본 내용 대신 그날 기록이 표시됩니다.</div><label style="margin-top:10px;display:flex;align-items:center;gap:7px"><input id="rIsMeal" type="checkbox" style="width:auto">식사 기록으로 사용</label><div class="fieldHint" style="margin-top:4px">시간 블록이나 이름과 관계없이 식사 기록으로 분류됩니다.</div><label style="margin-top:10px">캘린더 표시 이름 <span class="fieldHint">선택</span></label><input id="rCalendarLabel" maxlength="12" placeholder="예: 아침, 점심, 저녁, 단백질"><div class="fieldHint" style="margin-top:4px">식사 기록에서만 사용됩니다. 비워두면 아침·점심·저녁 또는 '식사'로 짧게 표시됩니다.</div></div>
     <div class="lifeField" style="display:none"><input id="rOrder" type="number" step="1" value=""></div>
     <div class="lifeField"><label><input id="rEnabled" type="checkbox" checked style="width:auto;margin-right:6px">활성 상태로 표시</label></div>
@@ -4862,7 +4881,7 @@ function rrTodayDate(){return rrDate(getLocalDateKey(new Date()));}
 function rrDaysBetween(start,end){
   const out=[];for(let d=rrClone(start);d<=end;d.setDate(d.getDate()+1))out.push(rrClone(d));return out;
 }
-function rrAvg(a){const x=a.filter(v=>Number.isFinite(Number(v))).map(Number);return x.length?x.reduce((s,v)=>s+v,0)/x.length:0;}
+function rrAvg(a){const x=a.filter(v=>v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v))).map(Number);return x.length?x.reduce((s,v)=>s+v,0)/x.length:0;}
 function rrData(d){return buildCalendarDayRecord(rrIso(d));}
 function rrRoutineRate(x){
   if(!x||!x.routines?.length)return null;
@@ -4988,8 +5007,7 @@ function rrLine(points,tips,labels){
   if(!real.length)return '<div class="rr-empty">측정 기록이 아직 없어요.</div>';
   let lo=Math.min(...real),hi=Math.max(...real);if(lo===hi){lo-=1;hi+=1}else{const p=(hi-lo)*.15;lo-=p;hi+=p}
   const X=i=>14+(points.length<=1?136:i/(points.length-1)*272),Y=v=>96-(v-lo)/(hi-lo)*78;
-  const segments=[];let run=[];
-  vals.forEach((v,i)=>{if(v===null){if(run.length){segments.push(run);run=[]}}else run.push([i,v])});if(run.length)segments.push(run);
+  const segments=[vals.map((v,i)=>v===null?null:[i,v]).filter(Boolean)];
   return `<svg class="rr-chart" viewBox="0 0 300 118" role="img">${segments.map(seg=>`<polyline points="${seg.map(([i,v])=>`${X(i)},${Y(v)}`).join(' ')}" fill="none" stroke="#f28fa2" stroke-width="1.5"/>`).join('')}${vals.map((v,i)=>v===null?'':`<g class="rr-hit" data-tip="${escapeLife(tips[i]||'')}" onclick="rrSelectMark(this)"><circle cx="${X(i)}" cy="${Y(v)}" r="10" fill="transparent"/><circle class="rr-point" cx="${X(i)}" cy="${Y(v)}" r="3"/></g>`).join('')}${labels.map((x,i)=>x?`<text x="${X(i)}" y="112">${escapeLife(x)}</text>`:'').join('')}</svg>`;
 }
 function rrSleepTimeline(x){
@@ -5164,15 +5182,9 @@ function rrRenderMonth(){
   const out=document.getElementById('rrOut');if(!out)return;
   if(!st.R.length){out.innerHTML='<div class="rr-card"><div class="rr-empty">이 달은 기록이 아직 없어요.</div></div>';return}
   const c=rrMetricConfig(st,st.D,days),tips=c.vals.map((v,i)=>`${m+1}/${i+1} · ${c.fmt(v)}`),labs=days.map((_,i)=>i===0||(i+1)%5===0?String(i+1):'');
-  const lead=(new Date(y,m,1).getDay()+6)%7,nw=Math.ceil((n+lead)/7);
-  const wr=Array.from({length:nw},(_,w)=>{const a=st.D.map((x,i)=>x&&Math.floor((i+lead)/7)===w?rrRoutineRate(x):null).filter(Number.isFinite);return a.length?Math.round(rrAvg(a)):null});
-  const WN=['월','화','수','목','금','토','일'];
-  const ww=WN.map((_,w)=>{const a=st.D.map((x,i)=>x&&((days[i].getDay()+6)%7===w)?rrRoutineRate(x):null).filter(Number.isFinite);return a.length?Math.round(rrAvg(a)):null});
   const freeBuckets=st.D.map(x=>x?[x]:[]);
   out.innerHTML=`
   <div class="rr-card"><h2>일별 추이 <span class="rr-card-note">${escapeLife(c.title)} 평균 ${c.fmt(c.avg)}${c.goal?` · 목표 ${c.fmt(c.goal)}`:''}</span></h2>${rrMetricChips()}${rrBars(c.vals,c.goal,c.max,tips,labs)}<div class="rr-card-note">막대를 눌러 수치를 확인하세요.</div></div>
-  <div class="rr-card"><h2>주차별 루틴 달성률</h2>${rrBars(wr,0,100,wr.map((v,i)=>`${i+1}주차 · ${v===null?'기록 없음':v+'%'}`),wr.map((_,i)=>`${i+1}주`))}<div class="rr-card-note">막대를 눌러 수치를 확인하세요.</div></div>
-  <div class="rr-card"><h2>요일별 루틴 달성률</h2>${rrBars(ww,0,100,ww.map((v,i)=>`${WN[i]}요일 · ${v===null?'기록 없음':v+'%'}`),WN)}<div class="rr-card-note">막대를 눌러 수치를 확인하세요.</div></div>
   <div class="rr-card"><h2>시간 블록별 달성률</h2>${RR_BLOCKS.map(b=>{const a=st.R.flatMap(x=>x.routines.filter(r=>r[4]===b&&r[5]!==false)),p=a.length?Math.round(a.filter(r=>r[2]).length/a.length*100):0;return `<div class="rr-progress"><span>${b}</span><span class="rr-sub">${p}%</span></div><div class="rr-bar"><i style="width:${p}%"></i></div>`}).join('')}</div>
   <div class="rr-card rr-free-card"><h2>취미생활</h2>${rrLeisureSummary(freeBuckets,labs,false)}</div>`;
 }
@@ -6139,7 +6151,12 @@ function legacyRoutineChecked(r){
 function lifeDone(rid){
   const r=loadLifeRoutines().find(x=>x.id===rid);
   if(r?.legacyKey) return legacyRoutineChecked(r);
-  return getLifeDayLogs().some(x=>x.routineId===rid);
+  return getLifeDayLogs().some(x=>x.routineId===rid&&x.partial!==true);
+}
+function countMetaText(r,log){
+  const u=r.unit||'개',v=Number(log?.value)||0,t=Number(r.target)||0;
+  if(!log)return t?`목표 ${t}${u}`:'';
+  return t?`${v} / ${t}${u}`:`${v}${u}`;
 }
 function freeTypeIcon(r){
   if(r?.type==='time')return '◷';
@@ -6153,6 +6170,7 @@ function freeTypeIconClass(r){
 }
 function freeDisplayMeta(r){
   const running=timerElapsedForRoutine(r.id);
+  if(r.type==='count'&&!running)return countMetaText(r,getLifeDayLogs().find(x=>x.routineId===r.id));
   return running?`측정 중 · ${running}`:'';
 }
 function lifeMeta(r){
@@ -6162,12 +6180,23 @@ function lifeMeta(r){
   if(r.type==='free'){
     const note=(log?.memo||r.defaultNote||'').trim();if(note)a.push(note);
     if(isMealFreeRoutine(r)&&log)mealLogIds(log).forEach(id=>{const d=dailyCareDef(id)||{};a.push(`${d.name||id} ${formatDailyCareNumber(mealItemValue(log,id))}${d.unit||''}`);});
+  }else if(r.type==='count'){const t=countMetaText(r,log);if(t)a.push(t);
   }else if(log&&Number(log.duration)>0)a.push(`기록 ${formatDurationMin(log.duration)}`);
   else if(r.type==='time'&&r.target)a.push(`목표 ${r.target}${r.unit||'분'}`);
   else if(r.type==='number'&&r.target)a.push(`${r.target}${r.unit||''}`);
   return a.join(' · ');
 }
 
+function openCountInput(id,dateKey){
+  const r=loadLifeRoutines().find(x=>x.id===id);if(!r)return;
+  const k=dateKey||lifeLogKey(),log=(loadLifeLogs()[k]||[]).find(x=>x.routineId===id);
+  const u=r.unit||'개',t=Number(r.target)||0,cur=Number(log?.value)||0;
+  openRoutineInputSheet({mode:'count',id,title:r.name,hint:`${t?`목표 ${t}${u} · `:''}지금까지 ${cur}${u}`,value:cur||'',unit:u,target:t,dateKey:k,calendarEdit:!!dateKey});
+}
+function addCountChip(n){
+  const el=document.getElementById('routineInputValue');if(!el)return;
+  el.value=String((Number(el.value)||0)+Number(n||0));el.focus();
+}
 function recordFreeRoutine(id){
   const r=loadLifeRoutines().find(x=>x.id===id);if(!r)return;
   const logs=getLifeDayLogs(),idx=logs.findIndex(x=>x.routineId===id);
@@ -6187,6 +6216,7 @@ async function toggleLifeRoutine(id){
     renderLifeGuide();
     return;
   }
+  if(r.type==='count'){openCountInput(id);return;}
   let logs=getLifeDayLogs();const idx=logs.findIndex(x=>x.routineId===id);
 
   if(r.type==='free'&&idx>=0){
@@ -6743,6 +6773,7 @@ function editCalendarRoutineRecord(k,id){
     });
     return;
   }
+  if(r.type==='count'){openCountInput(id,k);return;}
   if(r.type==='number'){
     openRoutineInputSheet({
       mode:'number',id,title:r.name,
@@ -6789,6 +6820,7 @@ function calendarDayBlockLabel(block){
 }
 function calendarRoutineLogIsRecorded(log){
   if(!log)return false;
+  if(log.partial===true)return false;
   return log.completed===true||log.done===true||Number(log.duration)>0||
     (log.value!==null&&log.value!==undefined&&String(log.value).trim()!=='')||
     String(log.memo||'').trim()!=='';
@@ -6798,6 +6830,7 @@ function calendarRoutineDetailText(r,log){
   if(r.type==='time'&&Number(log.duration)>0)return formatDurationMin(Number(log.duration));
   if(r.type==='number'&&log.value!==null&&log.value!==undefined&&String(log.value).trim()!=='')return `${log.value}${r.unit||''}`;
   if(r.type==='free'&&String(log.memo||'').trim())return String(log.memo).trim();
+  if(r.type==='count')return countMetaText(r,log);
   return '';
 }
 function calendarDaySleepRecord(dateKey){
@@ -7060,6 +7093,7 @@ async function deleteRoutineFromManager(id){const r=loadLifeRoutines().find(x=>x
 function handleRoutineRowTap(event,id){
   if(event && event.target && event.target.closest && event.target.closest('button,input,select,textarea,a')) return;
   const r=loadLifeRoutines().find(x=>x.id===id);if(!r)return;
+  if(r.type==='count'){openCountInput(id);return;}
   if(r.type==='check'){toggleLifeRoutine(id);return;}
   if(r.type==='free'){openFreeRoutineActions(id);return;}
   if(r.type==='time'){openTimeRoutineActions(id);return;}
@@ -7281,6 +7315,9 @@ function openRoutineInputSheet(ctx){
     wrap.innerHTML=`<textarea id="routineInputValue" class="routineInputText" rows="2" aria-label="간식 내용" placeholder="예: 아이스라떼, 초코과자"></textarea>`;
   }else if(ctx.mode==='time'){
     wrap.innerHTML='<div class="routineInputUnitRow"><input id="routineInputValue" class="routineInputField" type="number" inputmode="decimal" min="0" step="1" aria-label="시간 입력"><span class="routineInputUnit">분</span></div>';
+  }else if(ctx.mode==='count'){
+    const steps=(ctx.target||0)>=500?[100,500,1000]:[10,50,100];
+    wrap.innerHTML=`<div class="routineInputUnitRow"><input id="routineInputValue" class="routineInputField" type="number" inputmode="numeric" min="0" step="1" aria-label="오늘 개수"><span class="routineInputUnit">${escapeLife(ctx.unit||'개')}</span></div><div class="countChips">${steps.map(n=>`<button type="button" onclick="addCountChip(${n})">+${n}</button>`).join('')}<button type="button" onclick="document.getElementById('routineInputValue').value=''">비우기</button></div>`;
   }else if(ctx.mode==='number'){
     wrap.innerHTML=`<div class="routineInputUnitRow"><input id="routineInputValue" class="routineInputField" type="number" inputmode="decimal" step="any" aria-label="숫자 입력">${ctx.unit?`<span class="routineInputUnit">${escapeLife(ctx.unit)}</span>`:''}</div>`;
   }else{
@@ -7356,6 +7393,16 @@ function saveRoutineInputSheet(){
       if(idx>=0)logs.splice(idx,1);
     }else if(idx<0)logs.push({routineId:ctx.id,completed:true,value:null,duration:total,memo:'',loggedAt:new Date().toISOString()});
     else{logs[idx].completed=true;logs[idx].duration=total;logs[idx].loggedAt=new Date().toISOString();}
+  }else if(ctx.mode==='count'){
+    const n=input.value.trim()===''?0:Number(input.value);
+    if(!Number.isFinite(n)||n<0){appAlert('0 이상의 숫자를 입력해 주세요.');return;}
+    const r=loadLifeRoutines().find(x=>x.id===ctx.id),t=Number(r?.target)||0,partial=t>0&&n<t;
+    if(n===0){if(idx>=0)logs.splice(idx,1);}
+    else{
+      const row={routineId:ctx.id,completed:!partial,value:n,duration:null,memo:'',loggedAt:new Date().toISOString()};
+      if(partial)row.partial=true;
+      if(idx>=0)logs[idx]=row;else logs.push(row);
+    }
   }else if(ctx.mode==='number'){
     const raw=input.value.trim(),value=raw===''?null:Number(raw);
     if(raw!==''&&!Number.isFinite(value)){appAlert('숫자를 입력해 주세요.');return;}
@@ -7566,7 +7613,7 @@ function openRoutineModal(id,block){
   document.getElementById('rType').value=editableType;document.getElementById('rBlock').value=r?.block||block||'morning';
   const sch=normalizeSchedule(r||{recurrence:block==='free'?'free':'daily'},{allowFree:true});
   document.getElementById('rRecurrence').value=sch.kind;document.getElementById('rScheduleEvery').value=sch.every||1;document.getElementById('rScheduleAnchor').value=sch.anchorDate||lifeLogKey();
-  document.getElementById('rTarget').value=r?.type==='time'?(r?.target??''):'';document.getElementById('rDefaultNote').value=r?.type==='free'?(r?.defaultNote||''):'';document.getElementById('rIsMeal').checked=!!r?.isMeal;document.getElementById('rCalendarLabel').value=r?.calendarLabel||'';document.getElementById('rOrder').value=r?.order??'';document.getElementById('rEnabled').checked=r?.enabled??true;
+  document.getElementById('rTarget').value=r?.type==='time'?(r?.target??''):'';document.getElementById('rCountTarget').value=r?.type==='count'?(r?.target??''):'';document.getElementById('rCountUnit').value=r?.type==='count'?(r?.unit||''):'';document.getElementById('rDefaultNote').value=r?.type==='free'?(r?.defaultNote||''):'';document.getElementById('rIsMeal').checked=!!r?.isMeal;document.getElementById('rCalendarLabel').value=r?.calendarLabel||'';document.getElementById('rOrder').value=r?.order??'';document.getElementById('rEnabled').checked=r?.enabled??true;
   document.querySelectorAll('input[name="rDay"]').forEach(x=>x.checked=sch.days.includes(Number(x.value)));
   document.getElementById('routineDeleteBtn').classList.toggle('hide',!r);toggleRoutineDays();toggleRoutineTypeFields();document.getElementById('routineModal').classList.remove('hide');
 }
@@ -7583,6 +7630,7 @@ function toggleRoutineTypeFields(){
   const type=document.getElementById('rType').value;
   document.getElementById('rTimeOptions').classList.toggle('hide',type!=='time');
   document.getElementById('rFreeOptions').classList.toggle('hide',type!=='free');
+  document.getElementById('rCountOptions')?.classList.toggle('hide',type!=='count');
 }
 function saveRoutineFromModal(){
   const name=document.getElementById('rName').value.trim();if(!name){appAlert('루틴 이름을 입력해 주세요.');return;}
@@ -7602,7 +7650,7 @@ function saveRoutineFromModal(){
     if(legacyKey==='1,2,3,4,5'){recurrence='weekday';legacyDays=[];}
     else if(legacyKey==='0,6'){recurrence='weekend';legacyDays=[];}
   }
-  const target=type==='time'?num('rTarget'):null,unit=type==='time'?'분':'';
+  const target=type==='time'?num('rTarget'):type==='count'?num('rCountTarget'):null,unit=type==='time'?'분':type==='count'?(document.getElementById('rCountUnit').value.trim()||'개'):'';
   const list=loadLifeRoutines();const idx=list.findIndex(x=>x.id===id);const oldName=idx>=0?(list[idx].name||''):'';
   const previous=idx>=0?list[idx]:null;
   const r={id,name,icon:document.getElementById('rIcon').value.trim(),type,block,recurrence,days:legacyDays,schedule,target,unit,defaultNote:type==='free'?document.getElementById('rDefaultNote').value.trim():'',isMeal:type==='free'&&document.getElementById('rIsMeal').checked,calendarLabel:type==='free'?document.getElementById('rCalendarLabel').value.trim():'',recordFrom:previous?.recordFrom||(previous?'':lifeLogKey()),maxDuration:null,enabled:document.getElementById('rEnabled').checked,order:(num('rOrder')??(Math.max(0,...loadLifeRoutines().filter(x=>x.block===block).map(x=>Number(x.order)||0))+10))};
@@ -8061,15 +8109,13 @@ function rrMonthFactsHTML(){
   const days=Array.from({length:n},(_,i)=>new Date(y,m,i+1));
   const st=rrStats(days);if(!st.R.length)return '';
   const top=(map)=>{let best=null;map.forEach((v,k)=>{if(!best||v>best[1])best=[k,v];});return best;};
-  const doneMap=new Map(),freeMap=new Map();
+  const freeMap=new Map();
   st.R.forEach(x=>{
-    (x.routines||[]).forEach(r=>{if(r[2]&&r[1]!=='time'&&r[0])doneMap.set(r[0],(doneMap.get(r[0])||0)+1);});
     (x.free||[]).forEach(r=>{if(r[0])freeMap.set(r[0],(freeMap.get(r[0])||0)+1);});
   });
   const pre=`${y}-${String(m+1).padStart(2,'0')}-`;
   const finished=loadBooks().filter(b=>b.status==='완독'&&String(b.finishDate||'').startsWith(pre)).length;
   const rows=[['기록한 날',`<b>${st.R.length}</b>일`]];
-  const t1=top(doneMap);if(t1)rows.push(['가장 자주 한 루틴',`<b>${escapeLife(t1[0])}</b> ${t1[1]}일`]);
   const t2=top(freeMap);if(t2)rows.push(['가장 자주 한 취미',`<b>${escapeLife(t2[0])}</b> ${t2[1]}일`]);
   if(st.read>0)rows.push(['독서',`<b>${formatDurationMin(Math.round(st.read))}</b>`]);
   if(finished>0)rows.push(['완독',`<b>${finished}</b>권`]);
@@ -8139,8 +8185,7 @@ rrLine=function(points,tips,labels){
   const X0=38,X1=292,X=i=>points.length<=1?(X0+X1)/2:X0+i/(points.length-1)*(X1-X0),Y=v=>96-(v-sc.t0)/span*78;
   const fmt=v=>String(Math.round(v*100)/100);
   const grid=sc.ticks.map(t=>`<line class="rr-grid" x1="${X0-6}" x2="${X1+6}" y1="${Y(t)}" y2="${Y(t)}"/><text class="rr-ytick" x="${X0-10}" y="${Y(t)+3}" style="text-anchor:end">${fmt(t)}</text>`).join('');
-  const segments=[];let run=[];
-  vals.forEach((v,i)=>{if(v===null){if(run.length){segments.push(run);run=[]}}else run.push([i,v])});if(run.length)segments.push(run);
+  const segments=[vals.map((v,i)=>v===null?null:[i,v]).filter(Boolean)];
   return `<svg class="rr-chart" viewBox="0 0 300 118" role="img">${grid}${segments.map(seg=>`<polyline points="${seg.map(([i,v])=>`${X(i)},${Y(v)}`).join(' ')}" fill="none" stroke="#f28fa2" stroke-width="1.5"/>`).join('')}${vals.map((v,i)=>v===null?'':`<g class="rr-hit" data-tip="${escapeLife(tips[i]||'')}" onclick="rrSelectMark(this)"><circle cx="${X(i)}" cy="${Y(v)}" r="10" fill="transparent"/><circle class="rr-point" cx="${X(i)}" cy="${Y(v)}" r="3"/></g>`).join('')}${labels.map((x,i)=>x?`<text x="${X(i)}" y="112">${escapeLife(x)}</text>`:'').join('')}</svg>`;
 };
 
@@ -8394,6 +8439,40 @@ function endDcDrag(ev){
   new MutationObserver(fit).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class']});
   document.addEventListener('focusin',()=>{setTimeout(fit,60);setTimeout(fit,300);});
   document.addEventListener('focusout',()=>setTimeout(fit,300));
+})();
+
+/* ===== 캘린더: 좌우로 밀어서 이동 (달력 = 월, 하단 기록 = 하루) ===== */
+(function(){
+  let st=null;
+  const view=()=>document.getElementById('viewCalendar');
+  function shiftDay(delta){
+    const d=parseDateKeyLocal(calendarSelectedKey);d.setDate(d.getDate()+delta);
+    calendarSelectedKey=getLocalDateKey(d);
+    calendarCursor=new Date(d.getFullYear(),d.getMonth(),1);
+    renderLifeCalendar();
+  }
+  function animate(el,dir){
+    if(!el)return;const c=dir>0?'calSlideNext':'calSlidePrev';
+    el.classList.remove('calSlideNext','calSlidePrev');void el.offsetWidth;el.classList.add(c);
+    setTimeout(()=>el.classList.remove(c),260);
+  }
+  document.addEventListener('touchstart',e=>{
+    const v=view();if(!v||v.classList.contains('hide')||e.touches.length!==1){st=null;return;}
+    const t=e.target;if(!t.closest)return;
+    if(t.closest('input,textarea,select,.routineActionOverlay,.lifeModal'))return;
+    const zone=t.closest('.calWrap')?'month':t.closest('#calendarDetail')?'day':null;
+    st=zone?{zone,x:e.touches[0].clientX,y:e.touches[0].clientY,t:Date.now()}:null;
+  },{passive:true});
+  document.addEventListener('touchend',e=>{
+    if(!st)return;const s0=st;st=null;
+    const t=e.changedTouches[0],dx=t.clientX-s0.x,dy=t.clientY-s0.y;
+    if(Date.now()-s0.t>700||Math.abs(dx)<60||Math.abs(dx)<Math.abs(dy)*1.6)return;
+    const dir=dx<0?1:-1;
+    if(s0.zone==='month')moveCalendarMonth(dir);else shiftDay(dir);
+    animate(document.getElementById(s0.zone==='month'?'calendarGrid':'calendarDetail'),dir);
+  },{passive:true});
+  document.addEventListener('touchcancel',()=>{st=null;},{passive:true});
+  window.calendarShiftDay=shiftDay;
 })();
 </script>
 
