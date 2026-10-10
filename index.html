@@ -1828,6 +1828,33 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
 .calDayBar.show{display:flex}
 .calDayGo{color:var(--rc-gd);font-size:var(--fs-1);letter-spacing:0;cursor:pointer;padding:2px 0 2px 12px}
 #viewCalendar{padding-top:30px}
+
+/* 책 검색 결과 상자 넘침 방지 / 책 형태 버튼 한 줄 */
+.bookSearchResults{grid-template-columns:minmax(0,1fr)}
+.bookSearchBox{box-sizing:border-box;max-width:100%;overflow:hidden}
+.bookSearchResult{min-width:0;max-width:100%;box-sizing:border-box;overflow:hidden}
+.bookSearchResultText{flex:1 1 0;min-width:0}
+.bookSearchResultTitle,.bookSearchResultMeta{display:block;min-width:0}
+.bookSearchResultTitle{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bookFormatMulti{flex-wrap:nowrap!important;gap:5px}
+.bookFormatMulti .bookFormatChoice{flex:1 1 0;min-width:0;padding-left:2px!important;padding-right:2px!important;text-align:center;white-space:nowrap}
+
+.bookFormGrid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.bookFormGrid>*{min-width:0}
+.bookFormGrid input,.bookFormGrid select,.bookFormGrid textarea{min-width:0;max-width:100%;box-sizing:border-box}
+
+/* 도서 정보 찾기 옆 한 줄 안내 */
+.bookSearchHint1{margin:0!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1 1 0}
+/* 독서상태 + 형태 같은 줄 */
+.bookFormGrid{grid-template-columns:repeat(6,minmax(0,1fr))}
+.bookFormGrid>*{grid-column:span 3}
+.bookFormGrid>.bookWide{grid-column:1/-1}
+.bookFormGrid>.bookField:has(#bookStatus){grid-column:span 2}
+.bookFormGrid>.bookField:has(#bookFormatChoices){grid-column:span 4}
+.bookFormGrid .bookFormatMulti .bookFormatChoice{font-size:var(--fs-1)!important;padding:7px 0!important}
+.bookFormGrid .bookFormatMulti{min-height:40px;align-items:stretch}
+.bookFormGrid .bookFormatMulti .bookFormatChoice{padding:0!important;line-height:1.2}
+.bookFormGrid #bookStatus{padding-left:8px;padding-right:2px}
 </style>
 </head>
 
@@ -2460,7 +2487,7 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
         <div class="bookSearchBox" style="margin:2px 0 0">
           <div class="bookSearchRow">
             <button type="button" class="lifeMiniBtn bookSearchBtn" onclick="searchBookMetadata()">도서 정보 찾기</button>
-            <span class="bookSearchHint" style="margin:0">제목·저자·출판사 중 입력된 정보를 바탕으로 표지, ISBN, 장르를 찾아요.</span>
+            <span class="bookSearchHint bookSearchHint1">표지·ISBN·장르를 찾아요</span>
           </div>
           <input id="bookSearchQuery" type="hidden">
           <div id="bookSearchStatus" class="bookSearchStatus"></div>
@@ -5374,13 +5401,55 @@ function cleanIsbn(value){return String(value||'').replace(/[^0-9Xx]/g,'');}
 function normalizeSearchText(value){
   return String(value||'').toLowerCase().replace(/[\s\-_:;,.·'"“”‘’()[\]{}]/g,'');
 }
+const KDC_FORM={'1':'시','2':'희곡','3':'소설','4':'수필','5':'연설·웅변','6':'일기·서간·기행','7':'풍자·유머','8':'르포·기록문학'};
+const KDC_CLASS={
+  '01':'도서학·서지학','02':'문헌정보학','03':'백과사전','04':'강연집·수필집','05':'연속간행물','06':'학회·단체','07':'신문·저널리즘','08':'전집·총서','09':'향토자료',
+  '11':'형이상학','12':'인식론·인간학','13':'철학의 체계','14':'경학','15':'아시아철학·사상','16':'서양철학','17':'논리학','18':'심리학','19':'윤리학·도덕철학',
+  '21':'비교종교','22':'불교','23':'기독교','24':'도교','25':'천도교','26':'신도','27':'힌두교','28':'이슬람교','29':'기타 종교',
+  '31':'통계학','32':'경제학','33':'사회학·사회문제','34':'정치학','35':'행정학','36':'법학','37':'교육학','38':'풍속·민속학','39':'국방·군사학',
+  '41':'수학','42':'물리학','43':'화학','44':'천문학','45':'지학','46':'광물학','47':'생명과학','48':'식물학','49':'동물학',
+  '51':'의학','52':'농업·농학','53':'공학·공업','54':'건축공학','55':'기계공학','56':'전기·전자공학','57':'화학공학','58':'제조업','59':'가정학·가정생활',
+  '61':'건축술','62':'조각','63':'공예·장식미술','64':'서예','65':'회화·도화','66':'사진예술','67':'음악','68':'공연예술·매체예술','69':'오락·스포츠',
+  '71':'한국어','72':'중국어','73':'일본어','74':'영어','75':'독일어','76':'프랑스어','77':'스페인어·포르투갈어','78':'이탈리아어','79':'기타 외국어',
+  '81':'한국문학','82':'중국문학','83':'일본문학','84':'영미문학','85':'독일문학','86':'프랑스문학','87':'스페인·포르투갈문학','88':'이탈리아문학','89':'기타 문학',
+  '91':'아시아사','92':'유럽사','93':'아프리카사','94':'북아메리카사','95':'남아메리카사','96':'오세아니아사','97':'양극지방사','98':'지리','99':'전기'
+};
+const BOOK_GENRE_EN={fiction:'소설',novel:'소설',novels:'소설',poetry:'시',poems:'시',drama:'희곡',plays:'희곡',essays:'수필',essay:'수필',biography:'전기','biography & autobiography':'전기',history:'역사',philosophy:'철학',religion:'종교',science:'과학',psychology:'심리학',art:'예술',music:'음악',cooking:'요리'};
+const BOOK_GENRE_TOPLEVEL=new Set(['총류','철학','종교','사회과학','자연과학','기술과학','예술','언어','문학','역사','비문학','문학/비문학','문학·비문학','비소설','일반']);
 function kdcGenreName(value){
   const raw=String(value||'').trim();
   if(!raw)return '';
-  const digit=(raw.match(/\d/)||[])[0];
-  if(digit&&KDC_GENRE_NAMES[digit])return KDC_GENRE_NAMES[digit];
-  if(/^[가-힣A-Za-z][가-힣A-Za-z\s·/-]*$/.test(raw)&&raw.length<=20)return raw;
+  const digits=(raw.match(/\d+/)||[''])[0];
+  if(digits){
+    // 문학(8xx): 세 번째 자리 = 문학 형식(소설, 희곡 …)
+    if(digits[0]==='8'&&digits.length>=3&&digits[1]!=='0'&&KDC_FORM[digits[2]])return KDC_FORM[digits[2]];
+    if(digits.length>=2&&KDC_CLASS[digits.slice(0,2)])return KDC_CLASS[digits.slice(0,2)];
+    return '';
+  }
+  const k=raw.toLowerCase();
+  if(BOOK_GENRE_EN[k])return BOOK_GENRE_EN[k];
+  if(BOOK_GENRE_TOPLEVEL.has(raw))return '';
+  if(/^[가-힣][가-힣\s·/-]*$/.test(raw)&&raw.length<=20)return raw;
   return '';
+}
+/* 저자 표기: "저자 : 이름 ; 이름 옮김" */
+function formatBookAuthor(value){
+  let raw=String(value||'').trim();if(!raw)return '';
+  if(/^저자\s*:/.test(raw))return raw;
+  const segs=raw.split(/\s*[;；\/|]\s*/).map(x=>x.trim()).filter(Boolean);
+  const authors=[],trans=[],others=[];
+  const roleRe=/(지은이|지음|저자|글|옮긴이|옮김|역자|번역|역|그림|그린이|일러스트|삽화|엮은이|엮음|편저|편집|감수|편)/;
+  const strip=t=>t.replace(/(지은이|저자|옮긴이|역자|번역자?|그린이|엮은이|감수자?)\s*[:：]?/g,'').replace(/\s*(지음|옮김|그림|엮음|편저|편집|감수|역|글|편)\s*$/,'').trim();
+  segs.forEach(seg=>{
+    const role=/옮긴이|옮김|역자|번역|(^|\s)역$/.test(seg)?'t':/그림|그린이|일러스트|삽화|엮은이|엮음|편저|편집|감수|(^|\s)편$/.test(seg)?'o':'a';
+    const name=strip(seg);if(!name)return;
+    (role==='t'?trans:role==='o'?others:authors).push(role==='o'?`${name} ${(seg.match(/그림|그린이|일러스트|삽화/)?'그림':seg.match(/감수/)?'감수':'엮음')}`:name);
+  });
+  if(!authors.length&&!trans.length&&!others.length)return raw;
+  let out=authors.length?`저자 : ${authors.join(', ')}`:'';
+  if(trans.length)out+=`${out?' ; ':'저자 : '}${trans.join(', ')} 옮김`;
+  if(others.length)out+=`${out?' ; ':''}${others.join(', ')}`;
+  return out;
 }
 function parseBookSearchQuery(query){
   const raw=String(query||'').trim();
@@ -5449,7 +5518,7 @@ function mergeBookSearchCandidates(groups,parsed){
     const isbn=cleanIsbn(items.find(x=>cleanIsbn(x.isbn))?.isbn||'');
     const sources=[...new Set(items.map(x=>sourceBase(x.source)).filter(Boolean))];
     return {
-      title:pick('title'),author:pick('author'),publisher:pick('publisher'),
+      title:pick('title'),author:formatBookAuthor(pick('author')),publisher:pick('publisher'),
       publishDate:pick('publishDate'),genre:kdcGenreName(pick('genre')),
       detail:'',coverUrl:pick('coverUrl'),isbn,description:pick('description'),
       source:sources.join(' + ')
