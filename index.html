@@ -1786,6 +1786,34 @@ body.scrolled #viewAll_v2 .recordHero #rrNav{margin-top:4px!important}
 body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-height:28px!important;font-size:var(--fs-1)!important}
 .noStick{position:static!important}
 .noStick::before,.noStick::after{display:none!important}
+
+/* 수면 시간: 취침(오른쪽 정렬) – 기상(왼쪽 정렬), 가운데 대시 줄맞춤 */
+#viewAll_v2 .rr-sleep-row{grid-template-columns:22px 1fr 70px!important}
+#viewAll_v2 .rr-sleep-row ~ .rr-axis{margin-right:76px}
+#viewAll_v2 .rr-sleep-row .rr-range{display:grid;grid-template-columns:1fr auto 1fr;gap:2px;text-align:left}
+#viewAll_v2 .rr-sleep-row .rr-range i{font-style:normal;font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+#viewAll_v2 .rr-sleep-row .rr-range i:first-child{text-align:right}
+#viewAll_v2 .rr-sleep-row .rr-range i:last-child{text-align:left}
+/* 캘린더: 달력이 화면 밖으로 나가면 선택한 날짜를 작게 표시 */
+.calDayBar{position:fixed;top:var(--topH);left:50%;transform:translateX(-50%);width:min(100%,560px);z-index:48;box-sizing:border-box;padding:5px var(--sp-4) 6px;background:var(--rc-bg);border-bottom:1px solid var(--rc-line);font-size:var(--fs-1);color:var(--rc-mu);font-variant-numeric:tabular-nums;letter-spacing:.04em;display:none;cursor:pointer}
+.calDayBar.show{display:block}
+.calDayBar b{color:var(--rc-tx2);font-weight:var(--fw-3);margin-right:6px}
+
+/* ===== 캘린더 NOTE 본문 = 식사 본문 크기 ===== */
+#calendarDetail .calDailyNoteBtn{font-size:var(--fs-2)!important;line-height:1.45;color:var(--rc-tx)}
+/* ===== 데일리케어/프리타임 이름 크기 정리 ===== */
+.dailyCareName,.dailyCareItemCard .dailyCareName{font-size:.75rem!important}
+.freeChip .freeName{font-size:.75rem!important}
+.freeChip .freeEmoji{font-size:1rem!important}
+/* 큰 글자에서 하단 메뉴/날짜칸 보호 */
+.bottomNav button{font-size:min(var(--fs-1),11px)!important;letter-spacing:-.02em}
+#datePicker{width:auto!important;min-width:140px;max-width:100%}
+/* ===== 북스/레코드 상단 탭 글씨 ===== */
+.bookPeriodTab{font-size:.9rem!important}
+
+#calendarDetail .calDailyNoteBtn.hasNote{color:var(--rc-tx)!important}
+
+.lifeSheet .lifeActions{position:sticky;bottom:calc(-1 * (22px + env(safe-area-inset-bottom)));background:var(--rc-card);padding:10px 0 calc(12px + env(safe-area-inset-bottom));margin-bottom:calc(-1 * (22px + env(safe-area-inset-bottom)));z-index:3}
 </style>
 </head>
 
@@ -1797,6 +1825,7 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
 </div>
 <div id="lifeBar" aria-hidden="true"><b id="lifeBarTitle">Today</b><span id="lifeBarDate"></span></div>
 <div id="today" class="hide"></div>
+<div id="calDayBar" class="calDayBar" role="button" onclick="scrollTo({top:0,behavior:'smooth'})"></div>
   
 <!-- TODAY -->
 <div id="viewToday">
@@ -3651,7 +3680,7 @@ const NL_API_KEY_STORAGE='nationalLibraryApiKey_v1';
 const DATA4LIB_API_KEY_STORAGE='data4LibraryApiKey_v1';
 const FONT_SIZE_KEY='fontSizeSetting_v1';
 const BACKUP_EXCLUDED_KEYS=new Set([NL_API_KEY_STORAGE,DATA4LIB_API_KEY_STORAGE,'lastFileBackup_v1','backupNudgeSince_v1','backupNudgeSnooze_v1']);
-const FONT_SIZE_ROOT_PX={small:14,normal:16,large:19};
+const FONT_SIZE_ROOT_PX={small:16,normal:19,large:22};
 
 function getNationalLibraryApiKey(){
   return String(localStorage.getItem(NL_API_KEY_STORAGE)||'').trim();
@@ -7129,7 +7158,7 @@ function renderCalendarDetail(k){
   const measurements=calendarDayMeasurementSummary(k);
   root.innerHTML=`${renderCalendarDayOverview(k)}
     ${mealSummary}
-    <div class="calInfoCard"><h4 class="rc-section-title">NOTE</h4><button type="button" class="calDetailItem calDailyNoteBtn" onclick="editCalendarDailyNote('${k}')">${note?escapeLife(note):'기록 없음'}</button></div>
+    <div class="calInfoCard"><h4 class="rc-section-title">NOTE</h4><button type="button" class="calDetailItem calDailyNoteBtn${note?' hasNote':''}" onclick="editCalendarDailyNote('${k}')">${note?escapeLife(note):'기록 없음'}</button></div>
     ${measurements.length?`<div class="calInfoCard"><h4 class="rc-section-title">HEALTH</h4><div class="calDetailItem">${measurements.map(escapeLife).join(' · ')}</div></div>`:''}`;
 }
 let routineManagerMode='active';
@@ -8697,6 +8726,138 @@ function bookRegKey(b,idx){
     }
     localStorage.setItem('bookOrderMigrated_v1','done');
   }catch(e){}
+})();
+
+/* range 텍스트를 취침/기상 두 칸으로 분리 */
+(function(){
+  const b=rrDurationWeekCard;
+  rrDurationWeekCard=function(){
+    return b.apply(this,arguments).replace(/<small class="rr-range">([^<]*)<\/small>/g,(m,t)=>{
+      const p=t.split('–');
+      return p.length===2&&p[0]&&p[1]?`<small class="rr-range"><i>${p[0]}</i><i>–</i><i>${p[1]}</i></small>`:m;
+    });
+  };
+})();
+/* ===== 캘린더 선택 날짜 미니 바 ===== */
+(function(){
+  const EN={'일':'SUN','월':'MON','화':'TUE','수':'WED','목':'THU','금':'FRI','토':'SAT'};
+  const bar=()=>document.getElementById('calDayBar');
+  function label(){
+    try{const d=parseDateKeyLocal(calendarSelectedKey);const w=['일','월','화','수','목','금','토'][d.getDay()];
+      return `<b>${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${EN[w]}</b>${d.getFullYear()}`;}catch(e){return '';}
+  }
+  function upd(){
+    const el=bar(),v=document.getElementById('viewCalendar'),w=document.querySelector('#viewCalendar .calWrap');if(!el)return;
+    if(!v||v.classList.contains('hide')||!w){el.classList.remove('show');return;}
+    const topH=document.querySelector('.lifeTop')?.offsetHeight||60;
+    const gone=window.scrollY>12;
+    if(gone){el.innerHTML=label();}
+    el.classList.toggle('show',gone);
+  }
+  window.addEventListener('scroll',upd,{passive:true});window.addEventListener('resize',upd);
+  const r=renderLifeCalendar;renderLifeCalendar=function(){const x=r.apply(this,arguments);upd();return x;};
+  const n=lifeNavigate;lifeNavigate=function(){const x=n.apply(this,arguments);setTimeout(upd,40);return x;};
+})();
+
+/* 글자 크기 단계 개편: 예전 기본→작게, 예전 크게→기본, 새 단계→크게 */
+(function(){
+  try{
+    if(localStorage.getItem('fontScaleMigrated_v2')==='done')return;
+    const v=localStorage.getItem(FONT_SIZE_KEY);
+    const map={normal:'small',large:'normal',small:'small'};
+    localStorage.setItem(FONT_SIZE_KEY,v&&map[v]?map[v]:'small');
+    localStorage.setItem('fontScaleMigrated_v2','done');
+  }catch(e){}
+  try{applyFontSizeSetting();}catch(e){}
+})();
+
+/* ===== 시간형 데일리케어: 카드에는 시간 길이만, 세부 시각은 터치하면 ===== */
+function showTimeBreakdown(id,ev){
+  if(ev&&ev.target&&ev.target.closest&&ev.target.closest('button'))return;
+  const key=activeDateKey;
+  if(id==='sleep'){
+    const sess=loadSleepSession();
+    if(sess&&sess.startAt){void appAlert(`수면 진행 중\n\n취침  ${fmtHM(new Date(sess.startAt))}`);return;}
+    const x=calendarDaySleepRecord(key);
+    if(Number.isFinite(x.bed)&&Number.isFinite(x.dur)){
+      void appAlert(`수면 ${formatDurationMin(x.dur)}\n\n취침  ${calendarDayHM(x.bed)}\n기상  ${calendarDayHM(x.bed+x.dur)}`);
+    }else void appAlert('수면 기록이 아직 없어요.');
+    return;
+  }
+  const d=normalizeDailyCareDefinition(dailyCareDef(id)||{id,name:id});
+  const sess=getDailyCareDurationSession(id);
+  if(sess&&sess.startAt){
+    const lines=[];if(d.durationTrackStart)lines.push(`${d.durationStartLabel||'시작'}  ${fmtHM(new Date(sess.startAt))}`);
+    void appAlert(`${d.name} 진행 중${lines.length?'\n\n'+lines.join('\n'):''}`);return;
+  }
+  const raw=readDailyCareMetricValue(key,id);const val=raw&&typeof raw==='object'?raw:{};
+  const lines=[];
+  if(d.durationTrackStart&&val.start)lines.push(`${d.durationStartLabel||'시작'}  ${val.start}`);
+  if(d.durationTrackEnd&&val.end)lines.push(`${d.durationEndLabel||'종료'}  ${val.end}`);
+  if(d.durationTrackMinutes&&Number.isFinite(Number(val.minutes)))lines.unshift(`${formatDailyCareDuration(Number(val.minutes))}`);
+  void appAlert(lines.length?`${d.name}\n\n${lines.join('\n')}`:`${d.name} 기록이 아직 없어요.`);
+}
+(function(){
+  const sleepCard=()=>document.querySelector('.dailyCareItemCard[data-daily-care-id="sleep"]');
+  function bindSleep(){const c=sleepCard();if(c&&!c.dataset.tb){c.dataset.tb='1';c.setAttribute('onclick','showTimeBreakdown("sleep",event)');}}
+  const rs=renderSleep;
+  renderSleep=function(){
+    const r=rs.apply(this,arguments);
+    try{
+      const el=document.getElementById('sleepText');
+      if(el){
+        const t=el.textContent||'';
+        if(/진행 중/.test(t))el.textContent=t.replace(/\s*·.*$/,'');
+        else if(/–/.test(t))el.textContent=t.split(' · ')[0];
+      }
+    }catch(e){}
+    bindSleep();return r;
+  };
+  const rc=renderCustomDailyCare;
+  renderCustomDailyCare=function(){
+    const r=rc.apply(this,arguments);
+    try{
+      loadDailyCareDefinitions().map(normalizeDailyCareDefinition).filter(d=>!d.builtin&&!d.oneOff&&d.type==='duration').forEach(d=>{
+        const card=document.querySelector(`#customDailyCareGrid .dailyCareItemCard[data-daily-care-id="${d.id}"]`);if(!card)return;
+        card.setAttribute('onclick',`showTimeBreakdown('${d.id}',event)`);
+        const meta=card.querySelector('.dailyCareMeta');if(!meta)return;
+        const sess=getDailyCareDurationSession(d.id);
+        if(sess&&sess.startAt){
+          if(d.durationTrackMinutes){const m=Math.max(0,Math.floor((Date.now()-new Date(sess.startAt).getTime())/60000));meta.textContent=`${formatDailyCareDuration(m)} 진행 중`;}
+          else meta.textContent='진행 중';
+          return;
+        }
+        const raw=readDailyCareMetricValue(activeDateKey,d.id),val=raw&&typeof raw==='object'?raw:null;
+        if(val&&d.durationTrackMinutes&&Number.isFinite(Number(val.minutes)))meta.textContent=formatDailyCareDuration(Number(val.minutes));
+      });
+    }catch(e){}
+    return r;
+  };
+  try{renderSleep();renderCustomDailyCare();}catch(e){}
+})();
+
+/* ===== 모든 입력 시트가 키보드 위로 올라오게 (lifeModal) ===== */
+(function(){
+  const vv=window.visualViewport;
+  function fit(){
+    document.querySelectorAll('.lifeModal').forEach(o=>{
+      const sheet=o.querySelector('.lifeSheet');
+      if(o.classList.contains('hide')){o.style.top='';o.style.height='';o.style.bottom='';if(sheet)sheet.style.maxHeight='';return;}
+      if(vv){
+        o.style.top=vv.offsetTop+'px';o.style.height=vv.height+'px';o.style.bottom='auto';
+        if(sheet)sheet.style.maxHeight=Math.max(200,vv.height-12)+'px';
+      }
+    });
+  }
+  if(vv){vv.addEventListener('resize',fit);vv.addEventListener('scroll',fit);}
+  new MutationObserver(fit).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class']});
+  function reveal(e){
+    const t=e.target;if(!t||!t.closest||!t.closest('.lifeSheet'))return;
+    if(!/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))return;
+    [80,320].forEach(ms=>setTimeout(()=>{fit();try{t.scrollIntoView({block:'center',behavior:'smooth'});}catch(_){}},ms));
+  }
+  document.addEventListener('focusin',reveal);
+  document.addEventListener('focusout',()=>setTimeout(fit,300));
 })();
 </script>
 
