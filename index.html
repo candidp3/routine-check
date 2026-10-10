@@ -1814,6 +1814,11 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
 #calendarDetail .calDailyNoteBtn.hasNote{color:var(--rc-tx)!important}
 
 .lifeSheet .lifeActions{position:sticky;bottom:calc(-1 * (22px + env(safe-area-inset-bottom)));background:var(--rc-card);padding:10px 0 calc(12px + env(safe-area-inset-bottom));margin-bottom:calc(-1 * (22px + env(safe-area-inset-bottom)));z-index:3}
+
+.routineInputActions.hasDelete{display:grid!important;grid-template-columns:auto 1fr 1fr!important}
+.routineInputActions .routineInputDelete{flex:0 0 auto;background:transparent!important;color:var(--rc-pd)!important}
+.lifeActions .dailyCarePopupDelete{flex:0 0 auto;background:transparent!important;color:var(--rc-pd)!important}
+.lifeActions .dailyCarePopupDelete.hide{display:none}
 </style>
 </head>
 
@@ -8859,6 +8864,61 @@ function showTimeBreakdown(id,ev){
   document.addEventListener('focusin',reveal);
   document.addEventListener('focusout',()=>setTimeout(fit,300));
 })();
+
+/* ===== 단발성 기록: 이미 입력한 기록 삭제 ===== */
+(function(){
+  const o=openRoutineInputSheet;
+  openRoutineInputSheet=function(ctx){
+    const r=o.apply(this,arguments);
+    try{
+      const box=document.querySelector('#routineInputSheet .routineInputActions');
+      box?.querySelector('.routineInputDelete')?.remove();box?.classList.remove('hasDelete');
+      if(box&&ctx&&ctx.mode==='snack'&&ctx.index!==null&&ctx.index!==undefined){
+        const b=document.createElement('button');b.type='button';b.className='routineInputDelete';b.textContent='삭제';
+        b.onclick=deleteSnackRecordFromSheet;box.insertBefore(b,box.firstChild);box.classList.add('hasDelete');
+      }
+    }catch(e){}
+    return r;
+  };
+})();
+async function deleteSnackRecordFromSheet(){
+  const ctx=routineInputContext;if(!ctx||ctx.mode!=='snack'||ctx.index===null||ctx.index===undefined)return;
+  if(!await appConfirm('이 기록을 삭제할까요?'))return;
+  const k=ctx.dateKey||lifeLogKey(),snacks=loadSnackRecords(),rows=Array.isArray(snacks[k])?snacks[k]:[];
+  rows.splice(ctx.index,1);
+  if(rows.length)snacks[k]=rows;else delete snacks[k];
+  saveSnackRecords(snacks);
+  const calendarEdit=!!ctx.calendarEdit;
+  closeRoutineInputSheet();
+  try{update();}catch(e){}
+  renderLifeCalendar();try{renderRecordDashboard();}catch(e){}
+  if(calendarEdit)renderCalendarDetail(k);
+  appToast('삭제했어요');
+}
+/* 숫자형(건강 숫자형 단발성 포함) 팝업에도 삭제 */
+(function(){
+  const box=document.querySelector('#dailyCareNumericModal .lifeActions');
+  if(box&&!box.querySelector('.dailyCarePopupDelete')){
+    const b=document.createElement('button');b.type='button';b.id='dailyCareNumericDeleteBtn';b.className='dailyCarePopupDelete hide';b.textContent='삭제';
+    b.onclick=deleteCustomDailyCareNumericRecord;box.insertBefore(b,box.firstChild);
+  }
+  const o=openCustomDailyCareNumericPopup;
+  openCustomDailyCareNumericPopup=function(id){
+    const r=o.apply(this,arguments);
+    const has=dailyCareNumericValue(activeDateKey,id)!==null;
+    document.getElementById('dailyCareNumericDeleteBtn')?.classList.toggle('hide',!has);
+    return r;
+  };
+})();
+async function deleteCustomDailyCareNumericRecord(){
+  const id=dailyCareNumericPopupId;if(!id)return;
+  if(!await appConfirm('이 날짜의 기록을 삭제할까요?'))return;
+  removeDailyCareMetricValue(activeDateKey,id);
+  closeCustomDailyCareNumericPopup();
+  renderCustomDailyCare();try{renderDailyCareDashboard();}catch(e){}
+  try{renderLifeCalendar();renderRecordDashboard();}catch(e){}
+  appToast('삭제했어요');
+}
 </script>
 
 
