@@ -1819,6 +1819,15 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
 .routineInputActions .routineInputDelete{flex:0 0 auto;background:transparent!important;color:var(--rc-pd)!important}
 .lifeActions .dailyCarePopupDelete{flex:0 0 auto;background:transparent!important;color:var(--rc-pd)!important}
 .lifeActions .dailyCarePopupDelete.hide{display:none}
+
+.calGoToday{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;box-sizing:border-box;border:1px solid var(--rc-line2);background:var(--rc-card);border-radius:12px;padding:10px 14px;font:inherit;font-size:var(--fs-2);color:var(--rc-tx2);margin:10px 0 0;cursor:pointer;text-align:left}
+.calGoToday b{font-weight:var(--fw-3);color:var(--rc-tx)}
+.calGoToday span:last-child{color:var(--rc-mu)}
+
+.calDayBar{display:none;justify-content:space-between;align-items:center;cursor:default}
+.calDayBar.show{display:flex}
+.calDayGo{color:var(--rc-gd);font-size:var(--fs-1);letter-spacing:0;cursor:pointer;padding:2px 0 2px 12px}
+#viewCalendar{padding-top:30px}
 </style>
 </head>
 
@@ -1830,7 +1839,7 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
 </div>
 <div id="lifeBar" aria-hidden="true"><b id="lifeBarTitle">Today</b><span id="lifeBarDate"></span></div>
 <div id="today" class="hide"></div>
-<div id="calDayBar" class="calDayBar" role="button" onclick="scrollTo({top:0,behavior:'smooth'})"></div>
+<div id="calDayBar" class="calDayBar"></div>
   
 <!-- TODAY -->
 <div id="viewToday">
@@ -8749,15 +8758,15 @@ function bookRegKey(b,idx){
   const bar=()=>document.getElementById('calDayBar');
   function label(){
     try{const d=parseDateKeyLocal(calendarSelectedKey);const w=['일','월','화','수','목','금','토'][d.getDay()];
-      return `<b>${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${EN[w]}</b>${d.getFullYear()}`;}catch(e){return '';}
+      const link=calendarSelectedKey<=todayKey?`<span class="calDayGo" role="button" onclick="openTodayForDate('${calendarSelectedKey}')">기록하기 ›</span>`:'';
+      return `<span><b>${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${EN[w]}</b>${d.getFullYear()}</span>${link}`;}catch(e){return '';}
   }
   function upd(){
     const el=bar(),v=document.getElementById('viewCalendar'),w=document.querySelector('#viewCalendar .calWrap');if(!el)return;
     if(!v||v.classList.contains('hide')||!w){el.classList.remove('show');return;}
     const topH=document.querySelector('.lifeTop')?.offsetHeight||60;
-    const gone=window.scrollY>12;
-    if(gone){el.innerHTML=label();}
-    el.classList.toggle('show',gone);
+    el.innerHTML=label();
+    el.classList.add('show');
   }
   window.addEventListener('scroll',upd,{passive:true});window.addEventListener('resize',upd);
   const r=renderLifeCalendar;renderLifeCalendar=function(){const x=r.apply(this,arguments);upd();return x;};
@@ -8919,6 +8928,16 @@ async function deleteCustomDailyCareNumericRecord(){
   try{renderLifeCalendar();renderRecordDashboard();}catch(e){}
   appToast('삭제했어요');
 }
+
+/* ===== 캘린더 → 선택한 날짜의 투데이로 이동 ===== */
+function openTodayForDate(k){
+  if(!k)return;
+  if(k>todayKey){appAlert('미래 날짜는 기록할 수 없어요.');return;}
+  if(k===todayKey)backToToday();
+  else{const dp=document.getElementById('datePicker');if(dp){dp.value=k;loadDate();}}
+  lifeNavigate('today');
+}
+
 </script>
 
 
