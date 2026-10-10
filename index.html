@@ -1855,6 +1855,15 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
 .bookFormGrid .bookFormatMulti{min-height:40px;align-items:stretch}
 .bookFormGrid .bookFormatMulti .bookFormatChoice{padding:0!important;line-height:1.2}
 .bookFormGrid #bookStatus{padding-left:8px;padding-right:2px}
+
+.bookHeadBtns{display:flex;gap:6px;align-items:flex-start;flex:0 0 auto}
+.bookHeadBtns .bookHeadSearchBtn{background:var(--rc-soft);border:0;color:var(--rc-tx2)}
+.librarySearchList{display:flex;flex-direction:column;gap:6px;overflow-y:auto;max-height:55vh;margin-top:8px}
+.librarySearchItem{display:flex;gap:10px;align-items:center;text-align:left;width:100%;border:1px solid var(--rc-line,rgba(128,128,128,.25));background:var(--rc-card);border-radius:12px;padding:8px 10px;color:inherit;font:inherit}
+.librarySearchItem .lsT{font-size:var(--fs-2);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.librarySearchItem .lsM{font-size:var(--fs-1);color:var(--rc-tx2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.librarySearchItem .lsX{min-width:0;flex:1}
+.librarySearchEmpty{padding:14px 4px;color:var(--rc-tx2);font-size:var(--fs-1)}
 </style>
 </head>
 
@@ -1975,7 +1984,7 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
 </div>
 <div id="viewBooks" class="hide section booksView">
   <div class="booksFixed" id="booksFixed">
-  <div class="booksHead"><div><div class="booksTitle">BOOKS</div><div class="booksSub">내 책 목록과 독서 상태 관리</div></div><button class="bookAddBtn lifeMiniBtn uiPrimaryBtn" onclick="openBookModal()">+ 책 추가</button></div>
+  <div class="booksHead"><div><div class="booksTitle">BOOKS</div><div class="booksSub">내 책 목록과 독서 상태 관리</div></div><div class="bookHeadBtns"><button type="button" id="bookSearchOpenBtn" class="bookHeadSearchBtn dateBtn lifeMiniBtn" onclick="openLibrarySearch()">검색</button><button class="bookAddBtn lifeMiniBtn uiPrimaryBtn" onclick="openBookModal()">+ 책 추가</button></div></div>
   <div id="bookLibraryFilters" class="bookPeriodTabs">
     <button class="bookPeriodTab on" data-filter="읽고있어" onclick="setBookLibraryFilter('읽고있어')">읽고있어</button>
     <button class="bookPeriodTab" data-filter="읽고싶어" onclick="setBookLibraryFilter('읽고싶어')">관심있어</button>
@@ -2462,6 +2471,14 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
     <div class="lifeField" style="display:none"><input id="rOrder" type="number" step="1" value=""></div>
     <div class="lifeField"><label><input id="rEnabled" type="checkbox" checked style="width:auto;margin-right:6px">활성 상태로 표시</label></div>
     <div class="lifeActions"><button id="routineDeleteBtn" class="lifeDelete hide" onclick="deleteRoutineFromModal()">삭제</button><button class="lifeDelete" onclick="closeRoutineModal()">취소</button><button class="lifeSave" onclick="saveRoutineFromModal()">저장</button></div>
+  </div>
+</div>
+
+<div id="librarySearchModal" class="lifeModal hide" onclick="if(event.target===this)closeLibrarySearch()">
+  <div class="lifeSheet">
+    <div class="lifeSheetHead"><b>내 책 검색</b><button class="lifeClose" onclick="closeLibrarySearch()">×</button></div>
+    <div class="lifeField"><input id="librarySearchInput" type="search" placeholder="제목, 저자, 출판사, 장르" autocomplete="off" oninput="renderLibrarySearch()"></div>
+    <div id="librarySearchList" class="librarySearchList"></div>
   </div>
 </div>
 
@@ -5419,10 +5436,12 @@ const BOOK_GENRE_TOPLEVEL=new Set(['총류','철학','종교','사회과학','�
 function kdcGenreName(value){
   const raw=String(value||'').trim();
   if(!raw)return '';
-  const digits=(raw.match(/\d+/)||[''])[0];
+  const digits=((raw.match(/\d+(?:\.\d+)?/)||[''])[0]).replace('.','');
   if(digits){
     // 문학(8xx): 세 번째 자리 = 문학 형식(소설, 희곡 …)
-    if(digits[0]==='8'&&digits.length>=3&&digits[1]!=='0'&&KDC_FORM[digits[2]])return KDC_FORM[digits[2]];
+    if(digits[0]==='8'&&digits.length>=3&&/[1-8]/.test(digits[1])&&KDC_FORM[digits[2]])return KDC_FORM[digits[2]];
+    // 89x(기타 제문학: 그리스·라틴 등)은 세 번째 자리가 언어권이라 네 번째 자리가 문학 형식
+    if(digits[0]==='8'&&digits[1]==='9'&&digits.length>=4&&KDC_FORM[digits[3]])return KDC_FORM[digits[3]];
     if(digits.length>=2&&KDC_CLASS[digits.slice(0,2)])return KDC_CLASS[digits.slice(0,2)];
     return '';
   }
@@ -5446,9 +5465,8 @@ function formatBookAuthor(value){
     (role==='t'?trans:role==='o'?others:authors).push(role==='o'?`${name} ${(seg.match(/그림|그린이|일러스트|삽화/)?'그림':seg.match(/감수/)?'감수':'엮음')}`:name);
   });
   if(!authors.length&&!trans.length&&!others.length)return raw;
-  let out=authors.length?`저자 : ${authors.join(', ')}`:'';
-  if(trans.length)out+=`${out?' ; ':'저자 : '}${trans.join(', ')} 옮김`;
-  if(others.length)out+=`${out?' ; ':''}${others.join(', ')}`;
+  let out=authors.length?authors.join(', '):'';
+  if(trans.length)out+=`${out?' ;':''}${trans.join(', ')} 옮김`;
   return out;
 }
 function parseBookSearchQuery(query){
@@ -9007,6 +9025,26 @@ function openTodayForDate(k){
   lifeNavigate('today');
 }
 
+
+/* ===== 내 책 검색 ===== */
+function openLibrarySearch(){
+  const m=document.getElementById('librarySearchModal');if(!m)return;
+  m.classList.remove('hide');
+  const i=document.getElementById('librarySearchInput');if(i){i.value='';}
+  renderLibrarySearch();
+  setTimeout(()=>{try{i&&i.focus();}catch(e){}},80);
+}
+function closeLibrarySearch(){document.getElementById('librarySearchModal')?.classList.add('hide');}
+function renderLibrarySearch(){
+  const root=document.getElementById('librarySearchList');if(!root)return;
+  const q=String(document.getElementById('librarySearchInput')?.value||'').trim().toLowerCase().replace(/\s+/g,'');
+  if(!q){root.innerHTML='<div class="librarySearchEmpty">검색어를 입력하세요.</div>';return;}
+  const rows=loadBooks().filter(b=>[b.title,b.author,b.publisher,b.genre].map(x=>String(x||'').toLowerCase().replace(/\s+/g,'')).some(x=>x.includes(q)));
+  if(!rows.length){root.innerHTML='<div class="librarySearchEmpty">일치하는 책이 없어요.</div>';return;}
+  root.innerHTML=rows.slice(0,50).map(b=>`<button type="button" class="librarySearchItem" onclick="pickLibraryBook('${escapeLife(b.id)}')">${bookCoverImg(b)}<span class="lsX"><div class="lsT">${escapeLife(b.title)}</div><div class="lsM">${escapeLife([b.author,b.publisher].filter(Boolean).join(' · '))}</div><div class="lsM">${escapeLife([b.status==='읽고싶어'?'관심있어':b.status==='완독'?'다읽었어':b.status,b.genre].filter(Boolean).join(' · '))}</div></span></button>`).join('');
+  try{hydrateCustomBookCovers(root);}catch(e){}
+}
+function pickLibraryBook(id){closeLibrarySearch();openBookModal(id);}
 </script>
 
 
