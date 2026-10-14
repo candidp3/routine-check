@@ -1864,6 +1864,17 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
 .librarySearchItem .lsM{font-size:var(--fs-1);color:var(--rc-tx2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .librarySearchItem .lsX{min-width:0;flex:1}
 .librarySearchEmpty{padding:14px 4px;color:var(--rc-tx2);font-size:var(--fs-1)}
+
+#historyPickerList{max-height:50vh;overflow-y:auto}
+.noteDiarySheet{display:flex;flex-direction:column}
+.noteDiaryTools{display:flex;gap:6px;margin-bottom:8px}
+.noteDiaryTools input{flex:1;min-width:0}
+.noteDiaryList{overflow-y:auto;flex:1;min-height:0;max-height:68vh;-webkit-overflow-scrolling:touch}
+.noteDiaryMonth{font-size:var(--fs-1);color:var(--rc-mu);letter-spacing:.06em;margin:14px 0 6px}
+.noteDiaryMonth:first-child{margin-top:2px}
+.noteDiaryItem{display:block;width:100%;text-align:left;border:1px solid var(--rc-line,rgba(128,128,128,.25));background:var(--rc-card);border-radius:12px;padding:10px 12px;margin-bottom:7px;color:inherit;font:inherit}
+.noteDiaryItem .nd{font-size:var(--fs-1);color:var(--rc-mu);margin-bottom:4px}
+.noteDiaryItem .nt{font-size:var(--fs-2);white-space:pre-wrap;word-break:break-word;line-height:1.55}
 </style>
 </head>
 
@@ -1978,13 +1989,13 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
     </div>
     <div class="calWeek"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
     <div class="calGrid" id="calendarGrid"></div>
-    <div style="margin-top:9px"><button class="dateBtn" onclick="calendarGoToday()">오늘로 이동</button></div>
+    <div style="margin-top:9px"><button class="dateBtn" onclick="calendarGoToday()">오늘로 이동</button> <button class="dateBtn" onclick="openNoteDiary()">NOTE 모아보기</button></div>
   </div>
   <div class="section calDetail" id="calendarDetail"></div>
 </div>
 <div id="viewBooks" class="hide section booksView">
   <div class="booksFixed" id="booksFixed">
-  <div class="booksHead"><div><div class="booksTitle">BOOKS</div><div class="booksSub">내 책 목록과 독서 상태 관리</div></div><div class="bookHeadBtns"><button type="button" id="bookSearchOpenBtn" class="bookHeadSearchBtn dateBtn lifeMiniBtn" onclick="openLibrarySearch()">검색</button><button class="bookAddBtn lifeMiniBtn uiPrimaryBtn" onclick="openBookModal()">+ 책 추가</button></div></div>
+  <div class="booksHead"><div><div class="booksTitle">BOOKS</div><div class="booksSub">내 책 목록과 독서 상태 관리</div></div><div class="bookHeadBtns"><button type="button" id="bookSearchOpenBtn" class="bookHeadSearchBtn dateBtn lifeMiniBtn" onclick="openMyBookSearch()">검색</button><button class="bookAddBtn lifeMiniBtn uiPrimaryBtn" onclick="openBookModal()">+ 책 추가</button></div></div>
   <div id="bookLibraryFilters" class="bookPeriodTabs">
     <button class="bookPeriodTab on" data-filter="읽고있어" onclick="setBookLibraryFilter('읽고있어')">읽고있어</button>
     <button class="bookPeriodTab" data-filter="읽고싶어" onclick="setBookLibraryFilter('읽고싶어')">관심있어</button>
@@ -2202,30 +2213,8 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
   </section>
 
   <section class="backupCard backupBundle">
-    <div class="backupCardTitle">책 검색 키</div>
-    <div class="backupCardText">도서 검색용 인증키예요. 키는 이 기기에만 저장돼요.</div>
-    <div class="backupPart"><div class="settingsRow">
-      <div class="settingsLabel">도서 API 키</div>
-      <input id="nlApiKeyInput" class="settingsInput" type="password" autocomplete="off" placeholder="국립중앙도서관 인증키">
-    </div>
-    <div class="settingsRow">
-      <button class="settingsBtn uiActionSm" onclick="saveNationalLibraryApiKey()">키 저장</button>
-      <button class="settingsBtn uiActionSm" onclick="testNationalLibraryApiKey()">연결 확인</button>
-      <button class="settingsBtn uiActionSm uiActionDanger" onclick="deleteNationalLibraryApiKey()">키 삭제</button>
-    </div>
-    <div id="nlApiStatus" class="settingsStatus">API 키는 이 기기에만 저장되고 백업 파일에는 포함되지 않아요.</div>
-
-    <div class="settingsRow" style="margin-top:14px">
-      <div class="settingsLabel">정보나루 키</div>
-      <input id="data4LibApiKeyInput" class="settingsInput" type="password" autocomplete="off" placeholder="도서관 정보나루 인증키">
-    </div>
-    <div class="settingsRow">
-      <button class="settingsBtn uiActionSm" onclick="saveData4LibraryApiKey()">키 저장</button>
-      <button class="settingsBtn uiActionSm" onclick="testData4LibraryApiKey()">연결 확인</button>
-      <button class="settingsBtn uiActionSm uiActionDanger" onclick="deleteData4LibraryApiKey()">키 삭제</button>
-    </div>
-    <div id="data4LibApiStatus" class="settingsStatus">정보나루 키도 백업 파일에는 포함되지 않아요.</div>
-  </div>
+    <div class="backupCardTitle">책 검색</div>
+    <div class="backupCardText">책 검색은 Daum과 국립중앙도서관을 중계 서버로 연결해요. 이 기기에 인증키를 입력할 필요가 없어요.</div>
   </section>
 
   
@@ -2479,6 +2468,14 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
     <div class="lifeSheetHead"><b>내 책 검색</b><button class="lifeClose" onclick="closeLibrarySearch()">×</button></div>
     <div class="lifeField"><input id="librarySearchInput" type="search" placeholder="제목, 저자, 출판사, 장르" autocomplete="off" oninput="renderLibrarySearch()"></div>
     <div id="librarySearchList" class="librarySearchList"></div>
+  </div>
+</div>
+
+<div id="noteDiaryModal" class="lifeModal hide" onclick="if(event.target===this)closeNoteDiary()">
+  <div class="lifeSheet noteDiarySheet">
+    <div class="lifeSheetHead"><b>NOTE 모아보기</b><button class="lifeClose" onclick="closeNoteDiary()">×</button></div>
+    <div class="noteDiaryTools"><input id="noteDiarySearch" type="search" placeholder="노트 내용 검색" autocomplete="off" oninput="renderNoteDiary()"><button type="button" id="noteDiarySortBtn" class="dateBtn" onclick="toggleNoteDiarySort()"></button></div>
+    <div id="noteDiaryList" class="noteDiaryList"></div>
   </div>
 </div>
 
@@ -5303,6 +5300,20 @@ function rrMetricConfig(st,D,days){
   return {def,key:def.id,goal,vals,avg,max,title:def.name,fmt:v=>rrFmtMetricDef(def,v)};
 }
 
+function rrWeekMetricCard(days,labels){
+  const defs=rrTrackableMetricDefs();if(!defs.length)return '';
+  const def=rrEnsureMetric();
+  if(def.type==='duration'){
+    const html=rrDurationWeekCard(def,days,labels);
+    return html.replace(`<h2>${escapeLife(def.name)} `,'<h2>요일별 추이 ')
+      .replace('rr-duration-note">평균',`rr-duration-note">${escapeLife(def.name)} 평균`)
+      .replace('</h2>','</h2>'+rrMetricChips());
+  }
+  const vals=days.map(d=>rrMetricValueForDate(def,rrIso(d))),goal=rrMetricGoalDef(def);
+  const avg=rrAvg(vals),max=Math.max(goal?goal*1.25:0,...vals.filter(Number.isFinite),1);
+  const tips=vals.map((v,i)=>`${labels[i]} · ${rrFmtMetricDef(def,v)}`);
+  return `<div class="rr-card"><h2>요일별 추이 <span class="rr-card-note">${escapeLife(def.name)} 평균 ${rrFmtMetricDef(def,avg)}${goal?` · 목표 ${rrFmtMetricDef(def,goal)}`:''}</span></h2>${rrMetricChips()}${rrBars(vals,goal,max,tips,labels)}<div class="rr-card-note">막대를 눌러 수치를 확인하세요.</div></div>`;
+}
 function rrRenderWeek(){
   const days=rrWeekDays(rrCursor),st=rrStats(days);
   const a=days[0],z=days[6];rrUpdateNav(`${a.getMonth()+1}.${a.getDate()} – ${z.getMonth()+1}.${z.getDate()}`);
@@ -5321,7 +5332,7 @@ function rrRenderWeek(){
   const durationCards=duration.map(def=>rrDurationWeekCard(def,days,labels)).join('');
   const blockGrid=`<span></span>${labels.map(x=>`<span class="rr-h">${x}</span>`).join('')}`+RR_BLOCKS.map(b=>`<span class="rr-bn">${b}</span>${st.D.map(x=>{if(!x)return'<span class="rr-sq na"></span>';const a=x.routines.filter(r=>r[4]===b&&r[5]!==false);if(!a.length)return'<span class="rr-sq na"></span>';return `<span class="rr-sq" style="background:${rrHeat(a.filter(r=>r[2]).length/a.length)}"></span>`}).join('')}`).join('');
   const freeBuckets=st.D.map(x=>x?[x]:[]);
-  out.innerHTML=`${cumulativeCards}${durationCards}
+  out.innerHTML=`${rrWeekMetricCard(days,labels)}
   <div class="rr-card"><h2>루틴 수행 · 블록별</h2><div class="rr-grid">${blockGrid}</div></div>
   <div class="rr-card rr-free-card"><h2>취미생활</h2>${rrLeisureSummary(freeBuckets,labels,false)}</div>`;
 }
@@ -5504,14 +5515,15 @@ function scoreBookCandidate(book,parsed){
 }
 function mergeBookSearchCandidates(groups,parsed){
   const fieldRank={
-    title:['국립중앙도서관','도서관 정보나루','Google Books','Open Library'],
-    author:['국립중앙도서관','도서관 정보나루','Google Books','Open Library'],
-    publisher:['국립중앙도서관','도서관 정보나루','Google Books','Open Library'],
-    publishDate:['국립중앙도서관','도서관 정보나루','Google Books','Open Library'],
-    genre:['도서관 정보나루','국립중앙도서관','Google Books','Open Library'],
-    coverUrl:['도서관 정보나루','Google Books','국립중앙도서관','Open Library'],
-    description:['도서관 정보나루','Google Books','국립중앙도서관','Open Library']
+    title:['Daum','국립중앙도서관'],
+    author:['Daum','국립중앙도서관'],
+    publisher:['Daum','국립중앙도서관'],
+    publishDate:['국립중앙도서관','Daum'],
+    genre:['국립중앙도서관','Daum'],
+    coverUrl:['Daum','국립중앙도서관'],
+    description:['Daum','국립중앙도서관']
   };
+
   const sourceBase=s=>String(s||'').replace(/\s*판본$/,'');
   const priority=(field,source)=>{
     const list=fieldRank[field]||[];
@@ -5648,7 +5660,7 @@ function mapNationalLibraryData(data){
       isbn:String(row?.EA_ISBN||row?.ISBN||'').replace(/[^0-9Xx]/g,''),
       description:'',
       source:'국립중앙도서관',
-      publishDate:String(row?.PUBLISH_PREDATE||'').trim()
+      publishDate:String(row?.PUBLISH_PREDATE||'').trim().replace(/^(\d{4})(\d{2})(\d{2})$/,'$1-$2-$3')
     };
   }).filter(x=>x.title);
 }
@@ -7436,7 +7448,7 @@ function setMealValues(log,vals){
   const ex={};Object.keys(vals).forEach(id=>{if(id!=='protein'&&vals[id]>0)ex[id]=vals[id];});
   if(Object.keys(ex).length)log.extras=ex;else delete log.extras;
 }
-function getPreviousMealRecords(routineId,limit=12){
+function getPreviousMealRecords(routineId,limit=1000){
   const routines=loadLifeRoutines(),target=routines.find(r=>r.id===routineId);
   if(!isMealFreeRoutine(target))return [];
   const mealIds=new Set(routines.filter(r=>isMealFreeRoutine(r)).map(r=>r.id));
@@ -7453,7 +7465,7 @@ function getPreviousMealRecords(routineId,limit=12){
   });
   return rows.slice(0,limit);
 }
-function getPreviousFreeRecords(routineId,limit=12){
+function getPreviousFreeRecords(routineId,limit=1000){
   const all=loadLifeLogs(),seen=new Set(),rows=[];
   Object.keys(all).sort().reverse().forEach(k=>{
     (Array.isArray(all[k])?all[k]:[]).forEach(log=>{
@@ -9027,7 +9039,7 @@ function openTodayForDate(k){
 
 
 /* ===== 내 책 검색 ===== */
-function openLibrarySearch(){
+function openMyBookSearch(){
   const m=document.getElementById('librarySearchModal');if(!m)return;
   m.classList.remove('hide');
   const i=document.getElementById('librarySearchInput');if(i){i.value='';}
@@ -9045,6 +9057,139 @@ function renderLibrarySearch(){
   try{hydrateCustomBookCovers(root);}catch(e){}
 }
 function pickLibraryBook(id){closeLibrarySearch();openBookModal(id);}
+
+/* ===== NOTE 모아보기 ===== */
+let noteDiaryDesc=true;
+function openNoteDiary(){
+  const m=document.getElementById('noteDiaryModal');if(!m)return;
+  const i=document.getElementById('noteDiarySearch');if(i)i.value='';
+  renderNoteDiary();m.classList.remove('hide');
+}
+function closeNoteDiary(){document.getElementById('noteDiaryModal')?.classList.add('hide');}
+function toggleNoteDiarySort(){noteDiaryDesc=!noteDiaryDesc;renderNoteDiary();}
+function renderNoteDiary(){
+  const root=document.getElementById('noteDiaryList');if(!root)return;
+  const btn=document.getElementById('noteDiarySortBtn');if(btn)btn.textContent=noteDiaryDesc?'최신순':'오래된순';
+  const q=String(document.getElementById('noteDiarySearch')?.value||'').trim().toLowerCase();
+  const notes=loadDailyNotes();
+  let keys=Object.keys(notes).filter(k=>/^\d{4}-\d{2}-\d{2}$/.test(k)&&String(notes[k]||'').trim()&&(!q||String(notes[k]).toLowerCase().includes(q))).sort();
+  if(noteDiaryDesc)keys.reverse();
+  if(!keys.length){root.innerHTML=`<div class="librarySearchEmpty">${q?'일치하는 노트가 없어요.':'아직 작성한 노트가 없어요.'}</div>`;return;}
+  const wd=['일','월','화','수','목','금','토'];
+  let html='',cur='';
+  keys.forEach(k=>{
+    const d=parseDateKeyLocal(k),ym=`${d.getFullYear()}년 ${d.getMonth()+1}월`;
+    if(ym!==cur){cur=ym;html+=`<div class="noteDiaryMonth">${ym}</div>`;}
+    html+=`<button type="button" class="noteDiaryItem" onclick="noteDiaryGo('${k}')"><div class="nd">${d.getMonth()+1}.${d.getDate()} ${wd[d.getDay()]}</div><div class="nt">${escapeLife(String(notes[k]).trim())}</div></button>`;
+  });
+  root.innerHTML=html;
+}
+function noteDiaryGo(k){
+  closeNoteDiary();
+  const d=parseDateKeyLocal(k);calendarCursor=new Date(d.getFullYear(),d.getMonth(),1);
+  selectCalendarDate(k);
+}
+
+/* ===== 책 검색: Cloudflare Worker 경유 (Daum + 국립중앙도서관) ===== */
+const BOOK_API_BASE='https://routine-check-api.candidp3.workers.dev';
+try{localStorage.removeItem('nationalLibraryApiKey_v1');localStorage.removeItem('data4LibraryApiKey_v1');}catch(e){}
+async function bookApiGet(path,params){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),12000);
+  try{
+    const res=await fetch(`${BOOK_API_BASE}${path}?${new URLSearchParams(params).toString()}`,{method:'GET',mode:'cors',credentials:'omit',signal:controller.signal});
+    if(!res.ok)throw new Error(`book-api-${res.status}`);
+    return await res.json();
+  }finally{clearTimeout(timer);}
+}
+async function nationalLibrarySearch(query){
+  const parsed=typeof query==='object'&&query?query:parseBookSearchQuery(query);
+  const params={page_size:'12'};
+  if(parsed.isIsbn)params.isbn=parsed.isbn;
+  else{
+    if(parsed.title)params.title=parsed.title;
+    if(parsed.author)params.author=parsed.author;
+    if(parsed.publisher)params.publisher=parsed.publisher;
+    if(!parsed.title&&!parsed.author&&!parsed.publisher)params.title=parsed.raw;
+  }
+  const data=await bookApiGet('/nl',params);
+  const code=nationalLibraryErrorCode(data);
+  if(code&&code!=='200'&&code!=='0')throw new Error(`national-library-api-${code}`);
+  return data;
+}
+async function daumBookSearch(parsed){
+  const params={size:'12'};
+  if(parsed.isIsbn){params.query=parsed.isbn;params.target='isbn';}
+  else{
+    const parts=[parsed.title,parsed.author,parsed.publisher].filter(Boolean);
+    params.query=parts.length?parts.join(' '):parsed.raw;
+    if(parts.length===1){params.target=parsed.title?'title':parsed.author?'person':'publisher';}
+  }
+  return await bookApiGet('/daum',params);
+}
+function mapDaumBooks(data){
+  return (Array.isArray(data?.documents)?data.documents:[]).map(d=>{
+    const authors=(d.authors||[]).map(x=>String(x).trim()).filter(Boolean);
+    const trans=(d.translators||[]).map(x=>String(x).trim()).filter(Boolean);
+    let author=authors.join(', ');
+    if(trans.length)author+=`${author?' ;':''}${trans.join(', ')} 옮김`;
+    const isbns=String(d.isbn||'').split(/\s+/).filter(Boolean);
+    const isbn=isbns.find(x=>x.length===13)||isbns[0]||'';
+    return {
+      title:String(d.title||'').trim(),
+      author,
+      publisher:String(d.publisher||'').trim(),
+      publishDate:String(d.datetime||'').slice(0,10),
+      genre:'',detail:'',
+      coverUrl:normalizeCoverUrl(d.thumbnail||''),
+      isbn:cleanIsbn(isbn),
+      description:String(d.contents||'').trim(),
+      source:'Daum'
+    };
+  }).filter(x=>x.title);
+}
+searchBookOnline=async function(parsedOverride=null){
+  const input=document.getElementById('bookSearchQuery');
+  const status=document.getElementById('bookSearchStatus');
+  const root=document.getElementById('bookSearchResults');
+  const q=input?.value.trim()||'';
+  const parsed=parsedOverride||parseBookSearchQuery(q);
+  const hasFieldQuery=parsed.isIsbn||[parsed.title,parsed.author,parsed.publisher].some(v=>String(v||'').trim());
+  if(!hasFieldQuery){if(status)status.textContent='책 제목, 저자, 출판사 또는 ISBN 중 하나를 입력해 주세요.';return;}
+  if(status)status.textContent='검색 중…';
+  if(root)root.innerHTML='';
+  bookSearchResultsCache=[];
+  const [daumR,nlR]=await Promise.allSettled([daumBookSearch(parsed),nationalLibrarySearch(parsed)]);
+  let daumRows=daumR.status==='fulfilled'?mapDaumBooks(daumR.value):[];
+  let nlRows=nlR.status==='fulfilled'?mapNationalLibraryData(nlR.value):[];
+  if(parsed.isIsbn){
+    const exact=rows=>rows.filter(b=>cleanIsbn(b.isbn)===parsed.isbn);
+    daumRows=exact(daumRows);nlRows=exact(nlRows);
+  }
+  bookSearchResultsCache=mergeBookSearchCandidates([daumRows,nlRows],parsed);
+  if(status){
+    const notes=[];
+    if(daumR.status==='rejected')notes.push('Daum 연결 실패');
+    if(nlR.status==='rejected')notes.push('국립중앙도서관 연결 실패');
+    if(bookSearchResultsCache.length){
+      const sources=[daumRows.length?'Daum':'',nlRows.length?'국립중앙도서관':''].filter(Boolean).join(' + ');
+      status.textContent=`${bookSearchResultsCache.length}개 결과 · ${sources}${notes.length?' · '+notes.join(' · '):''}`;
+    }else if(daumR.status==='rejected'&&nlR.status==='rejected'){
+      status.textContent='온라인 도서 검색에 실패했어요. 네트워크를 확인하거나 직접 입력해 주세요.';
+    }else{
+      status.textContent=parsed.isIsbn
+        ?'해당 ISBN의 검색 결과가 없어요. ISBN을 확인하거나 제목으로 검색해 주세요.'
+        :'검색 결과가 없어요. 제목·저자·출판사 중 일부만 입력하거나 조합을 줄여 다시 검색해 주세요.';
+    }
+  }
+  if(root)root.innerHTML=bookSearchResultsCache.map((b,i)=>`<button type="button" class="bookSearchResult" onclick="applyBookSearchResult(${i})">
+      ${bookSearchCoverHtml(b.coverUrl)}
+      <span class="bookSearchResultText">
+        <span class="bookSearchResultTitle">${escapeLife(b.title||'제목 없음')}</span>
+        <span class="bookSearchResultMeta">${escapeLife([b.author,b.publisher,b.publishDate,b.isbn?`ISBN ${b.isbn}`:'',b.source].filter(Boolean).join(' · '))}</span>
+      </span>
+  </button>`).join('');
+};
 </script>
 
 
