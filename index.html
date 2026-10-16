@@ -1875,6 +1875,21 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
 .noteDiaryItem{display:block;width:100%;text-align:left;border:1px solid var(--rc-line,rgba(128,128,128,.25));background:var(--rc-card);border-radius:12px;padding:10px 12px;margin-bottom:7px;color:inherit;font:inherit}
 .noteDiaryItem .nd{font-size:var(--fs-1);color:var(--rc-mu);margin-bottom:4px}
 .noteDiaryItem .nt{font-size:var(--fs-2);white-space:pre-wrap;word-break:break-word;line-height:1.55}
+
+.themeColorChoices{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px;margin-top:10px;justify-items:center}
+.themeSwatch{min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px;border:0;background:transparent;padding:2px;font:inherit;font-size:var(--fs-1);color:var(--rc-mu)}
+.themeSwatch i{display:block;width:32px;height:32px;border-radius:50%;border:2px solid transparent;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.themeSwatch.on i{border-color:var(--rc-tx)}
+.themeSwatch.on{color:var(--rc-tx)}
+#viewAll_v2 .rr-card[data-tone="water"] svg.rr-chart .rr-bar-mark{fill:var(--t2-g)}
+#viewAll_v2 .rr-card[data-tone="water"] svg.rr-chart .rr-hit.sel .rr-bar-mark{fill:var(--t2-gs)}
+#viewAll_v2 .rr-card[data-tone="water"] .rr-metric-chip.on{background:var(--t2-gl);color:var(--t2-gd);border-color:var(--t2-g)}
+#viewAll_v2 .rr-card[data-tone="sleep"] svg.rr-chart .rr-bar-mark{fill:var(--t3-g)}
+#viewAll_v2 .rr-card[data-tone="sleep"] svg.rr-chart .rr-hit.sel .rr-bar-mark{fill:var(--t3-gs)}
+#viewAll_v2 .rr-card[data-tone="sleep"] .rr-timeline i{background:var(--t3-g)}
+#viewAll_v2 .rr-card[data-tone="sleep"] .rr-timeline{background:var(--t3-gl)}
+#viewAll_v2 .rr-card[data-tone="sleep"] .rr-sleep-row.sel{color:var(--t3-gd)!important}
+#viewAll_v2 .rr-card[data-tone="sleep"] .rr-metric-chip.on{background:var(--t3-gl);color:var(--t3-gd);border-color:var(--t3-g)}
 </style>
 </head>
 
@@ -2191,6 +2206,9 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
 <section class="backupCard backupBundle">
     <div class="backupCardTitle">앱 설정</div>
     <div class="backupCardText">화면 크기와 기록 항목을 한곳에서 관리해요.</div>
+    <div class="backupPart"><div class="backupSubTitle">테마 색</div>
+      <div id="themeColorChoices" class="themeColorChoices" role="radiogroup" aria-label="테마 색"></div>
+    </div>
     <div class="backupPart"><div class="backupSubTitle">글자 크기</div><div class="settingsRow">
       
       <div class="fontScaleButtons">
@@ -9190,6 +9208,52 @@ searchBookOnline=async function(parsedOverride=null){
       </span>
   </button>`).join('');
 };
+
+/* ===== 테마 색 + 항목별 그래프 색 ===== */
+const THEME_KEY='themeColor_v1';
+const THEME_PALETTES={"green": {"light": {"base": {"g": "#8fd1b5", "gs": "#3f9c7c", "gd": "#2f6b55", "gl": "#e2f4ec"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#c3b7ee", "gs": "#8d7cbf", "gd": "#615583", "gl": "#f0ecfd"}}, "dark": {"base": {"g": "#5fb797", "gs": "#7fd0b0", "gd": "#bfe6d4", "gl": "#223a31"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#a797da", "gs": "#c0b1f2", "gd": "#ddd6f8", "gl": "#353144"}}}, "red": {"light": {"base": {"g": "#f2a3a6", "gs": "#e0525a", "gd": "#a23b43", "gl": "#fdeaea"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#c3b7ee", "gs": "#8d7cbf", "gd": "#615583", "gl": "#f0ecfd"}, "n": {"bg": "#f9f6f5", "card": "#ffffff", "soft": "#faf4f3", "soft2": "#fdf9f9", "line": "#efe8e8", "line2": "#e4d7d6"}}, "dark": {"base": {"g": "#e4757a", "gs": "#f59a9d", "gd": "#fcd0d2", "gl": "#46262a"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#a797da", "gs": "#c0b1f2", "gd": "#ddd6f8", "gl": "#353144"}, "n": {"bg": "#181414", "card": "#251f1e", "soft": "#312928", "soft2": "#2c2423", "line": "#392f2e", "line2": "#4d403f"}}}, "orange": {"light": {"base": {"g": "#f6b384", "gs": "#ec7a2c", "gd": "#a3521a", "gl": "#fff0e3"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#c3b7ee", "gs": "#8d7cbf", "gd": "#615583", "gl": "#f0ecfd"}, "n": {"bg": "#f8f6f4", "card": "#ffffff", "soft": "#f9f5f1", "soft2": "#fcfaf7", "line": "#eee9e6", "line2": "#e3d9d2"}}, "dark": {"base": {"g": "#e8934f", "gs": "#f6b07a", "gd": "#fbd6b6", "gl": "#43301f"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#a797da", "gs": "#c0b1f2", "gd": "#ddd6f8", "gl": "#353144"}, "n": {"bg": "#171412", "card": "#241f1c", "soft": "#302a25", "soft2": "#2b2521", "line": "#37302b", "line2": "#4c413a"}}}, "yellow": {"light": {"base": {"g": "#f3cd6a", "gs": "#d99a00", "gd": "#8a6200", "gl": "#fff6d9"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#c3b7ee", "gs": "#8d7cbf", "gd": "#615583", "gl": "#f0ecfd"}, "n": {"bg": "#f7f6f4", "card": "#ffffff", "soft": "#f7f6f1", "soft2": "#fbfaf7", "line": "#eceae5", "line2": "#dedbd1"}}, "dark": {"base": {"g": "#d6aa2e", "gs": "#efc65a", "gd": "#f8e2a6", "gl": "#3d3418"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#a797da", "gs": "#c0b1f2", "gd": "#ddd6f8", "gl": "#353144"}, "n": {"bg": "#161512", "card": "#22201b", "soft": "#2d2b24", "soft2": "#282620", "line": "#34312a", "line2": "#474439"}}}, "blue": {"light": {"base": {"g": "#9cc4f2", "gs": "#3b82d6", "gd": "#285a9a", "gl": "#e6f1fd"}, "t2": {"g": "#81d0d4", "gs": "#1c9ba1", "gd": "#1c6a6e", "gl": "#dff4f5"}, "t3": {"g": "#ccb4ea", "gs": "#9778ba", "gd": "#67537f", "gl": "#f2ecfb"}, "n": {"bg": "#f5f7f9", "card": "#ffffff", "soft": "#f2f6fa", "soft2": "#f8fafd", "line": "#e7ebef", "line2": "#d4dce4"}}, "dark": {"base": {"g": "#5b9be0", "gs": "#86b8f4", "gd": "#c2dcfb", "gl": "#243649"}, "t2": {"g": "#49b6bb", "gs": "#6dcfd4", "gd": "#b8e6e8", "gl": "#1d3a3b"}, "t3": {"g": "#b193d5", "gs": "#caaeed", "gd": "#e2d4f5", "gl": "#383043"}, "n": {"bg": "#131518", "card": "#1d2125", "soft": "#262c31", "soft2": "#22272c", "line": "#2c3239", "line2": "#3c454d"}}}, "purple": {"light": {"base": {"g": "#c4b0f0", "gs": "#8a63d2", "gd": "#5b3f9a", "gl": "#f1ebfd"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#a8c0f4", "gs": "#6a87c6", "gd": "#4a5d87", "gl": "#e8effe"}, "n": {"bg": "#f7f6f8", "card": "#ffffff", "soft": "#f6f5f9", "soft2": "#fafafd", "line": "#ebe9ef", "line2": "#dcd9e3"}}, "dark": {"base": {"g": "#9a7de0", "gs": "#bba2f4", "gd": "#ddd0fa", "gl": "#352d47"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#85a2e1", "gs": "#a0bcf9", "gd": "#ccdcfc", "gl": "#2c3446"}, "n": {"bg": "#151418", "card": "#211f24", "soft": "#2c2a30", "soft2": "#27252b", "line": "#333038", "line2": "#45424c"}}}};
+const THEME_LABELS={green:'그린',red:'빨강',orange:'주황',yellow:'노랑',blue:'파랑',purple:'보라'};
+function getThemeColor(){try{const v=localStorage.getItem(THEME_KEY);return THEME_PALETTES[v]?v:'green';}catch(e){return 'green';}}
+function themeCssBlock(p,withBase){
+  const b=p.base,o=[];
+  if(withBase)o.push(`--accent:${b.gs};--accent-dark:${b.gd};--accent-soft:${b.gl};--life-accent:${b.gs};--rc-g:${b.g};--rc-bl:${b.g};--rc-gd:${b.gd};--rc-gl:${b.gl};--rc-gs:${b.gs};--rc-solid:${b.gs}`);
+  if(withBase&&p.n){const n=p.n;o.push(`--rc-bg:${n.bg};--life-bg:${n.bg};--warm-bg:${n.bg};--rc-card:${n.card};--life-card:${n.card};--surface:${n.card};--rc-soft:${n.soft};--life-soft:${n.soft};--rc-soft2:${n.soft2};--accent-surface:${n.soft2};--rc-line:${n.line};--line:${n.line};--life-line:${n.line};--rc-line2:${n.line2};--box-line:${n.line2}`);}
+  ['t2','t3'].forEach(k=>o.push(`--${k}-g:${p[k].g};--${k}-gs:${p[k].gs};--${k}-gd:${p[k].gd};--${k}-gl:${p[k].gl}`));
+  return o.join(';');
+}
+function applyThemeColor(){
+  const name=getThemeColor(),pal=THEME_PALETTES[name],withBase=name!=='green';
+  let st=document.getElementById('themeColorStyle');
+  if(!st){st=document.createElement('style');st.id='themeColorStyle';document.head.appendChild(st);}
+  st.textContent=`:root:root{${themeCssBlock(pal.light,withBase)}}@media (prefers-color-scheme:dark){:root:root{${themeCssBlock(pal.dark,withBase)}}}`;
+  renderThemeChoices();
+}
+function setThemeColor(name){
+  if(!THEME_PALETTES[name])return;
+  try{localStorage.setItem(THEME_KEY,name);}catch(e){}
+  applyThemeColor();
+}
+function renderThemeChoices(){
+  const root=document.getElementById('themeColorChoices');if(!root)return;
+  const cur=getThemeColor();
+  root.innerHTML=Object.keys(THEME_PALETTES).map(n=>`<button type="button" class="themeSwatch ${n===cur?'on':''}" role="radio" aria-checked="${n===cur}" aria-label="${THEME_LABELS[n]}" title="${THEME_LABELS[n]}" onclick="setThemeColor('${n}')"><i style="background:${THEME_PALETTES[n].light.base.gs}"></i></button>`).join('');
+}
+function rrToneFor(id){return id==='water'?'water':id==='sleep'?'sleep':'';}
+function tagRecordTones(){
+  const out=document.getElementById('rrOut');if(!out)return;
+  out.querySelectorAll('.rr-card').forEach(c=>{
+    if(c.querySelector('.rr-metric-chips .rr-metric-chip')&&c.querySelector('.rr-metric-chips .rr-metric-chip.on')){
+      const t=rrToneFor(rrMetric);
+      if(t&&c.querySelector('svg.rr-chart .rr-bar-mark,.rr-sleep-row'))c.dataset.tone=t;else delete c.dataset.tone;
+    }
+  });
+}
+(function(){
+  const o=renderRecordDashboard;
+  renderRecordDashboard=function(){const r=o.apply(this,arguments);try{tagRecordTones();}catch(e){}return r;};
+})();
+applyThemeColor();
+(function(){const o=lifeNavigate;lifeNavigate=function(){const r=o.apply(this,arguments);try{renderThemeChoices();}catch(e){}return r;};})();
 </script>
 
 
