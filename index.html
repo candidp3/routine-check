@@ -9442,7 +9442,8 @@ periodCardHTML=function(k){
     const f=periodFertileInfo(p);
     if(f)note+=`<br>${f.inProgress?'지금은 가임기 예상 기간이에요 · ':'가임기 예상 '}${periodShort(f.start)} ~ ${periodShort(f.end)} · 배란 예상 ${periodShort(f.ov)}<br><span class="periodFine">달력 기준 추정이라 피임·임신 판단에는 쓰지 마세요</span>`;
   }else{
-    note=`시작일을 3번 이상 기록하면 다음 시작일을 예측해요 (현재 ${p.count}번)<br>설정에서 평소 주기를 입력하면 한 번만 기록해도 바로 예측해요`;
+    note=p.st.cycle?`마지막 생리 시작일을 한 번 기록하면 입력한 ${p.st.cycle}일 주기로 다음 시작일을 예측해요`
+      :`시작일을 3번 이상 기록하면 다음 시작일을 예측해요 (현재 ${p.count}번)<br>설정에서 평소 주기를 입력하면 한 번만 기록해도 바로 예측해요`;
   }
   return `<div class="calInfoCard periodCard"><h4 class="rc-section-title">PERIOD</h4><div class="periodBtns"><button type="button" class="periodBtn ${cur==='start'?'on':''}" onclick="setPeriodMark('${k}','start')">시작</button><button type="button" class="periodBtn ${cur==='end'?'on':''}" onclick="setPeriodMark('${k}','end')">종료</button></div><div class="periodNote">${note}</div></div>`;
 };
