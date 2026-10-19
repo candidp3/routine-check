@@ -1903,6 +1903,11 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
 .periodNote .periodFine{font-size:var(--fs-1);opacity:.85}
 
 #periodToggleBtn.statePill{pointer-events:auto;cursor:pointer}
+
+.mealMetaR{display:inline-flex;align-items:baseline;justify-content:flex-end;gap:6px;min-width:0;max-width:55%;white-space:nowrap;overflow:visible;text-overflow:clip}
+.mealMetaR .mealPl{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.mealMetaR .mealSep{opacity:.5;flex:0 0 auto}
+.mealMetaR .mealTm{flex:0 0 auto;min-width:4.2em;text-align:right;font-variant-numeric:tabular-nums}
 </style>
 </head>
 
@@ -7073,7 +7078,7 @@ function calendarMealSummary(k,routines,logs){
     const log=logs.find(x=>x.routineId===r.id);
     const memo=String(log?.memo||'').trim();if(!memo&&!log?.mealTime&&!log?.place)return;
     const label=String(r.calendarLabel||'').trim()||labels[r.block]||'식사';
-    const when=[log?.mealTime||'',log?.place||''].filter(Boolean).join(' | ');
+    const when=[log?.place||'',log?.mealTime||''].filter(Boolean).join(' | ');
     rows.push(`<button type="button" class="calMealRow" onclick="editCalendarRoutineRecord('${k}','${r.id}')"><span class="calMealLabel">${escapeLife(label)}</span><span class="calMealText">${escapeLife(memo)}</span>${when?`<span class="calMealWhen">${escapeLife(when)}</span>`:''}</button>`);
   });
   const snacks=loadSnackRecords()[k]||[];
@@ -7503,7 +7508,9 @@ function lifeMetaHTML(r){
   if(isMealFreeRoutine(r)&&!timerElapsedForRoutine(r.id)){
     const log=getLifeDayLogs().find(x=>x.routineId===r.id),m=mealMetaParts(r,log);
     if(!m.left&&!m.right)return '';
-    return `<div class="lifeRoutineMeta mealMetaLine"><span class="mealMetaL">${escapeLife(m.left)}</span>${m.right?`<span class="mealMetaR">${escapeLife(m.right)}</span>`:''}</div>`;
+    const pl=String(log?.place||'').trim(),tm=String(log?.mealTime||'').trim();
+    const right=(pl||tm)?`<span class="mealMetaR">${pl?`<span class="mealPl">${escapeLife(pl)}</span>`:''}${pl&&tm?'<span class="mealSep">|</span>':''}${tm?`<span class="mealTm">${escapeLife(tm)}</span>`:''}</span>`:'';
+    return `<div class="lifeRoutineMeta mealMetaLine"><span class="mealMetaL">${escapeLife(m.left)}</span>${right}</div>`;
   }
   const t=lifeMeta(r);return t?`<div class="lifeRoutineMeta">${escapeLife(t)}</div>`:'';
 }
