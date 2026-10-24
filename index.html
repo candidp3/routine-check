@@ -1908,6 +1908,15 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
 .mealMetaR .mealPl{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .mealMetaR .mealSep{opacity:.5;flex:0 0 auto}
 .mealMetaR .mealTm{flex:0 0 auto;text-align:right;font-variant-numeric:tabular-nums}
+
+.rr-free-card .rr-leisure-item{cursor:pointer}
+.rr-free-card .rr-leisure-item .rr-leisure-days::after{content:" ›";color:var(--rc-mu)}
+.leisureBody{max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.leisureRow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:10px 0;border-bottom:1px solid var(--box-line)}
+.leisureRow:last-child{border-bottom:0}
+.leisureRow .lt{min-width:0;flex:1;overflow-wrap:anywhere;font-size:var(--fs-2);color:var(--rc-tx)}
+.leisureRow .ld{flex:0 0 auto;font-size:var(--fs-1);color:var(--rc-mu);font-variant-numeric:tabular-nums}
+.leisureNote{margin-top:8px;font-size:var(--fs-1);color:var(--rc-mu);line-height:1.5}
 </style>
 </head>
 
@@ -2545,6 +2554,13 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
       </div>
     </details>
     <div class="lifeActions"><button class="lifeDelete" onclick="closePeriodSettings()">취소</button><button class="lifeSave" onclick="savePeriodSettings()">저장</button></div>
+  </div>
+</div>
+
+<div id="leisureTitlesModal" class="lifeModal hide" onclick="if(event.target===this)closeLeisureTitles()">
+  <div class="lifeSheet">
+    <div class="lifeSheetHead"><b id="leisureTitlesHead">취미생활</b><button class="lifeClose" onclick="closeLeisureTitles()">×</button></div>
+    <div id="leisureTitlesBody" class="leisureBody"></div>
   </div>
 </div>
 
@@ -9500,6 +9516,129 @@ function savePeriodSettings(){
     return parts.join(' ').toLowerCase().includes(q);
   };
 })();
+
+/* ===== 자유형 기록: 하루에 여러 개 추가 + 기간별 제목 모아보기 ===== */
+function freeLogEntries(log){
+  const a=[],m=String(log?.memo||'').trim();if(m)a.push(m);
+  (Array.isArray(log?.extra)?log.extra:[]).forEach(x=>{x=String(x||'').trim();if(x)a.push(x);});
+  return a;
+}
+(function(){
+  const baseActions=openFreeRoutineActions;
+  openFreeRoutineActions=function(id){
+    const r=loadLifeRoutines().find(x=>x.id===id);
+    if(!r||isMealFreeRoutine(r))return baseActions.apply(this,arguments);
+    const log=getLifeDayLogs().find(x=>x.routineId===id);
+    if(!log){recordFreeRoutine(id);return;}
+    const ents=freeLogEntries(log);
+    const acts=[{label:'기록 추가',kind:'primary',run:()=>addFreeEntry(id)}];
+    acts.push(ents.length>1?{label:'기록 수정',run:()=>pickFreeEntryToEdit(id)}:{label:'기록 수정',run:()=>recordFreeRoutine(id)});
+    acts.push({label:'체크 해제',kind:'danger',run:()=>clearFreeRoutineRecord(id)});
+    showRoutineActionSheet(r.name,acts);
+  };
+  const baseMeta=lifeMeta;
+  lifeMeta=function(r){
+    if(r&&r.type==='free'&&!isMealFreeRoutine(r)){
+      const log=getLifeDayLogs().find(x=>x.routineId===r.id);
+      if(log&&Array.isArray(log.extra)&&log.extra.length)return freeLogEntries(log).join(' · ');
+    }
+    return baseMeta.apply(this,arguments);
+  };
+  const baseSave=saveRoutineInputSheet;
+  saveRoutineInputSheet=function(){
+    const ctx=routineInputContext,input=document.getElementById('routineInputValue');
+    if(!ctx||!input||ctx.mode!=='free'||(ctx.freeMode!=='add'&&ctx.entryIndex===undefined))return baseSave.apply(this,arguments);
+    const k=ctx.dateKey||lifeLogKey(),memo=input.value.trim();
+    const all=loadLifeLogs(),logs=Array.isArray(all[k])?all[k]:[];
+    const log=logs.find(x=>x.routineId===ctx.id);
+    if(!log)return baseSave.apply(this,arguments);
+    const ents=freeLogEntries(log);
+    if(ctx.freeMode==='add'){
+      if(!memo){appAlert('기록 내용을 입력해 주세요.');return;}
+      ents.push(memo);
+    }else if(memo)ents[ctx.entryIndex]=memo;
+    else ents.splice(ctx.entryIndex,1);
+    log.memo=ents[0]||'';
+    if(ents.length>1)log.extra=ents.slice(1);else delete log.extra;
+    log.completed=true;log.loggedAt=new Date().toISOString();
+    saveLifeLogs(all);
+    const calendarEdit=!!ctx.calendarEdit;
+    closeRoutineInputSheet();update();renderLifeCalendar();renderRecordDashboard();
+    if(calendarEdit)renderCalendarDetail(k);
+  };
+  const baseBuild=buildCalendarDayRecord;
+  buildCalendarDayRecord=function(dateKey){
+    const d=baseBuild.apply(this,arguments);
+    if(!d||!Array.isArray(d.free))return d;
+    const logs=loadLifeLogs()[dateKey]||[],routines=loadLifeRoutines(),out=[];
+    d.free.forEach(f=>{
+      if(f[1]==='free'){
+        const r=routines.find(x=>x.block==='free'&&x.name===f[0]),log=r&&logs.find(x=>x.routineId===r.id);
+        const ents=freeLogEntries(log);
+        if(ents.length>1){ents.forEach(e=>out.push([f[0],f[1],e]));return;}
+      }
+      out.push(f);
+    });
+    d.free=out;return d;
+  };
+  const baseText=calendarDateMatchesText;
+  calendarDateMatchesText=function(dateKey,rawQuery){
+    if(baseText.apply(this,arguments))return true;
+    const q=String(rawQuery||'').trim().toLowerCase();if(!q)return true;
+    const logs=loadLifeLogs()[dateKey];
+    return Array.isArray(logs)&&logs.some(l=>Array.isArray(l?.extra)&&l.extra.some(x=>String(x||'').toLowerCase().includes(q)));
+  };
+})();
+function addFreeEntry(id){
+  const r=loadLifeRoutines().find(x=>x.id===id);if(!r)return;
+  openRoutineInputSheet({mode:'free',id,title:r.name,hint:'기록 추가 (예: 영화 제목)',value:'',freeMode:'add'});
+}
+function pickFreeEntryToEdit(id){
+  const r=loadLifeRoutines().find(x=>x.id===id);if(!r)return;
+  const log=getLifeDayLogs().find(x=>x.routineId===id),ents=freeLogEntries(log);
+  showRoutineActionSheet(r.name+' · 수정할 기록',ents.map((e,i)=>({label:e.length>24?e.slice(0,24)+'…':e,run:()=>
+    openRoutineInputSheet({mode:'free',id,title:r.name,hint:'기록 수정 · 비우면 삭제',value:e,entryIndex:i})})));
+}
+function rrPeriodInfo(){
+  const today=rrTodayDate();let days,label;
+  if(recordPeriod==='week'){days=rrWeekDays(rrCursor);label=`${days[0].getMonth()+1}.${days[0].getDate()} – ${days[6].getMonth()+1}.${days[6].getDate()}`;}
+  else if(recordPeriod==='month'){const y=rrCursor.getFullYear(),m=rrCursor.getMonth();days=Array.from({length:new Date(y,m+1,0).getDate()},(_,i)=>new Date(y,m,i+1));label=`${y}년 ${m+1}월`;}
+  else{const y=rrCursor.getFullYear();days=rrDaysBetween(new Date(y,0,1),new Date(y,11,31));label=`${y}년`;}
+  return {days:days.filter(d=>d<=today),label};
+}
+function openLeisureTitles(name){
+  const {days,label}=rrPeriodInfo();
+  const routines=loadLifeRoutines(),books=loadBooks(),rlogs=loadReadingLogs();
+  const readIds=new Set(routines.filter(r=>r.id==='free_read'||String(r.name||'').trim()==='독서').map(r=>r.id));
+  const groups=new Map();let noTitle=0,totalDays=0;
+  const fmt=k=>{const d=parseDateKeyLocal(k);return `${d.getMonth()+1}.${d.getDate()}`;};
+  const add=(t,k,min)=>{const g=groups.get(t)||{dates:new Set(),min:0};g.dates.add(k);g.min+=min||0;groups.set(t,g);};
+  days.forEach(d=>{
+    const k=rrIso(d);let had=false,titled=false;
+    if(name==='독서'){
+      (Array.isArray(rlogs[k])?rlogs[k]:[]).forEach(x=>{had=true;const t=books.find(b=>b.id===x.bookId)?.title;if(t){add(t,k,Number(x.minutes)||0);titled=true;}});
+      (loadLifeLogs()[k]||[]).filter(l=>readIds.has(l.routineId)&&calendarRoutineLogIsRecorded(l)).forEach(l=>{had=true;freeLogEntries(l).forEach(e=>{add(e,k,0);titled=true;});});
+    }else{
+      const rs=routines.filter(r=>r.block==='free'&&!readIds.has(r.id)&&r.name===name);
+      (loadLifeLogs()[k]||[]).filter(l=>rs.some(r=>r.id===l.routineId)&&calendarRoutineLogIsRecorded(l)).forEach(l=>{had=true;freeLogEntries(l).forEach(e=>{add(e,k,0);titled=true;});});
+    }
+    if(had){totalDays++;if(!titled)noTitle++;}
+  });
+  const rows=[...groups.entries()].map(([t,g])=>{
+    const n=g.dates.size,dt=n===1?fmt([...g.dates][0]):`${n}일`;
+    return `<div class="leisureRow"><span class="lt">${escapeLife(t)}</span><span class="ld">${dt}${g.min?` · ${escapeLife(calendarDayDuration(g.min))}`:''}</span></div>`;
+  }).join('');
+  document.getElementById('leisureTitlesHead').textContent=`${name} · ${label}`;
+  document.getElementById('leisureTitlesBody').innerHTML=(rows||'<div class="rr-empty">이 기간에 적어 둔 제목이 없어요.</div>')
+    +(noTitle?`<div class="leisureNote">제목 없이 기록한 날 ${noTitle}일 (총 ${totalDays}일)</div>`:'');
+  document.getElementById('leisureTitlesModal').classList.remove('hide');
+}
+function closeLeisureTitles(){document.getElementById('leisureTitlesModal')?.classList.add('hide');}
+document.addEventListener('click',e=>{
+  const it=e.target.closest&&e.target.closest('.rr-free-card .rr-leisure-item');if(!it)return;
+  const sp=[...it.children].find(c=>c.tagName==='SPAN'&&!c.classList.contains('rr-leisure-days'));
+  if(sp)openLeisureTitles(sp.textContent.trim());
+});
 </script>
 
 
