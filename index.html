@@ -9486,6 +9486,20 @@ function savePeriodSettings(){
   try{renderLifeCalendar();}catch(e){}
   appToast('저장했어요');
 }
+
+/* 캘린더 검색: 간식·식사 장소까지 포함 */
+(function(){
+  const base=calendarDateMatchesText;
+  calendarDateMatchesText=function(dateKey,rawQuery){
+    if(base.apply(this,arguments))return true;
+    const q=String(rawQuery||'').trim().toLowerCase();if(!q)return true;
+    const parts=[];
+    (loadSnackRecords()[dateKey]||[]).forEach(x=>{if(x)parts.push(x.text||'',x.label||'');});
+    const logs=loadLifeLogs()[dateKey];
+    if(Array.isArray(logs))logs.forEach(l=>{if(l&&l.place)parts.push(l.place);});
+    return parts.join(' ').toLowerCase().includes(q);
+  };
+})();
 </script>
 
 
