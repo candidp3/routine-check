@@ -1918,6 +1918,16 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
 .leisureRow .ld{flex:0 0 auto;font-size:var(--fs-1);color:var(--rc-mu);font-variant-numeric:tabular-nums}
 .leisureNote{margin-top:8px;font-size:var(--fs-1);color:var(--rc-mu);line-height:1.5}
 body.scrolled .booksFixed .bookHeadSearchBtn{height:28px!important;min-height:28px!important;font-size:var(--fs-1)!important}
+
+.calSearchResults{margin-top:10px;max-height:38vh;overflow-y:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--box-line);border-radius:12px;background:var(--rc-card)}
+.calSearchResults.hide{display:none}
+.calHitHead{padding:8px 11px;font-size:var(--fs-1);color:var(--rc-mu);border-bottom:1px solid var(--box-line)}
+.calHitRow{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--box-line);background:transparent;padding:9px 11px;font:inherit;color:var(--rc-tx)}
+.calHitRow:last-child{border-bottom:0}
+.calHitRow .hd{font-size:var(--fs-1);color:var(--rc-mu);font-variant-numeric:tabular-nums}
+.calHitRow .ht{font-size:var(--fs-2);line-height:1.5;overflow-wrap:anywhere}
+mark.calHit,.calHitRow mark{background:var(--rc-gl);color:inherit;border-radius:3px;padding:0 1px}
+.rc-free-item.calEditable{cursor:pointer}
 </style>
 </head>
 
@@ -2023,6 +2033,7 @@ body.scrolled .booksFixed .bookHeadSearchBtn{height:28px!important;min-height:28
     </div>
     <div id="calendarRoutineChips" class="calendarRoutineChips"></div>
     <div id="calendarRoutineSummary" class="calendarRoutineSummary hide"></div>
+    <div id="calendarSearchResults" class="calSearchResults hide"></div>
   </div>
   <div class="section calWrap">
     <div class="calHead">
@@ -9576,7 +9587,8 @@ function freeLogEntries(log){
       if(f[1]==='free'){
         const r=routines.find(x=>x.block==='free'&&x.name===f[0]),log=r&&logs.find(x=>x.routineId===r.id);
         const ents=freeLogEntries(log);
-        if(ents.length>1){ents.forEach(e=>out.push([f[0],f[1],e]));return;}
+        if(ents.length>1){ents.forEach((e,i)=>out.push([f[0],f[1],e,r.id,i]));return;}
+        if(r){out.push([f[0],f[1],f[2],r.id,ents.length?0:-1]);return;}
       }
       out.push(f);
     });
@@ -9640,6 +9652,122 @@ document.addEventListener('click',e=>{
   const sp=[...it.children].find(c=>c.tagName==='SPAN'&&!c.classList.contains('rr-leisure-days'));
   if(sp)openLeisureTitles(sp.textContent.trim());
 });
+
+/* ===== 캘린더 검색 결과 목록 + 일치 줄 강조 + 자유형 기록 수정 ===== */
+function calHitMark(text,q){
+  const t=String(text),i=t.toLowerCase().indexOf(q);
+  if(i<0)return escapeLife(t.length>46?t.slice(0,46)+'…':t);
+  const a=Math.max(0,i-12),b=Math.min(t.length,i+q.length+24);
+  return (a>0?'…':'')+escapeLife(t.slice(a,i))+'<mark>'+escapeLife(t.slice(i,i+q.length))+'</mark>'+escapeLife(t.slice(i+q.length,b))+(b<t.length?'…':'');
+}
+function calendarSearchHits(raw){
+  const q=String(raw||'').trim().toLowerCase();if(!q)return [];
+  const routines=loadLifeRoutines(),lifeLogs=loadLifeLogs(),notes=loadDailyNotes(),snacks=loadSnackRecords(),keys=new Set();
+  [lifeLogs,notes,snacks,loadReadingLogs()].forEach(o=>Object.keys(o).forEach(k=>keys.add(k)));
+  try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(/^\d{4}-\d{2}-\d{2}$/.test(k))keys.add(k);}}catch(e){}
+  const out=[];
+  [...keys].filter(k=>/^\d{4}-\d{2}-\d{2}$/.test(k)).sort().reverse().forEach(k=>{
+    if(!calendarDateMatchesText(k,q))return;
+    const items=[];
+    const note=String(notes[k]||'');if(note.toLowerCase().includes(q))items.push('노트 · '+calHitMark(note.replace(/\s+/g,' '),q));
+    (Array.isArray(lifeLogs[k])?lifeLogs[k]:[]).forEach(l=>{
+      const r=routines.find(x=>x.id===l.routineId),name=r?String(r.name||''):'';
+      const ents=freeLogEntries(l).filter(e=>e.toLowerCase().includes(q));
+      ents.forEach(e=>items.push(escapeLife(name)+' · '+calHitMark(e,q)));
+      if(!ents.length){
+        if(l.place&&String(l.place).toLowerCase().includes(q))items.push(escapeLife(name)+' · '+calHitMark(l.place,q));
+        else if(l.value!==null&&l.value!==undefined&&String(l.value).toLowerCase().includes(q))items.push(escapeLife(name)+' · '+calHitMark(String(l.value),q));
+        else if(r&&(name+' '+(r.icon||'')).toLowerCase().includes(q))items.push(calHitMark(name,q));
+      }
+    });
+    (Array.isArray(snacks[k])?snacks[k]:[]).forEach(x=>{const t=String(x?.text||'');if((t+' '+(x?.label||'')).toLowerCase().includes(q))items.push('간식 · '+calHitMark(t,q));});
+    if(!items.length)items.push('루틴 기록');
+    out.push({k,items});
+  });
+  return out;
+}
+function renderCalendarSearchResults(){
+  const el=document.getElementById('calendarSearchResults');if(!el)return;
+  const q=calendarSearchText.trim();
+  if(!q||calendarRoutineFilterId){el.classList.add('hide');el.innerHTML='';return;}
+  const hits=calendarSearchHits(q),wd=['일','월','화','수','목','금','토'],MAX=40;
+  el.classList.remove('hide');
+  if(!hits.length){el.innerHTML='<div class="calHitHead">일치하는 기록이 없어요.</div>';return;}
+  el.innerHTML=`<div class="calHitHead">${hits.length}일에서 찾았어요 · 누르면 그 날짜로 이동해요</div>`+hits.slice(0,MAX).map(h=>{
+    const d=parseDateKeyLocal(h.k),more=h.items.length>3?` <span class="hd">외 ${h.items.length-3}개</span>`:'';
+    return `<button type="button" class="calHitRow" onclick="calendarSearchGo('${h.k}')"><div class="hd">${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()} ${wd[d.getDay()]}</div><div class="ht">${h.items.slice(0,3).join('<br>')}${more}</div></button>`;
+  }).join('')+(hits.length>MAX?`<div class="calHitHead">최근 ${MAX}일만 보여요. 검색어를 더 구체적으로 입력해 보세요.</div>`:'');
+}
+let calScrollToHit=false;
+function calendarSearchGo(k){
+  const d=parseDateKeyLocal(k);calendarCursor=new Date(d.getFullYear(),d.getMonth(),1);
+  calScrollToHit=true;selectCalendarDate(k);
+}
+function highlightCalendarHits(){
+  const root=document.getElementById('calendarDetail'),q=calendarSearchText.trim().toLowerCase();
+  if(!root||!q||calendarRoutineFilterId){calScrollToHit=false;return;}
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),nodes=[];
+  while(walker.nextNode()){const n=walker.currentNode;if(n.nodeValue.toLowerCase().includes(q)&&!/^(SCRIPT|STYLE|TEXTAREA|INPUT)$/.test(n.parentNode.tagName))nodes.push(n);}
+  nodes.forEach(n=>{
+    const t=n.nodeValue,low=t.toLowerCase(),frag=document.createDocumentFragment();let p=0,i;
+    while((i=low.indexOf(q,p))>=0){
+      if(i>p)frag.appendChild(document.createTextNode(t.slice(p,i)));
+      const m=document.createElement('mark');m.className='calHit';m.textContent=t.slice(i,i+q.length);frag.appendChild(m);p=i+q.length;
+    }
+    if(p<t.length)frag.appendChild(document.createTextNode(t.slice(p)));
+    n.parentNode.replaceChild(frag,n);
+  });
+  root.querySelectorAll('mark.calHit').forEach(m=>{const d=m.closest('details');if(d)d.open=true;});
+  if(calScrollToHit){
+    calScrollToHit=false;
+    const first=root.querySelector('mark.calHit');
+    if(first)setTimeout(()=>first.scrollIntoView({block:'center',behavior:'smooth'}),60);
+  }
+}
+function editCalendarFreeEntry(k,id,idx){
+  const r=loadLifeRoutines().find(x=>x.id===id);if(!r)return;
+  const log=(loadLifeLogs()[k]||[]).find(x=>x.routineId===id);if(!log)return;
+  const ents=freeLogEntries(log);
+  const acts=[];
+  acts.push(idx>=0&&ents[idx]!==undefined
+    ?{label:'수정',kind:'primary',run:()=>openRoutineInputSheet({mode:'free',id,title:r.name,hint:`${k} 기록 수정 · 비우면 삭제`,value:ents[idx],entryIndex:idx,dateKey:k,calendarEdit:true})}
+    :{label:'수정',kind:'primary',run:()=>editCalendarRoutineRecord(k,id)});
+  acts.push({label:'기록 추가',run:()=>openRoutineInputSheet({mode:'free',id,title:r.name,hint:`${k} 기록 추가`,value:'',freeMode:'add',dateKey:k,calendarEdit:true})});
+  acts.push({label:'삭제',kind:'danger',run:()=>{
+    if(idx>=0&&ents.length>1){
+      const all=loadLifeLogs(),lg=(all[k]||[]).find(x=>x.routineId===id);if(!lg)return;
+      const e=freeLogEntries(lg);e.splice(idx,1);
+      lg.memo=e[0]||'';if(e.length>1)lg.extra=e.slice(1);else delete lg.extra;
+      saveLifeLogs(all);refreshCalendarAfterEdit(k);
+    }else removeCalendarCheckRecord(k,id);
+  }});
+  showRoutineActionSheet(`${r.name} · ${k.slice(5).replace('-','.')}`,acts);
+}
+function decorateCalendarFreeItems(k){
+  const root=document.getElementById('calendarDetail');if(!root)return;
+  const card=[...root.querySelectorAll('.rc-card')].find(c=>c.querySelector('.rc-section-title')?.textContent.trim()==='FREE TIME');if(!card)return;
+  const data=buildCalendarDayRecord(k);if(!data)return;
+  [...card.querySelectorAll('.rc-free-item')].forEach((el,i)=>{
+    const f=data.free[i];if(!f||f[1]!=='free'||!f[3])return;
+    el.classList.add('calEditable');el.setAttribute('role','button');el.tabIndex=0;
+    el.onclick=()=>editCalendarFreeEntry(k,f[3],f[4]);
+  });
+}
+(function(){
+  const baseDetail=renderCalendarDetail;
+  renderCalendarDetail=function(k){
+    const r=baseDetail.apply(this,arguments);
+    try{decorateCalendarFreeItems(k);}catch(e){}
+    try{highlightCalendarHits();}catch(e){}
+    return r;
+  };
+  const baseCal=renderLifeCalendar;
+  renderLifeCalendar=function(){
+    const r=baseCal.apply(this,arguments);
+    try{renderCalendarSearchResults();}catch(e){}
+    return r;
+  };
+})();
 </script>
 
 
