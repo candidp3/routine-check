@@ -1928,6 +1928,13 @@ body.scrolled .booksFixed .bookHeadSearchBtn{height:28px!important;min-height:28
 .calHitRow .ht{font-size:var(--fs-2);line-height:1.5;overflow-wrap:anywhere}
 mark.calHit,.calHitRow mark{background:var(--rc-gl);color:inherit;border-radius:3px;padding:0 1px}
 .rc-free-item.calEditable{cursor:pointer}
+
+.readEntryRow{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--box-line);background:transparent;padding:12px 0;font:inherit;color:var(--rc-tx)}
+.readEntryRow:last-child{border-bottom:0}
+.readEntryRow .lt{min-width:0;flex:1;overflow-wrap:anywhere;font-size:var(--fs-2)}
+.readEntryRow .ld{flex:0 0 auto;font-size:var(--fs-1);color:var(--rc-mu);font-variant-numeric:tabular-nums}
+#calendarDetail .rc-card .rc-item.calEditable,#calendarDetail .rc-card .rc-empty.calEditable{cursor:pointer}
+#routineActionSheet.routineActionOverlay{z-index:340}
 </style>
 </head>
 
@@ -2566,6 +2573,15 @@ mark.calHit,.calHitRow mark{background:var(--rc-gl);color:inherit;border-radius:
       </div>
     </details>
     <div class="lifeActions"><button class="lifeDelete" onclick="closePeriodSettings()">취소</button><button class="lifeSave" onclick="savePeriodSettings()">저장</button></div>
+  </div>
+</div>
+
+<div id="readingEntriesModal" class="lifeModal hide" onclick="if(event.target===this)closeReadingEntries()">
+  <div class="lifeSheet">
+    <div class="lifeSheetHead"><b id="readingEntriesHead">독서 기록</b><button class="lifeClose" onclick="closeReadingEntries()">×</button></div>
+    <div class="calendarChipSelectHint">책을 잘못 연결했다면 눌러서 책을 바꾸거나 시간을 고칠 수 있어요.</div>
+    <div id="readingEntriesBody" class="leisureBody"></div>
+    <div class="lifeActions"><button class="lifeSave" onclick="addReadingEntry()">+ 책 연결 추가</button></div>
   </div>
 </div>
 
@@ -9765,6 +9781,119 @@ function decorateCalendarFreeItems(k){
   renderLifeCalendar=function(){
     const r=baseCal.apply(this,arguments);
     try{renderCalendarSearchResults();}catch(e){}
+    return r;
+  };
+})();
+
+/* ===== 독서: 날짜별 책 연결 수정 (책 변경 / 시간 수정 / 삭제 / 추가) ===== */
+let readingEditDate=null,readingPickCtx=null;
+function readingBooksSorted(){
+  const b=loadBooks();
+  return [...b.filter(x=>x.status==='읽고있어'),...b.filter(x=>x.status!=='읽고있어')];
+}
+function readingTitleOf(id){return loadBooks().find(b=>b.id===id)?.title||'(삭제된 책)';}
+function openReadingEntries(k){
+  readingEditDate=k||lifeLogKey();
+  renderReadingEntries();
+  document.getElementById('readingEntriesModal').classList.remove('hide');
+}
+function closeReadingEntries(){document.getElementById('readingEntriesModal')?.classList.add('hide');}
+function renderReadingEntries(){
+  const k=readingEditDate,d=parseDateKeyLocal(k);
+  document.getElementById('readingEntriesHead').textContent=`독서 기록 · ${d.getMonth()+1}.${d.getDate()}`;
+  const rows=Array.isArray(loadReadingLogs()[k])?loadReadingLogs()[k]:[];
+  document.getElementById('readingEntriesBody').innerHTML=rows.length
+    ?rows.map((x,i)=>`<button type="button" class="readEntryRow" onclick="readingEntryActions(${i})"><span class="lt">📚 ${escapeLife(readingTitleOf(x.bookId))}</span><span class="ld">${escapeLife(formatDurationMin(Number(x.minutes)||0))} ›</span></button>`).join('')
+    :'<div class="rr-empty">연결된 책 기록이 없어요. 아래 버튼으로 책을 연결할 수 있어요.</div>';
+}
+function refreshAfterReadingEdit(){
+  const k=readingEditDate;
+  try{renderLifeCalendar();}catch(e){}
+  try{renderCalendarDetail(calendarSelectedKey||k);}catch(e){}
+  try{renderRecordDashboard();}catch(e){}
+  try{if(typeof renderBooks==='function')renderBooks();}catch(e){}
+  renderReadingEntries();
+}
+function readingEntryActions(i){
+  const k=readingEditDate,rows=loadReadingLogs()[k]||[],x=rows[i];if(!x)return;
+  showRoutineActionSheet(readingTitleOf(x.bookId),[
+    {label:'책 변경',kind:'primary',run:()=>openReadingPicker({mode:'change',index:i})},
+    {label:'시간 수정',run:async()=>{
+      const v=await appPrompt('읽은 시간을 분 단위로 입력해 주세요.',String(Number(x.minutes)||''));
+      if(v===null||v===undefined)return;
+      const n=Number(String(v).trim());
+      if(!Number.isFinite(n)||n<=0){appAlert('1 이상의 숫자를 입력해 주세요.');return;}
+      const all=loadReadingLogs(),r=all[k]||[];if(!r[i])return;r[i].minutes=n;saveReadingLogs(all);refreshAfterReadingEdit();
+    }},
+    {label:'삭제',kind:'danger',run:async()=>{
+      if(!await appConfirm('이 독서 기록을 삭제할까요?'))return;
+      const all=loadReadingLogs(),r=all[k]||[];r.splice(i,1);
+      if(r.length)all[k]=r;else delete all[k];
+      saveReadingLogs(all);refreshAfterReadingEdit();
+    }}
+  ]);
+}
+function addReadingEntry(){openReadingPicker({mode:'add'});}
+function openReadingPicker(ctx){
+  const books=readingBooksSorted();
+  if(!books.length){appAlert('먼저 BOOKS에서 책을 추가해 주세요.');return;}
+  readingPickCtx=ctx;
+  closeReadingEntries();
+  document.getElementById('readingBookDuration').textContent=ctx.mode==='add'?'연결할 책을 선택하세요':'바꿀 책을 선택하세요';
+  document.getElementById('readingPickList').innerHTML=books.map(b=>`<button class="readingPickBtn" onclick="pickReadingBook('${b.id}')">📚 ${escapeLife(b.title)}<div class="bookAuthor">${escapeLife(b.author||'')}${b.status?` · ${escapeLife(b.status)}`:''}</div></button>`).join('');
+  document.getElementById('readingBookModal').classList.remove('hide');
+}
+async function pickReadingBook(bookId){
+  const ctx=readingPickCtx;if(!ctx)return;
+  const k=readingEditDate;
+  document.getElementById('readingBookModal').classList.add('hide');pendingReadingTimer=null;readingPickCtx=null;
+  const all=loadReadingLogs(),rows=Array.isArray(all[k])?all[k]:[];
+  if(ctx.mode==='change'){
+    const x=rows[ctx.index];
+    if(x){
+      x.bookId=bookId;
+      const dup=rows.findIndex((y,j)=>j!==ctx.index&&y.bookId===bookId);
+      if(dup>=0){x.minutes=(Number(x.minutes)||0)+(Number(rows[dup].minutes)||0);rows.splice(dup,1);}
+      all[k]=rows;saveReadingLogs(all);
+    }
+  }else{
+    const v=await appPrompt('읽은 시간을 분 단위로 입력해 주세요.','');
+    const n=Number(String(v??'').trim());
+    if(v===null||v===undefined||!Number.isFinite(n)||n<=0){if(v!==null&&v!==undefined)appAlert('1 이상의 숫자를 입력해 주세요.');openReadingEntries(k);return;}
+    addReadingLog(k,bookId,n);
+  }
+  refreshAfterReadingEdit();
+  document.getElementById('readingEntriesModal').classList.remove('hide');
+}
+(function(){
+  const baseClose=closeReadingBookModal;
+  closeReadingBookModal=function(){
+    const was=readingPickCtx;readingPickCtx=null;
+    const r=baseClose.apply(this,arguments);
+    if(was)document.getElementById('readingEntriesModal')?.classList.remove('hide');
+    return r;
+  };
+  const baseTime=openTimeRoutineActions;
+  openTimeRoutineActions=function(id){
+    const r=baseTime.apply(this,arguments);
+    try{
+      const rt=loadLifeRoutines().find(x=>x.id===id);
+      if(rt&&(rt.id==='free_read'||String(rt.name||'').trim()==='독서')&&!isTimerRunningFor(id)){
+        const box=document.getElementById('routineActionButtons');
+        if(box){const b=document.createElement('button');b.type='button';b.textContent='책 기록 수정';
+          b.onclick=()=>{closeRoutineActionSheet();openReadingEntries(lifeLogKey());};box.appendChild(b);}
+      }
+    }catch(e){}
+    return r;
+  };
+  const baseDetail=renderCalendarDetail;
+  renderCalendarDetail=function(k){
+    const r=baseDetail.apply(this,arguments);
+    try{
+      const card=[...document.querySelectorAll('#calendarDetail .rc-card')].find(c=>c.querySelector('.rc-section-title')?.textContent.trim()==='MY READING');
+      const el=card&&card.querySelector('.rc-item,.rc-empty');
+      if(el){el.classList.add('calEditable');el.setAttribute('role','button');el.tabIndex=0;el.onclick=()=>openReadingEntries(k);}
+    }catch(e){}
     return r;
   };
 })();
