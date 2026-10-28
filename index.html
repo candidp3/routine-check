@@ -9891,8 +9891,13 @@ async function pickReadingBook(bookId){
     const r=baseDetail.apply(this,arguments);
     try{
       const card=[...document.querySelectorAll('#calendarDetail .rc-card')].find(c=>c.querySelector('.rc-section-title')?.textContent.trim()==='MY READING');
-      const el=card&&card.querySelector('.rc-item,.rc-empty');
-      if(el){el.classList.add('calEditable');el.setAttribute('role','button');el.tabIndex=0;el.onclick=()=>openReadingEntries(k);}
+      const rl=Array.isArray(loadReadingLogs()[k])?loadReadingLogs()[k]:[];
+      if(card&&rl.length){
+        const first=card.querySelector('.rc-item,.rc-empty');
+        const html=rl.map(x=>`<div class="rc-item"><span class="rc-dot rc-ok rc-free-dot"></span><span class="rc-routine-name">${escapeLife(readingTitleOf(x.bookId))}</span><span><b class="rc-value">${escapeLife(calendarDayDuration(Number(x.minutes)||0))}</b></span></div>`).join('');
+        if(first){first.insertAdjacentHTML('beforebegin',html);card.querySelectorAll('.rc-item,.rc-empty').forEach((e,i)=>{if(i>=rl.length)e.remove();});}
+      }
+      if(card)card.querySelectorAll('.rc-item,.rc-empty').forEach(el=>{el.classList.add('calEditable');el.setAttribute('role','button');el.tabIndex=0;el.onclick=()=>openReadingEntries(k);});
     }catch(e){}
     return r;
   };
