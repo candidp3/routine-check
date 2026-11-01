@@ -9902,6 +9902,24 @@ async function pickReadingBook(bookId){
     return r;
   };
 })();
+
+/* 독서 시간을 직접 입력했을 때도 책 연결 */
+(function(){
+  const baseSave=saveRoutineInputSheet;
+  const isRead=id=>{const r=loadLifeRoutines().find(x=>x.id===id);return !!r&&(r.id==='free_read'||String(r.name||'').trim()==='독서');};
+  const dur=(k,id)=>{const l=(loadLifeLogs()[k]||[]).find(x=>x.routineId===id);return Number(l?.duration)||0;};
+  const linked=k=>(Array.isArray(loadReadingLogs()[k])?loadReadingLogs()[k]:[]).reduce((a,x)=>a+(Number(x.minutes)||0),0);
+  saveRoutineInputSheet=function(){
+    const ctx=routineInputContext;
+    if(!ctx||ctx.mode!=='time'||!isRead(ctx.id))return baseSave.apply(this,arguments);
+    const k=ctx.dateKey||lifeLogKey(),before=dur(k,ctx.id),linkedBefore=linked(k),timeMode=ctx.timeMode;
+    const r=baseSave.apply(this,arguments);
+    const after=dur(k,ctx.id);
+    const amt=timeMode==='add'?after-before:after-linkedBefore;
+    if(after>0&&after!==before&&amt>0)setTimeout(()=>chooseBookForReadingTimer(k,amt),120);
+    return r;
+  };
+})();
 </script>
 
 
