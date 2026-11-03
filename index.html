@@ -3893,63 +3893,11 @@ function update(){
    백업 / 복원
 ========================= */
 
-const NL_API_KEY_STORAGE='nationalLibraryApiKey_v1';
-const DATA4LIB_API_KEY_STORAGE='data4LibraryApiKey_v1';
 const FONT_SIZE_KEY='fontSizeSetting_v1';
-const BACKUP_EXCLUDED_KEYS=new Set([NL_API_KEY_STORAGE,DATA4LIB_API_KEY_STORAGE,'lastFileBackup_v1','backupNudgeSince_v1','backupNudgeSnooze_v1']);
+const BACKUP_EXCLUDED_KEYS=new Set(['nationalLibraryApiKey_v1','data4LibraryApiKey_v1','lastFileBackup_v1','backupNudgeSince_v1','backupNudgeSnooze_v1']);
 const FONT_SIZE_ROOT_PX={small:16,normal:19,large:22};
 
-function getNationalLibraryApiKey(){
-  return String(localStorage.getItem(NL_API_KEY_STORAGE)||'').trim();
-}
-function renderNationalLibraryApiSetting(){
-  const input=document.getElementById('nlApiKeyInput');
-  if(input&&document.activeElement!==input)input.value=getNationalLibraryApiKey();
-  const status=document.getElementById('nlApiStatus');
-  if(status&&!getNationalLibraryApiKey())status.textContent='API 키는 이 기기에만 저장되고 백업 파일에는 포함되지 않아요.';
-}
-function saveNationalLibraryApiKey(){
-  const input=document.getElementById('nlApiKeyInput');
-  const key=String(input?.value||'').trim();
-  if(!key)return appAlert('발급받은 국립중앙도서관 API 키를 입력해 주세요.');
-  localStorage.setItem(NL_API_KEY_STORAGE,key);
-  const status=document.getElementById('nlApiStatus');
-  if(status)status.textContent='API 키를 이 기기에 저장했어요. 백업 파일에는 포함되지 않습니다.';
-}
-async function deleteNationalLibraryApiKey(){
-  if(!getNationalLibraryApiKey())return;
-  if(!await appConfirm('이 기기에 저장된 국립중앙도서관 API 키를 삭제할까요?'))return;
-  localStorage.removeItem(NL_API_KEY_STORAGE);
-  const input=document.getElementById('nlApiKeyInput');if(input)input.value='';
-  const status=document.getElementById('nlApiStatus');
-  if(status)status.textContent='저장된 API 키를 삭제했어요.';
-}
 
-function getData4LibraryApiKey(){
-  return String(localStorage.getItem(DATA4LIB_API_KEY_STORAGE)||'').trim();
-}
-function renderData4LibraryApiSetting(){
-  const input=document.getElementById('data4LibApiKeyInput');
-  if(input&&document.activeElement!==input)input.value=getData4LibraryApiKey();
-  const status=document.getElementById('data4LibApiStatus');
-  if(status&&!getData4LibraryApiKey())status.textContent='정보나루 키도 백업 파일에는 포함되지 않아요.';
-}
-function saveData4LibraryApiKey(){
-  const input=document.getElementById('data4LibApiKeyInput');
-  const key=String(input?.value||'').trim();
-  if(!key)return appAlert('발급받은 도서관 정보나루 API 키를 입력해 주세요.');
-  localStorage.setItem(DATA4LIB_API_KEY_STORAGE,key);
-  const status=document.getElementById('data4LibApiStatus');
-  if(status)status.textContent='정보나루 API 키를 이 기기에 저장했어요. 백업 파일에는 포함되지 않습니다.';
-}
-async function deleteData4LibraryApiKey(){
-  if(!getData4LibraryApiKey())return;
-  if(!await appConfirm('이 기기에 저장된 도서관 정보나루 API 키를 삭제할까요?'))return;
-  localStorage.removeItem(DATA4LIB_API_KEY_STORAGE);
-  const input=document.getElementById('data4LibApiKeyInput');if(input)input.value='';
-  const status=document.getElementById('data4LibApiStatus');
-  if(status)status.textContent='저장된 정보나루 API 키를 삭제했어요.';
-}
 function getFontSizeSetting(){
   const v=localStorage.getItem(FONT_SIZE_KEY)||'normal';
   return Object.prototype.hasOwnProperty.call(FONT_SIZE_ROOT_PX,v)?v:'normal';
@@ -4078,9 +4026,6 @@ function validateBackupPayload(value){
   return vals.every(v=>typeof v==='string'||v===null)?'legacy':'invalid';
 }
 
-function exportBackup(){
-  downloadBackup();
-}
 
 async function downloadBackup(){
   const button=document.querySelector('[onclick="downloadBackup()"]');
@@ -4361,15 +4306,6 @@ const LEGACY_BASE_ROUTINES = [
 ];
 
 function lifeClone(v){ return JSON.parse(JSON.stringify(v)); }
-function ensureLegacyBaseRoutines(list){
-  if(localStorage.getItem(LEGACY_MIGRATION_KEY)==='done') return list;
-  const byId=new Set(list.map(r=>r.id));
-  let changed=false;
-  LEGACY_BASE_ROUTINES.forEach(r=>{ if(!byId.has(r.id)){ list.push(lifeClone(r)); changed=true; } });
-  if(changed) saveLifeRoutines(list);
-  localStorage.setItem(LEGACY_MIGRATION_KEY,'done');
-  return list;
-}
 
 const BOOKS_KEY="books_v1";
 const READING_LOGS_KEY="readingLogs_v1";
@@ -5192,11 +5128,6 @@ function rrDaysBetween(start,end){
 }
 function rrAvg(a){const x=a.filter(v=>v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v))).map(Number);return x.length?x.reduce((s,v)=>s+v,0)/x.length:0;}
 function rrData(d){return buildCalendarDayRecord(rrIso(d));}
-function rrRoutineRate(x){
-  if(!x||!x.routines?.length)return null;
-  const scheduledForRate=x.routines.filter(r=>r[5]!==false);if(!scheduledForRate.length)return null;
-  return Math.round(scheduledForRate.filter(r=>r[2]).length/scheduledForRate.length*100);
-}
 function rrStats(days){
   const D=days.map(rrData),R=D.filter(Boolean),rt=R.flatMap(x=>(x.routines||[]).filter(r=>r[5]!==false));
   return {D,R,rec:R.length,elapsed:days.filter(d=>d<=rrTodayDate()).length,
@@ -5563,25 +5494,7 @@ function renderBookCoverPreview(url){
   root.innerHTML=`<img src="${escapeLife(u)}" alt="" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('hide')"><span>선택된 표지</span>`;
   root.classList.remove('hide');
 }
-function stripHtmlText(v){
-  const box=document.createElement('div');box.innerHTML=String(v||'');return (box.textContent||'').trim();
-}
 
-function firstArrayValue(v){
-  return Array.isArray(v)&&v.length?v[0]:'';
-}
-function openLibraryCoverUrl(doc){
-  if(doc?.cover_i)return `https://covers.openlibrary.org/b/id/${encodeURIComponent(doc.cover_i)}-M.jpg?default=false`;
-  if(Array.isArray(doc?.covers)&&doc.covers.length)return `https://covers.openlibrary.org/b/id/${encodeURIComponent(doc.covers[0])}-M.jpg?default=false`;
-  const isbn=firstArrayValue(doc?.isbn)||firstArrayValue(doc?.isbn_13)||firstArrayValue(doc?.isbn_10);
-  return isbn?`https://covers.openlibrary.org/b/isbn/${encodeURIComponent(isbn)}-M.jpg?default=false`:'';
-}
-function normalizeOpenLibraryWorkKey(key){
-  const raw=String(key||'').trim();
-  if(!raw)return '';
-  if(raw.startsWith('/works/'))return raw;
-  return raw.startsWith('OL')?`/works/${raw}`:raw;
-}
 
 const KDC_GENRE_NAMES={
   '0':'총류','1':'철학','2':'종교','3':'사회과학','4':'자연과학',
@@ -5672,7 +5585,6 @@ function scoreBookCandidate(book,parsed){
   }
   if(book?.coverUrl)score+=4;
   if(String(book?.source||'').includes('국립중앙도서관'))score+=5;
-  if(String(book?.source||'').includes('정보나루'))score+=4;
   return score;
 }
 function mergeBookSearchCandidates(groups,parsed){
@@ -5719,85 +5631,6 @@ function mergeBookSearchCandidates(groups,parsed){
   return merged.sort((a,b)=>scoreBookCandidate(b,parsed)-scoreBookCandidate(a,parsed)).slice(0,12);
 }
 
-function data4LibraryRows(data){
-  const rows=[];
-  const seen=new Set();
-  const visit=value=>{
-    if(!value||typeof value!=='object'||seen.has(value))return;
-    seen.add(value);
-    if(Array.isArray(value)){value.forEach(visit);return;}
-    const row=value.doc||value.book||value.item||value;
-    const hasBookFields=['bookname','bookName','title','TITLE','isbn13','isbn','ISBN'].some(k=>String(row?.[k]||'').trim());
-    if(hasBookFields&&row===value)rows.push(row);
-    if((value.doc||value.book||value.item)&&typeof row==='object'){
-      const nestedHasBookFields=['bookname','bookName','title','TITLE','isbn13','isbn','ISBN'].some(k=>String(row?.[k]||'').trim());
-      if(nestedHasBookFields)rows.push(row);
-    }
-    Object.values(value).forEach(visit);
-  };
-  visit(data);
-  const unique=[];
-  const keys=new Set();
-  rows.forEach(row=>{
-    const key=[String(row?.bookname||row?.bookName||row?.title||row?.TITLE||''),String(row?.isbn13||row?.isbn||row?.ISBN||'')].join('|');
-    if(!keys.has(key)){keys.add(key);unique.push(row);}
-  });
-  return unique;
-}
-function mapData4LibraryRows(data){
-  return data4LibraryRows(data).map(row=>{
-    const isbn=cleanIsbn(row?.isbn13||row?.isbn||row?.ISBN||'');
-    return {
-      title:String(row?.bookname||row?.bookName||row?.title||row?.TITLE||'').trim(),
-      author:String(row?.authors||row?.author||row?.AUTHOR||'').trim(),
-      publisher:String(row?.publisher||row?.pub||row?.PUBLISHER||'').trim(),
-      publishDate:String(row?.publication_year||row?.publicationYear||row?.pubYear||row?.publication_date||'').trim(),
-      genre:kdcGenreName(row?.kdc||row?.KDC||row?.class_no||row?.classNm||''),
-      detail:'',
-      coverUrl:normalizeCoverUrl(row?.bookImageURL||row?.bookImageUrl||row?.imageUrl||row?.coverUrl||''),
-      isbn,
-      description:stripHtmlText(row?.description||row?.bookDtl||row?.bookIntro||''),
-      source:'도서관 정보나루',
-      ranking:row?.ranking||row?.rank||'',
-      loan_count:row?.loan_count||row?.loanCount||''
-    };
-  }).filter(x=>x.title);
-}
-async function data4LibraryFetch(endpoint,params={},keyOverride=''){
-  const key=String(keyOverride||getData4LibraryApiKey()).trim();
-  if(!key)throw new Error('data4library-no-key');
-  const qs=new URLSearchParams({...params,authKey:key,format:'json'});
-  const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),10000);
-  try{
-    const res=await fetch(`https://data4library.kr/api/${endpoint}?${qs.toString()}`,{
-      method:'GET',mode:'cors',credentials:'omit',signal:controller.signal,
-      headers:{'Accept':'application/json,text/plain,*/*'}
-    });
-    if(!res.ok)throw new Error(`data4library-${res.status}`);
-    return await res.json();
-  }finally{clearTimeout(timer);}
-}
-async function data4LibrarySearch(parsed){
-  const key=getData4LibraryApiKey();
-  if(!key)return {_skipped:true,response:{docs:[]}};
-  const keyword=parsed.isIsbn?parsed.isbn:[parsed.title,parsed.author,parsed.publisher].filter(Boolean).join(' ');
-  return await data4LibraryFetch('srchBooks',{keyword,pageNo:'1',pageSize:'12'});
-}
-async function testData4LibraryApiKey(){
-  const input=document.getElementById('data4LibApiKeyInput');
-  const key=String(input?.value||getData4LibraryApiKey()).trim();
-  const status=document.getElementById('data4LibApiStatus');
-  if(!key){if(status)status.textContent='먼저 정보나루 API 키를 입력해 주세요.';return;}
-  if(status)status.textContent='도서관 정보나루 API 연결을 확인하는 중이에요…';
-  try{
-    const data=await data4LibraryFetch('srchBooks',{keyword:'역사',pageNo:'1',pageSize:'1'},key);
-    const rows=mapData4LibraryRows(data);
-    if(status)status.textContent=`연결 성공 · 검색 응답 ${rows.length}건 확인 · 저장하려면 ‘키 저장’을 눌러 주세요.`;
-  }catch(e){
-    if(status)status.textContent='정보나루 직접 연결에 실패했어요. API 키 상태나 브라우저 연결 제한을 확인해 주세요.';
-  }
-}
 
 function nationalLibraryDocs(data){
   const raw=data?.docs??data?.DOCS??data?.o?.docs??data?.response?.docs??[];
@@ -5826,319 +5659,7 @@ function mapNationalLibraryData(data){
     };
   }).filter(x=>x.title);
 }
-async function nationalLibrarySearch(query,keyOverride=''){
-  const key=String(keyOverride||getNationalLibraryApiKey()).trim();
-  if(!key)return {_skipped:true,docs:[]};
-  const parsed=typeof query==='object'&&query?query:parseBookSearchQuery(query);
-  const params=new URLSearchParams({
-    cert_key:key,
-    result_style:'json',
-    page_no:'1',
-    page_size:'12'
-  });
-  if(parsed.isIsbn)params.set('isbn',parsed.isbn);
-  else{
-    if(parsed.title)params.set('title',parsed.title);
-    if(parsed.author)params.set('author',parsed.author);
-    if(parsed.publisher)params.set('publisher',parsed.publisher);
-    if(!parsed.title&&!parsed.author&&!parsed.publisher)params.set('title',parsed.raw);
-  }
 
-  const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),10000);
-  try{
-    const res=await fetch(`https://www.nl.go.kr/seoji/SearchApi.do?${params.toString()}`,{
-      method:'GET',mode:'cors',credentials:'omit',signal:controller.signal,
-      headers:{'Accept':'application/json,text/plain,*/*'}
-    });
-    if(!res.ok)throw new Error(`national-library-${res.status}`);
-    const text=await res.text();
-    let data;
-    try{data=JSON.parse(text);}catch(e){throw new Error('national-library-invalid-json');}
-    const code=nationalLibraryErrorCode(data);
-    if(code&&code!=='200'&&code!=='0')throw new Error(`national-library-api-${code}`);
-    return data;
-  }finally{
-    clearTimeout(timer);
-  }
-}
-async function testNationalLibraryApiKey(){
-  const input=document.getElementById('nlApiKeyInput');
-  const key=String(input?.value||getNationalLibraryApiKey()).trim();
-  const status=document.getElementById('nlApiStatus');
-  if(!key){if(status)status.textContent='먼저 API 키를 입력해 주세요.';return;}
-  if(status)status.textContent='국립중앙도서관 API 연결을 확인하는 중이에요…';
-  try{
-    const data=await nationalLibrarySearch(parseBookSearchQuery('토지'),key);
-    const rows=mapNationalLibraryData(data);
-    if(status)status.textContent=`연결 성공 · 검색 응답 ${rows.length}건 확인 · 저장하려면 ‘키 저장’을 눌러 주세요.`;
-  }catch(e){
-    if(status)status.textContent='직접 연결에 실패했어요. 브라우저의 CORS 제한 또는 API 키 상태를 확인해 주세요. BOOKS 검색은 Google Books와 Open Library로 계속 동작합니다.';
-  }
-}
-
-function mapOpenLibraryDocs(data){
-  return (data?.docs||[]).map(doc=>{
-    const subjects=Array.isArray(doc.subject)?doc.subject.filter(Boolean):[];
-    const publishers=Array.isArray(doc.publisher)?doc.publisher.filter(Boolean):[];
-    const isbns=Array.isArray(doc.isbn)?doc.isbn.filter(Boolean):[];
-    return {
-      title:doc.title||'',
-      author:(doc.author_name||[]).join(', '),
-      publisher:publishers[0]||'',
-      genre:kdcGenreName(subjects[0]||''),
-      detail:'',
-      coverUrl:normalizeCoverUrl(openLibraryCoverUrl(doc)),
-      isbn:isbns.find(x=>String(x).replace(/[-\s]/g,'').length===13)||isbns[0]||'',
-      description:'',
-      source:'Open Library',
-      workKey:normalizeOpenLibraryWorkKey(doc.key),
-      publishDate:doc.first_publish_year?String(doc.first_publish_year):''
-    };
-  }).filter(x=>x.title);
-}
-async function openLibrarySearch(query){
-  const isbnOnly=String(query||'').replace(/[-\s]/g,'');
-  const params=new URLSearchParams({
-    q:/^\d{10}(\d{3})?$/.test(isbnOnly)?`isbn:${isbnOnly}`:String(query||'').trim(),
-    fields:'title,author_name,publisher,isbn,cover_i,subject,first_publish_year,key,edition_key',
-    limit:'8'
-  });
-  const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),9000);
-  try{
-    const res=await fetch(`https://openlibrary.org/search.json?${params.toString()}`,{
-      method:'GET',
-      mode:'cors',
-      credentials:'omit',
-      signal:controller.signal,
-      headers:{'Accept':'application/json'}
-    });
-    if(!res.ok)throw new Error(`openlibrary-${res.status}`);
-    return await res.json();
-  }finally{
-    clearTimeout(timer);
-  }
-}
-function mapOpenLibraryEditionRow(row,work){
-  const isbn13=Array.isArray(row?.isbn_13)?row.isbn_13.filter(Boolean):[];
-  const isbn10=Array.isArray(row?.isbn_10)?row.isbn_10.filter(Boolean):[];
-  const isbn=isbn13[0]||isbn10[0]||'';
-  const publishers=Array.isArray(row?.publishers)?row.publishers.filter(Boolean):[];
-  const languages=(Array.isArray(row?.languages)?row.languages:[]).map(x=>{
-    if(typeof x==='string')return x.replace('/languages/','');
-    return String(x?.key||'').replace('/languages/','');
-  }).filter(Boolean);
-  return {
-    title:row?.title||work?.title||'',
-    author:work?.author||'',
-    publisher:publishers[0]||work?.publisher||'',
-    genre:work?.genre||'',
-    detail:work?.detail||'',
-    coverUrl:normalizeCoverUrl(openLibraryCoverUrl({...row,isbn:[isbn]}))||work?.coverUrl||'',
-    isbn,
-    description:'',
-    source:'Open Library 판본',
-    workKey:work?.workKey||'',
-    editionKey:String(row?.key||''),
-    publishDate:String(row?.publish_date||''),
-    languages
-  };
-}
-async function openLibraryEditionsForWork(work,limit=8){
-  const workKey=normalizeOpenLibraryWorkKey(work?.workKey);
-  if(!workKey)return [];
-  const params=new URLSearchParams();
-  params.set('type','/type/edition');
-  params.set('works',workKey);
-  params.set('title','');
-  params.set('publishers','');
-  params.set('isbn_13','');
-  params.set('isbn_10','');
-  params.set('covers','');
-  params.set('publish_date','');
-  params.set('languages','');
-  params.set('limit',String(limit));
-
-  const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),9000);
-  try{
-    const res=await fetch(`https://openlibrary.org/query.json?${params.toString()}`,{
-      method:'GET',
-      mode:'cors',
-      credentials:'omit',
-      signal:controller.signal,
-      headers:{'Accept':'application/json'}
-    });
-    if(!res.ok)throw new Error(`openlibrary-editions-${res.status}`);
-    const rows=await res.json();
-    return (Array.isArray(rows)?rows:[]).map(row=>mapOpenLibraryEditionRow(row,work)).filter(x=>x.title);
-  }finally{
-    clearTimeout(timer);
-  }
-}
-function rankOpenLibraryEditions(rows){
-  return [...(rows||[])].sort((a,b)=>{
-    const ak=a.languages?.includes('kor')?1:0;
-    const bk=b.languages?.includes('kor')?1:0;
-    if(ak!==bk)return bk-ak;
-    const ap=a.publisher?1:0,bp=b.publisher?1:0;
-    if(ap!==bp)return bp-ap;
-    const ai=a.isbn?1:0,bi=b.isbn?1:0;
-    return bi-ai;
-  });
-}
-async function expandOpenLibraryEditions(data){
-  const works=mapOpenLibraryDocs(data);
-  if(!works.length)return [];
-  const targetWorks=works.slice(0,3);
-  const settled=await Promise.allSettled(targetWorks.map(w=>openLibraryEditionsForWork(w,8)));
-  let editions=[];
-  settled.forEach((r,i)=>{
-    if(r.status==='fulfilled'&&r.value.length)editions.push(...r.value);
-    else editions.push(targetWorks[i]);
-  });
-  const ranked=rankOpenLibraryEditions(editions);
-  return mergeBookSearchResults(ranked,[]).slice(0,12);
-}
-function mergeBookSearchResults(primary,secondary){
-  const seen=new Set();
-  return [...(primary||[]),...(secondary||[])].filter(b=>{
-    const key=[String(b.isbn||'').replace(/[-\s]/g,''),String(b.title||'').trim().toLowerCase(),String(b.author||'').trim().toLowerCase()].join('|');
-    if(seen.has(key))return false;
-    seen.add(key);
-    return true;
-  }).slice(0,12);
-}
-function mapGoogleBookItems(data){
-  return (data?.items||[]).map(item=>{
-    const v=item.volumeInfo||{};
-    const categories=Array.isArray(v.categories)?v.categories.filter(Boolean):[];
-    const isbn=(v.industryIdentifiers||[]).find(x=>x.type==='ISBN_13')?.identifier
-      ||(v.industryIdentifiers||[]).find(x=>x.type==='ISBN_10')?.identifier||'';
-    return {
-      title:v.title||'',
-      author:(v.authors||[]).join(', '),
-      publisher:v.publisher||'',
-      genre:kdcGenreName(v.mainCategory||categories[0]||''),
-      detail:'',
-      coverUrl:normalizeCoverUrl(v.imageLinks?.thumbnail||v.imageLinks?.smallThumbnail||''),
-      isbn,
-      description:stripHtmlText(v.description||''),
-      source:'Google Books'
-    };
-  });
-}
-function googleBooksJsonpSearch(query){
-  return new Promise((resolve,reject)=>{
-    const callbackName='__routineBooksCb_'+Date.now()+'_'+Math.random().toString(36).slice(2);
-    const script=document.createElement('script');
-    let settled=false;
-    const cleanup=()=>{
-      try{delete window[callbackName]}catch(_){window[callbackName]=undefined}
-      script.remove();
-    };
-    const timer=setTimeout(()=>{
-      if(settled)return;
-      settled=true;cleanup();reject(new Error('timeout'));
-    },10000);
-    window[callbackName]=(data)=>{
-      if(settled)return;
-      settled=true;clearTimeout(timer);cleanup();resolve(data||{});
-    };
-    script.onerror=()=>{
-      if(settled)return;
-      settled=true;clearTimeout(timer);cleanup();reject(new Error('network'));
-    };
-    script.src=`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&printType=books&maxResults=12&callback=${encodeURIComponent(callbackName)}`;
-    document.head.appendChild(script);
-  });
-}
-async function searchBookOnline(parsedOverride=null){
-  const input=document.getElementById('bookSearchQuery');
-  const status=document.getElementById('bookSearchStatus');
-  const root=document.getElementById('bookSearchResults');
-  const q=input?.value.trim()||'';
-  const parsed=parsedOverride||parseBookSearchQuery(q);
-  const hasFieldQuery=parsed.isIsbn||[parsed.title,parsed.author,parsed.publisher].some(v=>String(v||'').trim());
-  if(!hasFieldQuery){if(status)status.textContent='책 제목, 저자, 출판사 또는 ISBN 중 하나를 입력해 주세요.';return;}
-  if(status)status.textContent='검색 중…';
-  if(root)root.innerHTML='';
-  bookSearchResultsCache=[];
-
-  const googleParts=[];
-  if(parsed.title)googleParts.push(`intitle:${parsed.title}`);
-  if(parsed.author)googleParts.push(`inauthor:${parsed.author}`);
-  if(parsed.publisher)googleParts.push(`inpublisher:${parsed.publisher}`);
-  const googleQuery=parsed.isIsbn?`isbn:${parsed.isbn}`:googleParts.join(' ');
-  const openParts=[];
-  if(parsed.title)openParts.push(`title:${parsed.title}`);
-  if(parsed.author)openParts.push(`author:${parsed.author}`);
-  if(parsed.publisher)openParts.push(`publisher:${parsed.publisher}`);
-  const openQuery=parsed.isIsbn?parsed.isbn:openParts.join(' ');
-  const hasNlKey=!!getNationalLibraryApiKey();
-  const hasData4Key=!!getData4LibraryApiKey();
-
-  const [nlResult,data4Result,googleResult,openResult]=await Promise.allSettled([
-    hasNlKey?nationalLibrarySearch(parsed):Promise.resolve({_skipped:true,docs:[]}),
-    hasData4Key?data4LibrarySearch(parsed):Promise.resolve({_skipped:true,response:{docs:[]}}),
-    googleBooksJsonpSearch(googleQuery),
-    openLibrarySearch(openQuery)
-  ]);
-
-  let nlRows=[],data4Rows=[],googleRows=[],openRows=[];
-  let nlError=null,data4Error=null,googleError=null,openError=null;
-
-  if(nlResult.status==='fulfilled')nlRows=mapNationalLibraryData(nlResult.value);
-  else if(hasNlKey)nlError=nlResult.reason;
-
-  if(data4Result.status==='fulfilled')data4Rows=mapData4LibraryRows(data4Result.value);
-  else if(hasData4Key)data4Error=data4Result.reason;
-
-  if(googleResult.status==='fulfilled')googleRows=mapGoogleBookItems(googleResult.value);
-  else googleError=googleResult.reason;
-
-  if(openResult.status==='fulfilled'){
-    try{openRows=await expandOpenLibraryEditions(openResult.value);}
-    catch(e){openError=e;}
-  }else openError=openResult.reason;
-
-  if(parsed.isIsbn){
-    const exact=rows=>rows.filter(b=>cleanIsbn(b.isbn)===parsed.isbn);
-    nlRows=exact(nlRows);data4Rows=exact(data4Rows);googleRows=exact(googleRows);openRows=exact(openRows);
-  }
-
-  bookSearchResultsCache=mergeBookSearchCandidates([nlRows,data4Rows,googleRows,openRows],parsed);
-
-  if(status){
-    if(bookSearchResultsCache.length){
-      const sources=[
-        nlRows.length?'국립중앙도서관':'',
-        data4Rows.length?'정보나루':'',
-        googleRows.length?'Google Books':'',
-        openRows.length?'Open Library':''
-      ].filter(Boolean).join(' + ');
-      const notes=[];
-      if(nlError)notes.push('국립중앙도서관 연결 실패');
-      if(data4Error)notes.push('정보나루 연결 실패');
-      status.textContent=`${bookSearchResultsCache.length}개 결과 · ${sources||'온라인 검색'}${notes.length?' · '+notes.join(' · '):''} · 정확도순으로 정리했어요.`;
-    }else if((!hasNlKey||nlError)&&(!hasData4Key||data4Error)&&googleError&&openError){
-      status.textContent='온라인 도서 검색에 실패했어요. API 설정 또는 네트워크를 확인하거나 직접 입력해 주세요.';
-    }else{
-      status.textContent=parsed.isIsbn
-        ?'해당 ISBN의 검색 결과가 없어요. ISBN을 확인하거나 제목으로 검색해 주세요.'
-        :'검색 결과가 없어요. 제목·저자·출판사 중 일부만 입력하거나 조합을 줄여 다시 검색해 주세요.';
-    }
-  }
-
-  if(root)root.innerHTML=bookSearchResultsCache.map((b,i)=>`<button type="button" class="bookSearchResult" onclick="applyBookSearchResult(${i})">
-      ${bookSearchCoverHtml(b.coverUrl)}
-      <span class="bookSearchResultText">
-        <span class="bookSearchResultTitle">${escapeLife(b.title||'제목 없음')}</span>
-        <span class="bookSearchResultMeta">${escapeLife([b.author,b.publisher,b.publishDate,b.isbn?`ISBN ${b.isbn}`:'',b.source].filter(Boolean).join(' · '))}</span>
-      </span>
-  </button>`).join('');
-}
 
 function applyBookSearchResult(i){
   const b=bookSearchResultsCache[i];if(!b)return;
@@ -7107,20 +6628,6 @@ function selectCalendarDate(k){calendarSelectedKey=k;renderLifeCalendar();}
 function refreshCalendarAfterEdit(k){
   renderLifeGuide();renderLifeCalendar();renderRecordDashboard();renderCalendarDetail(k);
 }
-function editCalendarLegacyRecord(k,id){
-  const r=loadLifeRoutines().find(x=>x.id===id);if(!r||!r.legacyKey)return;
-  showRoutineActionSheet(r.name,[
-    {label:'체크 해제',kind:'danger',run:()=>{
-      const s=getStateForKey(k);
-      if(s.checks&&Object.prototype.hasOwnProperty.call(s.checks,r.legacyKey)){
-        s.checks[r.legacyKey]=false;
-        saveStateForKey(k,s);
-        if(k===activeDateKey)state=s;
-      }
-      refreshCalendarAfterEdit(k);
-    }}
-  ]);
-}
 function editCalendarRoutineRecord(k,id){
   const r=loadLifeRoutines().find(x=>x.id===id);if(!r)return;
   const all=loadLifeLogs(),logs=Array.isArray(all[k])?all[k]:[];
@@ -8035,7 +7542,7 @@ function lifeNavigate(where){
   if(where==='calendar'){document.getElementById('viewCalendar')?.classList.remove('hide');renderLifeCalendar();}
   if(where==='books'){document.getElementById('viewBooks')?.classList.remove('hide');renderBooks();}
   if(where==='record'){document.getElementById('viewAll_v2')?.classList.remove('hide');renderRecordDashboard();}
-  if(where==='backup'){document.getElementById('viewBackup')?.classList.remove('hide');renderBackupStatus();renderOneOffSettings();renderNationalLibraryApiSetting();renderData4LibraryApiSetting();applyFontSizeSetting();}
+  if(where==='backup'){document.getElementById('viewBackup')?.classList.remove('hide');renderBackupStatus();renderOneOffSettings();applyFontSizeSetting();}
 }
 
 makeAutoBackup();
@@ -9312,7 +8819,7 @@ function mapDaumBooks(data){
     };
   }).filter(x=>x.title);
 }
-searchBookOnline=async function(parsedOverride=null){
+async function searchBookOnline(parsedOverride=null){
   const input=document.getElementById('bookSearchQuery');
   const status=document.getElementById('bookSearchStatus');
   const root=document.getElementById('bookSearchResults');
