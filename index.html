@@ -1935,6 +1935,48 @@ mark.calHit,.calHitRow mark{background:var(--rc-gl);color:inherit;border-radius:
 .readEntryRow .ld{flex:0 0 auto;font-size:var(--fs-1);color:var(--rc-mu);font-variant-numeric:tabular-nums}
 #calendarDetail .rc-card .rc-item.calEditable,#calendarDetail .rc-card .rc-empty.calEditable{cursor:pointer}
 #routineActionSheet.routineActionOverlay{z-index:340}
+
+.rhBack{border:0;background:var(--rc-soft);color:var(--rc-tx2);border-radius:10px;width:30px;height:30px;font-size:var(--fs-4);line-height:1;margin-right:8px}
+.lifeSheetHead #rhHead{flex:1;min-width:0}
+.rhRow{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--box-line);background:transparent;padding:11px 0;font:inherit;color:var(--rc-tx)}
+.rhRow:last-child{border-bottom:0}
+.rhRow .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.rhRow .nm{min-width:0;flex:1;overflow-wrap:anywhere;font-size:var(--fs-2)}
+.rhRow .cnt{flex:0 0 auto;font-size:var(--fs-1);color:var(--rc-mu);font-variant-numeric:tabular-nums}
+.rhBar{height:5px;border-radius:3px;background:var(--rc-soft);margin-top:7px;overflow:hidden}
+.rhBar i{display:block;height:100%;background:var(--rc-gs)}
+.rhSum{font-size:var(--fs-2);color:var(--rc-tx2);margin-bottom:10px}
+.rhLegend{display:flex;gap:12px;margin-top:10px;font-size:var(--fs-1);color:var(--rc-mu)}
+.rhLegend span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.rhLegend .d::before{background:var(--rc-gs)}.rhLegend .m::before{border:1px solid var(--rc-line2)}.rhLegend .n::before{background:var(--rc-soft)}
+.rhCell{border:1px solid transparent;border-radius:8px;background:var(--rc-soft);color:var(--rc-mu);font:inherit;font-size:var(--fs-1);padding:0;display:flex;align-items:center;justify-content:center}
+.rhCell.d{background:var(--rc-gs);color:#fff}
+.rhCell.m{background:transparent;border-color:var(--rc-line2);color:var(--rc-tx2)}
+.rhCell.f{opacity:.45}
+.rhCell.sel{outline:2px solid var(--rc-tx2);outline-offset:1px}
+.rhMonth{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.rhMonth .wd{text-align:center;font-size:var(--fs-1);color:var(--rc-mu)}
+.rhMonth .rhCell{aspect-ratio:1/1;min-height:30px}
+.rhYearRow{display:grid;grid-template-columns:24px minmax(0,1fr) 30px;gap:6px;align-items:center;margin-bottom:5px}
+.rhYearRow .ml{font-size:var(--fs-1);color:var(--rc-mu);text-align:right}
+.rhYearRow .mc{font-size:var(--fs-1);color:var(--rc-mu);text-align:right;font-variant-numeric:tabular-nums}
+.rhDays{display:grid;grid-template-columns:repeat(31,minmax(0,1fr));gap:2px}
+.rhDays .rhCell{aspect-ratio:1/1;border-radius:2px;min-height:0}
+.rhWeekRow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--box-line);font-size:var(--fs-2)}
+.rhWeekRow:last-child{border-bottom:0}
+.rhWeekRow .wk{width:62px;color:var(--rc-mu);font-size:var(--fs-1);flex:0 0 auto}
+.rhWeekRow .dot{width:18px;height:18px;border-radius:6px;flex:0 0 auto;background:var(--rc-soft)}
+.rhWeekRow .dot.d{background:var(--rc-gs)}.rhWeekRow .dot.m{background:transparent;border:1px solid var(--rc-line2)}
+.rhWeekRow .tx{min-width:0;flex:1;overflow-wrap:anywhere;color:var(--rc-tx2)}
+.rhNote{margin-top:10px;min-height:20px;font-size:var(--fs-2);color:var(--rc-tx2)}
+#viewAll_v2 .rr-grid .rr-bn,#viewAll_v2 .rr-heat .rr-bn,#viewAll_v2 .rr-progress:has(+.rr-bar){cursor:pointer}
+#viewAll_v2 .rr-grid .rr-bn::after,#viewAll_v2 .rr-heat .rr-bn::after{content:" ›"}
+#bookFormatCustomBtn{overflow:hidden;text-overflow:ellipsis}
+
+.rhWeek{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.rhWeek .wd{text-align:center;font-size:var(--fs-1);color:var(--rc-mu)}
+.rhWeek .rhCell{aspect-ratio:1/1;min-height:36px;font-size:var(--fs-2)}
+.rhCell.today{box-shadow:inset 0 0 0 2px var(--rc-tx2)}
 </style>
 </head>
 
@@ -2585,6 +2627,13 @@ mark.calHit,.calHitRow mark{background:var(--rc-gl);color:inherit;border-radius:
   </div>
 </div>
 
+<div id="routineHistoryModal" class="lifeModal hide" onclick="if(event.target===this)closeRoutineHistory()">
+  <div class="lifeSheet">
+    <div class="lifeSheetHead"><button type="button" id="rhBack" class="rhBack hide" onclick="rhBackToList()" aria-label="뒤로">‹</button><b id="rhHead">루틴</b><button class="lifeClose" onclick="closeRoutineHistory()">×</button></div>
+    <div id="rhBody" class="leisureBody"></div>
+  </div>
+</div>
+
 <div id="leisureTitlesModal" class="lifeModal hide" onclick="if(event.target===this)closeLeisureTitles()">
   <div class="lifeSheet">
     <div class="lifeSheetHead"><b id="leisureTitlesHead">취미생활</b><button class="lifeClose" onclick="closeLeisureTitles()">×</button></div>
@@ -2628,11 +2677,11 @@ mark.calHit,.calHitRow mark{background:var(--rc-gl);color:inherit;border-radius:
           <button type="button" class="bookFormatChoice" data-book-format="종이책" onclick="toggleBookFormat(this)">종이책</button>
           <button type="button" class="bookFormatChoice" data-book-format="전자책" onclick="toggleBookFormat(this)">전자책</button>
           <button type="button" class="bookFormatChoice" data-book-format="오디오북" onclick="toggleBookFormat(this)">오디오북</button>
-          <button type="button" class="bookFormatChoice" data-book-format="기타" onclick="toggleBookFormat(this)">기타</button>
+          <button type="button" id="bookFormatCustomBtn" class="bookFormatChoice" data-custom="1" onclick="editBookFormatCustom()">직접 입력</button>
         </div>
       </div>
-      <div data-grp="reading" class="bookField"><label>읽은 곳</label><select id="bookSource"><option value=""></option><option>교보</option><option>윌라</option><option>크레마</option><option>도서관</option><option>기타</option></select></div>
-      <div data-grp="reading" class="bookField"><label>소장</label><select id="bookOwnership"><option value=""></option><option>구매</option><option>대여</option></select></div>
+      <div data-grp="reading" class="bookField"><label>읽은 곳</label><select id="bookSource" onchange="bookSelectCustom(this)"><option value=""></option><option>교보</option><option>윌라</option><option>크레마</option><option>도서관</option><option value="__custom__">직접 입력…</option></select></div>
+      <div data-grp="reading" class="bookField"><label>소장</label><select id="bookOwnership" onchange="bookSelectCustom(this)"><option value=""></option><option>구매</option><option>대여</option><option value="__custom__">직접 입력…</option></select></div>
       <div data-grp="reading" class="bookField"><label>시작일</label><input id="bookStartDate" type="date"></div><div data-grp="done" class="bookField"><label>완독일</label><input id="bookFinishDate" type="date"></div>
       <div class="bookField"><label>장르</label><input id="bookGenre" placeholder="예: 소설"></div><div data-grp="done" class="bookField"><label>별점</label><select id="bookRating"><option value=""></option><option>★</option><option>★★</option><option>★★★</option><option>★★★★</option><option>★★★★★</option></select></div>
       <div data-grp="done" class="bookField bookWide"><label>하이라이트</label><textarea id="bookHighlight"></textarea></div>
@@ -9920,6 +9969,150 @@ async function pickReadingBook(bookId){
     return r;
   };
 })();
+
+/* ===== BOOKS: 읽은 곳·소장·형태 직접 입력 ===== */
+const BOOK_FMT_KNOWN=['종이책','전자책','오디오북'];
+function bookCustomFormatOf(value){
+  const raw=String(value||'').trim();if(!raw)return '';
+  return raw.split(/\s*,\s*/).filter(Boolean).find(p=>!BOOK_FMT_KNOWN.includes(p))||'';
+}
+normalizeBookFormats=function(value){
+  const raw=String(value||'').trim();if(!raw)return [];
+  const parts=raw.split(/\s*,\s*/).filter(Boolean);
+  const out=BOOK_FMT_KNOWN.filter(x=>parts.includes(x)),c=bookCustomFormatOf(raw);
+  if(c)out.push(c);return out;
+};
+function bookFormatRefresh(custom){
+  const btn=document.getElementById('bookFormatCustomBtn');
+  if(btn){btn.dataset.val=custom||'';btn.textContent=custom||'직접 입력';btn.classList.toggle('on',!!custom);}
+  const vals=[...document.querySelectorAll('#bookFormatChoices .bookFormatChoice.on[data-book-format]')].map(x=>x.dataset.bookFormat);
+  if(custom)vals.push(custom);
+  const hidden=document.getElementById('bookFormat');if(hidden)hidden.value=vals.join(', ');
+}
+setBookFormatSelection=function(value){
+  const known=new Set(normalizeBookFormats(value));
+  document.querySelectorAll('#bookFormatChoices .bookFormatChoice[data-book-format]').forEach(btn=>btn.classList.toggle('on',known.has(btn.dataset.bookFormat)));
+  bookFormatRefresh(bookCustomFormatOf(value));
+};
+toggleBookFormat=function(btn){
+  if(!btn)return;btn.classList.toggle('on');
+  bookFormatRefresh(document.getElementById('bookFormatCustomBtn')?.dataset.val||'');
+};
+async function editBookFormatCustom(){
+  const btn=document.getElementById('bookFormatCustomBtn');if(!btn)return;
+  const cur=btn.dataset.val||'';
+  const v=await appPrompt(cur?'형태를 직접 입력해 주세요. 비우면 삭제돼요.':'형태를 직접 입력해 주세요. (예: 잡지, 만화)',cur);
+  if(v===null||v===undefined)return;
+  const t=String(v).replace(/,/g,' ').trim();
+  bookFormatRefresh(t);
+}
+function ensureBookSelectOptions(){
+  const books=loadBooks();
+  [['bookSource','source'],['bookOwnership','ownership']].forEach(([id,k])=>{
+    const sel=document.getElementById(id);if(!sel)return;
+    const have=new Set([...sel.options].map(o=>o.value||o.text));
+    books.map(b=>String(b?.[k]||'').trim()).filter(Boolean).forEach(v=>{
+      if(have.has(v))return;have.add(v);
+      const o=document.createElement('option');o.textContent=v;sel.insertBefore(o,sel.querySelector('option[value="__custom__"]'));
+    });
+    sel.dataset.prev=sel.value;
+  });
+}
+async function bookSelectCustom(sel){
+  if(sel.value!=='__custom__'){sel.dataset.prev=sel.value;return;}
+  const prev=sel.dataset.prev||'';
+  const v=await appPrompt(sel.id==='bookSource'?'읽은 곳을 직접 입력해 주세요. (예: 밀리의서재)':'소장 방식을 직접 입력해 주세요. (예: 선물)','');
+  const t=String(v??'').trim();
+  if(!t){sel.value=prev;return;}
+  let o=[...sel.options].find(x=>(x.value||x.text)===t);
+  if(!o){o=document.createElement('option');o.textContent=t;sel.insertBefore(o,sel.querySelector('option[value="__custom__"]'));}
+  sel.value=o.value||o.text;sel.dataset.prev=sel.value;
+}
+(function(){
+  const baseOpen=openBookModal;
+  openBookModal=async function(){ensureBookSelectOptions();const r=await baseOpen.apply(this,arguments);const si=document.getElementById('bookSource'),so=document.getElementById('bookOwnership');if(si)si.dataset.prev=si.value;if(so)so.dataset.prev=so.value;return r;};
+  const baseCopy=copyBook;
+  copyBook=async function(){ensureBookSelectOptions();return baseCopy.apply(this,arguments);};
+})();
+
+/* ===== RECORD: 블록 → 루틴 → 기간별 일 단위 체크 ===== */
+let rhCtx=null;
+function rhPeriod(){
+  const today=rrTodayDate();let days,label,kind=recordPeriod;
+  if(kind==='week'){days=rrWeekDays(rrCursor);label=`${days[0].getMonth()+1}.${days[0].getDate()} – ${days[6].getMonth()+1}.${days[6].getDate()}`;}
+  else if(kind==='month'){const y=rrCursor.getFullYear(),m=rrCursor.getMonth();days=Array.from({length:new Date(y,m+1,0).getDate()},(_,i)=>new Date(y,m,i+1));label=`${y}년 ${m+1}월`;}
+  else{kind='year';const y=rrCursor.getFullYear();days=rrDaysBetween(new Date(y,0,1),new Date(y,11,31));label=`${y}년`;}
+  return {days,label,kind,today};
+}
+function rhCollect(block){
+  const P=rhPeriod(),order=loadLifeRoutines().map(r=>r.name),map=new Map();
+  P.days.forEach(d=>{
+    if(d>P.today)return;
+    const k=rrIso(d),rec=buildCalendarDayRecord(k);if(!rec)return;
+    rec.routines.filter(r=>r[4]===block).forEach(r=>{
+      const e=map.get(r[0])||{name:r[0],type:r[1],days:{}};
+      e.days[k]={done:!!r[2],sched:r[5]!==false,text:String(r[3]||'')};
+      map.set(r[0],e);
+    });
+  });
+  const list=[...map.values()].map(e=>{
+    const v=Object.values(e.days);
+    e.done=v.filter(x=>x.done).length;e.sched=v.filter(x=>x.sched).length;
+    e.rate=e.sched?Math.round(e.done/e.sched*100):(e.done?100:0);return e;
+  }).sort((a,b)=>{const ia=order.indexOf(a.name),ib=order.indexOf(b.name);return (ia<0?999:ia)-(ib<0?999:ib);});
+  return {P,list};
+}
+function openRoutineHistory(block){
+  rhCtx={block,name:null};rhRender();
+  document.getElementById('routineHistoryModal').classList.remove('hide');
+}
+function closeRoutineHistory(){document.getElementById('routineHistoryModal')?.classList.add('hide');rhCtx=null;}
+function rhBackToList(){if(!rhCtx)return;rhCtx.name=null;rhRender();}
+function rhOpenRoutine(i){if(!rhCtx)return;rhCtx.name=rhCtx.list[i].name;rhRender();}
+function rhRender(){
+  if(!rhCtx)return;
+  const {P,list}=rhCollect(rhCtx.block);rhCtx.list=list;
+  const head=document.getElementById('rhHead'),body=document.getElementById('rhBody'),back=document.getElementById('rhBack');
+  back.classList.toggle('hide',!rhCtx.name);
+  if(!rhCtx.name){
+    head.textContent=`${rhCtx.block} · ${P.label}`;
+    body.innerHTML=list.length?list.map((e,i)=>`<button type="button" class="rhRow" onclick="rhOpenRoutine(${i})"><div class="top"><span class="nm">${escapeLife(e.name)}</span><span class="cnt">${e.done}/${e.sched}일 · ${e.rate}% ›</span></div><div class="rhBar"><i style="width:${e.rate}%"></i></div></button>`).join('')
+      :'<div class="rr-empty">이 기간에 이 블록의 루틴 기록이 없어요.</div>';
+    return;
+  }
+  const e=list.find(x=>x.name===rhCtx.name);
+  head.textContent=rhCtx.name;
+  if(!e){body.innerHTML='<div class="rr-empty">기록이 없어요.</div>';return;}
+  const wd=['일','월','화','수','목','금','토'];
+  const st=d=>{const k=rrIso(d),x=e.days[k];if(d>P.today)return 'f';if(!x)return 'n';return x.done?'d':(x.sched?'m':'n');};
+  const tip=d=>{const k=rrIso(d),x=e.days[k];return `${d.getMonth()+1}.${d.getDate()} ${wd[d.getDay()]} · ${!x?(d>P.today?'아직 안 지났어요':'예정 없음'):(x.done?'완료':'미완료')}${x&&x.text?' · '+x.text:''}`;};
+  let html=`<div class="rhSum">${escapeLife(P.label)} · 완료 ${e.done}일 / 예정 ${e.sched}일 (${e.rate}%)</div>`;
+  if(P.kind==='week'){
+    html+='<div class="rhWeek">'+P.days.map(d=>`<div class="wd">${wd[d.getDay()]}</div>`).join('')
+      +P.days.map(d=>`<button type="button" class="rhCell ${st(d)}${rrIso(d)===rrIso(P.today)?' today':''}" data-tip="${escapeLife(tip(d))}" onclick="rhPick(this)">${d.getDate()}</button>`).join('')+'</div>';
+  }else if(P.kind==='month'){
+    html+='<div class="rhMonth">'+wd.map(w=>`<div class="wd">${w}</div>`).join('')+Array.from({length:P.days[0].getDay()},()=>'<div></div>').join('')
+      +P.days.map((d,i)=>`<button type="button" class="rhCell ${st(d)}" data-tip="${escapeLife(tip(d))}" onclick="rhPick(this)">${i+1}</button>`).join('')+'</div>';
+  }else{
+    html+=Array.from({length:12},(_,m)=>{
+      const ds=P.days.filter(d=>d.getMonth()===m),dn=ds.filter(d=>st(d)==='d').length;
+      return `<div class="rhYearRow"><span class="ml">${m+1}월</span><div class="rhDays">${ds.map(d=>`<button type="button" class="rhCell ${st(d)}" data-tip="${escapeLife(tip(d))}" onclick="rhPick(this)"></button>`).join('')}</div><span class="mc">${dn}일</span></div>`;
+    }).join('');
+  }
+  html+='<div class="rhNote" id="rhNote">칸을 누르면 날짜별 기록이 보여요.</div>';
+  html+='<div class="rhLegend"><span class="d">완료</span><span class="m">미완료</span><span class="n">예정 없음</span></div>';
+  body.innerHTML=html;
+}
+function rhPick(btn){
+  document.querySelectorAll('#rhBody .rhCell.sel').forEach(x=>x.classList.remove('sel'));
+  btn.classList.add('sel');const n=document.getElementById('rhNote');if(n)n.textContent=btn.dataset.tip||'';
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest&&e.target.closest('#viewAll_v2 .rr-bn, #viewAll_v2 .rr-progress');if(!t)return;
+  if(t.classList.contains('rr-progress')&&!(t.nextElementSibling&&t.nextElementSibling.classList.contains('rr-bar')))return;
+  const name=(t.classList.contains('rr-progress')?t.querySelector('span'):t).textContent.replace('›','').trim();
+  if(RR_BLOCKS.includes(name))openRoutineHistory(name);
+});
 </script>
 
 
