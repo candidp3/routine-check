@@ -10,7 +10,7 @@
 
 <style>
 /* ===== Phase 6.65 — 디자인 토큰 통합 (값은 이전과 동일, 선언만 한곳으로) ===== */
-:root{--accent:#3f9c7c;--accent-dark:#2f6b55;--accent-soft:#e2f4ec;--accent-surface:#f8fbf9;--action-sm-font:.75rem;--action-sm-height:36px;--action-sm-pad-x:10px;--action-sm-radius:11px;--box-line:#d3ded8;--btn-compact-h:26px;--btn-normal-h:34px;--card-radius:16px;--font-body:1rem;--font-caption:.6875rem;--font-compact:.6875rem;--font-control:.75rem;--font-section:.875rem;--font-title:1.25rem;--font-ui:"Pretendard",system-ui,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Segoe UI",Roboto,sans-serif;--free-card-min-height:86px;--fs-1:.6875rem;--fs-2:.75rem;--fs-3:.875rem;--fs-4:1rem;--fs-5:1.25rem;--fw-1:400;--fw-2:500;--fw-3:600;--life-accent:#3f9c7c;--life-bg:#f5f7f5;--life-card:#ffffff;--life-line:#e6ece9;--life-muted:#7b8981;--life-soft:#f2f7f4;--line:#e6ece9;--modal-field-height:44px;--muted:#7b8981;--rc-ac:#f28fa2;--rc-bg:#f5f7f5;--rc-bl:#8fd1b5;--rc-card:#ffffff;--rc-g:#8fd1b5;--rc-gd:#2f6b55;--rc-gl:#e2f4ec;--rc-gs:#3f9c7c;--rc-line:#e6ece9;--rc-line2:#d3ded8;--rc-mu:#7b8981;--rc-pd:#b54a63;--rc-pk:#f28fa2;--rc-pl:#fdeef1;--rc-soft:#f2f7f4;--rc-soft2:#f8fbf9;--rc-solid:#3f9c7c;--rc-tx:#1f2622;--rc-tx2:#4a5750;--shadow-soft:0 5px 18px rgba(74,82,66,.055);--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--surface:#ffffff;--text:#1f2622;--ui-radius:9px;--warm-bg:#f5f7f5;--wide-action-font:.875rem}
+:root{--accent:#3f9c7c;--accent-dark:#2f6b55;--accent-soft:#e2f4ec;--accent-surface:#f8fbf9;--action-sm-font:.75rem;--action-sm-height:36px;--action-sm-pad-x:10px;--action-sm-radius:11px;--box-line:#d3ded8;--btn-compact-h:26px;--btn-normal-h:34px;--card-radius:16px;--font-body:1rem;--font-caption:.6875rem;--font-compact:.6875rem;--font-control:.75rem;--font-section:.875rem;--font-title:1.25rem;--font-ui:"Pretendard",system-ui,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Segoe UI",Roboto,sans-serif;--free-card-min-height:86px;--fs-1:.6875rem;--fs-2:.75rem;--fs-3:.875rem;--fs-4:1rem;--fs-5:1.25rem;--fw-1:400;--fw-2:400;--fw-3:600;--life-accent:#3f9c7c;--life-bg:#f5f7f5;--life-card:#ffffff;--life-line:#e6ece9;--life-muted:#7b8981;--life-soft:#f2f7f4;--line:#e6ece9;--modal-field-height:44px;--muted:#7b8981;--rc-ac:#f28fa2;--rc-bg:#f5f7f5;--rc-bl:#8fd1b5;--rc-card:#ffffff;--rc-g:#8fd1b5;--rc-gd:#2f6b55;--rc-gl:#e2f4ec;--rc-gs:#3f9c7c;--rc-line:#e6ece9;--rc-line2:#d3ded8;--rc-mu:#7b8981;--rc-pd:#b54a63;--rc-pk:#f28fa2;--rc-pl:#fdeef1;--rc-soft:#f2f7f4;--rc-soft2:#f8fbf9;--rc-solid:#3f9c7c;--rc-tx:#1f2622;--rc-tx2:#4a5750;--shadow-soft:0 5px 18px rgba(74,82,66,.055);--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--surface:#ffffff;--text:#1f2622;--ui-radius:9px;--warm-bg:#f5f7f5;--wide-action-font:.875rem}
 @media (prefers-color-scheme:dark){:root{--accent:#7fd0b0;--accent-dark:#bfe6d4;--accent-soft:#223a31;--accent-surface:#212825;--box-line:#3b4741;--life-accent:#7fd0b0;--life-bg:#121615;--life-card:#1c2220;--life-line:#2b3430;--life-muted:#97a69e;--life-soft:#252d2a;--line:#2b3430;--muted:#97a69e;--rc-ac:#ee8fa2;--rc-bg:#121615;--rc-bl:#5fb797;--rc-card:#1c2220;--rc-g:#5fb797;--rc-gd:#bfe6d4;--rc-gl:#223a31;--rc-gs:#7fd0b0;--rc-line:#2b3430;--rc-line2:#3b4741;--rc-mu:#97a69e;--rc-pd:#f3b3c1;--rc-pk:#ee8fa2;--rc-pl:#3a272c;--rc-soft:#252d2a;--rc-soft2:#212825;--rc-tx:#eef3f0;--rc-tx2:#c5d0ca;--shadow-soft:0 5px 18px rgba(0,0,0,.25);--surface:#1c2220;--text:#eef3f0;--warm-bg:#121615}}
 
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--rc-soft);margin:0;padding:14px;color:var(--rc-tx)}
@@ -1777,20 +1777,17 @@ body.scrolled #viewAll_v2 .recordHero .rr-nav button{height:28px!important;min-h
 .noteDiaryItem .nd{font-size:var(--fs-1);color:var(--rc-mu);margin-bottom:4px}
 .noteDiaryItem .nt{font-size:var(--fs-2);white-space:pre-wrap;word-break:break-word;line-height:1.55}
 
-.themeColorChoices{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px;margin-top:10px;justify-items:center}
+.themeColorChoices{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:0;margin-top:10px;justify-items:center}
 .themeSwatch{min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px;border:0;background:transparent;padding:2px;font:inherit;font-size:var(--fs-1);color:var(--rc-mu)}
 .themeSwatch i{display:block;width:32px;height:32px;border-radius:50%;border:2px solid transparent;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
 .themeSwatch.on i{border-color:var(--rc-tx)}
 .themeSwatch.on{color:var(--rc-tx)}
-#viewAll_v2 .rr-card[data-tone="water"] svg.rr-chart .rr-bar-mark{fill:var(--t2-g)}
-#viewAll_v2 .rr-card[data-tone="water"] svg.rr-chart .rr-hit.sel .rr-bar-mark{fill:var(--t2-gs)}
-#viewAll_v2 .rr-card[data-tone="water"] .rr-metric-chip.on{background:var(--t2-gl);color:var(--t2-gd);border-color:var(--t2-g)}
-#viewAll_v2 .rr-card[data-tone="sleep"] svg.rr-chart .rr-bar-mark{fill:var(--t3-g)}
-#viewAll_v2 .rr-card[data-tone="sleep"] svg.rr-chart .rr-hit.sel .rr-bar-mark{fill:var(--t3-gs)}
-#viewAll_v2 .rr-card[data-tone="sleep"] .rr-timeline i{background:var(--t3-g)}
-#viewAll_v2 .rr-card[data-tone="sleep"] .rr-timeline{background:var(--t3-gl)}
-#viewAll_v2 .rr-card[data-tone="sleep"] .rr-sleep-row.sel{color:var(--t3-gd)!important}
-#viewAll_v2 .rr-card[data-tone="sleep"] .rr-metric-chip.on{background:var(--t3-gl);color:var(--t3-gd);border-color:var(--t3-g)}
+#viewAll_v2 .rr-card[class*="rcc-"] svg.rr-chart .rr-bar-mark{fill:var(--gc-g)}
+#viewAll_v2 .rr-card[class*="rcc-"] svg.rr-chart .rr-hit.sel .rr-bar-mark{fill:var(--gc-gs)}
+#viewAll_v2 .rr-card[class*="rcc-"] .rr-metric-chip.on{background:var(--gc-gl);color:var(--gc-gd);border-color:var(--gc-g)}
+#viewAll_v2 .rr-card[class*="rcc-"] .rr-timeline i{background:var(--gc-g)}
+#viewAll_v2 .rr-card[class*="rcc-"] .rr-timeline{background:var(--gc-gl)}
+#viewAll_v2 .rr-card[class*="rcc-"] .rr-sleep-row.sel{color:var(--gc-gd)!important}
 
 .periodSetInput{display:flex;align-items:center;gap:8px}
 .periodSetInput input{flex:1;min-width:0}
@@ -1915,10 +1912,6 @@ mark.calHit,.calHitRow mark{background:var(--rc-gl);color:inherit;border-radius:
 .stEditRow button{border:0;background:var(--rc-soft);color:var(--rc-tx2);border-radius:8px;height:32px;font:inherit}
 .stEditTools{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
 .stEditTools .periodChoice{flex:1 1 auto;min-width:0;font-size:var(--fs-1)}
-.staticRowBtn{display:block;width:100%;text-align:left}
-.stSumRow{display:flex;justify-content:space-between;gap:10px;padding:7px 0;font-size:var(--fs-2);color:var(--rc-tx2);border-bottom:1px solid var(--box-line)}
-.stSumRow:last-child{border-bottom:0}
-.stSumRow b{color:var(--rc-tx);font-variant-numeric:tabular-nums}
 .oneOffVisBtn{border:1px solid var(--box-line);background:transparent;color:var(--rc-tx2);border-radius:8px;padding:4px 8px;font:inherit;font-size:var(--fs-1);margin-right:6px}
 .oneOffSettingRow.isHidden{opacity:.62}
 
@@ -1982,6 +1975,46 @@ input.icTok{display:none}
 
 /* Daily Care 이름 굵기를 루틴과 통일 */
 .dailyCareName{font-weight:var(--fw-1)!important}
+
+/* FREE TIME: 칸 크기 고정 (타이머·기록 문구가 나와도 변하지 않음) */
+.freeChipWrap{height:90px!important;min-height:90px!important}
+.freeChipWrap .freeChip{height:100%!important;min-height:0!important;position:relative!important;overflow:hidden}
+.freeChip .freeName{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.freeChip .freeMeta{position:absolute!important;left:0;right:0;bottom:3px;width:auto!important;margin:0!important;padding:0 6px;font-size:.625rem!important;line-height:11px;text-align:center!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* 타이머 진행 표시: 숫자 대신 작은 점 (시간은 떠 있는 타이머에서 확인) */
+@keyframes timingPulse{0%,100%{opacity:1}50%{opacity:.25}}
+.freeChip.timing{border-color:var(--rc-gs)!important}
+.freeChip.timing::after{content:"";position:absolute;left:9px;top:9px;width:6px;height:6px;border-radius:50%;background:var(--rc-gs);animation:timingPulse 1.4s ease-in-out infinite}
+.lifeRoutine.timing .lifeRoutineName::after{content:"";display:inline-block;width:6px;height:6px;margin-left:7px;border-radius:50%;background:var(--rc-gs);vertical-align:middle;animation:timingPulse 1.4s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.freeChip.timing::after,.lifeRoutine.timing .lifeRoutineName::after{animation:none}}
+
+/* 데일리케어 아이콘 크기를 FREE TIME과 동일하게 */
+.dcIco{width:36px;height:36px;font-size:1rem}
+.dcIco .appIco{width:18px;height:18px}
+html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions button.primary,html[data-tc="yellow"] .routineActionButtons button.primary,html[data-tc="yellow"] .backupPrimary,html[data-tc="yellow"] .uiPrimaryBtn,html[data-tc="yellow"] .bookAddBtn,html[data-tc="yellow"] .bookSaveBtn,html[data-tc="yellow"] .dailyCarePopupSave,html[data-tc="yellow"] .dateBtn,html[data-tc="yellow"] #viewAll_v2 .rr-nav .rr-today,html[data-tc="yellow"] .backupNudge button.go,html[data-tc="yellow"] .bookEditBtns button.bookEditDone{color:#3b2e00!important}
+#viewToday .lifeBlockTitle,#viewBooks .lifeBlockTitle{font-weight:700}
+#viewBooks .bookCard .bookName{font-weight:400}
+.rr-leisure-axisNote{white-space:nowrap}
+#viewAll_v2 .rr-card h2,#viewAll_v2 .rr-card-note,#viewAll_v2 .rr-timeStat,#viewAll_v2 .rr-metric-chip{white-space:nowrap}
+#viewToday .lifeRoutineName,#viewToday .dailyCareName,#viewToday .dcTxt,#viewToday .freeName{font-weight:400!important}
+.stCalRow{cursor:pointer}
+/* 데일리케어 기록 버튼: 굵지 않게 */
+.dailyCareItemCard button{font-weight:400!important}
+/* 캘린더·레코드: 항목 이름 12 / 보조 11 / 범례·축 9 */
+#calendarDetail .rc-routine-name,#calendarDetail .calendarRoutineChip,#calendarDetail .rc-small-title,#calendarRoutineChips .calendarRoutineChip,.calendarRoutineChip{font-size:var(--fs-2)!important}
+#calendarDetail .rc-meta,#calendarDetail .rc-meta *{font-size:var(--fs-1)}
+#viewAll_v2 .rr-metric-chip,#viewAll_v2 .rr-leisure-item>span:not(.rr-leisure-days){font-size:var(--fs-2)!important}
+#viewAll_v2 .rr-card-note,#viewAll_v2 .rr-leisure-days,#viewAll_v2 .rr-leisure-axisNote,#viewAll_v2 .rr-timeStat{font-size:var(--fs-1)!important}
+#viewAll_v2 .rr-h{font-size:.5625rem!important}
+#viewAll_v2 .rr-bn{font-size:var(--fs-1)!important;white-space:nowrap;letter-spacing:-.02em}
+#viewAll_v2 .rr-heat{grid-template-columns:max-content repeat(12,minmax(0,1fr))}
+#viewAll_v2 .rr-heat .rr-bn{padding-right:6px}
+.stTable{border-collapse:separate;border-spacing:0 3px;font-size:var(--fs-2)}
+.stTable th{border:0;background:none;color:var(--rc-mu);font-size:var(--fs-1);font-weight:400;padding:0 4px 2px}
+.stTable td{border:0;background:var(--rc-soft);padding:5px 4px;line-height:1.3}
+.stTable td:first-child{border-radius:9px 0 0 9px}.stTable td:last-child{border-radius:0 9px 9px 0}
+.stTable td.stN{color:var(--rc-mu)}
 </style>
 </head>
 
@@ -2454,7 +2487,7 @@ input.icTok{display:none}
       <label class="dailyCareFormWide">색
         <select id="dailyCareEditColor">
           <option value="auto">자동 · 순서대로 색이 돌아가요</option>
-          <option value="green">초록</option><option value="blue">파랑</option><option value="purple">보라</option><option value="orange">주황</option><option value="red">빨강</option>
+          <option value="red">빨강</option><option value="orange">주황</option><option value="yellow">노랑</option><option value="green">초록</option><option value="blue">파랑</option><option value="purple">보라</option><option value="pink">분홍</option>
         </select>
       </label>
       <label class="dailyCareFormWide">기록 방식
@@ -3652,7 +3685,7 @@ function openDailyCareItemEditor(id=''){
   document.getElementById('dailyCareEditId').value=d.id||'';
   document.getElementById('dailyCareEditIcon').value=d.icon||'';
   document.getElementById('dailyCareEditName').value=d.name||'';
-  {const cs=document.getElementById('dailyCareEditColor');if(cs)cs.value=['green','blue','purple','orange','red'].includes(d.color)?d.color:'auto';}
+  {const cs=document.getElementById('dailyCareEditColor');if(cs)cs.value=['red','orange','yellow','green','blue','purple','pink'].includes(d.color)?d.color:'auto';}
   document.getElementById('dailyCareEditType').value=d.type||'cumulative';
   document.getElementById('dailyCareEditUnit').value=d.unit||'';
   document.getElementById('dailyCareEditTarget').value=d.target??'';
@@ -6058,11 +6091,9 @@ function freeTypeIconClass(r){
 function freeDisplayMeta(r){
   const running=timerElapsedForRoutine(r.id);
   if(r.type==='count'&&!running)return countMetaText(r,getLifeDayLogs().find(x=>x.routineId===r.id));
-  return running?`측정 중 · ${running}`:'';
+  return '';
 }
 function lifeMeta(r){
-  const running=timerElapsedForRoutine(r.id);
-  if(running)return `측정 중 · ${running}`;
   const a=[];const log=getLifeDayLogs().find(x=>x.routineId===r.id);
   if(r.type==='free'){
     const note=(log?.memo||r.defaultNote||'').trim();if(note)a.push(note);
@@ -7470,7 +7501,7 @@ function renderLifeGuide(){
     const lead=`<button class="lifeCheck ${lifeDone(r.id)?'done':''}" onclick="event.stopPropagation();handleRoutineRowTap(null,'${r.id}')">${lifeDone(r.id)?'✓':''}</button>`;
     const drag=`<button type="button" class="todayDragHandle" aria-label="${escapeLife(r.name)} 순서 변경" title="누른 채 드래그" onpointerdown="startTodayRoutineDrag(event)" onpointermove="moveTodayRoutineDrag(event)" onpointerup="endTodayRoutineDrag(event)" onpointercancel="endTodayRoutineDrag(event)" onclick="event.preventDefault();event.stopPropagation()">☰</button>`;
     const edit=`<button class="lifeMiniBtn uiActionSm routineEditDots" aria-label="${escapeLife(r.name)} 편집" onclick="event.stopPropagation();openRoutineModal('${r.id}')">···</button>`;
-    return `<div class="lifeRoutine" data-routine-id="${escapeLife(r.id)}" data-block="${escapeLife(r.block)}" data-drag-group="${escapeLife(dragGroup)}" onclick="handleRoutineRowTap(event,'${r.id}')">${lead}<div class="lifeRoutineMain"><div class="lifeRoutineName">${escapeLife(r.icon||'')} ${escapeLife(r.name)}</div>${lifeMetaHTML(r)}</div>${drag}${edit}</div>`;
+    return `<div class="lifeRoutine${timerElapsedForRoutine(r.id)?' timing':''}" data-routine-id="${escapeLife(r.id)}" data-block="${escapeLife(r.block)}" data-drag-group="${escapeLife(dragGroup)}" onclick="handleRoutineRowTap(event,'${r.id}')">${lead}<div class="lifeRoutineMain"><div class="lifeRoutineName">${escapeLife(r.icon||'')} ${escapeLife(r.name)}</div>${lifeMetaHTML(r)}</div>${drag}${edit}</div>`;
   };
   let html='';
   for(const [key,title,hint] of blocks){
@@ -7485,7 +7516,7 @@ function renderLifeGuide(){
     html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">${title}</div><div class="lifeBlockHint">${hint}</div></div></div><div>${body}</div><button class="lifeAddBtn lifeAddRoutineBtn" onclick="openRoutineModal(null,'${key}')">+ 이 블록에 루틴 추가</button></section>`;
   }
   const free=routines.filter(r=>r.block==='free'&&r.enabled).sort((a,b)=>(a.order||0)-(b.order||0));
-  html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">FREE TIME</div><div class="lifeBlockHint">해야 할 일이 아니라, 오늘 여유가 있을 때 고르는 활동</div></div></div><div class="freeGrid">${free.map(r=>`<div class="freeChipWrap" data-routine-id="${escapeLife(r.id)}"><button class="freeChip ${lifeDone(r.id)?'done':''}" onclick="handleRoutineRowTap(null,'${r.id}')"><span class="freeMainCentered"><span class="ico freeEmoji">${escapeLife(r.icon||'')}</span><span class="freeTypeIcon freeTypeIcon--${freeTypeIconClass(r)}" aria-hidden="true">${freeTypeIcon(r)}</span><span class="freeName">${escapeLife(r.name)}</span></span>${freeDisplayMeta(r)?`<span class="freeMeta">${escapeLife(freeDisplayMeta(r))}</span>`:''}</button><button class="freeEditBtn routineEditDots" aria-label="${escapeLife(r.name)} 편집" onclick="event.stopPropagation();openRoutineModal('${r.id}')">···</button><button type="button" class="freeOrderBtn" aria-label="${escapeLife(r.name)} 순서 변경" title="누른 채 드래그" onpointerdown="startFreeTimeDrag(event)" onpointermove="moveFreeTimeDrag(event)" onpointerup="endFreeTimeDrag(event)" onpointercancel="endFreeTimeDrag(event)" onclick="event.preventDefault();event.stopPropagation()">☰</button></div>`).join('')}${free.length?'':'<div class="lifeBlockHint">SETTING에서 프리타임 항목을 추가할 수 있어요.</div>'}</div><div class="lifeBlockHint" style="margin-top:9px">하지 않은 활동은 아무 표시도 남기지 않아요.<br>카드를 길게 누르면 순서를 바꿀 수 있어요.</div></section>`;
+  html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">FREE TIME</div><div class="lifeBlockHint">해야 할 일이 아니라, 오늘 여유가 있을 때 고르는 활동</div></div></div><div class="freeGrid">${free.map(r=>`<div class="freeChipWrap" data-routine-id="${escapeLife(r.id)}"><button class="freeChip ${lifeDone(r.id)?'done':''}${timerElapsedForRoutine(r.id)?' timing':''}" onclick="handleRoutineRowTap(null,'${r.id}')"><span class="freeMainCentered"><span class="ico freeEmoji">${escapeLife(r.icon||'')}</span><span class="freeTypeIcon freeTypeIcon--${freeTypeIconClass(r)}" aria-hidden="true">${freeTypeIcon(r)}</span><span class="freeName">${escapeLife(r.name)}</span></span>${freeDisplayMeta(r)?`<span class="freeMeta">${escapeLife(freeDisplayMeta(r))}</span>`:''}</button><button class="freeEditBtn routineEditDots" aria-label="${escapeLife(r.name)} 편집" onclick="event.stopPropagation();openRoutineModal('${r.id}')">···</button><button type="button" class="freeOrderBtn" aria-label="${escapeLife(r.name)} 순서 변경" title="누른 채 드래그" onpointerdown="startFreeTimeDrag(event)" onpointermove="moveFreeTimeDrag(event)" onpointerup="endFreeTimeDrag(event)" onpointercancel="endFreeTimeDrag(event)" onclick="event.preventDefault();event.stopPropagation()">☰</button></div>`).join('')}${free.length?'':'<div class="lifeBlockHint">SETTING에서 프리타임 항목을 추가할 수 있어요.</div>'}</div><div class="lifeBlockHint" style="margin-top:9px">하지 않은 활동은 아무 표시도 남기지 않아요.<br>카드를 길게 누르면 순서를 바꿀 수 있어요.</div></section>`;
   root.innerHTML=html;
   renderTodayNote();
   renderActivityTimerBanner();
@@ -8096,7 +8127,7 @@ let RR_LEISURE_DENOMS=null;
       }).join('');
       return `<rect class="rr-track" x="${cx-bw/2}" y="${base-h}" width="${bw}" height="${h}" rx="2"/>${segs}<text x="${cx}" y="103">${escapeLife(String(labels?.[i]??''))}</text>`;
     }).join('');
-    return `<div class="rr-leisure-chartWrap"><svg class="rr-leisure-stacked" viewBox="0 0 300 108" role="img" aria-label="취미생활 월별 누적 막대 그래프">${bars}</svg><div class="rr-leisure-axisNote">막대 높이 = 그 달의 전체 일수 · 색 구간 = 활동별 일수 비율</div></div>`;
+    return `<div class="rr-leisure-chartWrap"><svg class="rr-leisure-stacked" viewBox="0 0 300 108" role="img" aria-label="취미생활 월별 누적 막대 그래프">${bars}</svg><div class="rr-leisure-axisNote">높이 = 그 달 전체 일수 · 색 = 활동별 비율</div></div>`;
   };
   rrLeisureSummary=function(buckets,labels,showChart){
     const html=baseSummary.apply(this,arguments),den=RR_LEISURE_DENOMS;
@@ -8874,8 +8905,8 @@ async function searchBookOnline(parsedOverride=null){
 
 /* ===== 테마 색 + 항목별 그래프 색 ===== */
 const THEME_KEY='themeColor_v1';
-const THEME_PALETTES={"green": {"light": {"base": {"g": "#8fd1b5", "gs": "#3f9c7c", "gd": "#2f6b55", "gl": "#e2f4ec"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#c3b7ee", "gs": "#8d7cbf", "gd": "#615583", "gl": "#f0ecfd"}}, "dark": {"base": {"g": "#5fb797", "gs": "#7fd0b0", "gd": "#bfe6d4", "gl": "#223a31"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#a797da", "gs": "#c0b1f2", "gd": "#ddd6f8", "gl": "#353144"}}}, "red": {"light": {"base": {"g": "#f2a3a6", "gs": "#e0525a", "gd": "#a23b43", "gl": "#fdeaea"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#c3b7ee", "gs": "#8d7cbf", "gd": "#615583", "gl": "#f0ecfd"}, "n": {"bg": "#f9f6f5", "card": "#ffffff", "soft": "#faf4f3", "soft2": "#fdf9f9", "line": "#efe8e8", "line2": "#e4d7d6"}}, "dark": {"base": {"g": "#e4757a", "gs": "#f59a9d", "gd": "#fcd0d2", "gl": "#46262a"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#a797da", "gs": "#c0b1f2", "gd": "#ddd6f8", "gl": "#353144"}, "n": {"bg": "#181414", "card": "#251f1e", "soft": "#312928", "soft2": "#2c2423", "line": "#392f2e", "line2": "#4d403f"}}}, "orange": {"light": {"base": {"g": "#f6b384", "gs": "#ec7a2c", "gd": "#a3521a", "gl": "#fff0e3"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#c3b7ee", "gs": "#8d7cbf", "gd": "#615583", "gl": "#f0ecfd"}, "n": {"bg": "#f8f6f4", "card": "#ffffff", "soft": "#f9f5f1", "soft2": "#fcfaf7", "line": "#eee9e6", "line2": "#e3d9d2"}}, "dark": {"base": {"g": "#e8934f", "gs": "#f6b07a", "gd": "#fbd6b6", "gl": "#43301f"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#a797da", "gs": "#c0b1f2", "gd": "#ddd6f8", "gl": "#353144"}, "n": {"bg": "#171412", "card": "#241f1c", "soft": "#302a25", "soft2": "#2b2521", "line": "#37302b", "line2": "#4c413a"}}}, "yellow": {"light": {"base": {"g": "#f3cd6a", "gs": "#d99a00", "gd": "#8a6200", "gl": "#fff6d9"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#c3b7ee", "gs": "#8d7cbf", "gd": "#615583", "gl": "#f0ecfd"}, "n": {"bg": "#f7f6f4", "card": "#ffffff", "soft": "#f7f6f1", "soft2": "#fbfaf7", "line": "#eceae5", "line2": "#dedbd1"}}, "dark": {"base": {"g": "#d6aa2e", "gs": "#efc65a", "gd": "#f8e2a6", "gl": "#3d3418"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#a797da", "gs": "#c0b1f2", "gd": "#ddd6f8", "gl": "#353144"}, "n": {"bg": "#161512", "card": "#22201b", "soft": "#2d2b24", "soft2": "#282620", "line": "#34312a", "line2": "#474439"}}}, "blue": {"light": {"base": {"g": "#9cc4f2", "gs": "#3b82d6", "gd": "#285a9a", "gl": "#e6f1fd"}, "t2": {"g": "#81d0d4", "gs": "#1c9ba1", "gd": "#1c6a6e", "gl": "#dff4f5"}, "t3": {"g": "#ccb4ea", "gs": "#9778ba", "gd": "#67537f", "gl": "#f2ecfb"}, "n": {"bg": "#f5f7f9", "card": "#ffffff", "soft": "#f2f6fa", "soft2": "#f8fafd", "line": "#e7ebef", "line2": "#d4dce4"}}, "dark": {"base": {"g": "#5b9be0", "gs": "#86b8f4", "gd": "#c2dcfb", "gl": "#243649"}, "t2": {"g": "#49b6bb", "gs": "#6dcfd4", "gd": "#b8e6e8", "gl": "#1d3a3b"}, "t3": {"g": "#b193d5", "gs": "#caaeed", "gd": "#e2d4f5", "gl": "#383043"}, "n": {"bg": "#131518", "card": "#1d2125", "soft": "#262c31", "soft2": "#22272c", "line": "#2c3239", "line2": "#3c454d"}}}, "purple": {"light": {"base": {"g": "#c4b0f0", "gs": "#8a63d2", "gd": "#5b3f9a", "gl": "#f1ebfd"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#a8c0f4", "gs": "#6a87c6", "gd": "#4a5d87", "gl": "#e8effe"}, "n": {"bg": "#f7f6f8", "card": "#ffffff", "soft": "#f6f5f9", "soft2": "#fafafd", "line": "#ebe9ef", "line2": "#dcd9e3"}}, "dark": {"base": {"g": "#9a7de0", "gs": "#bba2f4", "gd": "#ddd0fa", "gl": "#352d47"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#85a2e1", "gs": "#a0bcf9", "gd": "#ccdcfc", "gl": "#2c3446"}, "n": {"bg": "#151418", "card": "#211f24", "soft": "#2c2a30", "soft2": "#27252b", "line": "#333038", "line2": "#45424c"}}}};
-const THEME_LABELS={green:'그린',red:'빨강',orange:'주황',yellow:'노랑',blue:'파랑',purple:'보라'};
+const THEME_PALETTES={"red": {"light": {"base": {"g": "#f2a3a6", "gs": "#e0525a", "gd": "#a23b43", "gl": "#fdeaea"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#c3b7ee", "gs": "#8d7cbf", "gd": "#615583", "gl": "#f0ecfd"}, "n": {"bg": "#f9f6f5", "card": "#ffffff", "soft": "#faf4f3", "soft2": "#fdf9f9", "line": "#efe8e8", "line2": "#e4d7d6"}}, "dark": {"base": {"g": "#e4757a", "gs": "#f59a9d", "gd": "#fcd0d2", "gl": "#46262a"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#a797da", "gs": "#c0b1f2", "gd": "#ddd6f8", "gl": "#353144"}, "n": {"bg": "#181414", "card": "#251f1e", "soft": "#312928", "soft2": "#2c2423", "line": "#392f2e", "line2": "#4d403f"}}}, "orange": {"light": {"base": {"g": "#f6b384", "gs": "#ec7a2c", "gd": "#a3521a", "gl": "#fff0e3"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#c3b7ee", "gs": "#8d7cbf", "gd": "#615583", "gl": "#f0ecfd"}, "n": {"bg": "#f8f6f4", "card": "#ffffff", "soft": "#f9f5f1", "soft2": "#fcfaf7", "line": "#eee9e6", "line2": "#e3d9d2"}}, "dark": {"base": {"g": "#e8934f", "gs": "#f6b07a", "gd": "#fbd6b6", "gl": "#43301f"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#a797da", "gs": "#c0b1f2", "gd": "#ddd6f8", "gl": "#353144"}, "n": {"bg": "#171412", "card": "#241f1c", "soft": "#302a25", "soft2": "#2b2521", "line": "#37302b", "line2": "#4c413a"}}}, "yellow": {"light": {"base": {"g": "#f8d556", "gs": "#eab308", "gd": "#8a6500", "gl": "#fff7d1"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#c3b7ee", "gs": "#8d7cbf", "gd": "#615583", "gl": "#f0ecfd"}, "n": {"bg": "#f9f8f3", "card": "#ffffff", "soft": "#f8f6ec", "soft2": "#fcfbf5", "line": "#eeebe0", "line2": "#e0dccb"}}, "dark": {"base": {"g": "#d3ab27", "gs": "#f4cb3f", "gd": "#fbe7a0", "gl": "#3d3515"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#a797da", "gs": "#c0b1f2", "gd": "#ddd6f8", "gl": "#353144"}, "n": {"bg": "#161512", "card": "#22201b", "soft": "#2d2a22", "soft2": "#27251e", "line": "#363229", "line2": "#4a453a"}}}, "green": {"light": {"base": {"g": "#8fd1b5", "gs": "#3f9c7c", "gd": "#2f6b55", "gl": "#e2f4ec"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#c3b7ee", "gs": "#8d7cbf", "gd": "#615583", "gl": "#f0ecfd"}}, "dark": {"base": {"g": "#5fb797", "gs": "#7fd0b0", "gd": "#bfe6d4", "gl": "#223a31"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#a797da", "gs": "#c0b1f2", "gd": "#ddd6f8", "gl": "#353144"}}}, "blue": {"light": {"base": {"g": "#9cc4f2", "gs": "#3b82d6", "gd": "#285a9a", "gl": "#e6f1fd"}, "t2": {"g": "#81d0d4", "gs": "#1c9ba1", "gd": "#1c6a6e", "gl": "#dff4f5"}, "t3": {"g": "#ccb4ea", "gs": "#9778ba", "gd": "#67537f", "gl": "#f2ecfb"}, "n": {"bg": "#f5f7f9", "card": "#ffffff", "soft": "#f2f6fa", "soft2": "#f8fafd", "line": "#e7ebef", "line2": "#d4dce4"}}, "dark": {"base": {"g": "#5b9be0", "gs": "#86b8f4", "gd": "#c2dcfb", "gl": "#243649"}, "t2": {"g": "#49b6bb", "gs": "#6dcfd4", "gd": "#b8e6e8", "gl": "#1d3a3b"}, "t3": {"g": "#b193d5", "gs": "#caaeed", "gd": "#e2d4f5", "gl": "#383043"}, "n": {"bg": "#131518", "card": "#1d2125", "soft": "#262c31", "soft2": "#22272c", "line": "#2c3239", "line2": "#3c454d"}}}, "purple": {"light": {"base": {"g": "#c4b0f0", "gs": "#8a63d2", "gd": "#5b3f9a", "gl": "#f1ebfd"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#a8c0f4", "gs": "#6a87c6", "gd": "#4a5d87", "gl": "#e8effe"}, "n": {"bg": "#f7f6f8", "card": "#ffffff", "soft": "#f6f5f9", "soft2": "#fafafd", "line": "#ebe9ef", "line2": "#dcd9e3"}}, "dark": {"base": {"g": "#9a7de0", "gs": "#bba2f4", "gd": "#ddd0fa", "gl": "#352d47"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#85a2e1", "gs": "#a0bcf9", "gd": "#ccdcfc", "gl": "#2c3446"}, "n": {"bg": "#151418", "card": "#211f24", "soft": "#2c2a30", "soft2": "#27252b", "line": "#333038", "line2": "#45424c"}}}, "pink": {"light": {"base": {"g": "#f2a5c4", "gs": "#e2679c", "gd": "#a8386a", "gl": "#fdebf3"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#c3b7ee", "gs": "#8d7cbf", "gd": "#615583", "gl": "#f0ecfd"}, "n": {"bg": "#faf5f7", "card": "#ffffff", "soft": "#fbf3f6", "soft2": "#fdf8fa", "line": "#f0e7ec", "line2": "#e5d6de"}}, "dark": {"base": {"g": "#e079a6", "gs": "#f59fc3", "gd": "#fcd3e4", "gl": "#46262f"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#a797da", "gs": "#c0b1f2", "gd": "#ddd6f8", "gl": "#353144"}, "n": {"bg": "#181416", "card": "#251f22", "soft": "#312829", "soft2": "#2c2426", "line": "#392f33", "line2": "#4d3f45"}}}};
+const THEME_LABELS={red:'빨강',orange:'주황',yellow:'노랑',green:'그린',blue:'파랑',purple:'보라',pink:'분홍'};
 function getThemeColor(){try{const v=localStorage.getItem(THEME_KEY);return THEME_PALETTES[v]?v:'green';}catch(e){return 'green';}}
 function themeCssBlock(p,withBase){
   const b=p.base,o=[];
@@ -8888,6 +8919,7 @@ function applyThemeColor(){
   const name=getThemeColor(),pal=THEME_PALETTES[name],withBase=name!=='green';
   let st=document.getElementById('themeColorStyle');
   if(!st){st=document.createElement('style');st.id='themeColorStyle';document.head.appendChild(st);}
+  document.documentElement.dataset.tc=name;
   st.textContent=`:root:root{${themeCssBlock(pal.light,withBase)}}@media (prefers-color-scheme:dark){:root:root{${themeCssBlock(pal.dark,withBase)}}}`;
   renderThemeChoices();
 }
@@ -8901,14 +8933,20 @@ function renderThemeChoices(){
   const cur=getThemeColor();
   root.innerHTML=Object.keys(THEME_PALETTES).map(n=>`<button type="button" class="themeSwatch ${n===cur?'on':''}" role="radio" aria-checked="${n===cur}" aria-label="${THEME_LABELS[n]}" title="${THEME_LABELS[n]}" onclick="setThemeColor('${n}')"><i style="background:${THEME_PALETTES[n].light.base.gs}"></i></button>`).join('');
 }
-function rrToneFor(id){return id==='water'?'water':id==='sleep'?'sleep':'';}
+function rcSetColor(c,col){[...c.classList].filter(x=>x.startsWith('rcc-')).forEach(x=>c.classList.remove(x));if(col)c.classList.add('rcc-'+col);}
 function tagRecordTones(){
   const out=document.getElementById('rrOut');if(!out)return;
   out.querySelectorAll('.rr-card').forEach(c=>{
-    if(c.querySelector('.rr-metric-chips .rr-metric-chip')&&c.querySelector('.rr-metric-chips .rr-metric-chip.on')){
-      const t=rrToneFor(rrMetric);
-      if(t&&c.querySelector('svg.rr-chart .rr-bar-mark,.rr-sleep-row'))c.dataset.tone=t;else delete c.dataset.tone;
-    }
+    delete c.dataset.tone;
+    if(c.classList.contains('rr-time-card')){
+      const rs=rrTimeRoutines();let one='';try{one=localStorage.getItem(RR_TIME_ONE)||'';}catch(e){}
+      let i=rs.findIndex(x=>x.id===one);
+      if(i<0){const on=[...c.querySelectorAll('.rr-metric-chip')].findIndex(x=>x.classList.contains('on'));i=on<0?0:on;}
+      const st=DC_CYCLE.indexOf(getThemeColor());
+      rcSetColor(c,DC_CYCLE[((st<0?0:st)+i)%DC_CYCLE.length]);
+    }else if(c.querySelector('.rr-metric-chips .rr-metric-chip.on')&&c.querySelector('svg.rr-chart .rr-bar-mark,.rr-sleep-row')){
+      rcSetColor(c,window.dcColorOf?window.dcColorOf(rrMetric):'');
+    }else rcSetColor(c,'');
   });
 }
 (function(){
@@ -9743,7 +9781,7 @@ function stAdj(key,d){
 }
 function stPickTable(id){const p=stPrefs();p.tableId=id;stSavePrefs(p);ST.done=null;stRender();}
 async function stClearBest(){if(!await appConfirm('최고 기록을 지울까요? (훈련 기록은 그대로 남아요)'))return;try{localStorage.removeItem(ST_BEST_KEY);}catch(e){}stRender();}
-function stTableHTML(rows){return `<table class="stTable"><tr><th>라운드</th><th>준비호흡</th><th>숨참기 시간</th></tr>${rows.map((r,i)=>`<tr><td>${i+1}</td><td>${r[0]} 초</td><td>${r[1]} 초</td></tr>`).join('')}</table>`;}
+function stTableHTML(rows){return `<table class="stTable"><tr><th>라운드</th><th>준비호흡</th><th>숨참기 시간</th></tr>${rows.map((r,i)=>`<tr><td class="stN">${i+1}</td><td>${r[0]}초</td><td>${r[1]}초</td></tr>`).join('')}</table>`;}
 function stShowTable(){
   const p=stPrefs(),rows=stTableFor(p.mode,p);if(!rows.length)return;
   document.getElementById('staticTableBody').innerHTML=stTableHTML(rows);
@@ -9902,15 +9940,6 @@ async function stDeleteSession(){
   closeStaticSession();
   try{renderLifeCalendar();renderCalendarDetail(calendarSelectedKey);renderRecordDashboard();}catch(e){}
 }
-function stRecordCardHTML(){
-  const {days}=rrPeriodInfo(),ss=days.flatMap(d=>stSessions(rrIso(d)));
-  if(!ss.length)return '';
-  const holds=ss.filter(s=>s.type==='hold').map(s=>s.holdSec),cnt=t=>ss.filter(s=>s.type===t).length;
-  const rows=[];
-  if(holds.length){rows.push(['숨참기 최고',stFmt(Math.max(...holds))]);rows.push(['숨참기 평균',stFmt(holds.reduce((a,b)=>a+b,0)/holds.length)]);rows.push(['숨참기 기록',`${holds.length}회`]);}
-  [['co2','CO2 트레이닝'],['o2','O2 트레이닝'],['custom','내 테이블']].forEach(([t,n])=>{if(cnt(t))rows.push([n,`${cnt(t)}회`]);});
-  return `<div class="rr-card"><h2>STATIC</h2>${rows.map(r=>`<div class="stSumRow"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('')}</div>`;
-}
 /* --- 단발성 기록: 숨김 + 설정 목록 + TODAY 버튼 --- */
 function toggleOneOffHidden(id){
   if(id==='__snack'){try{localStorage.setItem(SNACK_HIDE_KEY,snackHidden()?'0':'1');}catch(e){}}
@@ -9954,9 +9983,19 @@ renderOneOffQuick=function(){
     try{
       const ss=stSessions(k);
       if(ss.length){
-        const html=`<div class="calInfoCard"><h4 class="rc-section-title">STATIC</h4>${ss.map((s,i)=>`<button type="button" class="calDetailItem staticRowBtn" onclick="openStaticSession('${k}',${i})">${escapeLife(stSessionLine(s))}</button>`).join('')}</div>`;
-        const note=[...document.querySelectorAll('#calendarDetail .calInfoCard')].find(c=>c.querySelector('.rc-section-title')?.textContent.trim()==='NOTE');
-        if(note)note.insertAdjacentHTML('beforebegin',html);else document.getElementById('calendarDetail').insertAdjacentHTML('beforeend',html);
+        const card=[...document.querySelectorAll('#calendarDetail .rc-card')].find(c=>c.querySelector('.rc-section-title')?.textContent.trim()==='FREE TIME');
+        if(card&&!card.querySelector('.stCalRow')){
+          card.querySelector('.rc-empty')?.remove();
+          const NM={co2:'CO2',o2:'O2',hold:'Hold',custom:'Mine'};
+          const kinds=['co2','o2','hold','custom'].filter(t=>ss.some(x=>x.type===t)).map(t=>NM[t]).join(' · ');
+          const sec=ss.reduce((a,x)=>a+(x.type==='hold'?(Number(x.holdSec)||0):(Number(x.totalSec)||0)),0);
+          const f=`${String(Math.floor(sec/60)).padStart(2,'0')}분 ${String(sec%60).padStart(2,'0')}초`;
+          card.insertAdjacentHTML('beforeend',`<div class="rc-item rc-free-item stCalRow calEditable" role="button" tabindex="0"><span class="rc-dot rc-ok rc-free-dot"></span><span class="rc-routine-name">스태틱</span><span class="rc-meta">${kinds} | ${f}</span></div>`);
+          card.querySelector('.stCalRow').onclick=()=>{
+            if(ss.length===1)return openStaticSession(k,0);
+            showRoutineActionSheet('스태틱 · 훈련 기록',ss.map((x,i)=>({label:stSessionLine(x),run:()=>openStaticSession(k,i)})));
+          };
+        }
       }
     }catch(e){}
     return r;
@@ -9973,7 +10012,6 @@ renderOneOffQuick=function(){
   const baseDash=renderRecordDashboard;
   renderRecordDashboard=function(){
     const r=baseDash.apply(this,arguments);
-    try{const out=document.getElementById('rrOut');if(out)out.insertAdjacentHTML('beforeend',stRecordCardHTML());}catch(e){}
     return r;
   };
   const baseNav=lifeNavigate;
@@ -10164,7 +10202,7 @@ function addRoutineFromManager(){closeInactiveRoutineManager();openRoutineModal(
 })();
 
 /* ===== 앱 아이콘 팩 + 아이콘 원 ===== */
-const APP_ICONS=[["dumbbell", "아령", "M7 4v16M17 4v16M4 8v8M20 8v8M7 12h10"], ["drop", "물방울", "M12 3.5c3.2 4 5.5 6.8 5.5 10a5.5 5.5 0 0 1-11 0c0-3.2 2.3-6 5.5-10z"], ["moon", "달", "M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"], ["sun", "해", "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"], ["brush", "양치", "M5 19l8.5-8.5M13 5l6 6-2.5 2.5-6-6z"], ["pill", "영양제", "M10.5 20.5a4.95 4.95 0 0 1-7-7l10-10a4.95 4.95 0 0 1 7 7zM8.5 8.5l7 7"], ["meal", "식사", "M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10M17 21V3c-2 1-3.5 4-3.5 8h3.5"], ["cup", "음료", "M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5zM16 10h2a2.5 2.5 0 0 1 0 5h-2M8 3v2M12 3v2"], ["sparkle", "케어", "M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16v4M17 18h4"], ["book", "책", "M6 4h11a1 1 0 0 1 1 1v14H7a1 1 0 0 1-1-1zM6 17h12"], ["pencil", "공부", "M4 20l1-4L16 5l3 3L8 19zM14 7l3 3"], ["leaf", "산책", "M5 19C5 10 10 5 19 5c0 9-5 14-14 14zM5 19l7-7"], ["pulse", "운동", "M3 12h4l3-7 4 14 3-7h4"], ["dice", "게임", "M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3zM8.5 8.5h.01M15.5 8.5h.01M12 12h.01M8.5 15.5h.01M15.5 15.5h.01"], ["yarn", "뜨개질", "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM5 9c5 1 9 5 11 11M4.5 13c3 .5 6 2.5 7.5 6M8 5.5c4 1 7 4 8.5 8"], ["music", "음악", "M9 18V6l10-2v12M9 18a3 3 0 1 1-3-3 3 3 0 0 1 3 3zM19 16a3 3 0 1 1-3-3 3 3 0 0 1 3 3z"], ["wind", "호흡", "M3 9h10a3 3 0 1 0-3-3M3 15h14a3 3 0 1 1-3 3M3 12h7"], ["bed", "휴식", "M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"], ["heart", "마음", "M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"], ["clock", "시간", "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 8v4l3 2"], ["home", "집", "M4 11l8-7 8 7M6 10v10h12V10M10 20v-5h4v5"], ["star", "별", "M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"], ["flame", "불꽃", "M12 3c0 4-5 6-5 11a5 5 0 0 0 10 0c0-3-2-4-2-7-2 1-3 2-3 4 0-3 0-6 0-8z"], ["cloud", "구름", "M7 18a4 4 0 0 1-.5-7.9A5.5 5.5 0 0 1 17.1 9 4.5 4.5 0 0 1 17 18z"], ["laptop", "업무", "M5 6h14v9H5zM3 19h18"], ["bike", "자전거", "M6 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 15l4-7h5l3 7M10 8l2 7"], ["camera", "사진", "M4 8h3l2-3h6l2 3h3v11H4zM12 11a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"], ["palette", "그림", "M12 4a8 8 0 1 0 0 16c1.5 0 2-1 1.5-2s0-2 1.5-2h2a3 3 0 0 0 3-3A8 8 0 0 0 12 4zM8 11h.01M11 8h.01M15 9h.01"], ["smile", "웃음", "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM9 10h.01M15 10h.01M8.5 14a4.5 4.5 0 0 0 7 0"], ["shower", "샤워", "M4 12a8 6 0 0 1 16 0zM8 16v2M12 16v3M16 16v2"]];
+const APP_ICONS=[["dumbbell", "아령", "M7 4v16M17 4v16M4 8v8M20 8v8M7 12h10"], ["drop", "물방울", "M12 3.5c3.2 4 5.5 6.8 5.5 10a5.5 5.5 0 0 1-11 0c0-3.2 2.3-6 5.5-10z"], ["moon", "달", "M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"], ["sun", "해", "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"], ["brush", "양치", "M5 19l8.5-8.5M13 5l6 6-2.5 2.5-6-6z"], ["pill", "영양제", "M10.5 20.5a4.95 4.95 0 0 1-7-7l10-10a4.95 4.95 0 0 1 7 7zM8.5 8.5l7 7"], ["meal", "식사", "M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10M17 21V3c-2 1-3.5 4-3.5 8h3.5"], ["cup", "음료", "M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5zM16 10h2a2.5 2.5 0 0 1 0 5h-2M8 3v2M12 3v2"], ["sparkle", "케어", "M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16v4M17 18h4"], ["book", "책", "M6 4h11a1 1 0 0 1 1 1v14H7a1 1 0 0 1-1-1zM6 17h12"], ["pencil", "공부", "M4 20l1-4L16 5l3 3L8 19zM14 7l3 3"], ["leaf", "산책", "M5 19C5 10 10 5 19 5c0 9-5 14-14 14zM5 19l7-7"], ["pulse", "운동", "M3 12h4l3-7 4 14 3-7h4"], ["dice", "게임", "M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3zM8.5 8.5h.01M15.5 8.5h.01M12 12h.01M8.5 15.5h.01M15.5 15.5h.01"], ["yarn", "뜨개질", "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM5 9c5 1 9 5 11 11M4.5 13c3 .5 6 2.5 7.5 6M8 5.5c4 1 7 4 8.5 8"], ["music", "음악", "M9 18V6l10-2v12M9 18a3 3 0 1 1-3-3 3 3 0 0 1 3 3zM19 16a3 3 0 1 1-3-3 3 3 0 0 1 3 3z"], ["wind", "호흡", "M3 9h10a3 3 0 1 0-3-3M3 15h14a3 3 0 1 1-3 3M3 12h7"], ["bed", "휴식", "M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"], ["heart", "마음", "M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"], ["clock", "시간", "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 8v4l3 2"], ["home", "집", "M4 11l8-7 8 7M6 10v10h12V10M10 20v-5h4v5"], ["star", "별", "M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"], ["flame", "불꽃", "M12 3c0 4-5 6-5 11a5 5 0 0 0 10 0c0-3-2-4-2-7-2 1-3 2-3 4 0-3 0-6 0-8z"], ["cloud", "구름", "M7 18a4 4 0 0 1-.5-7.9A5.5 5.5 0 0 1 17.1 9 4.5 4.5 0 0 1 17 18z"], ["laptop", "업무", "M5 6h14v9H5zM3 19h18"], ["bike", "자전거", "M6 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 15l4-7h5l3 7M10 8l2 7"], ["camera", "사진", "M4 8h3l2-3h6l2 3h3v11H4zM12 11a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"], ["palette", "그림", "M12 4a8 8 0 1 0 0 16c1.5 0 2-1 1.5-2s0-2 1.5-2h2a3 3 0 0 0 3-3A8 8 0 0 0 12 4zM8 11h.01M11 8h.01M15 9h.01"], ["smile", "웃음", "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM9 10h.01M15 10h.01M8.5 14a4.5 4.5 0 0 0 7 0"], ["shower", "샤워", "M4 12a8 6 0 0 1 16 0zM8 16v2M12 16v3M16 16v2"], ["egg", "계란후라이", "M6 8c1-3.500 5-4.500 7.500-2.500 3-1 6 1.500 5.500 5 1.500 3-.5 6.500-4 6.500-2 1.500-5.500 1-6.500-1.500-2.500-.5-3.500-4-2.500-7.500zM12 9.500a2.500 2.500 0 1 0 0 5 2.500 2.500 0 0 0 0-5z"], ["toothbrush", "칫솔", "M3 14h10v3H3zM13 12.500h8v5h-8zM14.800 10v2.500M17 10v2.500M19.200 10v2.500"], ["germ", "균", "M12 7.500a4.500 4.500 0 1 0 0 9 4.500 4.500 0 0 0 0-9zM12 7.500V4M12 20v-3.500M7.500 12H4M20 12h-3.500M8.800 8.800L6.500 6.500M17.500 17.500l-2.300-2.300M8.800 15.200l-2.300 2.300M17.500 6.500l-2.300 2.300M10.500 11h.01M13.500 13h.01"], ["lemon", "레몬", "M3 12c0-4 4-7 9-7s9 3 9 7-4 7-9 7-9-3-9-7zM3 12H1.500M22.500 12H21M8 10c1-1 2.500-1.500 4-1.500"], ["salad", "샐러드", "M3 12h18c0 4.500-4 8-9 8s-9-3.500-9-8zM7.500 12c-1-3 0-6 3-7 0 3-1 5-3 7zM13 12c0-3 2-5 5-5 0 3-2 5-5 5z"], ["shoe", "신발", "M3 17V9l4 1.500c1 2 3 3 5 3l6 1c2 .3 3 1.500 3 3v.5H3zM3 20h18M9 11.500l1.500 1.500"], ["japan", "일본", "M4 5h16v14H4zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"], ["china", "중국", "M4 5h16v14H4zM8 7.500l.8 1.700 1.800.2-1.300 1.200.4 1.800L8 11.500l-1.700 1 .4-1.800L5.400 8.600l1.800-.2zM13.500 8h.01M14.500 10h.01M14.500 12.500h.01M13.500 14.500h.01"], ["usa", "미국", "M4 5h16v14H4zM4 5h8v6H4zM12 8h8M12 11h8M4 14.500h16"], ["facecare", "얼굴케어", "M11 6a6.500 6.500 0 1 0 0 13 6.500 6.500 0 0 0 0-13zM8.500 11.500h.01M13.500 11.500h.01M8.800 14.800c1.300 1.100 3.100 1.100 4.400 0M19 3v4M17 5h4"], ["speak", "말하기", "M4 5h16v11h-9l-4 4v-4H4zM8 9h8M8 12h5"], ["facemask", "얼굴팩", "M12 3C8 3 5.500 6 5.500 11c0 6 3 10 6.500 10s6.500-4 6.500-10c0-5-2.500-8-6.500-8zM8.500 10h2.500M13 10h2.500M10.500 16.500h3"], ["meat", "고기", "M14.500 4c3.500 0 6 3 5 6.500-.8 2.800-4 4.500-6.800 3.400L10 17l-3-3 3.100-2.700C9 8.500 11.500 4 14.500 4zM8.500 15.500L5 19M4 17.500h.01M6.500 20h.01"], ["gamepad", "게임기", "M7 8h10a5 5 0 0 1 4.800 6.500l-.8 2.700a2.500 2.500 0 0 1-4.200 1L14.500 16h-5L7.500 18.200a2.500 2.500 0 0 1-4.200-1L2.500 14.500A5 5 0 0 1 7 8zM7.500 10.500v3M6 12h3M15.500 11.500h.01M17.500 13.500h.01"], ["cinema", "영화관", "M4 10h16v9H4zM4 10l1.500-4.500 14.500 3.800L19 10M8.700 6.500l2 3.500M13.700 7.800l2 3.500"], ["teddy", "곰인형", "M4.800 6.800a2 2 0 1 0 4 0 2 2 0 0 0-4 0zM15.200 6.800a2 2 0 1 0 4 0 2 2 0 0 0-4 0zM12 6.500c-3.300 0-6 2.500-6 5.800s2.700 6.200 6 6.200 6-2.900 6-6.200-2.700-5.800-6-5.800zM9.500 11.500h.01M14.500 11.500h.01M10.500 15c.9.7 2.100.7 3 0"], ["bread", "빵", "M5 10c-1.500-3 1-6 4-6h6c3 0 5.500 3 4 6v8H5zM9 13v2.500M12 13v2.500M15 13v2.500"], ["tooth", "치아", "M12 6.500C10.500 5 8 4.500 6.500 5.800 5 7.200 5 9.500 6 12c.8 2 1 4 1.500 6.500.3 1.500 1.800 1.500 2.300 0L11 14.500c.3-.8 1.700-.8 2 0l1.200 4c.5 1.500 2 1.500 2.300 0 .5-2.500.7-4.500 1.500-6.500 1-2.500 1-4.800-.5-6.200C15.500 4.500 13.500 5 12 6.500z"]];
 const APP_ICON_MAP=Object.fromEntries(APP_ICONS.map(x=>[x[0],x]));
 function appIconSvg(name){const x=APP_ICON_MAP[name];if(!x)return '';return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${x[2]}"/></svg>`;}
 (function(){
@@ -10245,7 +10283,7 @@ function appIconSvg(name){const x=APP_ICON_MAP[name];if(!x)return '';return `<sv
 })();
 
 /* ===== 데일리케어 색 규칙 ===== */
-const DC_CYCLE=['green','blue','purple','orange','red'];
+const DC_CYCLE=['red','orange','yellow','green','blue','purple','pink'];
 (function(){
   function dcColorOf(id,defs){
     const i=defs.findIndex(x=>x.id===id);if(i<0)return DC_CYCLE[0];
@@ -10269,7 +10307,9 @@ const DC_CYCLE=['green','blue','purple','orange','red'];
       const tone=(id,k)=>{const c=dcColorOf(id,defs);const L=THEME_PALETTES[c].light.base,D=THEME_PALETTES[c].dark.base;
         const f=b=>`--${k}-g:${b.g};--${k}-gs:${b.gs};--${k}-gd:${b.gd};--${k}-gl:${b.gl}`;return [f(L),f(D)];};
       const w=tone('water','t2'),sl=tone('sleep','t3');
-      const css=st.dataset.base+`:root:root:root{${w[0]};${sl[0]}}@media (prefers-color-scheme:dark){:root:root:root{${w[1]};${sl[1]}}}`;
+      if(!st.dataset.rcc){const g=b=>`--gc-g:${b.g};--gc-gs:${b.gs};--gc-gd:${b.gd};--gc-gl:${b.gl}`;
+        st.dataset.rcc=block('light',c=>`.rcc-${c}`,g)+`@media (prefers-color-scheme:dark){${block('dark',c=>`.rcc-${c}`,g)}}`;}
+      const css=st.dataset.base+st.dataset.rcc+`:root:root:root{${w[0]};${sl[0]}}@media (prefers-color-scheme:dark){:root:root:root{${w[1]};${sl[1]}}}`;
       if(st.textContent!==css)st.textContent=css;
       document.querySelectorAll('.dailyCareItemCard[data-daily-care-id]').forEach(card=>{
         const want='dcc-'+dcColorOf(card.dataset.dailyCareId,defs);
@@ -10278,11 +10318,14 @@ const DC_CYCLE=['green','blue','purple','orange','red'];
     }catch(e){}
   }
   window.applyDcColors=applyDcColors;
+  window.dcColorOf=function(id){return dcColorOf(id,loadDailyCareDefinitions());};
   let q=0;
   new MutationObserver(()=>{if(!q)q=setTimeout(()=>{q=0;applyDcColors();},40);}).observe(document.body,{childList:true,subtree:true});
   applyDcColors();
   const o=applyThemeColor;applyThemeColor=function(){const r=o.apply(this,arguments);applyDcColors();return r;};
 })();
+(function(){const o=renderRecordDashboard;renderRecordDashboard=function(){const r=o.apply(this,arguments);try{tagRecordTones();}catch(e){}return r;};})();
+(function(){const o=applyThemeColor;applyThemeColor=function(){const r=o.apply(this,arguments);try{tagRecordTones();}catch(e){}return r;};})();
 </script>
 
 
