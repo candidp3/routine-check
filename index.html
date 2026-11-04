@@ -2022,6 +2022,26 @@ html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions but
 .stSeg button{border:1px solid var(--box-line);background:transparent;color:var(--rc-tx2);border-radius:9px;height:32px;padding:0 10px;font:inherit;font-size:var(--fs-2);white-space:nowrap}
 .stSeg button.on{background:var(--rc-card);border-color:var(--rc-gs);box-shadow:inset 0 0 0 .5px var(--rc-gs);color:var(--rc-tx)}
 .stSeg button:disabled{opacity:.5}
+/* 루틴 아이콘: 연한 원 + 테마색 / 체크는 점 */
+.lifeRoutineName.hasIco{display:flex;align-items:center;gap:8px;min-width:0}
+.lifeRoutineName .rIco{flex:none;width:24px;height:24px;border-radius:50%;background:var(--rc-gl);color:var(--rc-gs);display:grid;place-items:center;font-size:12px;line-height:1}
+.lifeRoutineName .rIco .appIco{display:grid;place-items:center;width:14px;height:14px}
+.lifeRoutineName .rIco .appIco svg{width:14px;height:14px;display:block}
+.lifeRoutineName .rTxt{min-width:0}
+.lifeRoutine:has(.lifeCheck.done) .rIco{background:var(--rc-soft);color:var(--rc-mu)}
+.lifeCheck.done{font-size:0!important;color:transparent!important;background:var(--rc-gl)!important;border-color:var(--rc-g)!important}
+.lifeCheck.done::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--rc-gs);display:block}
+.lifeCheck{border-radius:50%!important}
+.lifeCheck.done::before{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+.lifeRoutineMain:has(.lifeRoutineName.hasIco){position:relative;padding-left:32px}
+.lifeRoutineName.hasIco{display:block}
+.lifeRoutineName.hasIco .rIco{position:absolute;left:0;top:50%;transform:translateY(-50%)}
+.lifeCheck{width:20px!important;height:20px!important;flex:0 0 20px!important}
+.lifeCheck.done::before{width:8px;height:8px}
+.lifeRoutineName .rIco{width:28px;height:28px}
+.lifeRoutineName .rIco .appIco,.lifeRoutineName .rIco .appIco svg{width:16px;height:16px}
+.lifeRoutineName .rIco{font-size:14px}
+.lifeRoutineMain:has(.lifeRoutineName.hasIco){padding-left:36px}
 </style>
 </head>
 
@@ -6132,6 +6152,12 @@ function addCountChip(n){
 function recordFreeRoutine(id){
   const r=loadLifeRoutines().find(x=>x.id===id);if(!r)return;
   const logs=getLifeDayLogs(),idx=logs.findIndex(x=>x.routineId===id);
+  if(idx<0&&String(r.defaultNote||'').trim()&&!isMealFreeRoutine(r)){
+    logs.push({routineId:id,completed:true,value:null,duration:null,memo:String(r.defaultNote).trim(),loggedAt:new Date().toISOString()});
+    setLifeDayLogs(logs);
+    renderLifeGuide();renderLifeCalendar();renderRecordDashboard();update();
+    return;
+  }
   const existing=idx>=0?(logs[idx].memo||''):'';
   openRoutineInputSheet({
     mode:'free',id,title:r.name,hint:'오늘의 기록',
@@ -7011,9 +7037,26 @@ async function deleteRoutineFromManager(id){const r=loadLifeRoutines().find(x=>x
 function handleRoutineRowTap(event,id){
   if(event && event.target && event.target.closest && event.target.closest('button,input,select,textarea,a')) return;
   const r=loadLifeRoutines().find(x=>x.id===id);if(!r)return;
+  if(!event&&r.type!=='check'&&r.type!=='free'&&lifeDone(id)&&!isTimerRunningFor(id)){
+    if(r.type==='time'||r.type==='count'){clearRoutineTimeRecord(id);return;}
+  }
   if(r.type==='count'){openCountInput(id);return;}
   if(r.type==='check'){toggleLifeRoutine(id);return;}
-  if(r.type==='free'){openFreeRoutineActions(id);return;}
+  if(r.type==='free'){
+    if(!event){
+      const logs=getLifeDayLogs();
+      const ex=logs.find(x=>x.routineId===id);
+      if(ex){
+        const m=String(ex.memo||'').trim();
+        if(m&&m!==String(r.defaultNote||'').trim()){openFreeRoutineActions(id);return;}
+        clearFreeRoutineRecord(id);return;
+      }
+      if(!isMealFreeRoutine(r)&&!String(r.defaultNote||'').trim()){recordFreeRoutine(id);return;}
+      logs.push({routineId:id,completed:true,value:null,duration:null,memo:String(r.defaultNote||'').trim(),loggedAt:new Date().toISOString()});
+      setLifeDayLogs(logs);renderLifeGuide();renderLifeCalendar();renderRecordDashboard();update();return;
+    }
+    openFreeRoutineActions(id);return;
+  }
   if(r.type==='time'){openTimeRoutineActions(id);return;}
 }
 function closeRoutineActionSheet(){
@@ -10265,8 +10308,16 @@ function appIconSvg(name){const x=APP_ICON_MAP[name];if(!x)return '';return `<sv
       n.parentNode.replaceChild(frag,n);
     });
   }
-  const NAME=/^(⟪[a-z0-9_]+⟫|(?:\p{Extended_Pictographic}\uFE0F?(?:\u200D\p{Extended_Pictographic}\uFE0F?)*))\s*([\s\S]*)$/u;
+  const NAME=/^(⟪[a-z0-9_]+⟫|\p{Regional_Indicator}{2}|(?:\p{Extended_Pictographic}\uFE0F?(?:\u200D\p{Extended_Pictographic}\uFE0F?)*))\s*([\s\S]*)$/u;
   function wrapNames(){
+    document.querySelectorAll('.lifeRoutineName').forEach(el=>{
+      if(el.querySelector(':scope>.rIco')||el.children.length)return;
+      const m=el.textContent.match(NAME);if(!m)return;
+      el.textContent='';el.classList.add('hasIco');
+      const i=document.createElement('span');i.className='rIco';i.textContent=m[1];
+      const n=document.createElement('span');n.className='rTxt';n.textContent=m[2];
+      el.append(i,n);
+    });
     document.querySelectorAll('.dailyCareName').forEach(el=>{
       if(el.querySelector(':scope>.dcIco')||el.children.length)return;
       const m=el.textContent.match(NAME);if(!m)return;
@@ -10319,7 +10370,7 @@ function appIconSvg(name){const x=APP_ICON_MAP[name];if(!x)return '';return `<sv
   FIELDS.forEach(mount);
   let q=0;
   function run(){q=0;try{wrapNames();convert(document.body);syncAll();}catch(e){}}
-  const mo=new MutationObserver(()=>{try{wrapNames();convert(document.body);}catch(e){}mo.takeRecords();if(!q)q=setTimeout(run,30);});
+  const mo=new MutationObserver(()=>{try{wrapNames();convert(document.body);syncAll();}catch(e){}mo.takeRecords();});
   mo.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
   run();
 })();
