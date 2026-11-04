@@ -2015,6 +2015,13 @@ html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions but
 .stTable td{border:0;background:var(--rc-soft);padding:5px 4px;line-height:1.3}
 .stTable td:first-child{border-radius:9px 0 0 9px}.stTable td:last-child{border-radius:0 9px 9px 0}
 .stTable td.stN{color:var(--rc-mu)}
+.stAlertBox{margin-top:2px}
+.stAlertBox .stRow{min-height:44px}
+.stAlertHead{margin:6px 0 2px;font-size:var(--fs-1);letter-spacing:.08em;color:var(--rc-mu)}
+.stSeg{display:flex;gap:4px}
+.stSeg button{border:1px solid var(--box-line);background:transparent;color:var(--rc-tx2);border-radius:9px;height:32px;padding:0 10px;font:inherit;font-size:var(--fs-2);white-space:nowrap}
+.stSeg button.on{background:var(--rc-card);border-color:var(--rc-gs);box-shadow:inset 0 0 0 .5px var(--rc-gs);color:var(--rc-tx)}
+.stSeg button:disabled{opacity:.5}
 </style>
 </head>
 
@@ -2448,6 +2455,7 @@ html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions but
         </select>
       </label>
       <div id="oneOffTypeHint" class="oneOffTypeHint"></div>
+      <div id="oneOffStaticBox" class="dailyCareFormWide stAlertBox" hidden></div>
       <label id="oneOffUnitField" class="dailyCareFormWide">단위
         <input id="oneOffEditUnit" placeholder="예: kg, cm, %, mmHg">
       </label>
@@ -3582,6 +3590,12 @@ function updateOneOffEditorFields(){
     ?'몸무게·허리둘레처럼 잰 날에만 값을 입력해요.'
     :'간식·야식처럼 필요할 때 내용을 적어요. 식사 기록에 함께 보여요.';
 }
+(function(){const o=updateOneOffEditorFields;updateOneOffEditorFields=function(){
+  const r=o.apply(this,arguments);
+  const t=document.getElementById('oneOffEditType')?.value,box=document.getElementById('oneOffStaticBox'),h=document.getElementById('oneOffTypeHint');
+  if(box){box.hidden=t!=='static';if(t==='static')stRenderAlertBox();}
+  if(t==='static'&&h)h.textContent='누르면 스태틱 훈련 타이머가 열려요. 아래 알림은 모든 훈련에 공통으로 적용돼요.';
+  return r;};})();
 function openOneOffRecordEditor(id=''){
   const d=id
     ?loadOneOffDefinitions().find(x=>x.id===id)
@@ -9678,7 +9692,7 @@ function stJSON(key,def){try{const v=JSON.parse(localStorage.getItem(key));retur
 function stPrefs(){
   const v=stJSON(ST_PREF_KEY,{})||{};
   const clamp=(x,lo,hi,d)=>{x=Number(x);return Number.isFinite(x)?Math.min(hi,Math.max(lo,Math.round(x))):d;};
-  return {mode:ST_MODES.some(m=>m[0]===v.mode)?v.mode:'co2',co2Hold:clamp(v.co2Hold,20,300,60),o2Max:clamp(v.o2Max,60,300,90),holdPrep:clamp(v.holdPrep,0,300,120),tableId:String(v.tableId||'')};
+  return {mode:ST_MODES.some(m=>m[0]===v.mode)?v.mode:'co2',co2Hold:clamp(v.co2Hold,20,300,60),o2Max:clamp(v.o2Max,60,300,90),holdPrep:clamp(v.holdPrep,0,300,120),tableId:String(v.tableId||''),per:[0,30,60].includes(Number(v.per))?Number(v.per):0,cd:Number(v.cd)===5?5:10};
 }
 function stSavePrefs(p){try{localStorage.setItem(ST_PREF_KEY,JSON.stringify(p));}catch(e){}}
 function stTables(){const a=stJSON(ST_TABLE_KEY,[]);return Array.isArray(a)?a.filter(t=>t&&t.id&&Array.isArray(t.rows)&&t.rows.length):[];}
@@ -9726,6 +9740,18 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 /* --- 화면 --- */
 const ST={run:null,timer:null,done:null};
 const ST_NUM=['','one','two','three','four','five','six','seven','eight','nine','ten'];
+const ST_W1=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'],ST_W10=['','','twenty','thirty','forty','fifty'];
+function stWords(n){return n<20?ST_W1[n]:ST_W10[Math.floor(n/10)]+(n%10?' '+ST_W1[n%10]:'');}
+function stElapsedSpeech(e){const m=Math.floor(e/60),s=e%60;if(!m)return stWords(s)+' seconds';return stWords(m)+(m>1?' minutes':' minute')+(s?' '+stWords(s):'');}
+function stChime(){
+  try{
+    const ac=ST.ac;if(!ac)return;if(ac.state==='suspended')ac.resume();
+    [0,.35,.7].forEach((t,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.value=i===2?1175:880;
+      const at=ac.currentTime+t;g.gain.setValueAtTime(0.0001,at);g.gain.exponentialRampToValueAtTime(0.6,at+0.02);g.gain.exponentialRampToValueAtTime(0.0001,at+0.3);
+      o.connect(g);g.connect(ac.destination);o.start(at);o.stop(at+0.32);});
+    setTimeout(()=>{try{ac.close();}catch(e){}if(ST.ac===ac)ST.ac=null;},1500);
+  }catch(e){}
+}
 function openStatic(){
   ST.done=null;stRender();
   document.getElementById('staticScreen').classList.remove('hide');
@@ -9758,10 +9784,16 @@ function stRender(){
   document.getElementById('stParams').style.display=html?'':'none';
   stRenderPanel();
 }
+function stAlertRows(p,run){
+  const seg=(key,cur,opts)=>`<span class="stSeg">${opts.map(o=>`<button type="button" class="${Number(cur)===o[0]?'on':''}" ${run?'disabled':''} onclick="stSetAlert('${key}',${o[0]})">${o[1]}</button>`).join('')}</span>`;
+  return `<div class="stAlertHead">알림</div><div class="stRow"><span>주기적 알림</span>${seg('per',p.per,[[0,'없음'],[30,'30초'],[60,'1분']])}</div><div class="stRow"><span>카운트다운</span>${seg('cd',p.cd,[[5,'마지막 5초'],[10,'마지막 10초']])}</div>`;
+}
+function stSetAlert(key,v){const p=stPrefs();p[key]=Number(v);stSavePrefs(p);stRender();stRenderAlertBox();}
+function stRenderAlertBox(){const b=document.getElementById('oneOffStaticBox');if(b)b.innerHTML=stAlertRows(stPrefs(),false);}
 function stRenderPanel(){
   const panel=document.getElementById('stPanel'),p=stPrefs();
   if(ST.run){
-    panel.innerHTML=`<div class="stPanel" id="stPanelBox"><div class="stPhase" id="stPhase">BREATH</div><div class="stClock" id="stClock">00:00</div><div class="stRoundTx" id="stRound"></div><div class="stBarWrap"><i id="stBar"></i></div><div class="stNext" id="stNext"></div></div><button type="button" class="stBig quiet" onclick="stStop()">${p.mode==='hold'?'STOP · 기록하기':'STOP'}</button>`;
+    panel.innerHTML=`<div class="stPanel" id="stPanelBox"><div class="stPhase" id="stPhase">BREATHE</div><div class="stClock" id="stClock">00:00</div><div class="stRoundTx" id="stRound"></div><div class="stBarWrap"><i id="stBar"></i></div><div class="stNext" id="stNext"></div></div><button type="button" class="stBig quiet" onclick="stStop()">${p.mode==='hold'?'STOP · 기록하기':'STOP'}</button>`;
     return;
   }
   if(ST.done){
@@ -9801,7 +9833,8 @@ function stStart(){
   if(!phases.length)return;
   let acc=0;const cum=phases.map(ph=>acc+=ph.sec);
   ST.done=null;
-  ST.run={mode:p.mode,phases,cum,rows:stTableFor(p.mode,p),start:Date.now(),idx:-1,said:new Set(),name:(stTables().find(t=>t.id===p.tableId)||{}).name||'',prep:p.holdPrep};
+  try{ST.ac=new (window.AudioContext||window.webkitAudioContext)();ST.ac.resume();}catch(e){ST.ac=null;}
+  ST.run={per:p.per,cd:p.cd,mode:p.mode,phases,cum,rows:stTableFor(p.mode,p),start:Date.now(),idx:-1,said:new Set(),name:(stTables().find(t=>t.id===p.tableId)||{}).name||'',prep:p.holdPrep};
   stWake();stRender();
   clearInterval(ST.timer);ST.timer=setInterval(stTick,100);stTick();
 }
@@ -9812,14 +9845,15 @@ function stTick(){
   let i=r.cum.findIndex(c=>el<c);const ph=r.phases[i];
   const phStart=i?r.cum[i-1]:0,inPh=el-phStart;
   if(i!==r.idx){
-    r.idx=i;stSay(ph.k==='breath'?'breath':'hold');stVibrate(ph.k==='breath'?[60]:[120]);
+    r.idx=i;stSay(ph.k==='breath'?'breathe':'hold');stVibrate(ph.k==='breath'?[60]:[120]);
     const box=document.getElementById('stPanelBox');if(box)box.className='stPanel'+(ph.k==='hold'?' hold':'');
   }
   const set=(id,t)=>{const e=document.getElementById(id);if(e&&e.textContent!==t)e.textContent=t;};
-  set('stPhase',ph.k==='breath'?'BREATH':'HOLD');
+  set('stPhase',ph.k==='breath'?'BREATHE':'HOLD');
   if(ph.sec===Infinity){
     set('stClock',stFmt(Math.floor(inPh)));set('stRound','');set('stNext','');
     const bar=document.getElementById('stBar');if(bar)bar.style.width='0%';
+    if(r.per&&ph.k==='hold'){const e=Math.floor(inPh);if(e>0&&e%r.per===0){const key='p'+i+':'+e;if(!r.said.has(key)){r.said.add(key);stSay(stElapsedSpeech(e));}}}
     return;
   }
   const remaining=r.cum[i]-el,k=Math.ceil(remaining-0.001);
@@ -9830,7 +9864,12 @@ function stTick(){
   set('stNext',nx?`다음 · ${nx.k==='breath'?'준비호흡':'숨참기'}${nx.sec===Infinity?'':' '+nx.sec+'초'}`:'마지막 구간이에요');
   const bar=document.getElementById('stBar');if(bar)bar.style.width=Math.min(100,el/r.cum[r.cum.length-1]*100)+'%';
   if(r.mode==='hold'){const b=document.getElementById('stBar');if(b)b.style.width=Math.min(100,inPh/ph.sec*100)+'%';}
-  if(k>=1&&k<=10&&k<ph.sec){const key=i+':'+k;if(!r.said.has(key)){r.said.add(key);stSay(ST_NUM[k]);}}
+  const cd=r.cd||10;
+  if(k>=1&&k<=cd&&k<ph.sec){const key=i+':'+k;if(!r.said.has(key)){r.said.add(key);stSay(ST_NUM[k]);}}
+  else if(r.per&&ph.k==='hold'){
+    const e=Math.floor(inPh);
+    if(e>0&&e%r.per===0&&(ph.sec===Infinity||ph.sec-e>cd+1)){const key='p'+i+':'+e;if(!r.said.has(key)){r.said.add(key);stSay(stElapsedSpeech(e));}}
+  }
 }
 async function stStop(){
   const r=ST.run;if(!r)return;
@@ -9843,6 +9882,7 @@ function stFinish(natural,silent){
   const r=ST.run;if(!r)return;
   clearInterval(ST.timer);ST.timer=null;ST.run=null;
   try{speechSynthesis.cancel();}catch(e){}
+  if(natural&&r.mode!=='hold'){stChime();stVibrate([300,120,300,120,500]);}else{try{ST.ac&&ST.ac.close();}catch(e){}ST.ac=null;}
   stSleep();
   const el=Math.min((Date.now()-r.start)/1000,r.cum[r.cum.length-1]);
   let session=null,line='',sub='';
@@ -9986,11 +10026,11 @@ renderOneOffQuick=function(){
         const card=[...document.querySelectorAll('#calendarDetail .rc-card')].find(c=>c.querySelector('.rc-section-title')?.textContent.trim()==='FREE TIME');
         if(card&&!card.querySelector('.stCalRow')){
           card.querySelector('.rc-empty')?.remove();
-          const NM={co2:'CO2',o2:'O2',hold:'Hold',custom:'Mine'};
-          const kinds=['co2','o2','hold','custom'].filter(t=>ss.some(x=>x.type===t)).map(t=>NM[t]).join(' · ');
-          const sec=ss.reduce((a,x)=>a+(x.type==='hold'?(Number(x.holdSec)||0):(Number(x.totalSec)||0)),0);
-          const f=`${String(Math.floor(sec/60)).padStart(2,'0')}분 ${String(sec%60).padStart(2,'0')}초`;
-          card.insertAdjacentHTML('beforeend',`<div class="rc-item rc-free-item stCalRow calEditable" role="button" tabindex="0"><span class="rc-dot rc-ok rc-free-dot"></span><span class="rc-routine-name">스태틱</span><span class="rc-meta">${kinds} | ${f}</span></div>`);
+          const NM={co2:'CO2',o2:'O2',custom:'Mine'};
+          const kinds=['co2','o2','custom'].filter(t=>ss.some(x=>x.type===t)).map(t=>NM[t]).join(' · ');
+          const sec=Math.max(0,...ss.filter(x=>x.type==='hold').map(x=>Number(x.holdSec)||0));
+          const f=sec>0?`${String(Math.floor(sec/60)).padStart(2,'0')}분 ${String(sec%60).padStart(2,'0')}초`:'';
+          card.insertAdjacentHTML('beforeend',`<div class="rc-item rc-free-item stCalRow calEditable" role="button" tabindex="0"><span class="rc-dot rc-ok rc-free-dot"></span><span class="rc-routine-name">스태틱</span><span class="rc-meta">${[kinds,f].filter(Boolean).join(' | ')}</span></div>`);
           card.querySelector('.stCalRow').onclick=()=>{
             if(ss.length===1)return openStaticSession(k,0);
             showRoutineActionSheet('스태틱 · 훈련 기록',ss.map((x,i)=>({label:stSessionLine(x),run:()=>openStaticSession(k,i)})));
@@ -10060,10 +10100,10 @@ renderOneOffQuick=function(){
 function stVoiceTest(){
   try{
     if(!('speechSynthesis' in window)){appAlert('이 브라우저는 음성 안내를 지원하지 않아요. 진동과 화면으로만 안내돼요.');return;}
-    speechSynthesis.getVoices();stSay('breath');
+    speechSynthesis.getVoices();stSay('breathe');
     setTimeout(()=>stSay('hold'),1200);
     const n=(speechSynthesis.getVoices()||[]).filter(v=>/^en/i.test(v.lang)).length;
-    appToast(n?'"breath", "hold" 소리가 나는지 확인해 주세요':'영어 음성이 없을 수 있어요. 소리가 안 나면 기기의 음성 출력(TTS) 설정을 확인해 주세요');
+    appToast(n?'"breathe", "hold" 소리가 나는지 확인해 주세요':'영어 음성이 없을 수 있어요. 소리가 안 나면 기기의 음성 출력(TTS) 설정을 확인해 주세요');
   }catch(e){}
 }
 
@@ -10202,8 +10242,9 @@ function addRoutineFromManager(){closeInactiveRoutineManager();openRoutineModal(
 })();
 
 /* ===== 앱 아이콘 팩 + 아이콘 원 ===== */
-const APP_ICONS=[["dumbbell", "아령", "M7 4v16M17 4v16M4 8v8M20 8v8M7 12h10"], ["drop", "물방울", "M12 3.5c3.2 4 5.5 6.8 5.5 10a5.5 5.5 0 0 1-11 0c0-3.2 2.3-6 5.5-10z"], ["moon", "달", "M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"], ["sun", "해", "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"], ["brush", "양치", "M5 19l8.5-8.5M13 5l6 6-2.5 2.5-6-6z"], ["pill", "영양제", "M10.5 20.5a4.95 4.95 0 0 1-7-7l10-10a4.95 4.95 0 0 1 7 7zM8.5 8.5l7 7"], ["meal", "식사", "M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10M17 21V3c-2 1-3.5 4-3.5 8h3.5"], ["cup", "음료", "M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5zM16 10h2a2.5 2.5 0 0 1 0 5h-2M8 3v2M12 3v2"], ["sparkle", "케어", "M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16v4M17 18h4"], ["book", "책", "M6 4h11a1 1 0 0 1 1 1v14H7a1 1 0 0 1-1-1zM6 17h12"], ["pencil", "공부", "M4 20l1-4L16 5l3 3L8 19zM14 7l3 3"], ["leaf", "산책", "M5 19C5 10 10 5 19 5c0 9-5 14-14 14zM5 19l7-7"], ["pulse", "운동", "M3 12h4l3-7 4 14 3-7h4"], ["dice", "게임", "M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3zM8.5 8.5h.01M15.5 8.5h.01M12 12h.01M8.5 15.5h.01M15.5 15.5h.01"], ["yarn", "뜨개질", "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM5 9c5 1 9 5 11 11M4.5 13c3 .5 6 2.5 7.5 6M8 5.5c4 1 7 4 8.5 8"], ["music", "음악", "M9 18V6l10-2v12M9 18a3 3 0 1 1-3-3 3 3 0 0 1 3 3zM19 16a3 3 0 1 1-3-3 3 3 0 0 1 3 3z"], ["wind", "호흡", "M3 9h10a3 3 0 1 0-3-3M3 15h14a3 3 0 1 1-3 3M3 12h7"], ["bed", "휴식", "M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"], ["heart", "마음", "M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"], ["clock", "시간", "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 8v4l3 2"], ["home", "집", "M4 11l8-7 8 7M6 10v10h12V10M10 20v-5h4v5"], ["star", "별", "M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"], ["flame", "불꽃", "M12 3c0 4-5 6-5 11a5 5 0 0 0 10 0c0-3-2-4-2-7-2 1-3 2-3 4 0-3 0-6 0-8z"], ["cloud", "구름", "M7 18a4 4 0 0 1-.5-7.9A5.5 5.5 0 0 1 17.1 9 4.5 4.5 0 0 1 17 18z"], ["laptop", "업무", "M5 6h14v9H5zM3 19h18"], ["bike", "자전거", "M6 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 15l4-7h5l3 7M10 8l2 7"], ["camera", "사진", "M4 8h3l2-3h6l2 3h3v11H4zM12 11a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"], ["palette", "그림", "M12 4a8 8 0 1 0 0 16c1.5 0 2-1 1.5-2s0-2 1.5-2h2a3 3 0 0 0 3-3A8 8 0 0 0 12 4zM8 11h.01M11 8h.01M15 9h.01"], ["smile", "웃음", "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM9 10h.01M15 10h.01M8.5 14a4.5 4.5 0 0 0 7 0"], ["shower", "샤워", "M4 12a8 6 0 0 1 16 0zM8 16v2M12 16v3M16 16v2"], ["egg", "계란후라이", "M6 8c1-3.500 5-4.500 7.500-2.500 3-1 6 1.500 5.500 5 1.500 3-.5 6.500-4 6.500-2 1.500-5.500 1-6.500-1.500-2.500-.5-3.500-4-2.500-7.500zM12 9.500a2.500 2.500 0 1 0 0 5 2.500 2.500 0 0 0 0-5z"], ["toothbrush", "칫솔", "M3 14h10v3H3zM13 12.500h8v5h-8zM14.800 10v2.500M17 10v2.500M19.200 10v2.500"], ["germ", "균", "M12 7.500a4.500 4.500 0 1 0 0 9 4.500 4.500 0 0 0 0-9zM12 7.500V4M12 20v-3.500M7.500 12H4M20 12h-3.500M8.800 8.800L6.500 6.500M17.500 17.500l-2.300-2.300M8.800 15.200l-2.300 2.300M17.500 6.500l-2.300 2.300M10.500 11h.01M13.500 13h.01"], ["lemon", "레몬", "M3 12c0-4 4-7 9-7s9 3 9 7-4 7-9 7-9-3-9-7zM3 12H1.500M22.500 12H21M8 10c1-1 2.500-1.500 4-1.500"], ["salad", "샐러드", "M3 12h18c0 4.500-4 8-9 8s-9-3.500-9-8zM7.500 12c-1-3 0-6 3-7 0 3-1 5-3 7zM13 12c0-3 2-5 5-5 0 3-2 5-5 5z"], ["shoe", "신발", "M3 17V9l4 1.500c1 2 3 3 5 3l6 1c2 .3 3 1.500 3 3v.5H3zM3 20h18M9 11.500l1.500 1.500"], ["japan", "일본", "M4 5h16v14H4zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"], ["china", "중국", "M4 5h16v14H4zM8 7.500l.8 1.700 1.800.2-1.300 1.200.4 1.800L8 11.500l-1.700 1 .4-1.800L5.400 8.600l1.800-.2zM13.500 8h.01M14.500 10h.01M14.500 12.500h.01M13.500 14.500h.01"], ["usa", "미국", "M4 5h16v14H4zM4 5h8v6H4zM12 8h8M12 11h8M4 14.500h16"], ["facecare", "얼굴케어", "M11 6a6.500 6.500 0 1 0 0 13 6.500 6.500 0 0 0 0-13zM8.500 11.500h.01M13.500 11.500h.01M8.800 14.800c1.300 1.100 3.100 1.100 4.400 0M19 3v4M17 5h4"], ["speak", "말하기", "M4 5h16v11h-9l-4 4v-4H4zM8 9h8M8 12h5"], ["facemask", "얼굴팩", "M12 3C8 3 5.500 6 5.500 11c0 6 3 10 6.500 10s6.500-4 6.500-10c0-5-2.500-8-6.500-8zM8.500 10h2.500M13 10h2.500M10.500 16.500h3"], ["meat", "고기", "M14.500 4c3.500 0 6 3 5 6.500-.8 2.800-4 4.500-6.800 3.400L10 17l-3-3 3.100-2.700C9 8.500 11.500 4 14.500 4zM8.500 15.500L5 19M4 17.500h.01M6.500 20h.01"], ["gamepad", "게임기", "M7 8h10a5 5 0 0 1 4.800 6.500l-.8 2.700a2.500 2.500 0 0 1-4.200 1L14.500 16h-5L7.500 18.200a2.500 2.500 0 0 1-4.200-1L2.500 14.500A5 5 0 0 1 7 8zM7.500 10.500v3M6 12h3M15.500 11.500h.01M17.500 13.500h.01"], ["cinema", "영화관", "M4 10h16v9H4zM4 10l1.500-4.500 14.500 3.800L19 10M8.700 6.500l2 3.500M13.700 7.800l2 3.500"], ["teddy", "곰인형", "M4.800 6.800a2 2 0 1 0 4 0 2 2 0 0 0-4 0zM15.200 6.800a2 2 0 1 0 4 0 2 2 0 0 0-4 0zM12 6.500c-3.300 0-6 2.500-6 5.800s2.700 6.200 6 6.200 6-2.900 6-6.200-2.700-5.800-6-5.800zM9.500 11.500h.01M14.500 11.500h.01M10.500 15c.9.7 2.100.7 3 0"], ["bread", "빵", "M5 10c-1.500-3 1-6 4-6h6c3 0 5.500 3 4 6v8H5zM9 13v2.500M12 13v2.500M15 13v2.500"], ["tooth", "치아", "M12 6.500C10.500 5 8 4.500 6.500 5.800 5 7.200 5 9.500 6 12c.8 2 1 4 1.500 6.500.3 1.500 1.800 1.500 2.300 0L11 14.500c.3-.8 1.700-.8 2 0l1.200 4c.5 1.500 2 1.500 2.300 0 .5-2.500.7-4.500 1.500-6.500 1-2.500 1-4.800-.5-6.200C15.500 4.500 13.500 5 12 6.500z"]];
-const APP_ICON_MAP=Object.fromEntries(APP_ICONS.map(x=>[x[0],x]));
+const APP_ICONS=[["dumbbell", "아령", "M7 4v16M17 4v16M4 8v8M20 8v8M7 12h10"], ["drop", "물방울", "M12 3.5c3.2 4 5.5 6.8 5.5 10a5.5 5.5 0 0 1-11 0c0-3.2 2.3-6 5.5-10z"], ["moon", "달", "M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"], ["sun", "해", "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"], ["brush", "양치", "M5 19l8.5-8.5M13 5l6 6-2.5 2.5-6-6z"], ["pill", "영양제", "M10.5 20.5a4.95 4.95 0 0 1-7-7l10-10a4.95 4.95 0 0 1 7 7zM8.5 8.5l7 7"], ["meal", "식사", "M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10M17 21V3c-2 1-3.5 4-3.5 8h3.5"], ["cup", "음료", "M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5zM16 10h2a2.5 2.5 0 0 1 0 5h-2M8 3v2M12 3v2"], ["sparkle", "케어", "M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16v4M17 18h4"], ["book", "책", "M12 6.500C10 5 7 4.500 4 5v13c3-.5 6 0 8 1.500 2-1.500 5-2 8-1.500V5c-3-.5-6 0-8 1.500zM12 6.500v13M6.500 8.500c1.200 0 2.300.2 3.200.6M6.500 12c1.200 0 2.300.2 3.200.6M14.300 9.100c.9-.4 2-.6 3.200-.6M14.300 12.600c.9-.4 2-.6 3.200-.6"], ["pencil", "공부", "M4 20l1-4L16 5l3 3L8 19zM14 7l3 3"], ["leaf", "산책", "M5 19C5 10 10 5 19 5c0 9-5 14-14 14zM5 19l7-7"], ["pulse", "운동", "M3 12h4l3-7 4 14 3-7h4"], ["dice", "게임", "M7 4h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3zM8 7.200a.8.8 0 1 0 .01 0zM16 7.200a.8.8 0 1 0 .01 0zM12 11.200a.8.8 0 1 0 .01 0zM8 15.200a.8.8 0 1 0 .01 0zM16 15.200a.8.8 0 1 0 .01 0z"], ["yarn", "뜨개질", "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM5 9c5 1 9 5 11 11M4.5 13c3 .5 6 2.5 7.5 6M8 5.5c4 1 7 4 8.5 8"], ["music", "음악", "M9 18V6l10-2v12M9 18a3 3 0 1 1-3-3 3 3 0 0 1 3 3zM19 16a3 3 0 1 1-3-3 3 3 0 0 1 3 3z"], ["wind", "호흡", "M3 9h10a3 3 0 1 0-3-3M3 15h14a3 3 0 1 1-3 3M3 12h7"], ["bed", "휴식", "M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"], ["heart", "마음", "M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"], ["clock", "시간", "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 8v4l3 2"], ["home", "집", "M4 11l8-7 8 7M6 10v10h12V10M10 20v-5h4v5"], ["star", "별", "M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"], ["flame", "불꽃", "M12 3c0 4-5 6-5 11a5 5 0 0 0 10 0c0-3-2-4-2-7-2 1-3 2-3 4 0-3 0-6 0-8z"], ["cloud", "구름", "M7 18a4 4 0 0 1-.5-7.9A5.5 5.5 0 0 1 17.1 9 4.5 4.5 0 0 1 17 18z"], ["laptop", "업무", "M5 6h14v9H5zM3 19h18"], ["bike", "자전거", "M6 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 15l4-7h5l3 7M10 8l2 7"], ["camera", "사진", "M4 8h3l2-3h6l2 3h3v11H4zM12 11a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"], ["palette", "그림", "M12 4a8 8 0 1 0 0 16c1.5 0 2-1 1.5-2s0-2 1.5-2h2a3 3 0 0 0 3-3A8 8 0 0 0 12 4zM8 11h.01M11 8h.01M15 9h.01"], ["smile", "웃음", "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM9 10h.01M15 10h.01M8.5 14a4.5 4.5 0 0 0 7 0"], ["shower", "샤워", "M4 12a8 6 0 0 1 16 0zM8 16v2M12 16v3M16 16v2"], ["egg", "계란후라이", "M6 8c1-3.500 5-4.500 7.500-2.500 3-1 6 1.500 5.500 5 1.500 3-.5 6.500-4 6.500-2 1.500-5.500 1-6.500-1.500-2.500-.5-3.500-4-2.500-7.500zM12 9.500a2.500 2.500 0 1 0 0 5 2.500 2.500 0 0 0 0-5z"], ["germ", "균", "M12 7.500a4.500 4.500 0 1 0 0 9 4.500 4.500 0 0 0 0-9zM12 7.500V4M12 20v-3.500M7.500 12H4M20 12h-3.500M8.800 8.800L6.500 6.500M17.500 17.500l-2.300-2.300M8.800 15.200l-2.300 2.300M17.500 6.500l-2.300 2.300M10.500 11h.01M13.500 13h.01"], ["lemon", "레몬", "M4.49 15.99 C3.43 12.93 5.21 8.81 9.18 6.70 C13.16 4.59 17.56 5.42 19.51 8.01 C20.57 11.07 18.79 15.19 14.82 17.30 C10.84 19.41 6.44 18.58 4.49 15.99z M19.51 8.01 L20.95 6.90 M4.49 15.99 L3.05 17.10 M7.09 12.35 Q7.57 10.05 9.15 8.76"], ["salad", "샐러드", "M3 12h18c0 4.500-4 8-9 8s-9-3.500-9-8zM7.500 12c-1-3 0-6 3-7 0 3-1 5-3 7zM13 12c0-3 2-5 5-5 0 3-2 5-5 5z"], ["shoe", "신발", "M3 17V9l4 1.500c1 2 3 3 5 3l6 1c2 .3 3 1.500 3 3v.5H3zM3 20h18M9 11.500l1.500 1.500"], ["japan", "일본", "M4 5h16v14H4zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"], ["china", "중국", "M4 5h16v14H4zM8 7.500l.8 1.700 1.800.2-1.300 1.200.4 1.800L8 11.500l-1.700 1 .4-1.800L5.400 8.600l1.800-.2zM13.500 8h.01M14.500 10h.01M14.500 12.500h.01M13.500 14.500h.01"], ["usa", "미국", "M4 5h16v14H4zM4 5h8v6H4zM12 8h8M12 11h8M4 14.500h16"], ["facecare", "얼굴케어", "M11 6a6.500 6.500 0 1 0 0 13 6.500 6.500 0 0 0 0-13zM8.500 11.500h.01M13.500 11.500h.01M8.800 14.800c1.300 1.100 3.100 1.100 4.400 0M19 3v4M17 5h4"], ["speak", "말하기", "M4 5h16v11h-9l-4 4v-4H4zM8 9h8M8 12h5"], ["facemask", "얼굴팩", "M12 3C8 3 5.500 6 5.500 11c0 6 3 10 6.500 10s6.500-4 6.500-10c0-5-2.500-8-6.500-8zM8.500 10h2.500M13 10h2.500M10.500 16.500h3"], ["gamepad", "게임기", "M7 8h10a5 5 0 0 1 4.800 6.500l-.8 2.700a2.500 2.500 0 0 1-4.200 1L14.500 16h-5L7.500 18.200a2.500 2.500 0 0 1-4.200-1L2.500 14.500A5 5 0 0 1 7 8zM7.500 10.500v3M6 12h3M15.500 11.500h.01M17.500 13.500h.01"], ["cinema", "영화관", "M4 10h16v9H4zM4 10l1.500-4.500 14.500 3.800L19 10M8.700 6.500l2 3.500M13.700 7.800l2 3.500"], ["bread", "빵", "M5 10c-1.500-3 1-6 4-6h6c3 0 5.500 3 4 6v8H5zM9 13v2.500M12 13v2.500M15 13v2.500"], ["tooth", "치아", "M12 6.500C10.500 5 8 4.500 6.500 5.800 5 7.200 5 9.500 6 12c.8 2 1 4 1.500 6.500.3 1.500 1.800 1.500 2.300 0L11 14.500c.3-.8 1.700-.8 2 0l1.200 4c.5 1.500 2 1.500 2.300 0 .5-2.500.7-4.500 1.500-6.500 1-2.500 1-4.800-.5-6.200C15.500 4.500 13.500 5 12 6.500z"], ["cookie", "과자", "M12 3a9 9 0 1 0 9 9 4 4 0 0 1-4-4 4 4 0 0 1-5-5zM8.500 10h.01M11.500 14h.01M8 15h.01M15.500 14.500h.01M12 9.500h.01"], ["scale", "체중계", "M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM7 11a5 5 0 0 1 10 0zM12 11l1.800-2.600M8 17h8"], ["apple", "과일", "M12 7.500c-3-2-7 0-7 5s3 8.500 5.500 7.500c.8-.3 1.100-.4 1.500-.4s.7.1 1.500.4C16 21 19 17.500 19 12.500s-4-7-7-5zM12 7.500c0-2 1-3.500 3-4.500"], ["phone", "휴대폰", "M8 3h8a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM11 18h2"], ["paw", "반려동물", "M12 11c-3 0-5 3-5 5.500 0 1.700 1.500 2.500 3 2 1.300-.5 2.700-.5 4 0 1.500.5 3-.3 3-2 0-2.500-2-5.500-5-5.500zM6 9.500a1.300 1.300 0 1 0 .01 0zM9.500 6a1.300 1.300 0 1 0 .01 0zM14.500 6a1.300 1.300 0 1 0 .01 0zM18 9.500a1.300 1.300 0 1 0 .01 0z"], ["bottle", "물병", "M10 3h4v3l2 2.500V21H8V8.500L10 6zM8 12h8M8 17h8"], ["rose", "장미", "M12 3.500c3 0 5.500 1.500 6 4.200.4 2.200-.5 3.800-.5 3.800s1 2.200-.5 4c-1.500 1.800-3.800 1.800-5 1.200-1.500 1-3.800 1-5.200-.5-1.500-1.500-1.300-3.500-.5-4.500-1-1.700-.5-4 1.300-5.500C8.700 4.200 10.200 3.500 12 3.500zM12 7c2-.2 3.700 1.200 3.700 3 0 2-1.700 3.300-3.700 3.300-1.800 0-3.300-1.300-3.300-3 0-1.300.8-2.300 2-2.700M12 9.700c1 0 1.700.6 1.700 1.300M3 16c2.600-.3 4.600.6 5.600 2.300-2.400.8-4.600.3-5.600-2.300zM7 21.500c-.2-2.400.5-4.100 2.300-5.100.7 2.300-.2 4.300-2.300 5.100z"], ["poledance", "폴댄스", "M17.200 2.300v20.300M18 8c.6-.8.7-1.600.3-2.300-.4-.8-1.200-.8-1.600-.7C15.500 5.200 14.200 6 13.200 7.900c-.6 1.100-.5 2.300-.4 3.400M3.600 12.800c3-.6 6.200-1.200 9.200-1.400M12.800 11.400c1.600.1 2.800.9 2.800 2.300 0 1.300-.4 2.500-1.500 3.800M13.500 17.500a1.100 1.100 0 1 1-2.200 0 1.100 1.100 0 0 1 2.200 0z"], ["broccoli", "채소", "M8 14c-3 0-4.500-3-3-5.500 1-1.500 2.500-2 4-1.500C9.500 4.500 12 3 14.500 4c1.700.7 2.500 2 2.500 3.500 2.500.5 3.500 3.500 2 5.500-1 1.300-2.500 1.500-3.500 1M10.500 14v7M13.500 14v7M8.500 21h7"], ["shaker", "프로틴", "M5 8h14v13H5zM4 5h16v3H4zM10.500 17.500v-5h2a1.500 1.500 0 0 1 0 3h-2"], ["fish", "생선", "M2.500 12c2.500-4 7-5.500 11-4 1.500.5 2.500 1.200 3.500 2L21.500 7v10l-4.500-3.500c-1 .8-2 1.500-3.500 2-4 1.500-8.500 0-11-3.500zM7 11h.01"], ["nut", "견과", "M6.500 14.500a3.500 3.500 0 1 0 5 4.500l1.800-2.200 1.200-.9a3.500 3.500 0 1 0-5-4.500l-1.800 2.200-1.200.9zM9 16l.01 0M14 11.500h.01"], ["bowl", "밥", "M4 11h16c0 5-3.500 8.500-8 8.500S4 16 4 11zM9 21h6M6 11c0-3.500 2.700-6 6-6s6 2.500 6 6M10 8h.01M13.500 7.500h.01M12 10h.01"], ["coffee", "커피", "M7 8h10l-1 12H8zM6 8h12V6H6zM9.500 6V4h5v2M10 13h4"], ["cheese", "치즈", "M2.500 19V12L21.500 4.500V19zM8.800 15.500a1.300 1.300 0 1 1-2.600 0 1.300 1.300 0 0 1 2.600 0zM14.200 14a1.200 1.200 0 1 1-2.400 0 1.200 1.200 0 0 1 2.400 0zM19 16a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"]];
+const APP_ICONS_LEGACY=[["toothbrush", "칫솔", "M3 14h10v3H3zM13 12.500h8v5h-8zM14.800 10v2.500M17 10v2.500M19.200 10v2.500"], ["meat", "고기", "M20.500 8.500c0 3.600-3 6.500-6.600 6.500-1.200 0-2.300-.3-3.200-.9L8 16.800 7.200 16l1.200-2.200C7.800 12.800 7.500 11.800 7.500 10.700 7.500 7 10.300 3.500 14 3.500c3.600 0 6.500 2.200 6.500 5zM7.500 16l-2.200 2.200a1.700 1.700 0 1 0 2.400 2.400L9.900 18.500M5.300 18.200a1.700 1.700 0 1 0-2.400-2.400 1.700 1.700 0 0 0 2.400 2.400zM11.500 7.500c1.200-.8 3-.8 4.300.3"], ["teddy", "곰인형", "M4.800 6.800a2 2 0 1 0 4 0 2 2 0 0 0-4 0zM15.200 6.800a2 2 0 1 0 4 0 2 2 0 0 0-4 0zM12 6.500c-3.300 0-6 2.500-6 5.800s2.700 6.200 6 6.200 6-2.900 6-6.200-2.700-5.800-6-5.800zM9.500 11.500h.01M14.500 11.500h.01M10.500 15c.9.7 2.100.7 3 0"], ["bodyweight", "맨몸운동", "M3 4h18M9 4l1 5M15 4l-1 5M12 4.800a1.700 1.700 0 1 0 .01 0zM9.500 9h5M12 9v6M12 15l-2.500 5.500M12 15l2.500 5.500"], ["milk", "우유", "M7 8h10v13H7zM7 8l2.500-5h5L17 8M10 13h4M10 16.500h4"], ["muscle", "근육", "M3 19h14a3.500 3.500 0 0 0 3.500-3.500V5.500a2 2 0 0 0-4 0V9M16.500 9c-2-1.500-5-1.500-7 .5C7 12 4.500 12 3 14v5"], ["yoga", "요가", "M12 3.500a2 2 0 1 0 .01 0zM12 8v5M7 12.500l5-1.500 5 1.500M5.500 19c3.500-3.500 9.500-3.500 13 0"]];
+const APP_ICON_MAP=Object.fromEntries(APP_ICONS.concat(APP_ICONS_LEGACY).map(x=>[x[0],x]));
 function appIconSvg(name){const x=APP_ICON_MAP[name];if(!x)return '';return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${x[2]}"/></svg>`;}
 (function(){
   const TOK=/⟪([a-z0-9_]+)⟫/g,SKIP=/^(SCRIPT|STYLE|TEXTAREA|OPTION|TITLE)$/;
@@ -10278,7 +10319,8 @@ function appIconSvg(name){const x=APP_ICON_MAP[name];if(!x)return '';return `<sv
   FIELDS.forEach(mount);
   let q=0;
   function run(){q=0;try{wrapNames();convert(document.body);syncAll();}catch(e){}}
-  new MutationObserver(()=>{if(!q)q=setTimeout(run,30);}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+  const mo=new MutationObserver(()=>{try{wrapNames();convert(document.body);}catch(e){}mo.takeRecords();if(!q)q=setTimeout(run,30);});
+  mo.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
   run();
 })();
 
@@ -10320,7 +10362,7 @@ const DC_CYCLE=['red','orange','yellow','green','blue','purple','pink'];
   window.applyDcColors=applyDcColors;
   window.dcColorOf=function(id){return dcColorOf(id,loadDailyCareDefinitions());};
   let q=0;
-  new MutationObserver(()=>{if(!q)q=setTimeout(()=>{q=0;applyDcColors();},40);}).observe(document.body,{childList:true,subtree:true});
+  new MutationObserver(()=>{applyDcColors();}).observe(document.body,{childList:true,subtree:true});
   applyDcColors();
   const o=applyThemeColor;applyThemeColor=function(){const r=o.apply(this,arguments);applyDcColors();return r;};
 })();
