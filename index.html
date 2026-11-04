@@ -2042,6 +2042,10 @@ html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions but
 .lifeRoutineName .rIco .appIco,.lifeRoutineName .rIco .appIco svg{width:16px;height:16px}
 .lifeRoutineName .rIco{font-size:14px}
 .lifeRoutineMain:has(.lifeRoutineName.hasIco){padding-left:36px}
+.oneOffQuickRow .snackQuickBtn{display:inline-flex!important;align-items:center;justify-content:center;gap:7px;white-space:nowrap;padding-left:10px;padding-right:10px}
+.oneOffQuickRow .snackQuickBtn .qPlus,.oneOffQuickRow .snackQuickBtn .qIc{flex:none;display:inline-flex;align-items:center}
+.oneOffQuickRow .snackQuickBtn .qTx{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.oneOffQuickRow .snackQuickBtn{gap:6px!important}
 </style>
 </head>
 
@@ -7769,11 +7773,12 @@ function snackBtn(){
   let v={};try{v=JSON.parse(localStorage.getItem(SNACK_BTN_KEY)||'{}')||{};}catch(e){}
   return {icon:String(v.icon||''),name:String(v.name||'').trim()||'간식'};
 }
+function oneOffBtnInner(d,suf){if(suf===undefined)suf=' 기록';return `<span class="qPlus">+</span>${d.icon?`<span class="qIc">${escapeLife(d.icon)}</span>`:''}<span class="qTx">${escapeLife(d.name)}${suf}</span>`;}
 function oneOffLabel(d){return [d.icon,d.name].filter(Boolean).join(' ');}
 renderOneOffQuick=function(){
   const root=document.getElementById('oneOffQuickRow');if(!root)return;
-  root.innerHTML=`<button type="button" class="snackQuickBtn" onclick="openSnackRecord()">＋ ${escapeLife(oneOffLabel(snackBtn()))} 기록</button>`+
-    loadOneOffDefinitions().map(d=>`<button type="button" class="snackQuickBtn" onclick="openOneOffQuick('${d.id}')">＋ ${escapeLife(oneOffLabel(d))} 기록</button>`).join('');
+  root.innerHTML=`<button type="button" class="snackQuickBtn" onclick="openSnackRecord()">${oneOffBtnInner(snackBtn())}</button>`+
+    loadOneOffDefinitions().map(d=>`<button type="button" class="snackQuickBtn" onclick="openOneOffQuick('${d.id}')">${oneOffBtnInner(d)}</button>`).join('');
 };
 (function(){
   const open=openOneOffRecordEditor,save=saveOneOffRecordEditor;
@@ -10045,8 +10050,8 @@ renderOneOffSettings=function(){
 };
 renderOneOffQuick=function(){
   const root=document.getElementById('oneOffQuickRow');if(!root)return;
-  let h=snackHidden()?'':`<button type="button" class="snackQuickBtn" onclick="openSnackRecord()">＋ ${escapeLife(oneOffLabel(snackBtn()))} 기록</button>`;
-  h+=loadOneOffDefinitions().filter(d=>!d.hidden).map(d=>`<button type="button" class="snackQuickBtn" onclick="openOneOffQuick('${d.id}')">＋ ${escapeLife(oneOffLabel(d))}${d.type==='static'?'':' 기록'}</button>`).join('');
+  let h=snackHidden()?'':`<button type="button" class="snackQuickBtn" onclick="openSnackRecord()">${oneOffBtnInner(snackBtn())}</button>`;
+  h+=loadOneOffDefinitions().filter(d=>!d.hidden).map(d=>`<button type="button" class="snackQuickBtn" onclick="openOneOffQuick('${d.id}')">${oneOffBtnInner(d,d.type==='static'?'':' 기록')}</button>`).join('');
   root.innerHTML=h;
 };
 (function(){
