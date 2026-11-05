@@ -10840,7 +10840,7 @@ function quickLogItems(k,cal){
   }
   return items;
 }
-function qlChipsHTML(items){return items.map(x=>x.c?`<button type="button" class="olChip" onclick="${x.c}">${escapeLife(x.n)}<span>${escapeLife(x.t)}</span></button>`:`<span class="olChip">${escapeLife(x.n)}<span>${escapeLife(x.t)}</span></span>`).join('');}
+function qlChipsHTML(items){const len=x=>String((x.n||'')+(x.t||'')).replace(/⟪[^⟫]*⟫/g,'').replace(/\s/g,'').length;return items.map((x,i)=>({x,i})).sort((p,q)=>len(p.x)-len(q.x)||p.i-q.i).map(p=>p.x).map(x=>x.c?`<button type="button" class="olChip" onclick="${x.c}">${escapeLife(x.n)}<span>${escapeLife(x.t)}</span></button>`:`<span class="olChip">${escapeLife(x.n)}<span>${escapeLife(x.t)}</span></span>`).join('');}
 renderOneOffTodayLogs=function(){
   const root=document.getElementById('oneOffTodayLogs');if(!root)return;
   root.innerHTML=qlChipsHTML(quickLogItems(lifeLogKey(),false));
@@ -10933,7 +10933,7 @@ function qlJustify(root){
   const chips=[...root.querySelectorAll('.olChip')];chips.forEach(c=>c.classList.remove('qlGrow'));
   if(!chips.length||!root.offsetParent)return;
   const rows=[];chips.forEach(c=>{const t=Math.round(c.offsetTop);let r=rows[rows.length-1];if(!r||r.t!==t){r={t,list:[]};rows.push(r);}r.list.push(c);});
-  rows.slice(0,-1).forEach(r=>r.list.forEach(c=>c.classList.add('qlGrow')));
+  rows.forEach(r=>r.list.forEach(c=>c.classList.add('qlGrow')));
 }
 const qlRO=typeof ResizeObserver==='function'?new ResizeObserver(es=>es.forEach(e=>qlJustify(e.target))):null;
 function qlWatch(el){qlJustify(el);if(qlRO)qlRO.observe(el);}
