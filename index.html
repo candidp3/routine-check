@@ -6156,12 +6156,6 @@ function addCountChip(n){
 function recordFreeRoutine(id){
   const r=loadLifeRoutines().find(x=>x.id===id);if(!r)return;
   const logs=getLifeDayLogs(),idx=logs.findIndex(x=>x.routineId===id);
-  if(idx<0&&String(r.defaultNote||'').trim()&&!isMealFreeRoutine(r)){
-    logs.push({routineId:id,completed:true,value:null,duration:null,memo:String(r.defaultNote).trim(),loggedAt:new Date().toISOString()});
-    setLifeDayLogs(logs);
-    renderLifeGuide();renderLifeCalendar();renderRecordDashboard();update();
-    return;
-  }
   const existing=idx>=0?(logs[idx].memo||''):'';
   openRoutineInputSheet({
     mode:'free',id,title:r.name,hint:'오늘의 기록',
@@ -7041,24 +7035,9 @@ async function deleteRoutineFromManager(id){const r=loadLifeRoutines().find(x=>x
 function handleRoutineRowTap(event,id){
   if(event && event.target && event.target.closest && event.target.closest('button,input,select,textarea,a')) return;
   const r=loadLifeRoutines().find(x=>x.id===id);if(!r)return;
-  if(!event&&r.type!=='check'&&r.type!=='free'&&lifeDone(id)&&!isTimerRunningFor(id)){
-    if(r.type==='time'||r.type==='count'){clearRoutineTimeRecord(id);return;}
-  }
   if(r.type==='count'){openCountInput(id);return;}
   if(r.type==='check'){toggleLifeRoutine(id);return;}
   if(r.type==='free'){
-    if(!event){
-      const logs=getLifeDayLogs();
-      const ex=logs.find(x=>x.routineId===id);
-      if(ex){
-        const m=String(ex.memo||'').trim();
-        if(m&&m!==String(r.defaultNote||'').trim()){openFreeRoutineActions(id);return;}
-        clearFreeRoutineRecord(id);return;
-      }
-      if(!isMealFreeRoutine(r)&&!String(r.defaultNote||'').trim()){recordFreeRoutine(id);return;}
-      logs.push({routineId:id,completed:true,value:null,duration:null,memo:String(r.defaultNote||'').trim(),loggedAt:new Date().toISOString()});
-      setLifeDayLogs(logs);renderLifeGuide();renderLifeCalendar();renderRecordDashboard();update();return;
-    }
     openFreeRoutineActions(id);return;
   }
   if(r.type==='time'){openTimeRoutineActions(id);return;}
