@@ -2130,6 +2130,8 @@ html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions but
 .pvL{left:8px}.pvR{right:8px}
 .pvBar{position:absolute;left:0;right:0;bottom:22px;display:flex;align-items:center;justify-content:center;gap:16px;color:#fff;font-size:var(--fs-2)}
 .pvDel{border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;border-radius:999px;padding:9px 18px;font-size:var(--fs-2)}
+.olChip{box-sizing:border-box;height:34px;line-height:1.2;padding-top:0;padding-bottom:0}
+.olChip .appIco{flex:none}
 </style>
 </head>
 
@@ -10834,7 +10836,7 @@ function quickLogItems(k,cal){
   const ss=stSessions(k);
   if(!cal&&ss.length){const sd=defs.find(d=>d.type==='static');items.push({n:sd?qlName(sd):'🫁 숨참기',t:stDayText(ss),c:`stOpenDay('${k}')`});}
   if(!cal){
-    (loadSnackRecords()[k]||[]).forEach((r,i)=>{const nm=r.label||snackBtn().name;const d=defs.find(x=>x.name===nm);items.push({n:d?qlName(d):nm,t:r.text||'',c:`openSnackRecord('${k}',${i})`});});
+    (loadSnackRecords()[k]||[]).forEach((r,i)=>{const nm=r.label||snackBtn().name;const d=defs.find(x=>x.name===nm);items.push({n:d?qlName(d):(nm===snackBtn().name?qlName(snackBtn()):nm),t:r.text||'',c:`openSnackRecord('${k}',${i})`});});
   }
   return items;
 }
