@@ -2132,6 +2132,15 @@ html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions but
 .pvDel{border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;border-radius:999px;padding:9px 18px;font-size:var(--fs-2)}
 .olChip{box-sizing:border-box;height:34px;line-height:1.2;padding-top:0;padding-bottom:0}
 .olChip .appIco{flex:none}
+
+
+.lifeRoutineName .rIco{background:var(--rc-soft);color:var(--rc-mu)}
+.lifeRoutine:has(.lifeCheck.done) .rIco{background:var(--rc-gl);color:var(--rc-gs)}
+.dateTitle .appIco,.dateTitle .appIco svg{width:20px;height:20px;display:inline-grid;vertical-align:middle}
+.activityTimerName .appIco,.activityTimerName .appIco svg{width:16px;height:16px;vertical-align:-3px}
+.readingPickBtn .appIco,.readEntryRow .appIco{width:16px;height:16px;vertical-align:-3px}
+.readingPickBtn .appIco svg,.readEntryRow .appIco svg{width:16px;height:16px}
+.stVoiceTest .appIco,.stVoiceTest .appIco svg{width:15px;height:15px;vertical-align:-2px}
 </style>
 </head>
 
@@ -2150,11 +2159,11 @@ html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions but
   <div id="todayHealthFront">
     <div class="section">
       <div class="dateRow">
-        <div class="dateTitle">📅</div>
+        <div class="dateTitle">⟪calendar⟫</div>
         <input type="date" id="datePicker" onchange="loadDate()">
         <button class="dateBtn" onclick="backToToday()">오늘</button>
       </div>
-      <div class="small" id="editHint" style="margin-top:6px;color:#c62828;display:none;">⚠️ 과거 기록 수정 중</div>
+      <div class="small" id="editHint" style="margin-top:6px;color:#c62828;display:none;">⟪alert⟫ 과거 기록 수정 중</div>
     </div>
 
     <section class="lifeBlock dailyCareBlock">
@@ -2824,7 +2833,7 @@ html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions but
 </div>
 
 <div id="staticScreen" class="staticScreen hide">
-  <div class="stHead"><button type="button" class="stBack" onclick="closeStatic()" aria-label="뒤로">‹</button><span class="stNotice">육상에서만 하세요 · 물속에서 혼자 하지 마세요</span><button type="button" class="stVoiceTest" onclick="stVoiceTest()">🔊 음성 확인</button></div>
+  <div class="stHead"><button type="button" class="stBack" onclick="closeStatic()" aria-label="뒤로">‹</button><span class="stNotice">육상에서만 하세요 · 물속에서 혼자 하지 마세요</span><button type="button" class="stVoiceTest" onclick="stVoiceTest()">⟪speaker⟫ 음성 확인</button></div>
   <h2 class="stTitle" id="stTitle">CO2 TRAINING</h2>
   <div class="stModes" id="stModes"></div>
   <div class="stParams" id="stParams"></div>
@@ -3122,13 +3131,13 @@ function renderFasting(){
     const endHM   = fmtHM(end);
   
     if(now >= end){
-      el.innerHTML = `🍏 ${FAST_HOURS}시간 단식 (${startHM}-<span class="good">${endHM}</span> / 00:00)`;
+      el.innerHTML = `⟪apple⟫ ${FAST_HOURS}시간 단식 (${startHM}-<span class="good">${endHM}</span> / 00:00)`;
     }else{
       const mm = Math.floor((end - now)/60000);
       const rh = Math.floor(mm/60);
       const rm = mm % 60;
   
-      el.innerHTML = `🍏 ${FAST_HOURS}시간 단식 (${startHM}-<span class="need">${endHM}</span> / 남은 ${String(rh).padStart(2,"0")}:${String(rm).padStart(2,"0")})`;
+      el.innerHTML = `⟪apple⟫ ${FAST_HOURS}시간 단식 (${startHM}-<span class="need">${endHM}</span> / 남은 ${String(rh).padStart(2,"0")}:${String(rm).padStart(2,"0")})`;
     }
     return;
   }
@@ -3136,14 +3145,14 @@ function renderFasting(){
   // 2) 진행 중이 아니면: 오늘(선택된 날짜)의 완료 기록 표시
   if(state.fastingEndAt && typeof state.fastingMinutes === "number"){
     const endAt = new Date(state.fastingEndAt);
-    el.innerHTML = `✅ 단식 종료 <span class="good">${fmtHM(endAt)}</span> · 🕒 실제 단식 ${fmtDuration(state.fastingMinutes)}`;
+    el.innerHTML = `단식 종료 <span class="good">${fmtHM(endAt)}</span> · ⟪clock⟫ 실제 단식 ${fmtDuration(state.fastingMinutes)}`;
 
     if(delBtn) delBtn.style.display = "inline-block";
     return;
   }
 
   // 3) 그 외: 시작 안 함
-  el.innerHTML = `🍏 ${FAST_HOURS}시간 단식`;
+  el.innerHTML = `⟪apple⟫ ${FAST_HOURS}시간 단식`;
   if(delBtn) delBtn.style.display = "none";
 }
   
@@ -6051,7 +6060,7 @@ function chooseBookForReadingTimer(dateKey,minutes){
   pendingReadingTimer={dateKey,minutes};
   const books=loadBooks().filter(b=>b.status==='읽고있어');
   const list=document.getElementById('readingPickList');document.getElementById('readingBookDuration').textContent=`독서 ${formatDurationMin(minutes)}`;
-  list.innerHTML=books.map(b=>`<button class="readingPickBtn" onclick="linkPendingReading('${b.id}')">📚 ${escapeLife(b.title)}<div class="bookAuthor">${escapeLife(b.author||'')}</div></button>`).join('')+`<button class="readingPickBtn readingPickSkip" onclick="closeReadingBookModal()">책 연결 없이 기록</button>`;
+  list.innerHTML=books.map(b=>`<button class="readingPickBtn" onclick="linkPendingReading('${b.id}')">⟪book⟫ ${escapeLife(b.title)}<div class="bookAuthor">${escapeLife(b.author||'')}</div></button>`).join('')+`<button class="readingPickBtn readingPickSkip" onclick="closeReadingBookModal()">책 연결 없이 기록</button>`;
   document.getElementById('readingBookModal').classList.remove('hide');
 }
 function linkPendingReading(bookId){if(!pendingReadingTimer)return;addReadingLog(pendingReadingTimer.dateKey,bookId,pendingReadingTimer.minutes);closeReadingBookModal();renderLifeCalendar();}
@@ -6447,7 +6456,7 @@ function renderActivityTimerBanner(){
   const clock=formatTimerElapsed(Math.max(0,(Date.now()-new Date(t.startedAt).getTime())/60000));
   if(el){
     el.classList.remove('hide');
-    el.innerHTML=`<div class="activityTimerMain"><div class="activityTimerName">🕒 ${escapeLife(r?.name||'활동 진행 중')}</div><div class="activityTimerElapsed">${clock} 진행 중</div></div><div style="display:flex;gap:6px"><button class="activityTimerStop" onclick="cancelActivityTimer()">취소</button><button class="activityTimerStop" onclick="stopActivityTimer()">종료</button></div>`;
+    el.innerHTML=`<div class="activityTimerMain"><div class="activityTimerName">⟪timer⟫ ${escapeLife(r?.name||'활동 진행 중')}</div><div class="activityTimerElapsed">${clock} 진행 중</div></div><div style="display:flex;gap:6px"><button class="activityTimerStop" onclick="cancelActivityTimer()">취소</button><button class="activityTimerStop" onclick="stopActivityTimer()">종료</button></div>`;
   }
   if(floatEl){
     floatEl.classList.remove('hide');
@@ -6455,7 +6464,7 @@ function renderActivityTimerBanner(){
     floatEl.setAttribute('tabindex','0');
     floatEl.setAttribute('onclick','openRunningTimerActions()');
     floatEl.setAttribute('onkeydown',"if(event.key==='Enter'||event.key===' '){event.preventDefault();openRunningTimerActions()}");
-    floatEl.innerHTML=`<span>${escapeLife(r?.icon||'🕒')} ${escapeLife(r?.name||'활동')}</span><span>${clock}</span>`;
+    floatEl.innerHTML=`<span>⟪timer⟫ ${escapeLife(r?.name||'활동')}</span><span>${clock}</span>`;
   }
 }
 const SNACK_RECORDS_KEY="snackRecords_v1";
@@ -9586,7 +9595,7 @@ function renderReadingEntries(){
   document.getElementById('readingEntriesHead').textContent=`독서 기록 · ${d.getMonth()+1}.${d.getDate()}`;
   const rows=Array.isArray(loadReadingLogs()[k])?loadReadingLogs()[k]:[];
   document.getElementById('readingEntriesBody').innerHTML=rows.length
-    ?rows.map((x,i)=>`<button type="button" class="readEntryRow" onclick="readingEntryActions(${i})"><span class="lt">📚 ${escapeLife(readingTitleOf(x.bookId))}</span><span class="ld">${escapeLife(formatDurationMin(Number(x.minutes)||0))} ›</span></button>`).join('')
+    ?rows.map((x,i)=>`<button type="button" class="readEntryRow" onclick="readingEntryActions(${i})"><span class="lt">⟪book⟫ ${escapeLife(readingTitleOf(x.bookId))}</span><span class="ld">${escapeLife(formatDurationMin(Number(x.minutes)||0))} ›</span></button>`).join('')
     :'<div class="rr-empty">연결된 책 기록이 없어요. 아래 버튼으로 책을 연결할 수 있어요.</div>';
 }
 function refreshAfterReadingEdit(){
@@ -9623,7 +9632,7 @@ function openReadingPicker(ctx){
   readingPickCtx=ctx;
   closeReadingEntries();
   document.getElementById('readingBookDuration').textContent=ctx.mode==='add'?'연결할 책을 선택하세요':'바꿀 책을 선택하세요';
-  document.getElementById('readingPickList').innerHTML=books.map(b=>`<button class="readingPickBtn" onclick="pickReadingBook('${b.id}')">📚 ${escapeLife(b.title)}<div class="bookAuthor">${escapeLife(b.author||'')}${b.status?` · ${escapeLife(b.status)}`:''}</div></button>`).join('');
+  document.getElementById('readingPickList').innerHTML=books.map(b=>`<button class="readingPickBtn" onclick="pickReadingBook('${b.id}')">⟪book⟫ ${escapeLife(b.title)}<div class="bookAuthor">${escapeLife(b.author||'')}${b.status?` · ${escapeLife(b.status)}`:''}</div></button>`).join('');
   document.getElementById('readingBookModal').classList.remove('hide');
 }
 async function pickReadingBook(bookId){
@@ -10196,6 +10205,7 @@ renderOneOffQuick=function(){
           const kinds=['co2','o2','custom'].filter(t=>ss.some(x=>x.type===t)).map(t=>NM[t]).join(' · ');
           const sec=Math.max(0,...ss.filter(x=>x.type==='hold').map(x=>Number(x.holdSec)||0));
           const f=sec>0?`${String(Math.floor(sec/60)).padStart(2,'0')}분 ${String(sec%60).padStart(2,'0')}초`:'';
+          card.querySelectorAll('.rc-empty').forEach(e=>e.remove());
           card.insertAdjacentHTML('beforeend',`<div class="rc-item rc-free-item stCalRow calEditable" role="button" tabindex="0"><span class="rc-dot rc-ok rc-free-dot"></span><span class="rc-routine-name">숨참기</span><span class="rc-meta">${[kinds,f].filter(Boolean).join(' | ')}</span></div>`);
           card.querySelector('.stCalRow').onclick=()=>{
             if(ss.length===1)return openStaticSession(k,0);
@@ -10257,7 +10267,7 @@ renderOneOffQuick=function(){
   try{
     if(localStorage.getItem(ST_ON_KEY)==='1'){
       const defs=loadOneOffDefinitions();
-      if(!defs.some(d=>d.type==='static'))defs.push({id:'oneoff_static',icon:'🫁',name:'숨참기',type:'static'});
+      if(!defs.some(d=>d.type==='static'))defs.push({id:'oneoff_static',icon:'⟪pulse⟫',name:'숨참기',type:'static'});
       saveOneOffDefinitions(defs);localStorage.setItem(ST_ON_KEY,'0');
     }
   }catch(e){}
@@ -10410,6 +10420,10 @@ function addRoutineFromManager(){closeInactiveRoutineManager();openRoutineModal(
 /* ===== 앱 아이콘 팩 + 아이콘 원 ===== */
 const APP_ICONS=[["dumbbell", "아령", "M7 4v16M17 4v16M4 8v8M20 8v8M7 12h10"], ["drop", "물방울", "M12 3.5c3.2 4 5.5 6.8 5.5 10a5.5 5.5 0 0 1-11 0c0-3.2 2.3-6 5.5-10z"], ["moon", "달", "M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"], ["sun", "해", "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"], ["brush", "양치", "M5 19l8.5-8.5M13 5l6 6-2.5 2.5-6-6z"], ["pill", "영양제", "M10.5 20.5a4.95 4.95 0 0 1-7-7l10-10a4.95 4.95 0 0 1 7 7zM8.5 8.5l7 7"], ["meal", "식사", "M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10M17 21V3c-2 1-3.5 4-3.5 8h3.5"], ["cup", "음료", "M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5zM16 10h2a2.5 2.5 0 0 1 0 5h-2M8 3v2M12 3v2"], ["sparkle", "케어", "M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16v4M17 18h4"], ["book", "책", "M12 6.500C10 5 7 4.500 4 5v13c3-.5 6 0 8 1.500 2-1.500 5-2 8-1.500V5c-3-.5-6 0-8 1.500zM12 6.500v13M6.500 8.500c1.200 0 2.300.2 3.200.6M6.500 12c1.200 0 2.300.2 3.200.6M14.300 9.100c.9-.4 2-.6 3.200-.6M14.300 12.600c.9-.4 2-.6 3.200-.6"], ["pencil", "공부", "M4 20l1-4L16 5l3 3L8 19zM14 7l3 3"], ["leaf", "산책", "M5 19C5 10 10 5 19 5c0 9-5 14-14 14zM5 19l7-7"], ["pulse", "운동", "M3 12h4l3-7 4 14 3-7h4"], ["dice", "게임", "M7 4h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3zM8 7.200a.8.8 0 1 0 .01 0zM16 7.200a.8.8 0 1 0 .01 0zM12 11.200a.8.8 0 1 0 .01 0zM8 15.200a.8.8 0 1 0 .01 0zM16 15.200a.8.8 0 1 0 .01 0z"], ["yarn", "뜨개질", "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM5 9c5 1 9 5 11 11M4.5 13c3 .5 6 2.5 7.5 6M8 5.5c4 1 7 4 8.5 8"], ["music", "음악", "M9 18V6l10-2v12M9 18a3 3 0 1 1-3-3 3 3 0 0 1 3 3zM19 16a3 3 0 1 1-3-3 3 3 0 0 1 3 3z"], ["wind", "호흡", "M3 9h10a3 3 0 1 0-3-3M3 15h14a3 3 0 1 1-3 3M3 12h7"], ["bed", "휴식", "M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"], ["heart", "마음", "M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"], ["clock", "시간", "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 8v4l3 2"], ["home", "집", "M4 11l8-7 8 7M6 10v10h12V10M10 20v-5h4v5"], ["star", "별", "M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"], ["flame", "불꽃", "M12 3c0 4-5 6-5 11a5 5 0 0 0 10 0c0-3-2-4-2-7-2 1-3 2-3 4 0-3 0-6 0-8z"], ["cloud", "구름", "M7 18a4 4 0 0 1-.5-7.9A5.5 5.5 0 0 1 17.1 9 4.5 4.5 0 0 1 17 18z"], ["laptop", "업무", "M5 6h14v9H5zM3 19h18"], ["bike", "자전거", "M6 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 15l4-7h5l3 7M10 8l2 7"], ["camera", "사진", "M4 8h3l2-3h6l2 3h3v11H4zM12 11a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"], ["palette", "그림", "M12 4a8 8 0 1 0 0 16c1.5 0 2-1 1.5-2s0-2 1.5-2h2a3 3 0 0 0 3-3A8 8 0 0 0 12 4zM8 11h.01M11 8h.01M15 9h.01"], ["smile", "웃음", "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM9 10h.01M15 10h.01M8.5 14a4.5 4.5 0 0 0 7 0"], ["shower", "샤워", "M4 12a8 6 0 0 1 16 0zM8 16v2M12 16v3M16 16v2"], ["egg", "계란후라이", "M6 8c1-3.500 5-4.500 7.500-2.500 3-1 6 1.500 5.500 5 1.500 3-.5 6.500-4 6.500-2 1.500-5.500 1-6.500-1.500-2.500-.5-3.500-4-2.500-7.500zM12 9.500a2.500 2.500 0 1 0 0 5 2.500 2.500 0 0 0 0-5z"], ["germ", "균", "M12 7.500a4.500 4.500 0 1 0 0 9 4.500 4.500 0 0 0 0-9zM12 7.500V4M12 20v-3.500M7.500 12H4M20 12h-3.500M8.800 8.800L6.500 6.500M17.500 17.500l-2.300-2.300M8.800 15.200l-2.300 2.300M17.500 6.500l-2.300 2.300M10.500 11h.01M13.500 13h.01"], ["lemon", "레몬", "M4.49 15.99 C3.43 12.93 5.21 8.81 9.18 6.70 C13.16 4.59 17.56 5.42 19.51 8.01 C20.57 11.07 18.79 15.19 14.82 17.30 C10.84 19.41 6.44 18.58 4.49 15.99z M19.51 8.01 L20.95 6.90 M4.49 15.99 L3.05 17.10 M7.09 12.35 Q7.57 10.05 9.15 8.76"], ["salad", "샐러드", "M3 12h18c0 4.500-4 8-9 8s-9-3.500-9-8zM7.500 12c-1-3 0-6 3-7 0 3-1 5-3 7zM13 12c0-3 2-5 5-5 0 3-2 5-5 5z"], ["shoe", "신발", "M3 17V9l4 1.500c1 2 3 3 5 3l6 1c2 .3 3 1.500 3 3v.5H3zM3 20h18M9 11.500l1.500 1.500"], ["japan", "일본", "M4 5h16v14H4zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"], ["china", "중국", "M4 5h16v14H4zM8 7.500l.8 1.700 1.800.2-1.300 1.200.4 1.800L8 11.500l-1.700 1 .4-1.800L5.400 8.600l1.800-.2zM13.500 8h.01M14.500 10h.01M14.500 12.500h.01M13.500 14.500h.01"], ["usa", "미국", "M4 5h16v14H4zM4 5h8v6H4zM12 8h8M12 11h8M4 14.500h16"], ["facecare", "얼굴케어", "M11 6a6.500 6.500 0 1 0 0 13 6.500 6.500 0 0 0 0-13zM8.500 11.500h.01M13.500 11.500h.01M8.800 14.800c1.300 1.100 3.100 1.100 4.400 0M19 3v4M17 5h4"], ["speak", "말하기", "M4 5h16v11h-9l-4 4v-4H4zM8 9h8M8 12h5"], ["facemask", "얼굴팩", "M12 3C8 3 5.500 6 5.500 11c0 6 3 10 6.500 10s6.500-4 6.500-10c0-5-2.500-8-6.500-8zM8.500 10h2.500M13 10h2.500M10.500 16.500h3"], ["gamepad", "게임기", "M7 8h10a5 5 0 0 1 4.800 6.500l-.8 2.700a2.500 2.500 0 0 1-4.200 1L14.500 16h-5L7.500 18.200a2.500 2.500 0 0 1-4.200-1L2.500 14.500A5 5 0 0 1 7 8zM7.500 10.500v3M6 12h3M15.500 11.500h.01M17.500 13.500h.01"], ["cinema", "영화관", "M4 10h16v9H4zM4 10l1.500-4.500 14.500 3.800L19 10M8.700 6.500l2 3.500M13.700 7.800l2 3.500"], ["bread", "빵", "M5 10c-1.500-3 1-6 4-6h6c3 0 5.500 3 4 6v8H5zM9 13v2.500M12 13v2.500M15 13v2.500"], ["tooth", "치아", "M12 6.500C10.500 5 8 4.500 6.500 5.800 5 7.200 5 9.500 6 12c.8 2 1 4 1.500 6.500.3 1.500 1.800 1.500 2.300 0L11 14.500c.3-.8 1.700-.8 2 0l1.200 4c.5 1.500 2 1.500 2.300 0 .5-2.500.7-4.500 1.500-6.500 1-2.500 1-4.800-.5-6.200C15.500 4.500 13.500 5 12 6.500z"], ["cookie", "과자", "M12 3a9 9 0 1 0 9 9 4 4 0 0 1-4-4 4 4 0 0 1-5-5zM8.500 10h.01M11.500 14h.01M8 15h.01M15.500 14.500h.01M12 9.500h.01"], ["scale", "체중계", "M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM7 11a5 5 0 0 1 10 0zM12 11l1.800-2.600M8 17h8"], ["apple", "과일", "M12 7.500c-3-2-7 0-7 5s3 8.500 5.500 7.500c.8-.3 1.100-.4 1.500-.4s.7.1 1.500.4C16 21 19 17.500 19 12.500s-4-7-7-5zM12 7.500c0-2 1-3.500 3-4.500"], ["phone", "휴대폰", "M8 3h8a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM11 18h2"], ["paw", "반려동물", "M12 11c-3 0-5 3-5 5.500 0 1.700 1.500 2.500 3 2 1.300-.5 2.700-.5 4 0 1.500.5 3-.3 3-2 0-2.500-2-5.500-5-5.500zM6 9.500a1.300 1.300 0 1 0 .01 0zM9.500 6a1.300 1.300 0 1 0 .01 0zM14.500 6a1.300 1.300 0 1 0 .01 0zM18 9.500a1.300 1.300 0 1 0 .01 0z"], ["bottle", "물병", "M10 3h4v3l2 2.500V21H8V8.500L10 6zM8 12h8M8 17h8"], ["rose", "장미", "M12 3.500c3 0 5.500 1.500 6 4.200.4 2.200-.5 3.800-.5 3.800s1 2.200-.5 4c-1.500 1.800-3.800 1.800-5 1.200-1.500 1-3.800 1-5.200-.5-1.500-1.500-1.300-3.500-.5-4.500-1-1.700-.5-4 1.300-5.500C8.700 4.200 10.200 3.500 12 3.500zM12 7c2-.2 3.700 1.200 3.700 3 0 2-1.700 3.300-3.700 3.300-1.800 0-3.300-1.300-3.300-3 0-1.300.8-2.300 2-2.700M12 9.700c1 0 1.700.6 1.700 1.300M3 16c2.600-.3 4.600.6 5.600 2.300-2.400.8-4.600.3-5.600-2.300zM7 21.500c-.2-2.400.5-4.100 2.300-5.100.7 2.300-.2 4.300-2.300 5.100z"], ["poledance", "폴댄스", "M17.200 2.300v20.300M18 8c.6-.8.7-1.600.3-2.300-.4-.8-1.200-.8-1.600-.7C15.500 5.200 14.200 6 13.200 7.900c-.6 1.100-.5 2.300-.4 3.400M3.600 12.800c3-.6 6.200-1.200 9.200-1.400M12.800 11.400c1.600.1 2.800.9 2.800 2.300 0 1.300-.4 2.500-1.500 3.800M13.500 17.500a1.100 1.100 0 1 1-2.200 0 1.100 1.100 0 0 1 2.200 0z"], ["broccoli", "채소", "M8 14c-3 0-4.500-3-3-5.500 1-1.500 2.500-2 4-1.500C9.500 4.500 12 3 14.500 4c1.700.7 2.500 2 2.500 3.500 2.500.5 3.500 3.500 2 5.500-1 1.300-2.500 1.500-3.500 1M10.500 14v7M13.500 14v7M8.500 21h7"], ["shaker", "프로틴", "M5 8h14v13H5zM4 5h16v3H4zM10.500 17.500v-5h2a1.500 1.500 0 0 1 0 3h-2"], ["fish", "생선", "M2.500 12c2.500-4 7-5.500 11-4 1.500.5 2.500 1.200 3.500 2L21.500 7v10l-4.500-3.500c-1 .8-2 1.500-3.500 2-4 1.500-8.500 0-11-3.500zM7 11h.01"], ["nut", "견과", "M6.500 14.500a3.500 3.500 0 1 0 5 4.500l1.800-2.200 1.200-.9a3.500 3.500 0 1 0-5-4.500l-1.800 2.200-1.200.9zM9 16l.01 0M14 11.500h.01"], ["bowl", "밥", "M4 11h16c0 5-3.500 8.500-8 8.500S4 16 4 11zM9 21h6M6 11c0-3.500 2.700-6 6-6s6 2.500 6 6M10 8h.01M13.500 7.500h.01M12 10h.01"], ["coffee", "커피", "M7 8h10l-1 12H8zM6 8h12V6H6zM9.500 6V4h5v2M10 13h4"], ["cheese", "치즈", "M2.500 19V12L21.500 4.500V19zM8.800 15.500a1.300 1.300 0 1 1-2.600 0 1.300 1.300 0 0 1 2.600 0zM14.200 14a1.200 1.200 0 1 1-2.400 0 1.200 1.200 0 0 1 2.400 0zM19 16a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"]];
 APP_ICONS.push(
+ ["calendar","달력","M5 6.500h14a1 1 0 0 1 1 1V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7.500a1 1 0 0 1 1-1zM4 10.500h16M8 4v4M16 4v4"],
+ ["timer","타이머","M12 20a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM12 9.500v3.500l2.200 1.500M9.500 3h5"],
+ ["alert","주의","M12 4.500l8.500 14.500h-17zM12 10v4M12 16.800h.01"],
+ ["speaker","소리","M4 10v4h3l5 4V6L7 10zM16 9.500a3.500 3.500 0 0 1 0 5M18.500 7a7 7 0 0 1 0 10"],
  ["mood1","기분 매우 나쁨","M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM8 9l2.200 1M16 9l-2.200 1M9 16.500c1.800-2 4.200-2 6 0"],
  ["mood2","기분 나쁨","M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM9 10h.01M15 10h.01M9 16c1.800-1.400 4.200-1.400 6 0"],
  ["mood3","기분 보통","M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM9 10h.01M15 10h.01M9 15.500h6"],
@@ -10421,7 +10435,26 @@ const APP_ICON_MAP=Object.fromEntries(APP_ICONS.concat(APP_ICONS_LEGACY).map(x=>
 function appIconSvg(name){const x=APP_ICON_MAP[name];if(!x)return '';return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${x[2]}"/></svg>`;}
 (function(){
   const TOK=/⟪([a-z0-9_]+)⟫/g,SKIP=/^(SCRIPT|STYLE|TEXTAREA|OPTION|TITLE)$/;
+  const EMO2IC={'🪥':'brush','🦠':'germ','🍳':'egg','✨':'sparkle','🍋':'lemon','📝':'pencil','🔤':'pencil','✏️':'pencil','🗣️':'speak','🍚':'bowl','🚶':'shoe','👟':'shoe','💊':'pill','💻':'laptop','🥗':'salad','🥦':'broccoli','💆':'facecare','🧖':'facemask','🌹':'rose','💃':'poledance','🪢':'flame','📚':'book','📖':'book','📘':'book','🧶':'yarn','🌳':'leaf','🌿':'leaf','🎲':'dice','🎮':'gamepad','☁️':'cloud','🧴':'bottle','🍎':'apple','🍏':'apple','🥩':'meal','🍽️':'meal','💧':'drop','💤':'bed','😴':'bed','⚖️':'scale','📏':'scale','🫁':'wind','🕒':'clock','⏱️':'timer','⏰':'clock','🙂':'smile','😊':'smile','❤️':'heart','🏠':'home','⭐':'star','🔥':'flame','🌙':'moon','☀️':'sun','🏋️':'dumbbell','🚴':'bike','📷':'camera','🎨':'palette','🎵':'music','☕':'coffee','🍪':'cookie','🥤':'cup','🍞':'bread','🦷':'tooth','📱':'phone','🐶':'paw','🐱':'paw','🧀':'cheese','🐟':'fish','🥜':'nut','🥛':'cup','🍙':'bowl','🍜':'bowl','🍷':'cup','🍺':'cup','🎬':'cinema','🚿':'shower','🇯🇵':'japan','🇨🇳':'china','🇺🇸':'usa'};
+  const EMO_SEL='.calendarRoutineChip,.rIco,.dcIco,.freeEmoji,.olChip,#oneOffQuickRow button,.oneOffSettingRow,.freeChip .ico';
+  const EMO_RE=/^(\s*)(\p{Regional_Indicator}{2}|\p{Extended_Pictographic}\uFE0F?)/u;
+  function emojiPass(root){
+    if(!root||!root.querySelectorAll)return;
+    const hosts=[...root.querySelectorAll(EMO_SEL)];if(root.matches&&root.matches(EMO_SEL))hosts.push(root);
+    hosts.forEach(h=>{
+      const w=document.createTreeWalker(h,NodeFilter.SHOW_TEXT);const list=[];while(w.nextNode())list.push(w.currentNode);
+      list.forEach(n=>{
+        if(n.parentNode.closest('textarea,script,style,.appIco'))return;
+        const m=EMO_RE.exec(n.nodeValue);if(!m)return;
+        const ic=EMO2IC[m[2]]||EMO2IC[m[2].replace(/\uFE0F/g,'')];if(!ic||!APP_ICON_MAP[ic])return;
+        n.nodeValue=n.nodeValue.slice(m[0].length);
+        const sp=document.createElement('span');sp.className='appIco';sp.setAttribute('role','img');sp.setAttribute('aria-label',APP_ICON_MAP[ic][1]);sp.innerHTML=appIconSvg(ic);
+        n.parentNode.insertBefore(sp,n);
+      });
+    });
+  }
   function convert(root){
+    emojiPass(root);
     const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(n){return n.nodeValue.includes('⟪')&&!SKIP.test(n.parentNode.nodeName)?1:3;}});
     const list=[];while(w.nextNode())list.push(w.currentNode);
     list.forEach(n=>{
@@ -10681,7 +10714,6 @@ function loadOneOffLogs(){try{const v=JSON.parse(localStorage.getItem('oneOffLog
 function saveOneOffLogs(v){try{localStorage.setItem('oneOffLogs_v1',JSON.stringify(v));return true;}catch(e){appAlert('저장 공간이 부족해요. 백업 후 오래된 사진을 정리해 주세요.');return false;}}
 function oneOffLogsOn(k,defId){return (loadOneOffLogs()[k]||[]).map((x,i)=>({x,i})).filter(o=>!defId||o.x.defId===defId);}
 const MOOD_LABELS=['','매우 나쁨','나쁨','보통','좋음','매우 좋음'];
-const MOOD_FACES=['','😫','😕','😐','🙂','😄'];
 let olCtx=null;
 function oneOffLogText(x,d){
   if(x.kind==='mood')return `${MOOD_LABELS[x.value]||''}${x.memo?' · '+x.memo:''}`;
@@ -10834,7 +10866,7 @@ function quickLogItems(k,cal){
       if(pt.recorded&&Number.isFinite(pt.value))items.push({n:qlName(d),t:`${formatDailyCareNumber(pt.value)}${d.unit||''}`,c:cal?'':`openOneOffQuick('${d.id}')`});}catch(e){}
   });
   const ss=stSessions(k);
-  if(!cal&&ss.length){const sd=defs.find(d=>d.type==='static');items.push({n:sd?qlName(sd):'🫁 숨참기',t:stDayText(ss),c:`stOpenDay('${k}')`});}
+  if(!cal&&ss.length){const sd=defs.find(d=>d.type==='static');items.push({n:sd?qlName(sd):'⟪pulse⟫ 숨참기',t:stDayText(ss),c:`stOpenDay('${k}')`});}
   if(!cal){
     (loadSnackRecords()[k]||[]).forEach((r,i)=>{const nm=r.label||snackBtn().name;const d=defs.find(x=>x.name===nm);items.push({n:d?qlName(d):(nm===snackBtn().name?qlName(snackBtn()):nm),t:r.text||'',c:`openSnackRecord('${k}',${i})`});});
   }
@@ -10858,7 +10890,7 @@ renderOneOffTodayLogs=function(){
     rc.apply(this,arguments);
     const root=document.getElementById('calendarDetail');if(!root)return;
     const fc=[...root.querySelectorAll('.rc-card')].find(c=>c.querySelector('.rc-section-title')?.textContent.trim()==='FREE TIME');
-    if(fc&&!fc.querySelector('.rc-item'))fc.insertAdjacentHTML('beforeend','<div class="rc-empty">이 날은 취미생활 기록이 아직 없어요.</div>');
+    if(fc&&!fc.querySelector('.rc-item,.rc-empty'))fc.insertAdjacentHTML('beforeend','<div class="rc-empty">이 날은 취미생활 기록이 아직 없어요.</div>');
     root.querySelectorAll('.calInfoCard').forEach(c=>{if(c.querySelector('h4')?.textContent.trim()==='QUICK LOG')c.remove();});
     const items=quickLogItems(k,true);
     const noteCard=[...root.querySelectorAll('.calInfoCard')].find(c=>c.querySelector('h4')?.textContent.trim()==='NOTE');
