@@ -2141,6 +2141,14 @@ html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions but
 .readingPickBtn .appIco,.readEntryRow .appIco{width:16px;height:16px;vertical-align:-3px}
 .readingPickBtn .appIco svg,.readEntryRow .appIco svg{width:16px;height:16px}
 .stVoiceTest .appIco,.stVoiceTest .appIco svg{width:15px;height:15px;vertical-align:-2px}
+
+.todayNoteBox .photoRow{justify-content:flex-end;gap:8px;margin-top:8px;padding:0 2px}
+.todayNoteBox .stk{padding:3px 3px 8px}
+.todayNoteBox .stk img{width:36px;height:36px}
+.calNoteWithPhoto{display:flex;align-items:flex-start;gap:12px}
+.calNoteWithPhoto .calDailyNoteBtn{flex:1 1 auto;min-width:0;text-align:left}
+.calNoteWithPhoto .stk{flex:none;margin:4px 4px 0 0}
+.calNoteWithPhoto .stk img{width:72px;height:72px}
 </style>
 </head>
 
@@ -10932,7 +10940,12 @@ async function photoFromFile(file){
     const noteCard=[...root.querySelectorAll('.calInfoCard')].find(c=>c.querySelector('h4')?.textContent.trim()==='NOTE');if(!noteCard)return;
     const h4=noteCard.querySelector('h4');h4.classList.add('noteH4');
     if(((loadDailyPhotos()[k]||[]).length)<3)h4.insertAdjacentHTML('beforeend',`<button type="button" class="photoMini" onclick="photoAdd('${k}')">＋ 사진</button>`);
-    const html=photoRowHTML(k);if(html){const ph=document.createElement('div');ph.className='photoRow calPhotoRow';ph.innerHTML=html;noteCard.appendChild(ph);}
+    const html=photoRowHTML(k);if(!html)return;
+    const nb=noteCard.querySelector('.calDailyNoteBtn');
+    if((loadDailyPhotos()[k]||[]).length===1&&nb){
+      const wrap=document.createElement('div');wrap.className='calNoteWithPhoto';
+      nb.replaceWith(wrap);wrap.appendChild(nb);wrap.insertAdjacentHTML('beforeend',html);
+    }else{const ph=document.createElement('div');ph.className='photoRow calPhotoRow';ph.innerHTML=html;noteCard.appendChild(ph);}
   };
 })();
 
