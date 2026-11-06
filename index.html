@@ -2158,6 +2158,135 @@ html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions but
 .calNoteWithPhoto{gap:18px}
 .calNoteWithPhoto .stk{margin:4px 0 0 0}
 .calPhotoRow{margin-top:14px}
+
+.projectBlock.hide{display:none!important}
+.projectList{display:grid;margin-top:6px}
+.pjRow{padding:12px 0;border-top:1px solid var(--rc-line);cursor:pointer}
+.pjRow:first-child{border-top:0}
+.pjTop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pjName{font-size:var(--fs-2);font-weight:var(--fw-3);color:var(--rc-tx);min-width:0;overflow-wrap:anywhere}
+.pjDue{flex:none;font-size:var(--fs-1);color:var(--rc-mu);background:var(--rc-soft);border-radius:999px;padding:3px 9px}
+.pjDue.over{color:var(--rc-tx);font-weight:var(--fw-3)}
+.pjBar{height:6px;border-radius:999px;background:var(--rc-gl);margin:9px 0 8px;overflow:hidden}
+.pjBar i{display:block;height:100%;background:var(--rc-g);border-radius:999px}
+.pjNext{display:flex;align-items:center;gap:9px;margin-top:8px}
+.pjBar+.pjNext{margin-top:0}
+.pjNextText{flex:1 1 auto;min-width:0;font-size:var(--fs-1);color:var(--rc-tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pjNextText.mu{color:var(--rc-mu)}
+.pjCount{flex:none;font-size:var(--fs-1);color:var(--rc-mu)}
+.pjChk{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--rc-line);background:transparent;padding:0;position:relative}
+.pjChk::before{content:"";position:absolute;inset:-9px}
+.pjChk.on{background:var(--rc-g);border-color:var(--rc-g)}
+.pjChk.on::after{content:"";position:absolute;left:7px;top:3px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.projectFoot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;gap:8px}
+.pjAll{border:0;background:transparent;color:var(--rc-mu);font-size:var(--fs-1);padding:8px 2px}
+.pjEmpty{color:var(--rc-mu);font-size:var(--fs-1);padding:10px 0}
+.pjSeg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.pjSeg button{border:1px solid var(--rc-line);background:var(--rc-card);color:var(--rc-mu);border-radius:12px;padding:9px 0;font-size:var(--fs-1)}
+.pjSeg button.on{background:var(--rc-gl);border-color:var(--rc-g);color:var(--rc-tx);font-weight:var(--fw-3)}
+.pjDueRow{display:flex}
+.pjAddRow input{flex:1 1 auto;min-width:0}
+.pjTasks{display:grid;gap:6px;margin-bottom:8px}
+.pjTaskRow{display:flex;align-items:center;gap:9px}
+.pjTaskInput{flex:1 1 auto;min-width:0;border:0;border-bottom:1px solid var(--rc-line);background:transparent;border-radius:0;padding:7px 2px;font-size:var(--fs-2);color:var(--rc-tx)}
+.pjTaskInput.done{color:var(--rc-mu);text-decoration:line-through}
+.pjX{flex:none;border:0;background:transparent;color:var(--rc-mu);font-size:20px;line-height:1;padding:4px 6px}
+.pjManageList{display:grid;gap:7px}
+.pjGroupTitle{margin-top:8px;font-size:var(--fs-1);color:var(--rc-mu)}
+.pjManageRow{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer}
+.pjManageMain{min-width:0}
+.pjManageMeta{font-size:var(--fs-1);color:var(--rc-mu);margin-top:2px}
+
+body.secOff-dailycare .dailyCareBlock,body.secOff-project #projectBlock,body.secOff-quicklog #quickLogBlock,body.secOff-routine #lifeGuide>[data-sec="routine"],body.secOff-freetime #lifeGuide>[data-sec="freetime"],body.secOff-dailycare #calendarDetail [data-sec="dailycare"],body.secOff-routine #calendarDetail [data-sec="routine"],body.secOff-freetime #calendarDetail [data-sec="freetime"],body.secOff-quicklog #calendarDetail [data-sec="quicklog"]{display:none!important}
+.periodFold{margin:0}
+.periodFold>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;padding:2px 0;font-size:var(--fs-1);color:var(--rc-mu)}
+.periodFold>summary::-webkit-details-marker{display:none}
+.periodFold>summary b{color:var(--rc-tx);font-weight:var(--fw-3)}
+.periodFold>summary .pfC{flex:none;transition:transform .15s}
+.periodFold[open]>summary .pfC{transform:rotate(90deg)}
+.periodFold .periodBtns{margin-top:10px}
+.periodCard.periodSlim{background:transparent!important;box-shadow:none!important;border:0!important;padding:4px 2px!important}
+
+.tdChip{position:absolute;right:var(--sp-4);top:calc(env(safe-area-inset-top,0px) + 6px);display:flex;align-items:center;gap:8px}
+.tdChip.hide{display:none!important}
+.tdToday.hide{display:none!important}
+.tdPick{position:relative;width:30px;height:30px;border-radius:50%;background:var(--rc-soft);display:flex;align-items:center;justify-content:center;color:var(--rc-mu)}
+.tdChip.past .tdPick{background:var(--rc-gl);color:var(--rc-g)}
+.tdPick .tdIc{display:flex;pointer-events:none}.tdPick .appIco{width:16px;height:16px}
+.tdPick input{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;cursor:pointer}
+.tdToday{border:0;background:var(--rc-g);color:#fff;border-radius:999px;padding:5px 11px;font-size:var(--fs-1)}
+.calFuture{text-align:center;padding:48px 12px 40px}
+.calFutureMain{font-size:var(--fs-2);color:var(--rc-tx);font-weight:var(--fw-3)}
+.calFutureSub{margin-top:6px;font-size:var(--fs-1);color:var(--rc-mu)}
+
+.pjDates{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pjDates .lifeField{margin:0;min-width:0}.pjDates input{width:100%;min-width:0}
+.pjClr{border:0;background:transparent;color:var(--rc-mu);font-size:var(--fs-1);padding:0 2px;margin-left:4px}
+.pjTD{position:relative;flex:none;font-size:var(--fs-1);color:var(--rc-mu);background:var(--rc-soft);border-radius:999px;padding:4px 9px}
+.pjTD.set{color:var(--rc-tx);background:var(--rc-gl)}
+.pjTD input{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0}
+
+.pjMk{position:absolute;top:4px;right:4px;display:flex;gap:2px;pointer-events:none}
+.pjMk i{display:block;width:6px;height:6px;transform:rotate(45deg);box-sizing:border-box;border:1.4px solid var(--rc-g)}
+.pjMk i.f{background:var(--rc-g)}
+body.secOff-project #calendarDetail [data-sec="project"],body.secOff-project .calDay .pjMk{display:none!important}
+.pjDay{margin:0 2px 14px}
+.pjDayCap{font-size:var(--fs-1);color:var(--rc-mu);letter-spacing:.06em;margin:2px 0 6px}
+.pjDayRow{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:var(--fs-1)}
+.pjSym{flex:none;width:7px;height:7px;transform:rotate(45deg);box-sizing:border-box;border:1.4px solid var(--rc-g)}
+.pjSym.f{background:var(--rc-g)}
+.pjDayName{flex:none;max-width:48%;color:var(--rc-tx);font-weight:var(--fw-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pjDayMeta{flex:1 1 auto;min-width:0;text-align:right;color:var(--rc-mu);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* TODAY 시간대 접기 */
+.lifeBlock[data-lbid]>.lifeBlockHead{cursor:pointer;align-items:center}
+.lbInfo{margin-left:auto;display:flex;align-items:center;gap:6px;color:var(--rc-mu);font-size:var(--fs-1);flex:none;font-variant-numeric:tabular-nums}
+.lbInfo .lbC{display:inline-block;transition:transform .15s}
+.lifeBlock[data-lbid]:not(.lbFold) .lbC{transform:rotate(90deg)}
+.lifeBlock.lbFold>:not(.lifeBlockHead){display:none!important}
+.lifeBlock.lbFold{padding-bottom:var(--sp-3)}
+.lifeBlock.lbFold>.lifeBlockHead{margin-bottom:0}
+.lifeBlock.lbFold .lifeBlockHint{display:none}
+.lifeBlock.lbAllDone .lbInfo{color:var(--rc-g)}
+
+.pjDrag{flex:none;border:0;background:transparent;color:var(--rc-mu);font-size:15px;line-height:1;padding:6px 4px;touch-action:none;cursor:grab}
+.pjTaskRow.pjDragging{background:var(--rc-soft);border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+
+/* 프로젝트 편집창 정리 */
+.pjDates{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:11px 0}
+.pjBox{position:relative;display:flex;align-items:center;gap:8px;box-sizing:border-box;min-width:0;padding:12px 13px;border:1px solid var(--rc-line);border-radius:12px;background:var(--rc-card);font-size:var(--fs-3);color:var(--rc-mu)}
+.pjBox.set{color:var(--rc-tx)}
+.pjBoxIc{display:flex;flex:none}.pjBoxIc .appIco{width:17px;height:17px}
+.pjBoxTx{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pjBox input[type=date]{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;cursor:pointer}
+.pjBoxX{position:relative;z-index:2;flex:none;border:0;background:transparent;color:var(--rc-mu);font-size:18px;line-height:1;padding:0 2px}
+.pjBoxX.hide{display:none}
+.pjAddRow{display:flex;gap:8px;align-items:center}
+.pjAddBtn{flex:none;width:44px;height:44px;border:0;border-radius:12px;background:var(--rc-soft);color:var(--rc-tx2);font-size:20px;line-height:1}
+.pjTD{position:relative;flex:none;display:flex;align-items:center;gap:4px;min-width:30px;height:30px;box-sizing:border-box;justify-content:center;border-radius:999px;background:var(--rc-soft);color:var(--rc-mu);font-size:var(--fs-1);padding:0 8px}
+.pjTD.set{background:var(--rc-gl);color:var(--rc-tx);padding:0 6px 0 10px}
+.pjTDic{display:flex}.pjTDic .appIco{width:15px;height:15px}
+.pjTD input{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0}
+.pjTDx{position:relative;z-index:2;border:0;background:transparent;color:var(--rc-mu);font-size:15px;line-height:1;padding:0 2px}
+.pjTaskInput{font-size:var(--fs-3)}
+.pjMk i{border-color:var(--c,var(--rc-g))}.pjMk i.f{background:var(--c,var(--rc-g))}
+.pjSym{border-color:var(--c,var(--rc-g))}.pjSym.f{background:var(--c,var(--rc-g))}
+/* 캘린더 아래 버튼: 조용하게 */
+.calFootBtns{display:flex;gap:6px;margin-top:6px}
+.calFootBtns .dateBtn{height:28px!important;padding:0 11px!important;font-size:var(--fs-1)!important;background:var(--rc-soft)!important;color:var(--rc-mu)!important;border:0!important;box-shadow:none!important;border-radius:999px!important;font-weight:var(--fw-2)!important}
+.pjTD{line-height:1}.pjTD>span{display:flex;align-items:center;line-height:1}.pjTDic{height:15px}.pjTD .appIco{display:block}.pjTDx{display:flex;align-items:center;height:100%}
+.lifeField label.pjTD{display:flex;align-items:center;margin:0;padding:0 8px;font-size:var(--fs-1);font-weight:var(--fw-2);color:var(--rc-mu)}.lifeField label.pjTD.set{padding:0 6px 0 10px;color:var(--rc-tx)}
+
+/* 버튼 전체 컴팩트 */
+.lifeActions button,.lifeSheet .lifeActions button{padding:9px 12px!important;min-height:0!important;font-size:var(--fs-2)!important;border-radius:11px!important}
+.bottomNav button{padding:4px 2px!important}
+.bottomNav button span{height:26px!important;width:46px!important;margin-bottom:2px!important}
+.bookPeriodTab{padding:8px 4px 7px!important}
+.snackQuickBtn{height:38px!important}
+.settingLinkRow.backupPart{padding-top:10px!important;padding-bottom:10px!important}
+.pjBox{padding:8px 11px!important;font-size:var(--fs-2)!important;gap:7px}
+.pjBoxIc .appIco{width:15px!important;height:15px!important}
+.pjAddBtn{width:40px!important;height:40px!important}
+.pjMk i{width:7px!important;height:7px!important;border-width:1px!important}.pjSym{width:8px!important;height:8px!important;border-width:1px!important}
 </style>
 </head>
 
@@ -2166,6 +2295,7 @@ html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions but
 <div class="lifeTop">
   <div class="lifeTitle" id="lifeTitle">Today</div>
   <div class="lifeSub" id="lifeDateLine"></div>
+  <div id="tdChip" class="tdChip hide"><button type="button" id="tdToday" class="tdToday hide" onclick="backToTodayFromBar()">오늘</button><label class="tdPick" aria-label="날짜 바꾸기"><span class="tdIc">⟪calendar⟫</span><input type="date" id="tdInput" onchange="tdChange(this.value)"></label></div>
 </div>
 <div id="lifeBar" aria-hidden="true"><b id="lifeBarTitle">Today</b><span id="lifeBarDate"></span></div>
 <div id="today" class="hide"></div>
@@ -2235,6 +2365,11 @@ html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions but
   <div id="activityTimerBanner" class="activityTimerBanner hide"></div>
   <div id="activityTimerFloat" class="activityTimerFloat hide"></div>
   <div id="lifeGuide"></div>
+  <section class="lifeBlock projectBlock" id="projectBlock">
+    <div class="lifeBlockHead"><div><div class="lifeBlockTitle">PROJECTS</div><div class="lifeBlockHint">진행 중인 일만 보여요</div></div></div>
+    <div id="projectList" class="projectList"></div>
+    <div class="projectFoot"><button type="button" class="lifeMiniBtn" onclick="openProject(null)">＋ 프로젝트</button><button type="button" class="pjAll" onclick="openProjectManage()" id="pjAllBtn">전체 보기 ›</button></div>
+  </section>
   <section class="lifeBlock quickLogBlock" id="quickLogBlock">
     <div class="lifeBlockHead"><div><div class="lifeBlockTitle">QUICK LOG</div><div class="lifeBlockHint">필요할 때만 남기는 기록</div></div></div>
     <div id="oneOffQuickRow" class="oneOffQuickRow"><button type="button" class="snackQuickBtn" onclick="openSnackRecord()">＋ 간식</button></div>
@@ -2276,7 +2411,7 @@ html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions but
     </div>
     <div class="calWeek"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
     <div class="calGrid" id="calendarGrid"></div>
-    <div style="margin-top:9px"><button class="dateBtn" onclick="calendarGoToday()">오늘로 이동</button> <button class="dateBtn" onclick="openNoteDiary()">NOTE 모아보기</button></div>
+    <div class="calFootBtns"><button class="dateBtn" onclick="calendarGoToday()">오늘로 이동</button><button class="dateBtn" onclick="openNoteDiary()">NOTE 모아보기</button></div>
   </div>
   <div class="section calDetail" id="calendarDetail"></div>
 </div>
@@ -2490,15 +2625,17 @@ html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions but
 
   <section class="backupCard backupBundle">
     <div class="backupCardTitle">MANAGE</div>
-    <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openDailyCareSettings()"><div><div class="backupSubTitle">데일리케어 관리</div><div class="backupHint">단백질·물·수면 등 매일 보는 항목</div></div><span class="manageChev" aria-hidden="true">›</span></div>
-    <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openInactiveRoutineManager()"><div><div class="backupSubTitle">루틴 관리</div><div class="backupHint">일상 루틴 · FREE TIME 항목의 편집·순서·사용 중지</div></div><span class="manageChev" aria-hidden="true">›</span></div>
-    <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openLifeBlockSettings()"><div><div class="backupSubTitle">시간대 관리</div><div class="backupHint">BREAKFAST 등 이름 변경 · 새벽/밤 시간대 추가</div></div><span class="manageChev" aria-hidden="true">›</span></div>
-    <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openOneOffManage()"><div><div class="backupSubTitle">단발성 기록 관리</div><div class="backupHint">간식·몸무게·숨참기처럼 필요할 때만 입력하는 항목</div></div><span class="manageChev" aria-hidden="true">›</span></div>
+    <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openDailyCareSettings()"><div><div class="backupSubTitle">데일리케어 관리</div><div class="backupHint">단백질·물·수면 등 매일 챙기는 항목</div></div><span class="manageChev" aria-hidden="true">›</span></div>
+    <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openInactiveRoutineManager()"><div><div class="backupSubTitle">루틴 관리</div><div class="backupHint">루틴·FREE TIME 항목의 편집, 순서, 사용 중지</div></div><span class="manageChev" aria-hidden="true">›</span></div>
+    <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openLifeBlockSettings()"><div><div class="backupSubTitle">시간대 관리</div><div class="backupHint">BREAKFAST 같은 시간대 이름 바꾸기, 새벽·밤 추가</div></div><span class="manageChev" aria-hidden="true">›</span></div>
+    <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openProjectManage()"><div><div class="backupSubTitle">프로젝트 관리</div><div class="backupHint">할 일과 마감일이 있는 일</div></div><span class="manageChev" aria-hidden="true">›</span></div>
+    <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openOneOffManage()"><div><div class="backupSubTitle">단발성 기록 관리</div><div class="backupHint">간식·몸무게·숨참기처럼 필요할 때 남기는 기록</div></div><span class="manageChev" aria-hidden="true">›</span></div>
   </section>
 
   <section class="backupCard backupBundle">
     <div class="backupCardTitle">FEATURES</div>
-    <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openPeriodSettings()"><div><div class="backupSubTitle">생리주기 기록</div><div class="backupHint" id="periodSettingsSummary">캘린더에서 시작·종료 기록과 예측 사용</div></div><button type="button" id="periodToggleBtn" class="settingsBtn uiActionSm statePill" onclick="event.stopPropagation();togglePeriodFeature()">사용 중</button></div>
+    <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openSecVis()"><div><div class="backupSubTitle">화면 표시</div><div class="backupHint" id="secVisSummary">TODAY·캘린더에 보일 상자 고르기</div></div><span class="manageChev" aria-hidden="true">›</span></div>
+    <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openPeriodSettings()"><div><div class="backupSubTitle">생리주기 기록</div><div class="backupHint" id="periodSettingsSummary">캘린더에 시작·종료 기록과 예측 표시</div></div><button type="button" id="periodToggleBtn" class="settingsBtn uiActionSm statePill" onclick="event.stopPropagation();togglePeriodFeature()">사용 중</button></div>
   </section>
 
   <section class="backupCard backupBundle">
@@ -2543,6 +2680,35 @@ html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions but
   </div>
 </div>
 
+<div id="projectManageModal" class="lifeModal hide" onclick="if(event.target===this)closeProjectManage()">
+  <div class="lifeSheet">
+    <div class="lifeSheetHead"><b>프로젝트 관리</b><button class="lifeClose" type="button" onclick="closeProjectManage()">×</button></div>
+    <div class="calendarChipSelectHint">프로젝트가 하나도 없으면 TODAY의 PROJECTS 상자는 보이지 않아요.</div>
+    <div id="projectManageList" class="pjManageList"></div>
+    <button class="lifeMiniBtn" style="margin-top:9px" type="button" onclick="openProject(null)">＋ 프로젝트 추가</button>
+  </div>
+</div>
+<div id="projectModal" class="lifeModal hide" onclick="if(event.target===this)closeProject()">
+  <div class="lifeSheet">
+    <div class="lifeSheetHead"><b id="pjTitle">프로젝트</b><button class="lifeClose" type="button" onclick="closeProject()">×</button></div>
+    <div class="lifeField"><label>이름</label><input id="pjName" maxlength="40" placeholder="예: 릴스 만들기"></div>
+    <div class="lifeField"><label>상태</label><div class="pjSeg" id="pjSeg"></div></div>
+    <div class="pjDates"><label class="pjBox pjDateBtn" id="pjStartBox"><span class="pjBoxIc">⟪calendar⟫</span><span class="pjBoxTx" id="pjStartTx">시작일</span><input id="pjStart" type="date" onchange="pjDateSync()"><button type="button" class="pjBoxX hide" aria-label="시작일 지우기" onclick="event.preventDefault();event.stopPropagation();document.getElementById('pjStart').value='';pjDateSync()">×</button></label><label class="pjBox pjDateBtn" id="pjDueBox"><span class="pjBoxIc">⟪calendar⟫</span><span class="pjBoxTx" id="pjDueTx">마감일</span><input id="pjDue" type="date" onchange="pjDateSync()"><button type="button" class="pjBoxX hide" aria-label="마감일 지우기" onclick="event.preventDefault();event.stopPropagation();document.getElementById('pjDue').value='';pjDateSync()">×</button></label></div>
+    <div class="lifeField"><label>할 일</label><div id="pjTasks" class="pjTasks"></div>
+      <div class="pjAddRow"><input id="pjNewTask" maxlength="80" placeholder="할 일 추가" onkeydown="if(event.key==='Enter'){event.preventDefault();pjAddTask();}"><button type="button" class="pjAddBtn" aria-label="추가" onclick="pjAddTask()">＋</button></div></div>
+    <div class="lifeField"><label>메모</label><textarea id="pjNote" rows="2" maxlength="500" class="olMemoSm"></textarea></div>
+    <div class="lifeActions"><button id="pjDel" class="lifeDelete hide" type="button" onclick="pjDelete()">삭제</button><button class="lifeDelete" type="button" onclick="closeProject()">취소</button><button class="lifeSave" type="button" onclick="pjSave()">저장</button></div>
+  </div>
+</div>
+
+
+<div id="secVisModal" class="lifeModal hide" onclick="if(event.target===this)closeSecVis()">
+  <div class="lifeSheet">
+    <div class="lifeSheetHead"><b>화면 표시</b><button class="lifeClose" type="button" onclick="closeSecVis()">×</button></div>
+    <div class="calendarChipSelectHint">숨겨도 기록은 그대로 보관돼요. TODAY와 캘린더에 함께 적용돼요.</div>
+    <div id="secVisList" class="pjManageList"></div>
+  </div>
+</div>
 <div id="oneOffManageModal" class="lifeModal hide" onclick="if(event.target===this)closeOneOffManage()">
   <div class="lifeSheet">
     <div class="lifeSheetHead"><b>단발성 기록 관리</b><button class="lifeClose" onclick="closeOneOffManage()">×</button></div>
@@ -2807,14 +2973,14 @@ html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions but
         <button type="button" class="periodChoice" data-v="6" onclick="setPeriodChoice('basis',6)">최근 6번</button>
         <button type="button" class="periodChoice" data-v="12" onclick="setPeriodChoice('basis',12)">최근 12번</button>
       </div>
-      <div class="periodSetHint">주기가 자주 바뀌면 적게, 규칙적이면 많이 선택하세요.</div>
+      <div class="periodSetHint">주기가 자주 바뀌면 적게, 규칙적이면 많이 선택하세요. 직접 입력한 주기와 최근 기록을 함께 반영해 예측하고, 오차(±일)도 같이 보여 드려요.</div>
     </div>
     <div class="lifeField"><label>가임기 예상 표시</label>
       <div class="periodChoices" id="periodSetFertile">
         <button type="button" class="periodChoice" data-v="1" onclick="setPeriodChoice('fertile',true)">켜기</button>
         <button type="button" class="periodChoice" data-v="0" onclick="setPeriodChoice('fertile',false)">끄기</button>
       </div>
-      <div class="periodSetHint">달력 날짜에는 표시하지 않고, PERIOD 카드 아래에 작은 글씨로만 보여요.</div>
+      <div class="periodSetHint">달력 날짜에는 표시하지 않고, PERIOD 줄을 펼치면 가임기 예상 기간만 보여요. 달력 기준 추정이라 피임·임신 판단에는 쓰지 마세요.</div>
     </div>
     <details class="periodAdv"><summary>고급</summary>
       <div class="lifeField"><label>황체기 길이</label>
@@ -9273,12 +9439,11 @@ periodCardHTML=function(k){
     const base=p.source==='records'?`최근 ${p.used}번 기록 기준`
       :p.source==='input'?`직접 입력한 ${p.st.cycle}일 기준`
       :`직접 입력한 ${p.st.cycle}일 + 최근 ${p.used}번 기록 기준`;
-    note=`다음 시작 예정 <b>${periodShort(p.next)}</b> (±${p.margin}일) · ${left}<br>예상 주기 ${p.cycle}일 · ${base}`;
+    note=`다음 시작 예정 <b>${periodShort(p.next)}</b> (±${p.margin}일) · ${left}`;
     const f=periodFertileInfo(p);
-    if(f)note+=`<br>${f.inProgress?'지금은 가임기 예상 기간이에요 · ':'가임기 예상 '}${periodShort(f.start)} ~ ${periodShort(f.end)} · 배란 예상 ${periodShort(f.ov)}<br><span class="periodFine">달력 기준 추정이라 피임·임신 판단에는 쓰지 마세요</span>`;
+    if(f)note+=`<br>${f.inProgress?'가임기 예상 중 · ':'가임기 예상 '}${periodShort(f.start)} ~ ${periodShort(f.end)} · 배란 ${periodShort(f.ov)}`;
   }else{
-    note=p.st.cycle?`마지막 생리 시작일을 한 번 기록하면 입력한 ${p.st.cycle}일 주기로 다음 시작일을 예측해요`
-      :`시작일을 3번 이상 기록하면 다음 시작일을 예측해요 (현재 ${p.count}번)<br>설정에서 평소 주기를 입력하면 한 번만 기록해도 바로 예측해요`;
+    note=p.st.cycle?`시작일을 기록하면 다음 시작일을 예측해요`:`시작일 3번 기록 후 예측해요 (현재 ${p.count}번)`;
   }
   return `<div class="calInfoCard periodCard"><h4 class="rc-section-title">PERIOD</h4><div class="periodBtns"><button type="button" class="periodBtn ${cur==='start'?'on':''}" onclick="setPeriodMark('${k}','start')">시작</button><button type="button" class="periodBtn ${cur==='end'?'on':''}" onclick="setPeriodMark('${k}','end')">종료</button></div><div class="periodNote">${note}</div></div>`;
 };
@@ -10986,6 +11151,336 @@ function qlWatch(el){qlJustify(el);if(qlRO)qlRO.observe(el);}
     _lrVal=v;Promise.resolve().then(()=>{_lrVal=null;});return v;
   };
 })();
+
+/* ===== PROJECTS: 할 일 · 마감일 · 상태 ===== */
+const PROJECTS_KEY='projects_v1';
+const PJ_STATUS=[['active','진행 중'],['hold','잠시 멈춤'],['done','완료']];
+function pjLoad(){try{const v=JSON.parse(localStorage.getItem(PROJECTS_KEY)||'[]');return Array.isArray(v)?v:[];}catch(e){return [];}}
+function pjStore(list){try{localStorage.setItem(PROJECTS_KEY,JSON.stringify(list));return true;}catch(e){appAlert('저장 공간이 부족해요. 백업 후 오래된 사진을 정리해 주세요.');return false;}}
+function pjId(){return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function pjDays(due){
+  if(!due||!/^\d{4}-\d{2}-\d{2}$/.test(due))return null;
+  const t=parseDateKeyLocal(getLocalDateKey(new Date())),d=parseDateKeyLocal(due);
+  return Math.round((d-t)/86400000);
+}
+function pjDueLabel(due){const n=pjDays(due);if(n===null)return '';return n===0?'오늘 마감':n>0?`D-${n}`:'기한 지남';}
+function pjNext(p){return (p.tasks||[]).find(t=>!t.done);}
+function pjSorted(list){return list.slice().sort((a,b)=>{const da=pjDays(a.due),db=pjDays(b.due);if(da===null&&db!==null)return 1;if(db===null&&da!==null)return -1;if(da!==db&&da!==null)return da-db;return (a.createdAt||0)-(b.createdAt||0);});}
+function pjRowHTML(p){
+  const ts=p.tasks||[],done=ts.filter(t=>t.done).length,nx=pjNext(p),pct=ts.length?Math.round(done/ts.length*100):0;
+  const dl=pjDueLabel(p.due),over=false;
+  return `<div class="pjRow" role="button" tabindex="0" onclick="openProject('${p.id}')">
+    <div class="pjTop"><span class="pjName">${escapeLife(p.name)}</span>${dl?`<span class="pjDue${over?' over':''}">${dl}</span>`:''}</div>
+    ${ts.length?`<div class="pjBar"><i style="width:${pct}%"></i></div>`:''}
+    <div class="pjNext">${nx?`<button type="button" class="pjChk" aria-label="완료" onclick="event.stopPropagation();pjToggle('${p.id}','${nx.id}')"></button><span class="pjNextText">${escapeLife(nx.text)}${nx.due?` <span class="mu">· ${nx.due.slice(5).replace('-','.')}</span>`:''}</span>`:`<span class="pjNextText mu">${ts.length?'할 일을 모두 마쳤어요':'할 일을 추가해 보세요'}</span>`}${ts.length?`<span class="pjCount">${done}/${ts.length}</span>`:''}</div>
+  </div>`;
+}
+function renderProjects(){
+  const box=document.getElementById('projectBlock');if(!box)return;
+  const all=pjLoad();box.classList.toggle('hide',!secVisOn('project'));if(!all.length){document.getElementById('projectList').innerHTML='<div class="pjEmpty">아직 프로젝트가 없어요. 릴스 만들기, 책자 만들기처럼 마감이 있는 일을 적어 두면 할 일과 D-day를 챙겨 줘요.</div>';document.getElementById('pjAllBtn').style.visibility='hidden';return;}document.getElementById('pjAllBtn').style.visibility='';
+  const act=pjSorted(all.filter(p=>p.status==='active'));
+  document.getElementById('projectList').innerHTML=act.length?act.map(pjRowHTML).join(''):'<div class="pjEmpty">진행 중인 프로젝트가 없어요.</div>';
+  const other=all.length-act.length;
+  document.getElementById('pjAllBtn').textContent=other?`전체 보기 · 그 외 ${other}개 ›`:'전체 보기 ›';
+}
+function pjToggle(pid,tid){
+  const list=pjLoad(),p=list.find(x=>x.id===pid);if(!p)return;
+  const t=(p.tasks||[]).find(x=>x.id===tid);if(!t)return;t.done=!t.done;if(p.tasks.length&&p.tasks.every(x=>x.done)&&p.status!=='done'){p.status='done';p.doneAt=Date.now();appToast('할 일을 모두 마쳐서 완료로 옮겼어요');}pjStore(list);renderProjects();
+}
+let pjDraft=null;
+function openProject(id){
+  const p=id?pjLoad().find(x=>x.id===id):null;
+  pjDraft=p?JSON.parse(JSON.stringify(p)):{id:pjId(),name:'',status:'active',due:'',tasks:[],note:'',createdAt:Date.now(),isNew:true};
+  document.getElementById('pjTitle').textContent=p?'프로젝트 수정':'새 프로젝트';
+  document.getElementById('pjName').value=pjDraft.name;document.getElementById('pjDue').value=pjDraft.due||'';document.getElementById('pjStart').value=pjDraft.start||'';pjDateSync();document.getElementById('pjNote').value=pjDraft.note||'';
+  document.getElementById('pjNewTask').value='';document.getElementById('pjDel').classList.toggle('hide',!p);
+  pjRenderSeg();pjRenderTasks();
+  document.getElementById('projectManageModal')?.classList.add('hide');
+  document.getElementById('projectModal').classList.remove('hide');
+}
+function closeProject(){document.getElementById('projectModal')?.classList.add('hide');pjDraft=null;}
+function pjRenderSeg(){document.getElementById('pjSeg').innerHTML=PJ_STATUS.map(([k,l])=>`<button type="button" class="${pjDraft.status===k?'on':''}" onclick="pjDraft.status='${k}';delete pjDraft._auto;pjRenderSeg()">${l}</button>`).join('');}
+function pjRenderTasks(){
+  document.getElementById('pjTasks').innerHTML=(pjDraft.tasks||[]).map((t,i)=>`<div class="pjTaskRow" data-i="${i}"><button type="button" class="pjDrag" aria-label="순서 바꾸기" onpointerdown="pjDragStart(event)">☰</button><button type="button" class="pjChk${t.done?' on':''}" aria-label="완료" onclick="pjDraft.tasks[${i}].done=!pjDraft.tasks[${i}].done;pjAutoState();pjRenderTasks();pjRenderSeg()"></button><input class="pjTaskInput${t.done?' done':''}" value="${escapeLife(t.text).replace(/"/g,'&quot;')}" maxlength="80" oninput="pjDraft.tasks[${i}].text=this.value"><label class="pjTD${t.due?' set':''}" aria-label="날짜">${t.due?`<span>${t.due.slice(5).replace('-','.')}</span>`:'<span class="pjTDic">⟪calendar⟫</span>'}<input type="date" value="${t.due||''}" onchange="pjDraft.tasks[${i}].due=this.value;pjRenderTasks()">${t.due?`<button type="button" class="pjTDx" aria-label="날짜 지우기" onclick="event.preventDefault();event.stopPropagation();pjDraft.tasks[${i}].due='';pjRenderTasks()">×</button>`:''}</label><button type="button" class="pjX" aria-label="삭제" onclick="pjDraft.tasks.splice(${i},1);pjAutoState();pjRenderTasks();pjRenderSeg()">×</button></div>`).join('');
+}
+function pjAddTask(){
+  const inp=document.getElementById('pjNewTask'),v=inp.value.trim();if(!v||!pjDraft)return;
+  pjDraft.tasks.push({id:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),text:v,done:false});inp.value='';pjAutoState();pjRenderTasks();pjRenderSeg();inp.focus();
+}
+function pjSave(){
+  if(!pjDraft)return;
+  const name=document.getElementById('pjName').value.trim();if(!name)return appAlert('프로젝트 이름을 입력해 주세요.');
+  const pending=document.getElementById('pjNewTask').value.trim();if(pending)pjAddTask();
+  const p=pjDraft;p.name=name;p.due=document.getElementById('pjDue').value||'';p.start=document.getElementById('pjStart').value||'';if(p.start&&p.due&&p.start>p.due)return appAlert('시작일이 마감일보다 늦어요.');p.note=document.getElementById('pjNote').value.trim();
+  p.tasks=(p.tasks||[]).filter(t=>String(t.text).trim()).map(t=>({...t,text:String(t.text).trim()}));
+  const list=pjLoad(),i=list.findIndex(x=>x.id===p.id);
+  const prev=i>=0?list[i]:null;
+  if(p.tasks.length&&p.tasks.every(t=>t.done)&&p.status!=='done')p.status='done';delete p._auto;
+  if(p.status==='done'){p.doneAt=prev&&prev.status==='done'&&prev.doneAt?prev.doneAt:Date.now();}else delete p.doneAt;
+  delete p.isNew;
+  if(i>=0)list[i]=p;else list.push(p);
+  if(!pjStore(list))return;
+  closeProject();renderProjects();if(!document.getElementById('projectManageModal').classList.contains('hide'))renderProjectManage();
+}
+async function pjDelete(){
+  if(!pjDraft||pjDraft.isNew)return;
+  if(!await appConfirm('이 프로젝트를 삭제할까요?'))return;
+  pjStore(pjLoad().filter(x=>x.id!==pjDraft.id));closeProject();renderProjects();
+}
+function renderProjectManage(){
+  const all=pjLoad(),root=document.getElementById('projectManageList');if(!root)return;
+  if(!all.length){root.innerHTML='<div class="pjEmpty">아직 프로젝트가 없어요.</div>';return;}
+  root.innerHTML=PJ_STATUS.map(([k,l])=>{
+    const g=pjSorted(all.filter(p=>p.status===k));if(!g.length)return '';
+    return `<div class="pjGroupTitle">${l} · ${g.length}</div>`+g.map(p=>{const ts=p.tasks||[],d=ts.filter(t=>t.done).length,dl=pjDueLabel(p.due);return `<div class="oneOffSettingRow pjManageRow" role="button" tabindex="0" onclick="openProject('${p.id}')"><div class="pjManageMain"><div class="pjName">${escapeLife(p.name)}</div><div class="pjManageMeta">${[ts.length?`할 일 ${d}/${ts.length}`:'',dl,k==='done'&&p.doneAt?'완료 '+getLocalDateKey(new Date(p.doneAt)).slice(5).replace('-','.'):''].filter(Boolean).join(' · ')||'&nbsp;'}</div></div><span class="manageChev" aria-hidden="true">›</span></div>`;}).join('');
+  }).join('');
+}
+function openProjectManage(){renderProjectManage();document.getElementById('projectManageModal')?.classList.remove('hide');}
+function closeProjectManage(){document.getElementById('projectManageModal')?.classList.add('hide');}
+(function(){
+  const u=update;update=function(){const r=u.apply(this,arguments);try{renderProjects();}catch(e){}return r;};
+  try{renderProjects();}catch(e){}
+})();
+
+/* ===== 화면 표시(상자 켜기/끄기) + 캘린더 정리 ===== */
+const SECVIS_KEY='sectionVis_v1';
+const SECVIS_DEFS=[['dailycare','DAILY CARE','오늘의 기본 컨디션 관리'],['routine','ROUTINE','시간대별 루틴'],['freetime','FREE TIME','여유 있을 때 고르는 활동'],['project','PROJECTS','프로젝트 할 일 · 마감일'],['quicklog','QUICK LOG','필요할 때 남기는 기록']];
+function secVisLoad(){try{const v=JSON.parse(localStorage.getItem(SECVIS_KEY)||'{}');return v&&typeof v==='object'?v:{};}catch(e){return {};}}
+function secVisOn(id){return secVisLoad()[id]!==false;}
+function secVisApply(){
+  const v=secVisLoad();SECVIS_DEFS.forEach(d=>document.body.classList.toggle('secOff-'+d[0],v[d[0]]===false));
+  const off=SECVIS_DEFS.filter(d=>v[d[0]]===false).length,el=document.getElementById('secVisSummary');
+  if(el)el.textContent=off?`${off}개 숨김`:'TODAY·캘린더에 보일 상자 고르기';
+}
+function openSecVis(){renderSecVis();document.getElementById('secVisModal').classList.remove('hide');}
+function closeSecVis(){document.getElementById('secVisModal')?.classList.add('hide');}
+function renderSecVis(){
+  document.getElementById('secVisList').innerHTML=SECVIS_DEFS.map(d=>`<div class="oneOffSettingRow pjManageRow"><div class="pjManageMain"><div class="pjName">${d[1]}</div><div class="pjManageMeta">${d[2]}</div></div><button type="button" class="settingsBtn uiActionSm statePill" onclick="secVisToggle('${d[0]}')">${secVisOn(d[0])?'표시 중':'숨김'}</button></div>`).join('');
+}
+function secVisToggle(id){const v=secVisLoad();v[id]=!secVisOn(id);try{localStorage.setItem(SECVIS_KEY,JSON.stringify(v));}catch(e){}secVisApply();renderSecVis();try{renderProjects();}catch(e){}}
+(function(){
+  const g=renderLifeGuide;renderLifeGuide=function(){const r=g.apply(this,arguments);
+    document.querySelectorAll('#lifeGuide>.lifeBlock').forEach(b=>{const t=b.querySelector('.lifeBlockTitle')?.textContent.trim();b.dataset.sec=t==='FREE TIME'?'freetime':'routine';});return r;};
+  try{renderLifeGuide();}catch(e){}
+  // 캘린더: 기록이 없어도 DAILY CARE·ROUTINE·NOTE는 항상, MY READING·FREE TIME은 기록 있을 때만
+  const o=renderCalendarDayOverview;
+  renderCalendarDayOverview=function(k){
+    const h=o.apply(this,arguments);
+    if(h.indexOf('이 날은 기록이 아직 없어요.')<0)return h;
+    return `<div id="calendarDayOverview" class="rc-day-overview"><div class="rc-card"><h4 class="rc-section-title">DAILY CARE</h4><div class="rc-empty">이 날 DAILY CARE 기록이 없어요.</div></div><div class="rc-card"><h4 class="rc-section-title">ROUTINE</h4><div class="rc-empty">이 날 예정된 루틴이 아직 없어요.</div></div></div>`;
+  };
+  const c=renderCalendarDetail;
+  renderCalendarDetail=function(k){
+    const r=c.apply(this,arguments);
+    const root=document.getElementById('calendarDetail');if(!root)return r;
+    const map={'DAILY CARE':'dailycare','ROUTINE':'routine','FREE TIME':'freetime','QUICK LOG':'quicklog'};
+    root.querySelectorAll('.rc-card,.calInfoCard').forEach(card=>{
+      const t=card.querySelector('.rc-section-title')?.textContent.trim();
+      if(map[t])card.dataset.sec=map[t];
+      if((t==='MY READING'||t==='FREE TIME')&&!card.querySelector('.rc-item'))card.remove();
+    });
+    return r;
+  };
+  secVisApply();
+})();
+
+(function(){
+  const base=periodCardHTML;
+  periodCardHTML=function(k){
+    const h=base.apply(this,arguments);if(!h)return h;
+    try{
+      const logs=loadPeriodLogs(),cur=logs[k],p=periodPrediction(),today=getLocalDateKey(new Date());
+      let sum='기록하기',open=false;
+      const near=p.ready&&Math.abs(periodDiffDays(k,p.next))<=3;
+      const f=p.ready?periodFertileInfo(p):null;const inF=!!(f&&k>=f.start&&k<=f.end);
+      if(cur){sum=`<b>${cur==='start'?'생리 시작':'생리 종료'}</b> 기록됨`;open=true;}
+      else if(near){sum=`<b>생리 예정일 즈음</b> · ${periodShort(p.next)}`;open=true;}
+      else if(inF){sum=`<b>가임기 예상</b> · ${periodShort(f.start)} ~ ${periodShort(f.end)}`;open=true;}
+      else if(p.ready){const d=periodDiffDays(today,p.next);sum=`다음 시작 <b>${periodShort(p.next)}</b> · ${d>0?d+'일 남음':d===0?'오늘':(-d)+'일 지남'}`;}
+      const inner=h.replace(/^<div class="calInfoCard periodCard">/,'').replace(/<h4 class="rc-section-title">PERIOD<\/h4>/,'').replace(/<\/div>$/,'');
+      return `<div class="calInfoCard periodCard periodSlim"><details class="periodFold"${open?' open':''}><summary><span>PERIOD · ${sum}</span><span class="pfC" aria-hidden="true">›</span></summary>${inner}</details></div>`;
+    }catch(e){return h;}
+  };
+})();
+
+/* ===== TODAY 헤더: 날짜 바꾸기 버튼 (스크롤한 자리 그대로 날짜만 바뀜) ===== */
+function tdChange(v){
+  if(!v)return;
+  if(v>getLocalDateKey(new Date())){appAlert('미래 날짜는 기록할 수 없어요.');tdSync();return;}
+  const dp=document.getElementById('datePicker');if(dp)dp.value=v;
+  if(v===getLocalDateKey(new Date()))backToToday();else loadDate();
+  tdSync();
+}
+function backToTodayFromBar(){const dp=document.getElementById('datePicker');if(dp)dp.value=getLocalDateKey(new Date());backToToday();tdSync();}
+function tdSync(){
+  const chip=document.getElementById('tdChip');if(!chip)return;
+  const v=document.getElementById('viewToday'),on=v&&!v.classList.contains('hide');
+  chip.classList.toggle('hide',!on);if(!on)return;
+  const t=getLocalDateKey(new Date()),past=activeDateKey&&activeDateKey!==t;
+  chip.classList.toggle('past',!!past);document.getElementById('tdToday').classList.toggle('hide',!past);
+  const inp=document.getElementById('tdInput');inp.max=t;inp.value=activeDateKey||t;
+  const short=document.getElementById('lifeDateShort');
+  if(short&&past){const d=parseDateKeyLocal(activeDateKey);short.textContent=`${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${['SUN','MON','TUE','WED','THU','FRI','SAT'][d.getDay()]}`;}
+}
+(function(){
+  const n=lifeNavigate;lifeNavigate=function(){const r=n.apply(this,arguments);tdSync();return r;};
+  const l=loadDate;loadDate=function(){const r=l.apply(this,arguments);tdSync();return r;};
+  const b=backToToday;backToToday=function(){const r=b.apply(this,arguments);tdSync();return r;};
+  tdSync();
+})();
+
+/* ===== CALENDAR: 프로젝트 마감일 · 오지 않은 날 ===== */
+const PJ_RE=/^\d{4}-\d{2}-\d{2}$/;
+function pjAddDays(k,n){const d=parseDateKeyLocal(k);return getLocalDateKey(new Date(d.getFullYear(),d.getMonth(),d.getDate()+n));}
+function pjDoneKey(p){return p.doneAt?getLocalDateKey(new Date(p.doneAt)):'';}
+/* 한 날짜에 이 프로젝트가 보이는지: 'due'(마감·세부마감) / 'span'(진행 기간) / '' */
+function pjKindOn(p,k){
+  const today=getLocalDateKey(new Date());
+  if(p.status==='done'){const dk=pjDoneKey(p);if(p.start&&dk&&p.start<=k&&k<=dk)return 'span';if(!p.start&&dk===k)return 'span';return '';}
+  if(p.due===k)return 'due';
+  if(p.start&&PJ_RE.test(p.start)){
+    if(p.due&&PJ_RE.test(p.due)){if(p.start<=k&&k<=p.due)return 'span';}
+    else if(p.start<=k&&k<=today)return 'span';
+  }
+  return '';
+}
+function pjIdx(p){const all=pjLoad().slice().sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));return Math.max(0,all.findIndex(x=>x.id===p.id))%3;}
+function pjColors(){
+  const cs=getComputedStyle(document.documentElement).getPropertyValue('--rc-g').trim();
+  const t=document.createElement('i');t.style.color=cs||'#3f9c7c';document.body.appendChild(t);const rgb=getComputedStyle(t).color;t.remove();
+  const m=rgb.match(/[\d.]+/g)||[63,156,124];let [r,g,b]=[+m[0]/255,+m[1]/255,+m[2]/255];
+  const mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,d=mx-mn;let h=0,sat=0;
+  if(d){sat=d/(1-Math.abs(2*l-1));h=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4;h*=60;if(h<0)h+=360;}
+  return [0,70,-70].map(o=>`hsl(${Math.round((h+o+360)%360)} ${Math.round(Math.max(sat,.35)*100)}% ${Math.round(l*100)}%)`);
+}
+function pjDateSync(){
+  [['pjStart','시작일'],['pjDue','마감일']].forEach(([id,lb])=>{
+    const v=document.getElementById(id).value,box=document.getElementById(id+'Box');
+    document.getElementById(id+'Tx').textContent=v?`${lb} ${v.slice(5).replace('-','.')}`:lb;
+    box.classList.toggle('set',!!v);box.querySelector('.pjBoxX').classList.toggle('hide',!v);
+  });
+}
+function pjMarkMap(){
+  const m={};const list=pjLoad().filter(p=>p.status==='active');if(!list.length)return m;
+  list.forEach(p=>{
+    const days=new Set();
+    if(p.due&&PJ_RE.test(p.due))days.add(p.due);
+    const ci=pjIdx(p);days.forEach(k=>{(m[k]=m[k]||[]).push({c:ci,f:1});});
+    if(p.start&&p.due&&PJ_RE.test(p.start)&&PJ_RE.test(p.due)&&p.start<=p.due){
+      let k=p.start,n=0;while(k<=p.due&&n++<800){if(!days.has(k))(m[k]=m[k]||[]).push({c:ci,f:0});k=pjAddDays(k,1);}
+    }
+  });
+  return m;
+}
+function pjPaintMarks(){
+  const m=pjMarkMap(),cols=pjColors();
+  document.querySelectorAll('#calendarGrid .calDay:not(.blank)').forEach(b=>{
+    b.querySelectorAll('.pjMk').forEach(e=>e.remove());
+    const mm=(b.getAttribute('onclick')||'').match(/'(\d{4}-\d{2}-\d{2})'/);const x=mm&&m[mm[1]];if(!x)return;
+    const items=x.slice().sort((a,c)=>(a.c-c.c)||(c.f-a.f)).slice(0,3);
+    b.insertAdjacentHTML('beforeend',`<span class="pjMk" aria-hidden="true">${items.map(i=>`<i class="${i.f?'f':'h'}" style="--c:${cols[i.c]}"></i>`).join('')}</span>`);
+  });
+}
+function pjDayRows(k){
+  const rows=[];
+  pjSorted(pjLoad()).forEach(p=>{
+    const kind=pjKindOn(p,k);if(!kind)return;
+    const ts=p.tasks||[],done=ts.filter(t=>t.done).length,nx=pjNext(p);
+    let meta;
+    if(p.status==='done')meta='완료';else if(p.status==='hold')meta='잠시 멈춤';
+    else meta=ts.length?`${nx?escapeLife(nx.text)+' · ':''}${done}/${ts.length}`:'진행 중';
+    rows.push({ci:pjIdx(p),name:p.name,meta,sym:p.status==='active'&&kind==='due'?'f':'h',due:p.status!=='done'&&p.due===k});
+  });
+  return rows;
+}
+(function(){
+  const cal=renderLifeCalendar;
+  renderLifeCalendar=function(){
+    const r=cal.apply(this,arguments);
+    try{pjPaintMarks();}catch(e){}
+    return r;
+  };
+  const det=renderCalendarDetail;
+  renderCalendarDetail=function(k){
+    const r=det.apply(this,arguments);
+    const root=document.getElementById('calendarDetail');if(!root||!k)return r;
+    const future=k>getLocalDateKey(new Date());
+    const items=pjDayRows(k);
+    const card=items.length?`<div class="pjDay" data-sec="project"><div class="pjDayCap">PROJECTS</div>${items.map(x=>`<div class="pjDayRow"><i class="pjSym ${x.sym}" style="--c:${pjColors()[x.ci]}"></i><span class="pjDayName">${escapeLife(x.name)}</span><span class="pjDayMeta">${x.due?'마감 · ':''}${x.meta}</span></div>`).join('')}</div>`:'';
+    if(future)root.innerHTML=items.length?card:'<div class="calFuture"><div class="calFutureMain">아직 오지 않은 하루예요</div><div class="calFutureSub">그날이 오면 천천히 채워 가요</div></div>';
+    else if(card)root.insertAdjacentHTML('afterbegin',card);
+    return r;
+  };
+  const u=update;update=function(){const r=u.apply(this,arguments);try{if(typeof pjPaintMarks==='function')renderLifeCalendar();}catch(e){}return r;};
+})();
+
+/* ===== TODAY: 시간대 상자 접기 ===== */
+const lbManual={};
+function lbCurrentId(defs){
+  const h=new Date().getHours(),rng=[['dawn',0,6],['breakfast',6,9],['morning',9,12],['lunch',12,14],['afternoon',14,18],['evening',18,22],['night',22,24]];
+  const order=rng.map(x=>x[0]),ids=defs.map(d=>d.id);
+  const cur=rng.find(x=>h>=x[1]&&h<x[2])[0];
+  if(ids.includes(cur))return cur;
+  for(let i=order.indexOf(cur)+1;i<order.length;i++)if(ids.includes(order[i]))return order[i];
+  return ids[ids.length-1]||'';
+}
+function lbToggle(id){
+  const k=lifeLogKey()+'|'+id,sec=document.querySelector(`#lifeGuide>[data-lbid="${id}"]`);
+  const wasFold=sec?sec.classList.contains('lbFold'):true;lbManual[k]=wasFold;renderLifeGuide();
+}
+(function(){
+  const g=renderLifeGuide;
+  renderLifeGuide=function(){
+    const r=g.apply(this,arguments);
+    try{
+      const defs=lifeBlockDefs(),isToday=lifeLogKey()===getLocalDateKey(new Date()),cur=isToday?lbCurrentId(defs):'';
+      document.querySelectorAll('#lifeGuide>.lifeBlock[data-sec="routine"]').forEach(sec=>{
+        const title=sec.querySelector('.lifeBlockTitle')?.textContent.trim(),def=defs.find(d=>d.name===title);if(!def)return;
+        sec.dataset.lbid=def.id;
+        const rows=sec.querySelectorAll('.lifeRoutine'),done=sec.querySelectorAll('.lifeRoutine .lifeCheck.done').length,total=rows.length;
+        const all=total>0&&done===total;
+        const man=lbManual[lifeLogKey()+'|'+def.id];
+        const open=man!==undefined?man:(isToday&&def.id===cur&&!all);
+        sec.classList.toggle('lbFold',!open);sec.classList.toggle('lbAllDone',all);
+        const head=sec.querySelector('.lifeBlockHead');
+        if(head&&!head.querySelector('.lbInfo')){head.insertAdjacentHTML('beforeend',`<span class="lbInfo">${total?(all?'✓ ':'')+done+'/'+total:'없음'}<span class="lbC" aria-hidden="true">›</span></span>`);}
+        head.onclick=()=>lbToggle(def.id);
+      });
+    }catch(e){}
+    return r;
+  };
+})();
+/* ===== 프로젝트: 할 일을 모두 마치면 자동 완료 ===== */
+function pjAutoState(){
+  if(!pjDraft)return;const ts=pjDraft.tasks||[];
+  const all=ts.length>0&&ts.every(t=>t.done);
+  if(all&&pjDraft.status!=='done'){pjDraft.status='done';pjDraft._auto=1;}
+  else if(!all&&pjDraft.status==='done'&&pjDraft._auto){pjDraft.status='active';delete pjDraft._auto;}
+}
+
+/* 프로젝트 할 일 순서 바꾸기 (☰ 누른 채 드래그) */
+let pjDrag=null;
+function pjDragStart(e){
+  const row=e.currentTarget.closest('.pjTaskRow');if(!row)return;
+  e.preventDefault();pjDrag={row,id:e.pointerId,h:e.currentTarget};
+  row.classList.add('pjDragging');
+  window.addEventListener('pointermove',pjDragMove,{passive:false});window.addEventListener('pointerup',pjDragEnd);window.addEventListener('pointercancel',pjDragEnd);
+}
+function pjDragMove(e){
+  if(!pjDrag||e.pointerId!==pjDrag.id)return;e.preventDefault();
+  const wrap=document.getElementById('pjTasks'),rows=[...wrap.children].filter(r=>r!==pjDrag.row);
+  const y=e.clientY;let before=null;
+  for(const r of rows){const b=r.getBoundingClientRect();if(y<b.top+b.height/2){before=r;break;}}
+  if(before)wrap.insertBefore(pjDrag.row,before);else wrap.appendChild(pjDrag.row);
+}
+function pjDragEnd(e){
+  if(!pjDrag||e.pointerId!==pjDrag.id)return;
+  window.removeEventListener('pointermove',pjDragMove);window.removeEventListener('pointerup',pjDragEnd);window.removeEventListener('pointercancel',pjDragEnd);
+  const order=[...document.getElementById('pjTasks').children].map(r=>Number(r.dataset.i));
+  pjDrag=null;
+  if(pjDraft&&order.length===pjDraft.tasks.length){pjDraft.tasks=order.map(i=>pjDraft.tasks[i]);}
+  pjRenderTasks();
+}
 </script>
 
 
