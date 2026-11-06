@@ -2287,6 +2287,7 @@ body.secOff-project #calendarDetail [data-sec="project"],body.secOff-project .ca
 .pjBoxIc .appIco{width:15px!important;height:15px!important}
 .pjAddBtn{width:40px!important;height:40px!important}
 .pjMk i{width:7px!important;height:7px!important;border-width:1px!important}.pjSym{width:8px!important;height:8px!important;border-width:1px!important}
+#viewToday .lifeBlockHint{display:none!important}
 </style>
 </head>
 
@@ -2377,7 +2378,7 @@ body.secOff-project #calendarDetail [data-sec="project"],body.secOff-project .ca
   </section>
   <div class="section todayNoteBox">
     <div class="todayNoteHead"><div class="lifeBlockTitle todayNoteTitle">NOTE</div><button type="button" class="photoMini" id="todayPhotoBtn" onclick="photoAdd(lifeLogKey())">＋ 사진</button></div>
-    <textarea id="todayNote" placeholder="오늘 기억하고 싶은 것만 가볍게 적어두기" oninput="saveTodayNote()"></textarea>
+    <textarea id="todayNote" placeholder="오늘의 한 줄" oninput="saveTodayNote()"></textarea>
     <div id="todayPhotos" class="photoRow"></div>
     <div class="lifeBlockHint todayNoteAutoSaveHint" style="margin-top:5px">날짜별로 자동 저장돼요.</div>
   </div>
@@ -7848,7 +7849,7 @@ function renderLifeGuide(){
       body+=`<div class="lifeBlockHint" style="margin:12px 2px 6px;font-weight:var(--fw-3);">${dayNames[day]}요일 루틴</div>${dayOnly.map(r=>renderRow(r,'scheduled')).join('')}`;
     }
     if(!body) body='<div class="lifeBlockHint">오늘은 정해진 기본 일정이 없어요.</div>';
-    html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">${title}</div><div class="lifeBlockHint">${hint}</div></div></div><div>${body}</div><button class="lifeAddBtn lifeAddRoutineBtn" onclick="openRoutineModal(null,'${key}')">+ 이 시간대에 루틴 추가</button></section>`;
+    html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">${title}</div><div class="lifeBlockHint">${hint}</div></div></div><div>${body}</div><button class="lifeAddBtn lifeAddRoutineBtn" onclick="openRoutineModal(null,'${key}')">+ 루틴 추가</button></section>`;
   }
   const free=routines.filter(r=>r.block==='free'&&r.enabled).sort((a,b)=>(a.order||0)-(b.order||0));
   html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">FREE TIME</div><div class="lifeBlockHint">해야 할 일이 아니라, 오늘 여유가 있을 때 고르는 활동</div></div></div><div class="freeGrid">${free.map(r=>`<div class="freeChipWrap" data-routine-id="${escapeLife(r.id)}"><button class="freeChip ${lifeDone(r.id)?'done':''}${timerElapsedForRoutine(r.id)?' timing':''}" onclick="handleRoutineRowTap(null,'${r.id}')"><span class="freeMainCentered"><span class="ico freeEmoji">${escapeLife(r.icon||'')}</span><span class="freeTypeIcon freeTypeIcon--${freeTypeIconClass(r)}" aria-hidden="true">${freeTypeIcon(r)}</span><span class="freeName">${escapeLife(r.name)}</span></span>${freeDisplayMeta(r)?`<span class="freeMeta">${escapeLife(freeDisplayMeta(r))}</span>`:''}</button><button class="freeEditBtn routineEditDots" aria-label="${escapeLife(r.name)} 편집" onclick="event.stopPropagation();openRoutineModal('${r.id}')">···</button><button type="button" class="freeOrderBtn" aria-label="${escapeLife(r.name)} 순서 변경" title="누른 채 드래그" onpointerdown="startFreeTimeDrag(event)" onpointermove="moveFreeTimeDrag(event)" onpointerup="endFreeTimeDrag(event)" onpointercancel="endFreeTimeDrag(event)" onclick="event.preventDefault();event.stopPropagation()">☰</button></div>`).join('')}${free.length?'':'<div class="lifeBlockHint">SETTING에서 프리타임 항목을 추가할 수 있어요.</div>'}</div><div class="lifeBlockHint" style="margin-top:9px">하지 않은 활동은 아무 표시도 남기지 않아요.<br>카드를 길게 누르면 순서를 바꿀 수 있어요.</div></section>`;
@@ -11177,7 +11178,7 @@ function pjRowHTML(p){
 }
 function renderProjects(){
   const box=document.getElementById('projectBlock');if(!box)return;
-  const all=pjLoad();box.classList.toggle('hide',!secVisOn('project'));if(!all.length){document.getElementById('projectList').innerHTML='<div class="pjEmpty">아직 프로젝트가 없어요. 릴스 만들기, 책자 만들기처럼 마감이 있는 일을 적어 두면 할 일과 D-day를 챙겨 줘요.</div>';document.getElementById('pjAllBtn').style.visibility='hidden';return;}document.getElementById('pjAllBtn').style.visibility='';
+  const all=pjLoad();box.classList.toggle('hide',!secVisOn('project'));if(!all.length){document.getElementById('projectList').innerHTML='<div class="pjEmpty">아직 프로젝트가 없어요</div>';document.getElementById('pjAllBtn').style.visibility='hidden';return;}document.getElementById('pjAllBtn').style.visibility='';
   const act=pjSorted(all.filter(p=>p.status==='active'));
   document.getElementById('projectList').innerHTML=act.length?act.map(pjRowHTML).join(''):'<div class="pjEmpty">진행 중인 프로젝트가 없어요.</div>';
   const other=all.length-act.length;
