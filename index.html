@@ -10579,7 +10579,7 @@ const DC_CYCLE=['red','orange','yellow','green','blue','purple','pink'];
 let stManual={kind:'hold'};
 function openStaticMenu(){
   const k=lifeLogKey(),ss=stSessions(k);
-  const acts=[{label:'훈련 시작 (타이머)',kind:'primary',run:()=>openStatic()},
+  const acts=[{label:'훈련 시작',kind:'primary',run:()=>openStatic()},
     {label:'기록 직접 추가',run:()=>openStManual('hold')}];
   ss.forEach((x,i)=>acts.push({label:`보기·삭제 · ${stSessionLine(x)}`,run:()=>openStaticSession(k,i)}));
   showRoutineActionSheet(ss.length?`숨참기 · 오늘 ${ss.length}개 기록`:'숨참기',acts);
