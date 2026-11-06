@@ -2770,7 +2770,7 @@ html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions but
     </div></div>
     <div id="rTimeOptions" class="lifeField hide"><label>목표 시간 <span class="fieldHint">분</span></label><input id="rTarget" type="number" min="1" step="1" placeholder="20"><label style="margin-top:10px;display:flex;align-items:center;gap:7px"><input id="rShowGraph" type="checkbox" style="width:auto">RECORD의 TIME 그래프에 표시</label><div class="fieldHint" style="margin-top:4px">켜면 RECORD의 TIME 카드에서 이 루틴의 시간 그래프를 볼 수 있어요. 시간을 기록한 날이 있어야 막대가 나와요.</div></div>
     <div id="rCountOptions" class="lifeField hide"><div class="countOptRow"><label>하루 목표<input id="rCountTarget" type="number" inputmode="numeric" min="1" step="1" placeholder="예: 1000"></label><label>단위<input id="rCountUnit" maxlength="4" placeholder="개"></label></div><div class="fieldHint" style="margin-top:6px">목표를 채우면 체크 표시가 돼요. 하루 중 여러 번 나눠 더해도 돼요.</div></div>
-    <div id="rFreeOptions" class="lifeField hide"><label>기본 기록 내용 <span class="fieldHint">선택</span></label><input id="rDefaultNote" placeholder="예: 계란 · 두유 · 견과"><div class="fieldHint" style="margin-top:5px">그날 다른 내용을 적으면 그 내용이 표시돼요.</div><label style="margin-top:10px;display:flex;align-items:center;gap:7px"><input id="rIsMeal" type="checkbox" style="width:auto">식사 기록에 포함</label><div class="fieldHint" style="margin-top:4px">켜면 식사 기록에 함께 들어가요.</div><label style="margin-top:10px">캘린더 표시 이름 <span class="fieldHint">선택</span></label><input id="rCalendarLabel" maxlength="12" placeholder="예: 아침, 점심, 저녁, 단백질"><div class="fieldHint" style="margin-top:4px">식사 기록에서 캘린더에 짧게 보일 이름이에요. 비우면 아침·점심·저녁으로 표시돼요.</div></div>
+    <div id="rFreeOptions" class="lifeField hide"><label>기본 기록 내용 <span class="fieldHint">선택</span></label><input id="rDefaultNote" placeholder="예: 샐러드 · 두유 · 견과"><div class="fieldHint" style="margin-top:5px">그날 다른 내용을 적으면 그 내용이 표시돼요.</div><label style="margin-top:10px;display:flex;align-items:center;gap:7px"><input id="rIsMeal" type="checkbox" style="width:auto">식사 기록에 포함</label><div class="fieldHint" style="margin-top:4px">켜면 식사 기록에 함께 들어가요.</div><label style="margin-top:10px">캘린더 표시 이름 <span class="fieldHint">선택</span></label><input id="rCalendarLabel" maxlength="12" placeholder="예: 아침, 점심, 저녁, 단백질"><div class="fieldHint" style="margin-top:4px">식사 기록에서 캘린더에 짧게 보일 이름이에요. 비우면 아침·점심·저녁으로 표시돼요.</div></div>
     <div class="lifeField" style="display:none"><input id="rOrder" type="number" step="1" value=""></div>
     <div class="lifeField"><label><input id="rEnabled" type="checkbox" checked style="width:auto;margin-right:6px">활성 상태로 표시</label></div>
     <div class="lifeActions"><button id="routineDeleteBtn" class="lifeDelete hide" onclick="deleteRoutineFromModal()">삭제</button><button class="lifeDelete" onclick="closeRoutineModal()">취소</button><button class="lifeSave" onclick="saveRoutineFromModal()">저장</button></div>
@@ -4478,51 +4478,19 @@ const ROUTINE_SEMANTICS_V4_KEY = "routineSemanticsV4";
 const ROUTINE_CLEANUP_V5_KEY = "routineCleanupV5";
 
 const LIFE_DEFAULT_ROUTINES = [
-  {id:"breakfast_brush",name:"양치",icon:"🪥",type:"check",block:"breakfast",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:10,legacyKey:"아침_🪥 양치"},
-  {id:"breakfast_probiotic",name:"유산균",icon:"🦠",type:"check",block:"breakfast",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:20,legacyKey:"아침_💊 유산균"},
-  {id:"breakfast_meal",name:"아침식사",icon:"🍳",type:"free",block:"breakfast",recurrence:"daily",days:[],target:null,unit:"",defaultNote:"계란 · 두유 · 견과",maxDuration:null,enabled:true,order:30},
-  {id:"breakfast_collagen",name:"콜라겐",icon:"✨",type:"check",block:"breakfast",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:40},
-  {id:"breakfast_lemon",name:"레몬수",icon:"🍋",type:"check",block:"breakfast",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:50,legacyKey:"점심_🍋 레몬물"},
-
-  {id:"morning_vocab",name:"써보카",icon:"📝",type:"time",block:"morning",recurrence:"daily",days:[],target:20,unit:"분",maxDuration:20,enabled:true,order:10},
-  {id:"morning_speak",name:"말해영어",icon:"🗣️",type:"time",block:"morning",recurrence:"daily",days:[],target:20,unit:"분",maxDuration:20,enabled:true,order:20},
-  {id:"morning_japanese",name:"기초일본어",icon:"🇯🇵",type:"time",block:"morning",recurrence:"daily",days:[],target:20,unit:"분",maxDuration:20,enabled:true,order:30},
-
-  {id:"lunch_meal",name:"점심은 든든히",icon:"🍚",type:"check",block:"lunch",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:10},
+  {id:"breakfast_brush",name:"양치",icon:"🪥",type:"check",block:"breakfast",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:10},
+  {id:"breakfast_water",name:"물 한 잔",icon:"💧",type:"check",block:"breakfast",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:20},
+  {id:"breakfast_meal",name:"아침식사",icon:"🍳",type:"free",block:"breakfast",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:30},
+  {id:"morning_stretch",name:"스트레칭",icon:"🏋️",type:"time",block:"morning",recurrence:"daily",days:[],target:10,unit:"분",maxDuration:10,enabled:true,order:10},
+  {id:"lunch_meal",name:"점심식사",icon:"🍚",type:"check",block:"lunch",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:10},
   {id:"lunch_walk",name:"식후 걷기",icon:"🚶",type:"time",block:"lunch",recurrence:"daily",days:[],target:20,unit:"분",maxDuration:20,enabled:true,order:20},
-  {id:"lunch_vitamin",name:"비타민",icon:"💊",type:"check",block:"lunch",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:30,legacyKey:"점심_💊 비타민"},
-
-  {id:"afternoon_work",name:"업무 / 연구",icon:"💻",type:"check",block:"afternoon",recurrence:"weekday",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:10},
-
-  {id:"evening_dinner",name:"간단한 저녁",icon:"🥗",type:"check",block:"evening",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:10},
-  {id:"evening_shoulder",name:"어깨마사지",icon:"💆",type:"check",block:"evening",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:20},
-
-  {id:"mon_polepractice",name:"17:00–18:00 폴 연습",icon:"🌹",type:"check",block:"evening",recurrence:"days",days:[1],target:null,unit:"",maxDuration:60,enabled:true,order:110},
-  {id:"mon_poleclass",name:"18:30–19:20 폴 강의",icon:"💃",type:"check",block:"evening",recurrence:"days",days:[1],target:null,unit:"",maxDuration:50,enabled:true,order:120},
-  {id:"mon_rope",name:"줄넘기",icon:"🪢",type:"check",block:"evening",recurrence:"days",days:[1],target:null,unit:"",maxDuration:null,enabled:true,order:130},
-
-  {id:"tue_polepractice",name:"18:30–19:30 폴 연습",icon:"🌹",type:"check",block:"evening",recurrence:"days",days:[2],target:null,unit:"",maxDuration:60,enabled:true,order:110},
-  {id:"tue_poleclass",name:"20:30–21:20 폴 강의",icon:"💃",type:"check",block:"evening",recurrence:"days",days:[2],target:null,unit:"",maxDuration:50,enabled:true,order:120},
-  {id:"tue_rope",name:"줄넘기",icon:"🪢",type:"check",block:"evening",recurrence:"days",days:[2],target:null,unit:"",maxDuration:null,enabled:true,order:130},
-
-  {id:"wed_baha",name:"바하",icon:"🧴",type:"check",block:"evening",recurrence:"days",days:[3],target:null,unit:"",maxDuration:null,enabled:true,order:110},
-  {id:"wed_mask",name:"팩",icon:"🧖",type:"check",block:"evening",recurrence:"days",days:[3],target:null,unit:"",maxDuration:null,enabled:true,order:120},
-
-  {id:"thu_polepractice",name:"18:30–19:30 폴 연습",icon:"🌹",type:"check",block:"evening",recurrence:"days",days:[4],target:null,unit:"",maxDuration:60,enabled:true,order:110},
-  {id:"thu_poleclass",name:"20:30–21:20 폴 강의",icon:"💃",type:"check",block:"evening",recurrence:"days",days:[4],target:null,unit:"",maxDuration:50,enabled:true,order:120},
-  {id:"thu_rope",name:"줄넘기",icon:"🪢",type:"check",block:"evening",recurrence:"days",days:[4],target:null,unit:"",maxDuration:null,enabled:true,order:130},
-
-  {id:"sat_mask",name:"팩",icon:"🧖",type:"check",block:"evening",recurrence:"days",days:[6],target:null,unit:"",maxDuration:null,enabled:true,order:110},
-
+  {id:"afternoon_work",name:"업무 / 공부",icon:"💻",type:"check",block:"afternoon",recurrence:"weekday",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:10},
+  {id:"evening_dinner",name:"저녁식사",icon:"🥗",type:"check",block:"evening",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:10},
+  {id:"evening_exercise",name:"운동",icon:"🏋️",type:"check",block:"evening",recurrence:"daily",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:20},
   {id:"free_read",name:"독서",icon:"📚",type:"time",block:"free",recurrence:"free",days:[],target:null,unit:"분",maxDuration:null,enabled:true,order:10},
-  {id:"free_knit",name:"뜨개질",icon:"🧶",type:"time",block:"free",recurrence:"free",days:[],target:null,unit:"분",maxDuration:null,enabled:true,order:20},
-  {id:"free_rope",name:"줄넘기",icon:"🪢",type:"check",block:"free",recurrence:"free",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:30},
-  {id:"free_english",name:"영어",icon:"🔤",type:"check",block:"free",recurrence:"free",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:40},
-  {id:"free_japanese",name:"일본어",icon:"🇯🇵",type:"check",block:"free",recurrence:"free",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:50},
-  {id:"free_pole",name:"폴",icon:"💃",type:"check",block:"free",recurrence:"free",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:60},
-  {id:"free_walk",name:"산책",icon:"🌳",type:"time",block:"free",recurrence:"free",days:[],target:null,unit:"분",maxDuration:null,enabled:true,order:70},
-  {id:"free_boardgame",name:"보드게임",icon:"🎲",type:"free",block:"free",recurrence:"free",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:80},
-  {id:"free_rest",name:"그냥 쉬기",icon:"☁️",type:"check",block:"free",recurrence:"free",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:90}
+  {id:"free_walk",name:"산책",icon:"🌳",type:"time",block:"free",recurrence:"free",days:[],target:null,unit:"분",maxDuration:null,enabled:true,order:20},
+  {id:"free_exercise",name:"운동",icon:"🏋️",type:"check",block:"free",recurrence:"free",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:30},
+  {id:"free_rest",name:"그냥 쉬기",icon:"☁️",type:"check",block:"free",recurrence:"free",days:[],target:null,unit:"",maxDuration:null,enabled:true,order:40}
 ];
 
 
@@ -4532,7 +4500,7 @@ const BOOKS_KEY="books_v1";
 const READING_LOGS_KEY="readingLogs_v1";
 const BOOK_IMPORT_KEY="bookExcelImport_v1";
 const BOOK_WANT_ORDER_KEY="bookWantOrder_v1";
-const BOOK_EXCEL_SEED=[{"id":"excel_1","title":"눈물을 마시는 새 1-4권","author":"이영도","publisher":"황금가지","startDate":"2025-07-24","finishDate":"2025-08-20","status":"완독","format":"전자책","source":"교보","ownership":"구매","genre":"소설","detail":"판타지","rating":"★★★★★","highlight":"\"좋은 꿈들 꾸셨습니까!\n행운이 노력하는 자의 위대함을 깎아내리지는 않는다는 말도 된다.\n\"사랑하기 위해 사는 삶\"","memo":"영광이 추천"},{"id":"excel_2","title":"얼굴들","author":"이동원","publisher":"라곰","startDate":"2026-09-01","finishDate":"2026-09-08","status":"완독","format":"전자책","source":"윌라","ownership":"대여","genre":"소설","detail":"추리","rating":"★★★★★","highlight":"사랑을 하면 눈이 먼다고 한다. 하지만 사랑은 눈을 멀게 하지 않는다. 오히려 눈을 밝힌다. 분별하는 지혜를 주고, 두려움에 맞설 용기를 준다. 제멋대로 불타오느는 감정은 자신뿐 아니라 상대까지도 다치게 하지만 사랑은 가장 사람다운 온도로 서로의 마음을 감싸둔다.","memo":"완이님 추천"},{"id":"excel_3","title":"리볼브 1-2권","author":"이종관","publisher":"고즈넉이텐티","startDate":"","finishDate":"","status":"읽고있어","format":"전자책, 오디오북","source":"","ownership":"","genre":"","detail":"","rating":"","highlight":"","memo":"진향쌤 추천"},{"id":"excel_4","title":"모순","author":"양귀자","publisher":"쓰다","startDate":"","finishDate":"","status":"읽고싶어","format":"종이책","source":"","ownership":"","genre":"","detail":"","rating":"","highlight":"","memo":"진향쌤 추천"},{"id":"excel_5","title":"홍학의 자리","author":"정해연","publisher":"엘릭시르","startDate":"","finishDate":"","status":"읽고싶어","format":"종이책","source":"","ownership":"","genre":"","detail":"","rating":"","highlight":"","memo":"유명한 반전"},{"id":"excel_6","title":"개미 1-5권","author":"베르나르베르베르","publisher":"열린책들","startDate":"","finishDate":"","status":"읽고싶어","format":"전자책","source":"","ownership":"","genre":"","detail":"","rating":"","highlight":"","memo":"어릴 때 읽은 책"},{"id":"excel_7","title":"트로피컬 나이트","author":"조예은","publisher":"한겨레출판사","startDate":"","finishDate":"","status":"읽고싶어","format":"전자책","source":"","ownership":"","genre":"","detail":"","rating":"","highlight":"","memo":"윌라에 있어서"},{"id":"excel_8","title":"환상서점","author":"소서림","publisher":"해피북스투유","startDate":"","finishDate":"","status":"읽고싶어","format":"전자책","source":"","ownership":"","genre":"","detail":"","rating":"","highlight":"","memo":"윌라에 있어서"},{"id":"excel_9","title":"해리포터","author":"조앤 K. 롤링","publisher":"문학수첩","startDate":"","finishDate":"","status":"읽고싶어","format":"종이책","source":"","ownership":"","genre":"","detail":"","rating":"","highlight":"","memo":"영준이 추천"},{"id":"excel_10","title":"야수의 산","author":"홍진희","publisher":"클레이하우스","startDate":"","finishDate":"","status":"","format":"","source":"","ownership":"","genre":"","detail":"","rating":"","highlight":"","memo":""},{"id":"excel_11","title":"아ㅣ저드 베이커리","author":"구창모","publisher":"창비","startDate":"","finishDate":"","status":"","format":"","source":"","ownership":"","genre":"","detail":"","rating":"","highlight":"","memo":""}];
+const BOOK_EXCEL_SEED=[];
 let bookLibraryFilter="읽고있어";
 let recordPeriod="week";
 let recordDayKey="";
@@ -6122,7 +6090,7 @@ function applyRoutineSemanticsV3(){
     breakfast.type='free';
     breakfast.target=null;
     breakfast.unit='';
-    breakfast.defaultNote='계란 · 두유 · 견과';
+    breakfast.defaultNote='';
   }
   saveLifeRoutines(list);
   localStorage.setItem(ROUTINE_SEMANTICS_V3_KEY,'done');
@@ -6570,7 +6538,7 @@ let calendarRoutineFilterId=null;
 const CALENDAR_ROUTINE_CHIP_LABELS_KEY='calendarRoutineChipLabels_v1';
 const CALENDAR_ROUTINE_CHIP_SELECTION_KEY='calendarRoutineChipSelection_v1';
 const DEFAULT_CALENDAR_CHIP_KEYS=[
-  'breakfast_lemon','free_read','free_knit',
+  'breakfast_lemon','free_read','free_walk','free_knit',
   'mon_rope','tue_rope','thu_rope','free_rope',
   'free_japanese','free_boardgame','wed_baha','wed_mask','sat_mask'
 ];
