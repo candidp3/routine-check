@@ -2289,6 +2289,12 @@ body.secOff-project #calendarDetail [data-sec="project"],body.secOff-project .ca
 .pjMk i{width:7px!important;height:7px!important;border-width:1px!important}.pjSym{width:8px!important;height:8px!important;border-width:1px!important}
 #viewToday .lifeBlockHint{display:none!important}
 .lifeField label.pjTD,.lifeField label.pjTD.set{width:68px;min-width:68px;box-sizing:border-box;justify-content:center;font-variant-numeric:tabular-nums;padding:0 8px}.lifeField label.pjTD.set{justify-content:space-between;padding:0 6px 0 11px}
+
+.lbHours{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:var(--fs-1);color:var(--rc-mu)}
+.lbHours select{border:1px solid var(--rc-line);background:var(--rc-card);color:var(--rc-tx);border-radius:10px;padding:6px 8px;font-size:var(--fs-1)}
+.lbHours{margin-top:6px!important}
+.lbHours span{flex:none!important;white-space:nowrap!important;writing-mode:horizontal-tb!important;width:auto!important}
+.lbHours select{flex:1 1 0!important;min-width:0!important;width:auto!important;height:36px!important;padding:0 10px!important;font-size:var(--fs-2)!important;border-radius:10px!important}
 </style>
 </head>
 
@@ -10207,9 +10213,6 @@ function stTick(){
 }
 async function stStop(){
   const r=ST.run;if(!r)return;
-  const el=(Date.now()-r.start)/1000;
-  const msg=r.mode==='hold'?(el>r.prep?'숨참기를 끝내고 기록할까요?':'준비호흡 중이에요. 훈련을 끝낼까요? (기록되지 않아요)'):'훈련을 끝낼까요? 끝낸 라운드까지만 기록돼요.';
-  if(!await appConfirm(msg))return;
   stFinish(false);
 }
 function stFinish(natural,silent){
@@ -11483,6 +11486,42 @@ function pjDragEnd(e){
   if(pjDraft&&order.length===pjDraft.tasks.length){pjDraft.tasks=order.map(i=>pjDraft.tasks[i]);}
   pjRenderTasks();
 }
+
+/* ===== 시간대별 자동 펼침 시간 (시간대 관리) ===== */
+const LB_HOURS_KEY='lifeBlockHours_v1';
+const LB_HOURS_DEF={dawn:[0,6],breakfast:[6,9],morning:[9,12],lunch:[12,14],afternoon:[14,18],evening:[18,22],night:[22,24]};
+function lbHours(){let u={};try{u=JSON.parse(localStorage.getItem(LB_HOURS_KEY)||'{}')||{};}catch(e){}
+  const o={};Object.keys(LB_HOURS_DEF).forEach(id=>{const v=u[id];o[id]=(Array.isArray(v)&&v.length===2&&v[0]>=0&&v[1]<=24&&v[0]<v[1])?[+v[0],+v[1]]:LB_HOURS_DEF[id];});return o;}
+lbCurrentId=function(defs){
+  const h=new Date().getHours(),hs=lbHours(),ids=defs.map(d=>d.id);
+  const hit=ids.find(id=>h>=hs[id][0]&&h<hs[id][1]);if(hit)return hit;
+  const next=ids.filter(id=>hs[id][0]>h).sort((a,b)=>hs[a][0]-hs[b][0])[0];
+  if(next)return next;
+  return ids.slice().sort((a,b)=>hs[b][1]-hs[a][1])[0]||'';
+};
+(function(){
+  const hrOpt=(from,to,sel)=>{let o='';for(let i=from;i<=to;i++)o+=`<option value="${i}"${i===sel?' selected':''}>${String(i).padStart(2,'0')}시</option>`;return o;};
+  const o=openLifeBlockSettings;
+  openLifeBlockSettings=function(){
+    const r=o.apply(this,arguments);const hs=lbHours();
+    document.querySelectorAll('#lifeBlockList .lbRow').forEach(row=>{
+      const id=row.querySelector('[data-lb]')?.dataset.lb;if(!id||!hs[id]||row.querySelector('.lbHours'))return;
+      row.insertAdjacentHTML('beforeend',`<div class="lbHours"><span>자동 펼침</span><select data-lbs="${id}">${hrOpt(0,23,hs[id][0])}</select><span>~</span><select data-lbe="${id}">${hrOpt(1,24,hs[id][1])}</select></div>`);
+    });
+    return r;
+  };
+  const sv=saveLifeBlockSettings;
+  saveLifeBlockSettings=function(){
+    const out={};let bad=false;
+    document.querySelectorAll('#lifeBlockList select[data-lbs]').forEach(sel=>{
+      const id=sel.dataset.lbs,e=document.querySelector(`#lifeBlockList select[data-lbe="${id}"]`);
+      const a=+sel.value,b=+e.value;if(a>=b)bad=true;out[id]=[a,b];
+    });
+    if(bad){appAlert('자동 펼침 시간은 시작이 끝보다 앞서야 해요.');return;}
+    try{localStorage.setItem(LB_HOURS_KEY,JSON.stringify(out));}catch(e){}
+    return sv.apply(this,arguments);
+  };
+})();
 </script>
 
 
