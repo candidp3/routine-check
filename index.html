@@ -3079,6 +3079,12 @@ body.secOff-project #calendarDetail [data-sec="project"],body.secOff-project .ca
     <div class="lifeActions"><button class="lifeDelete" type="button" onclick="closeStManual()">취소</button><button class="lifeSave" type="button" onclick="saveStManual()">저장</button></div>
   </div>
 </div>
+<div id="stLogModal" class="lifeModal hide" onclick="if(event.target===this)closeStLog()">
+  <div class="lifeSheet">
+    <div class="lifeSheetHead"><b id="stLogHead">숨참기 기록</b><button class="lifeClose" onclick="closeStLog()">×</button></div>
+    <div id="stLogList" class="pjManageList"></div>
+  </div>
+</div>
 <div id="staticSessionModal" class="lifeModal hide" onclick="if(event.target===this)closeStaticSession()">
   <div class="lifeSheet">
     <div class="lifeSheetHead"><b id="staticSessionHead">숨참기</b><button class="lifeClose" onclick="closeStaticSession()">×</button></div>
@@ -10301,9 +10307,9 @@ function openStaticSession(k,i){
   const s=stSessions(k)[i];if(!s)return;stViewing={k,i};
   const d=parseDateKeyLocal(k);
   document.getElementById('staticSessionHead').textContent=`숨참기 · ${d.getMonth()+1}.${d.getDate()}`;
-  let body=`<div class="stSumLine">${escapeLife(stSessionLine(s))}</div>`;
+  let body=`<div class="stSumLine">${escapeLife(stShortLine(s))}</div>`;
   if(s.type==='hold')body+=`<div class="stSumLine">${s.manual?'직접 입력한 기록':`준비호흡 ${stFmt(s.prep||0)} 후 숨참기`}</div>`;
-  else if(!s.manual){body+=`<div class="stSumLine">총 ${stFmt(s.totalSec||0)} · 사용한 테이블</div>${stTableHTML(s.rows||[])}`;}
+  else if(!s.manual){body+=`<div class="stSumLine">총 ${stFmt(s.totalSec||0)}</div>`;}
   document.getElementById('staticSessionBody').innerHTML=body;
   document.getElementById('staticSessionModal').classList.remove('hide');
 }
@@ -10751,8 +10757,8 @@ function openStaticMenu(){
   const k=lifeLogKey(),ss=stSessions(k);
   const acts=[{label:'훈련 시작',kind:'primary',run:()=>openStatic()},
     {label:'기록 직접 추가',run:()=>openStManual('hold')}];
-  ss.forEach((x,i)=>acts.push({label:`보기·삭제 · ${stSessionLine(x)}`,run:()=>openStaticSession(k,i)}));
-  showRoutineActionSheet(ss.length?`숨참기 · 오늘 ${ss.length}개 기록`:'숨참기',acts);
+  if(ss.length)acts.push({label:`기록 보기 · ${ss.length}`,run:()=>openStLog()});
+  showRoutineActionSheet('숨참기',acts);
 }
 function openStManual(kind){
   stManual={kind:kind||'hold'};stRenderManual();
@@ -11522,6 +11528,34 @@ lbCurrentId=function(defs){
     return sv.apply(this,arguments);
   };
 })();
+
+/* 숨참기: 기록 보기 목록 */
+function stShortLine(s){
+  if(s.type==='hold')return `숨참기 ${stFmt(s.holdSec)}${s.manual?' · 직접 입력':''}`;
+  let nm=s.type==='co2'?'CO2':s.type==='o2'?'O2':String(stModeName(s.type,s.name)).split(' · ').pop();
+  if(s.manual)return `${nm} · 직접 기록`;
+  const tail=s.type==='co2'?` · 숨참기 ${stFmt(s.rows?.[0]?.[1]||0)}`:s.type==='o2'?` · 최대 ${stFmt(s.maxHold||0)}`:'';
+  return `${nm} · ${s.done}/${s.total}라운드${tail}`;
+}
+let stLogKey='';
+function openStLog(){stLogKey=lifeLogKey();renderStLog();document.getElementById('stLogModal').classList.remove('hide');}
+function closeStLog(){document.getElementById('stLogModal')?.classList.add('hide');}
+function renderStLog(){
+  const ss=stSessions(stLogKey),d=parseDateKeyLocal(stLogKey);
+  document.getElementById('stLogHead').textContent=`숨참기 기록 · ${d.getMonth()+1}.${d.getDate()}`;
+  const root=document.getElementById('stLogList');
+  if(!ss.length){root.innerHTML='<div class="pjEmpty">기록이 없어요</div>';return;}
+  root.innerHTML=ss.map((x,i)=>{const t=x.at?new Date(x.at):null,tm=t&&!isNaN(t)?`${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`:'';
+    return `<div class="oneOffSettingRow pjManageRow" role="button" tabindex="0" onclick="closeStLog();openStaticSession('${stLogKey}',${i})"><div class="pjManageMain"><div class="pjName">${escapeLife(stShortLine(x))}</div>${tm?`<div class="pjManageMeta">${tm}</div>`:''}</div><button type="button" class="pjX" aria-label="삭제" onclick="event.stopPropagation();stDeleteAt('${stLogKey}',${i})">×</button></div>`;}).join('');
+}
+async function stDeleteAt(k,i){
+  if(!await appConfirm('이 기록을 삭제할까요?'))return;
+  const all=stAllLogs(),a=all[k]||[];a.splice(i,1);
+  if(a.length)all[k]=a;else delete all[k];
+  try{localStorage.setItem(ST_LOG_KEY,JSON.stringify(all));}catch(e){}
+  renderStLog();try{renderLifeCalendar();renderCalendarDetail(calendarSelectedKey);renderRecordDashboard();}catch(e){}
+  if(!stSessions(k).length)closeStLog();
+}
 </script>
 
 
