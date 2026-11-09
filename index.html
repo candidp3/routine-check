@@ -2295,6 +2295,10 @@ body.secOff-project #calendarDetail [data-sec="project"],body.secOff-project .ca
 .lbHours{margin-top:6px!important}
 .lbHours span{flex:none!important;white-space:nowrap!important;writing-mode:horizontal-tb!important;width:auto!important}
 .lbHours select{flex:1 1 0!important;min-width:0!important;width:auto!important;height:36px!important;padding:0 10px!important;font-size:var(--fs-2)!important;border-radius:10px!important}
+#viewAll_v2 .rr-sleep-row .rr-range{display:flex!important;justify-content:flex-end;align-items:center;gap:3px!important;white-space:nowrap}
+#viewAll_v2 .rr-sleep-row .rr-range i{display:inline-flex;font-style:normal}
+#viewAll_v2 .rr-sleep-row .rr-range b{display:inline-block;width:.62em;text-align:center;font-weight:inherit}
+#viewAll_v2 .rr-sleep-row .rr-range u{display:inline-block;width:.32em;text-align:center;text-decoration:none}
 </style>
 </head>
 
@@ -8915,7 +8919,7 @@ function bookRegKey(b,idx){
   rrDurationWeekCard=function(){
     return b.apply(this,arguments).replace(/<small class="rr-range">([^<]*)<\/small>/g,(m,t)=>{
       const p=t.split('–');
-      return p.length===2&&p[0]&&p[1]?`<small class="rr-range"><i>${p[0]}</i><i>–</i><i>${p[1]}</i></small>`:m;
+      return p.length===2&&p[0]&&p[1]?`<small class="rr-range"><i>${rrTm(p[0])}</i><i>–</i><i>${rrTm(p[1])}</i></small>`:m;
     });
   };
 })();
@@ -11556,6 +11560,7 @@ async function stDeleteAt(k,i){
   renderStLog();try{renderLifeCalendar();renderCalendarDetail(calendarSelectedKey);renderRecordDashboard();}catch(e){}
   if(!stSessions(k).length)closeStLog();
 }
+function rrTm(t){return String(t).replace(/./g,c=>c===':'?'<u>:</u>':`<b>${c}</b>`);}
 </script>
 
 
