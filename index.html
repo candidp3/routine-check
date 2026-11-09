@@ -2299,6 +2299,30 @@ body.secOff-project #calendarDetail [data-sec="project"],body.secOff-project .ca
 #viewAll_v2 .rr-sleep-row .rr-range i{display:inline-flex;font-style:normal}
 #viewAll_v2 .rr-sleep-row .rr-range b{display:inline-block;width:.62em;text-align:center;font-weight:inherit}
 #viewAll_v2 .rr-sleep-row .rr-range u{display:inline-block;width:.32em;text-align:center;text-decoration:none}
+
+.projectList{grid-template-columns:minmax(0,1fr)!important}
+.projectBlock,.pjRow,.pjTop{min-width:0}
+.pjBarRow{display:flex;align-items:center;gap:10px;margin:9px 0 6px}
+.pjBarRow .pjBar{flex:1 1 auto;margin:0}
+.pjBarRow .pjCount{flex:none;font-variant-numeric:tabular-nums}
+.pjNext{align-items:flex-start!important;margin-top:6px!important}
+.pjNextText{white-space:normal!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.pjNext .pjChk{margin-top:0}
+.pjMore{margin:4px 0 0 31px;font-size:var(--fs-1);color:var(--rc-mu)}
+.pjDupBtn{margin-left:auto;margin-right:8px;border:0;background:var(--rc-soft);color:var(--rc-mu);border-radius:999px;padding:6px 12px;font-size:var(--fs-1)}
+.pjDupBtn.hide{display:none}
+.lifeSheetHead:has(.pjDupBtn){display:flex;align-items:center}
+.pjTools{display:flex;gap:14px;margin-top:8px}
+.pjTools button{border:0;background:transparent;color:var(--rc-mu);font-size:var(--fs-1);padding:4px 0;text-decoration:underline;text-underline-offset:3px}
+.pjBulk{display:flex;gap:8px;align-items:flex-end;margin-top:8px}
+.pjBulk.hide{display:none}
+.pjBulk textarea{flex:1 1 auto;min-width:0;border:1px solid var(--rc-line);border-radius:12px;background:var(--rc-soft);padding:10px 12px;font-size:var(--fs-2);color:var(--rc-tx);resize:none}
+.pjBulkOk{flex:none;height:40px;border:0;border-radius:12px;background:var(--rc-g);color:#fff;padding:0 16px;font-size:var(--fs-2)}
+.pjDoneTgl{border:0;background:transparent;color:var(--rc-mu);font-size:var(--fs-1);text-align:left;padding:6px 2px}
+
+.tdChip{align-items:center!important}
+.tdChip .tdToday{height:34px!important;min-height:0!important;box-sizing:border-box;padding:0 14px!important;display:inline-flex;align-items:center;line-height:1}
+.tdChip .tdPick{width:34px!important;height:34px!important;min-width:34px!important;min-height:0!important;flex:none!important;aspect-ratio:1/1;padding:0!important;margin:0!important;box-sizing:border-box;border-radius:50%!important}
 </style>
 </head>
 
@@ -2702,12 +2726,14 @@ body.secOff-project #calendarDetail [data-sec="project"],body.secOff-project .ca
 </div>
 <div id="projectModal" class="lifeModal hide" onclick="if(event.target===this)closeProject()">
   <div class="lifeSheet">
-    <div class="lifeSheetHead"><b id="pjTitle">프로젝트</b><button class="lifeClose" type="button" onclick="closeProject()">×</button></div>
+    <div class="lifeSheetHead"><b id="pjTitle">프로젝트</b><button type="button" id="pjDupBtn" class="pjDupBtn hide" onclick="pjDuplicate()">복제</button><button class="lifeClose" type="button" onclick="closeProject()">×</button></div>
     <div class="lifeField"><label>이름</label><input id="pjName" maxlength="40" placeholder="예: 릴스 만들기"></div>
     <div class="lifeField"><label>상태</label><div class="pjSeg" id="pjSeg"></div></div>
     <div class="pjDates"><label class="pjBox pjDateBtn" id="pjStartBox"><span class="pjBoxIc">⟪calendar⟫</span><span class="pjBoxTx" id="pjStartTx">시작일</span><input id="pjStart" type="date" onchange="pjDateSync()"><button type="button" class="pjBoxX hide" aria-label="시작일 지우기" onclick="event.preventDefault();event.stopPropagation();document.getElementById('pjStart').value='';pjDateSync()">×</button></label><label class="pjBox pjDateBtn" id="pjDueBox"><span class="pjBoxIc">⟪calendar⟫</span><span class="pjBoxTx" id="pjDueTx">마감일</span><input id="pjDue" type="date" onchange="pjDateSync()"><button type="button" class="pjBoxX hide" aria-label="마감일 지우기" onclick="event.preventDefault();event.stopPropagation();document.getElementById('pjDue').value='';pjDateSync()">×</button></label></div>
     <div class="lifeField"><label>할 일</label><div id="pjTasks" class="pjTasks"></div>
-      <div class="pjAddRow"><input id="pjNewTask" maxlength="80" placeholder="할 일 추가" onkeydown="if(event.key==='Enter'){event.preventDefault();pjAddTask();}"><button type="button" class="pjAddBtn" aria-label="추가" onclick="pjAddTask()">＋</button></div></div>
+      <div class="pjAddRow"><input id="pjNewTask" maxlength="80" placeholder="할 일 추가" onkeydown="if(event.key==='Enter'){event.preventDefault();pjAddTask();}"><button type="button" class="pjAddBtn" aria-label="추가" onclick="pjAddTask()">＋</button></div>
+      <div class="pjTools"><button type="button" onclick="pjToggleBulk()">여러 개 붙여넣기</button><button type="button" id="pjImportBtn" onclick="pjImportMenu()">다른 프로젝트에서 가져오기</button></div>
+      <div id="pjBulkBox" class="pjBulk hide"><textarea id="pjBulk" rows="5" placeholder="11.10 포스터 제작&#10;11.12 공문 발송&#10;자료 정리"></textarea><button type="button" class="pjBulkOk" onclick="pjBulkAdd()">추가</button></div></div>
     <div class="lifeField"><label>메모</label><textarea id="pjNote" rows="2" maxlength="500" class="olMemoSm"></textarea></div>
     <div class="lifeActions"><button id="pjDel" class="lifeDelete hide" type="button" onclick="pjDelete()">삭제</button><button class="lifeDelete" type="button" onclick="closeProject()">취소</button><button class="lifeSave" type="button" onclick="pjSave()">저장</button></div>
   </div>
@@ -11181,13 +11207,20 @@ function pjDays(due){
 function pjDueLabel(due){const n=pjDays(due);if(n===null)return '';return n===0?'오늘 마감':n>0?`D-${n}`:'기한 지남';}
 function pjNext(p){return (p.tasks||[]).find(t=>!t.done);}
 function pjSorted(list){return list.slice().sort((a,b)=>{const da=pjDays(a.due),db=pjDays(b.due);if(da===null&&db!==null)return 1;if(db===null&&da!==null)return -1;if(da!==db&&da!==null)return da-db;return (a.createdAt||0)-(b.createdAt||0);});}
+function pjNextGroup(p){
+  const und=(p.tasks||[]).filter(t=>!t.done);if(!und.length)return [];
+  const f=und[0];return f.due?und.filter(t=>t.due===f.due):[f];
+}
 function pjRowHTML(p){
-  const ts=p.tasks||[],done=ts.filter(t=>t.done).length,nx=pjNext(p),pct=ts.length?Math.round(done/ts.length*100):0;
-  const dl=pjDueLabel(p.due),over=false;
+  const ts=p.tasks||[],done=ts.filter(t=>t.done).length,pct=ts.length?Math.round(done/ts.length*100):0;
+  const dl=pjDueLabel(p.due),grp=pjNextGroup(p),show=grp.slice(0,3),more=grp.length-show.length;
+  const dd=grp[0]&&grp[0].due?grp[0].due.slice(5).replace('-','.'):'';
+  const rows=show.map((t,i)=>`<div class="pjNext"><button type="button" class="pjChk" aria-label="완료" onclick="event.stopPropagation();pjToggle('${p.id}','${t.id}')"></button><span class="pjNextText">${escapeLife(t.text)}</span>${i===0&&dd?`<span class="pjCount">${dd}</span>`:''}</div>`).join('')
+    +(more>0?`<div class="pjMore">외 ${more}개</div>`:'');
   return `<div class="pjRow" role="button" tabindex="0" onclick="openProject('${p.id}')">
-    <div class="pjTop"><span class="pjName">${escapeLife(p.name)}</span>${dl?`<span class="pjDue${over?' over':''}">${dl}</span>`:''}</div>
-    ${ts.length?`<div class="pjBar"><i style="width:${pct}%"></i></div>`:''}
-    <div class="pjNext">${nx?`<button type="button" class="pjChk" aria-label="완료" onclick="event.stopPropagation();pjToggle('${p.id}','${nx.id}')"></button><span class="pjNextText">${escapeLife(nx.text)}${nx.due?` <span class="mu">· ${nx.due.slice(5).replace('-','.')}</span>`:''}</span>`:`<span class="pjNextText mu">${ts.length?'할 일을 모두 마쳤어요':'할 일을 추가해 보세요'}</span>`}${ts.length?`<span class="pjCount">${done}/${ts.length}</span>`:''}</div>
+    <div class="pjTop"><span class="pjName">${escapeLife(p.name)}</span>${dl?`<span class="pjDue">${dl}</span>`:''}</div>
+    ${ts.length?`<div class="pjBarRow"><div class="pjBar"><i style="width:${pct}%"></i></div><span class="pjCount">${done}/${ts.length}</span></div>`:''}
+    ${rows||`<div class="pjNext"><span class="pjNextText mu">${ts.length?'할 일을 모두 마쳤어요':'할 일을 추가해 보세요'}</span></div>`}
   </div>`;
 }
 function renderProjects(){
@@ -11208,18 +11241,20 @@ function openProject(id){
   pjDraft=p?JSON.parse(JSON.stringify(p)):{id:pjId(),name:'',status:'active',due:'',tasks:[],note:'',createdAt:Date.now(),isNew:true};
   document.getElementById('pjTitle').textContent=p?'프로젝트 수정':'새 프로젝트';
   document.getElementById('pjName').value=pjDraft.name;document.getElementById('pjDue').value=pjDraft.due||'';document.getElementById('pjStart').value=pjDraft.start||'';pjDateSync();document.getElementById('pjNote').value=pjDraft.note||'';
-  document.getElementById('pjNewTask').value='';document.getElementById('pjDel').classList.toggle('hide',!p);
+  document.getElementById('pjNewTask').value='';document.getElementById('pjDel').classList.toggle('hide',!p);document.getElementById('pjDupBtn').classList.toggle('hide',!p);document.getElementById('pjBulkBox').classList.add('hide');
   pjRenderSeg();pjRenderTasks();
   document.getElementById('projectManageModal')?.classList.add('hide');
   document.getElementById('projectModal').classList.remove('hide');
 }
 function closeProject(){document.getElementById('projectModal')?.classList.add('hide');pjDraft=null;}
 function pjRenderSeg(){document.getElementById('pjSeg').innerHTML=PJ_STATUS.map(([k,l])=>`<button type="button" class="${pjDraft.status===k?'on':''}" onclick="pjDraft.status='${k}';delete pjDraft._auto;pjRenderSeg()">${l}</button>`).join('');}
+function pjVisibleTasks(){const ts=pjDraft.tasks||[];return ts.map((t,i)=>[t,i]).filter(([t])=>ts.length<=6||pjDraft._showDone||!t.done);}
+function pjDoneToggleHTML(){const ts=pjDraft.tasks||[],n=ts.filter(t=>t.done).length;if(ts.length<=6||!n)return '';return `<button type="button" class="pjDoneTgl" onclick="pjDraft._showDone=!pjDraft._showDone;pjRenderTasks()">완료한 ${n}개 ${pjDraft._showDone?'접기':'보기'}</button>`;}
 function pjRenderTasks(){
-  document.getElementById('pjTasks').innerHTML=(pjDraft.tasks||[]).map((t,i)=>`<div class="pjTaskRow" data-i="${i}"><button type="button" class="pjDrag" aria-label="순서 바꾸기" onpointerdown="pjDragStart(event)">☰</button><button type="button" class="pjChk${t.done?' on':''}" aria-label="완료" onclick="pjDraft.tasks[${i}].done=!pjDraft.tasks[${i}].done;pjAutoState();pjRenderTasks();pjRenderSeg()"></button><input class="pjTaskInput${t.done?' done':''}" value="${escapeLife(t.text).replace(/"/g,'&quot;')}" maxlength="80" oninput="pjDraft.tasks[${i}].text=this.value"><label class="pjTD${t.due?' set':''}" aria-label="날짜">${t.due?`<span>${t.due.slice(5).replace('-','.')}</span>`:'<span class="pjTDic">⟪calendar⟫</span>'}<input type="date" value="${t.due||''}" onchange="pjDraft.tasks[${i}].due=this.value;pjRenderTasks()">${t.due?`<button type="button" class="pjTDx" aria-label="날짜 지우기" onclick="event.preventDefault();event.stopPropagation();pjDraft.tasks[${i}].due='';pjRenderTasks()">×</button>`:''}</label><button type="button" class="pjX" aria-label="삭제" onclick="pjDraft.tasks.splice(${i},1);pjAutoState();pjRenderTasks();pjRenderSeg()">×</button></div>`).join('');
+  document.getElementById('pjTasks').innerHTML=pjVisibleTasks().map(([t,i])=>`<div class="pjTaskRow" data-i="${i}"><button type="button" class="pjDrag" aria-label="순서 바꾸기" onpointerdown="pjDragStart(event)">☰</button><button type="button" class="pjChk${t.done?' on':''}" aria-label="완료" onclick="pjDraft.tasks[${i}].done=!pjDraft.tasks[${i}].done;pjAutoState();pjRenderTasks();pjRenderSeg()"></button><input class="pjTaskInput${t.done?' done':''}" value="${escapeLife(t.text).replace(/"/g,'&quot;')}" maxlength="80" oninput="pjDraft.tasks[${i}].text=this.value"><label class="pjTD${t.due?' set':''}" aria-label="날짜">${t.due?`<span>${t.due.slice(5).replace('-','.')}</span>`:'<span class="pjTDic">⟪calendar⟫</span>'}<input type="date" value="${t.due||''}" onchange="pjDraft.tasks[${i}].due=this.value;pjSortByDue();pjRenderTasks()">${t.due?`<button type="button" class="pjTDx" aria-label="날짜 지우기" onclick="event.preventDefault();event.stopPropagation();pjDraft.tasks[${i}].due='';pjRenderTasks()">×</button>`:''}</label><button type="button" class="pjX" aria-label="삭제" onclick="pjDraft.tasks.splice(${i},1);pjAutoState();pjRenderTasks();pjRenderSeg()">×</button></div>`).join('')+pjDoneToggleHTML();
 }
 function pjAddTask(){
-  const inp=document.getElementById('pjNewTask'),v=inp.value.trim();if(!v||!pjDraft)return;
+  const inp=document.getElementById('pjNewTask'),v=inp.value.trim();if(!pjDraft)return;if(!v){pjDraft.tasks.push({id:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),text:'',done:false});pjRenderTasks();const ins=document.querySelectorAll('#pjTasks .pjTaskInput');const l=ins[ins.length-1];if(l){l.focus();l.scrollIntoView({block:'center'});}return;}
   pjDraft.tasks.push({id:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),text:v,done:false});inp.value='';pjAutoState();pjRenderTasks();pjRenderSeg();inp.focus();
 }
 function pjSave(){
@@ -11483,17 +11518,17 @@ function pjDragStart(e){
 }
 function pjDragMove(e){
   if(!pjDrag||e.pointerId!==pjDrag.id)return;e.preventDefault();
-  const wrap=document.getElementById('pjTasks'),rows=[...wrap.children].filter(r=>r!==pjDrag.row);
+  const wrap=document.getElementById('pjTasks'),rows=[...wrap.children].filter(r=>r!==pjDrag.row&&r.classList.contains('pjTaskRow'));
   const y=e.clientY;let before=null;
   for(const r of rows){const b=r.getBoundingClientRect();if(y<b.top+b.height/2){before=r;break;}}
-  if(before)wrap.insertBefore(pjDrag.row,before);else wrap.appendChild(pjDrag.row);
+  if(before)wrap.insertBefore(pjDrag.row,before);else if(rows.length)rows[rows.length-1].after(pjDrag.row);
 }
 function pjDragEnd(e){
   if(!pjDrag||e.pointerId!==pjDrag.id)return;
   window.removeEventListener('pointermove',pjDragMove);window.removeEventListener('pointerup',pjDragEnd);window.removeEventListener('pointercancel',pjDragEnd);
-  const order=[...document.getElementById('pjTasks').children].map(r=>Number(r.dataset.i));
+  const order=[...document.getElementById('pjTasks').querySelectorAll('.pjTaskRow')].map(r=>Number(r.dataset.i));
   pjDrag=null;
-  if(pjDraft&&order.length===pjDraft.tasks.length){pjDraft.tasks=order.map(i=>pjDraft.tasks[i]);}
+  if(pjDraft){const slots=order.slice().sort((a,b)=>a-b),old=pjDraft.tasks.slice();slots.forEach((pos,k)=>{pjDraft.tasks[pos]=old[order[k]];});}
   pjRenderTasks();
 }
 
@@ -11561,6 +11596,39 @@ async function stDeleteAt(k,i){
   if(!stSessions(k).length)closeStLog();
 }
 function rrTm(t){return String(t).replace(/./g,c=>c===':'?'<u>:</u>':`<b>${c}</b>`);}
+
+/* ===== 프로젝트: 복제 · 가져오기 · 여러 개 붙여넣기 ===== */
+function pjCloneTasks(list){return (list||[]).map(t=>({id:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),text:t.text,done:false}));}
+function pjDuplicate(){
+  if(!pjDraft)return;
+  const name=document.getElementById('pjName').value.trim()||pjDraft.name;
+  pjDraft={id:pjId(),name:name+' 복사',status:'active',start:'',due:'',tasks:pjCloneTasks(pjDraft.tasks),note:document.getElementById('pjNote').value.trim(),createdAt:Date.now(),isNew:true};
+  document.getElementById('pjTitle').textContent='새 프로젝트';
+  document.getElementById('pjName').value=pjDraft.name;document.getElementById('pjStart').value='';document.getElementById('pjDue').value='';pjDateSync();
+  document.getElementById('pjDel').classList.add('hide');document.getElementById('pjDupBtn').classList.add('hide');
+  pjRenderSeg();pjRenderTasks();
+}
+function pjImportMenu(){
+  const others=pjLoad().filter(p=>(p.tasks||[]).length&&(!pjDraft||p.id!==pjDraft.id));
+  if(!others.length)return appAlert('가져올 프로젝트가 아직 없어요.');
+  showRoutineActionSheet('할 일 가져오기',others.map(p=>({label:`${p.name} · ${p.tasks.length}개`,run:()=>{pjDraft.tasks=(pjDraft.tasks||[]).concat(pjCloneTasks(p.tasks));pjAutoState();pjRenderTasks();pjRenderSeg();}}))
+    .concat([{label:'취소',run:()=>{}}]));
+}
+function pjToggleBulk(){const b=document.getElementById('pjBulkBox');b.classList.toggle('hide');if(!b.classList.contains('hide'))document.getElementById('pjBulk').focus();}
+function pjBulkAdd(){
+  if(!pjDraft)return;const ta=document.getElementById('pjBulk');
+  const base=(document.getElementById('pjDue').value||document.getElementById('pjStart').value||getLocalDateKey(new Date())).slice(0,4);
+  let n=0;
+  ta.value.split(/\r?\n/).forEach(line=>{
+    let t=line.trim();if(!t)return;let due='';
+    const m=t.match(/^(?:\d{4}[./-])?(\d{1,2})(?:[./-]|월\s*)(\d{1,2})일?\s+(.+)$/);
+    if(m){const mo=+m[1],d=+m[2];if(mo>=1&&mo<=12&&d>=1&&d<=31){due=`${base}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;t=m[3].trim();}}
+    t=t.slice(0,80);const task={id:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)+n,text:t,done:false};if(due)task.due=due;pjDraft.tasks.push(task);n++;
+  });
+  if(!n)return;pjSortByDue();ta.value='';document.getElementById('pjBulkBox').classList.add('hide');pjAutoState();pjRenderTasks();pjRenderSeg();
+}
+
+function pjSortByDue(){if(!pjDraft)return;const ts=pjDraft.tasks;ts.forEach((t,i)=>t._o=i);ts.sort((a,b)=>(a.due?0:1)-(b.due?0:1)||(a.due&&b.due&&a.due!==b.due?(a.due<b.due?-1:1):0)||a._o-b._o);ts.forEach(t=>delete t._o);}
 </script>
 
 
