@@ -2397,6 +2397,25 @@ body.scrolled .tdChip .tdToday{height:28px!important;padding:0 10px!important;fo
 .calSelHead b{font-size:var(--fs-3);color:var(--rc-tx)}
 .calSelHead .calSelTag{margin-left:8px;font-size:var(--fs-1);color:var(--rc-gs,#2f6b55);background:var(--rc-gl,#e2f4ec);border-radius:99px;padding:2px 8px;vertical-align:middle}
 .calSelHead button{border:0;background:transparent;color:var(--rc-gd,var(--rc-gs));font:inherit;font-size:var(--fs-2);padding:6px 2px}
+/* 화면 모드(시스템/라이트/다크) */
+#themeModeRow{display:flex;gap:6px;width:100%}
+#themeModeRow button{min-width:0!important;flex:1 1 0}
+/* NOTE 모아보기: 검색창·사진·이동 */
+.noteDiaryTools{align-items:center;gap:8px!important}
+.noteDiaryTools .ndSearch{position:relative;flex:1;min-width:0}
+.noteDiaryTools .ndSearch input{width:100%;box-sizing:border-box;height:42px;border:1px solid var(--rc-line);border-radius:14px;background:var(--rc-bg,var(--rc-soft));padding:0 12px 0 38px;font:inherit;font-size:var(--fs-2);color:var(--rc-tx);outline:none;-webkit-appearance:none;appearance:none}
+.noteDiaryTools .ndSearch input::-webkit-search-cancel-button{display:none}
+.noteDiaryTools .ndSearch input:focus{border-color:var(--rc-gs,#3f9c7c)}
+.noteDiaryTools .ndSearch .ndIc{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--rc-mu);display:flex;pointer-events:none}
+.noteDiaryTools #noteDiarySortBtn{height:42px;border-radius:14px;padding:0 12px;white-space:nowrap}
+.noteDiaryItem.ndHasPhoto{display:flex!important;align-items:center;gap:12px}
+.noteDiaryItem .ndBody{flex:1;min-width:0}
+.noteDiaryItem .ndThumb{width:48px;height:48px;border-radius:10px;object-fit:cover;flex:none;background:var(--rc-soft)}
+/* 캘린더 NOTE 카드의 작은 '모아보기' 버튼, 아래 버튼줄은 없앰 */
+.noteAllMini{border:0;background:var(--rc-soft);color:var(--rc-mu);border-radius:999px;padding:5px 11px;font-size:var(--fs-1);min-height:28px;margin-left:auto}
+.noteAllMini+.photoMini{margin-left:6px}
+#viewCalendar .calFootBtns{display:none!important}
+.calInfoCard.ndFlash{box-shadow:0 0 0 2px var(--rc-gs,#3f9c7c);transition:box-shadow .6s}
 /* 4) 하루 시작 시간 */
 #viewBackup .dayStartRow{display:flex;flex-wrap:nowrap;gap:6px;width:100%}
 #viewBackup .dayStartRow button{min-width:0!important;flex:1 1 0;padding-left:0;padding-right:0}
@@ -2433,6 +2452,10 @@ body.scrolled .tdChip .tdToday{height:28px!important;padding:0 10px!important;fo
 .tdHero .lbPeek{display:flex!important;margin-top:0}
 .tdHero .thDone{font-size:var(--fs-2);color:var(--rc-mu);padding:4px 0}
 </style>
+<script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
+(function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
+[...document.styleSheets].forEach(sh=>{let rs;try{rs=sh.cssRules;}catch(e){return;}[...rs].forEach(r=>{if(!(r instanceof CSSMediaRule))return;const t=r.media.mediaText;if(!/prefers-color-scheme/.test(t))return;r.__orig=t;r.media.mediaText=((m==='dark')===/dark/.test(t))?'all':'not all';});});
+document.documentElement.style.colorScheme=m;}catch(e){}})();</script>
 </head>
 
 <body>
@@ -3100,7 +3123,7 @@ body.scrolled .tdChip .tdToday{height:28px!important;padding:0 10px!important;fo
 <div id="noteDiaryModal" class="lifeModal hide" onclick="if(event.target===this)closeNoteDiary()">
   <div class="lifeSheet noteDiarySheet">
     <div class="lifeSheetHead"><b>NOTE 모아보기</b><button class="lifeClose" onclick="closeNoteDiary()">×</button></div>
-    <div class="noteDiaryTools"><input id="noteDiarySearch" type="search" placeholder="노트 내용 검색" autocomplete="off" oninput="renderNoteDiary()"><button type="button" id="noteDiarySortBtn" class="dateBtn" onclick="toggleNoteDiarySort()"></button></div>
+    <div class="noteDiaryTools"><div class="ndSearch"><span class="ndIc"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg></span><input id="noteDiarySearch" type="text" enterkeyhint="search" placeholder="노트 검색" autocomplete="off" oninput="renderNoteDiary()"></div><button type="button" id="noteDiarySortBtn" class="dateBtn" onclick="toggleNoteDiarySort()"></button></div>
     <div id="noteDiaryList" class="noteDiaryList"></div>
   </div>
 </div>
@@ -9323,14 +9346,18 @@ function renderNoteDiary(){
   keys.forEach(k=>{
     const d=parseDateKeyLocal(k),ym=`${d.getFullYear()}년 ${d.getMonth()+1}월`;
     if(ym!==cur){cur=ym;html+=`<div class="noteDiaryMonth">${ym}</div>`;}
-    html+=`<button type="button" class="noteDiaryItem" onclick="noteDiaryGo('${k}')"><div class="nd">${d.getMonth()+1}.${d.getDate()} ${wd[d.getDay()]}</div><div class="nt">${escapeLife(String(notes[k]).trim())}</div></button>`;
+    let ph='';try{const a=(typeof loadDailyPhotos==='function'?loadDailyPhotos()[k]:null)||[];if(a.length&&document.getElementById('todayPhotoBtn')&&getComputedStyle(document.getElementById('todayPhotoBtn')).display!=='none')ph=a[0];}catch(e){}
+    html+=`<button type="button" class="noteDiaryItem${ph?' ndHasPhoto':''}" onclick="noteDiaryGo('${k}')"><div class="ndBody"><div class="nd">${d.getMonth()+1}.${d.getDate()} ${wd[d.getDay()]}</div><div class="nt">${escapeLife(String(notes[k]).trim())}</div></div>${ph?`<img class="ndThumb" src="${ph}" alt="" loading="lazy">`:''}</button>`;
   });
   root.innerHTML=html;
 }
 function noteDiaryGo(k){
   closeNoteDiary();
+  try{if(document.getElementById('viewCalendar')?.classList.contains('hide'))lifeNavigate('calendar');}catch(e){}
   const d=parseDateKeyLocal(k);calendarCursor=new Date(d.getFullYear(),d.getMonth(),1);
   selectCalendarDate(k);
+  setTimeout(()=>{const c=[...document.querySelectorAll('#calendarDetail .calInfoCard')].find(x=>/^NOTE/.test(x.querySelector('h4')?.textContent.trim()||''));
+    if(c){c.scrollIntoView({block:'center',behavior:'smooth'});c.classList.add('ndFlash');setTimeout(()=>c.classList.remove('ndFlash'),1400);}},120);
 }
 
 /* ===== 책 검색: Cloudflare Worker 경유 (Daum + 국립중앙도서관) ===== */
@@ -11878,6 +11905,33 @@ renderSecVis=function(){
     return x;};
   try{renderLifeCalendar();}catch(e){}
 })();
+/* 캘린더 NOTE 카드에 '모아보기' 작은 버튼 */
+(function(){const d=renderCalendarDetail;renderCalendarDetail=function(k){const x=d.apply(this,arguments);
+  try{const c=[...document.querySelectorAll('#calendarDetail .calInfoCard')].find(x=>/^NOTE/.test(x.querySelector('h4')?.textContent.trim()||''));const h=c?.querySelector('h4');
+    if(h&&!h.querySelector('.noteAllMini')){h.classList.add('noteH4');const ph=h.querySelector('.photoMini');const btn='<button type="button" class="noteAllMini" onclick="openNoteDiary()">모아보기</button>';if(ph)ph.insertAdjacentHTML('beforebegin',btn);else h.insertAdjacentHTML('beforeend',btn);}}catch(e){}
+  return x;};try{renderCalendarDetail(calendarSelectedKey);}catch(e){}})();
+/* 화면 모드: 시스템 / 라이트 / 다크 — 다크 전용 스타일을 켜고 끄는 방식 (기록과 무관) */
+const THEME_MODE_KEY='themeMode_v1';
+function themeMode(){try{const v=localStorage.getItem(THEME_MODE_KEY);return ['light','dark'].includes(v)?v:'system';}catch(e){return 'system';}}
+function applyThemeMode(){
+  const m=themeMode();
+  [...document.styleSheets].forEach(sh=>{let rules;try{rules=sh.cssRules;}catch(e){return;}
+    [...rules].forEach(r=>{if(!(r instanceof CSSMediaRule))return;
+      if(r.__orig===undefined){const t=r.media.mediaText;if(!/prefers-color-scheme/.test(t))return;r.__orig=t;}
+      const dark=/dark/.test(r.__orig);
+      r.media.mediaText=m==='system'?r.__orig:((m==='dark')===dark?'all':'not all');});});
+  document.querySelectorAll('meta[name="theme-color"]').forEach(mt=>{if(!mt.dataset.orig)mt.dataset.orig=mt.getAttribute('media')||'';const dark=/dark/.test(mt.dataset.orig);mt.setAttribute('media',m==='system'?mt.dataset.orig:((m==='dark')===dark?'all':'not all'));});
+  document.documentElement.style.colorScheme=m==='system'?'':m;
+  const row=document.getElementById('themeModeRow');
+  if(row)row.innerHTML=[['system','시스템'],['light','라이트'],['dark','다크']].map(([v,l])=>`<button type="button" class="settingsBtn uiActionSm${v===m?' on':''}" onclick="setThemeMode('${v}')">${l}</button>`).join('');
+}
+function setThemeMode(v){try{localStorage.setItem(THEME_MODE_KEY,v);}catch(e){}applyThemeMode();}
+(function(){
+  const t=[...document.querySelectorAll('#viewBackup .backupSubTitle')].find(x=>x.textContent.trim()==='테마 색');
+  const part=t?t.closest('.backupPart'):null;
+  if(part&&!document.getElementById('themeModeRow'))part.insertAdjacentHTML('afterend','<div class="backupPart"><div class="backupSubTitle">화면 모드</div><div class="backupHint">시스템은 폰 설정(라이트·다크)을 따라가요.</div><div class="settingsRow"><div class="fontScaleButtons" id="themeModeRow"></div></div></div>');
+  applyThemeMode();
+})();
 /* 4) SETTING: 하루가 바뀌는 시간 */
 function renderDayStart(){
   const el=document.getElementById('dayStartRow');if(!el)return;const h=dayStartHour();
@@ -11915,6 +11969,7 @@ function addSecSubs(){
 })();
 /* 6) 설정 검색 (삼성 설정처럼 단어로 찾기) */
 const SET_KW={
+  '화면 모드':'다크 라이트 어둡게 밝게 테마 모드 야간 밤',
   '하루가 바뀌는 시간':'자정 새벽 날짜 넘어가는 시간 하루 시작 다음날 전날',
   '테마 색':'색 컬러 테마 다크 밝기 색상','글자 크기':'글씨 폰트 크기 작게 크게 기본 글자',
   '데일리케어 관리':'단백질 물 수면 컨디션 목표 항목 추가 체중 데일리 케어',
