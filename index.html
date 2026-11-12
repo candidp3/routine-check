@@ -2324,6 +2324,46 @@ body.secOff-project #calendarDetail [data-sec="project"],body.secOff-project .ca
 .tdChip .tdToday{height:34px!important;min-height:0!important;box-sizing:border-box;padding:0 14px!important;display:inline-flex;align-items:center;line-height:1}
 .tdChip .tdPick{width:34px!important;height:34px!important;min-width:34px!important;min-height:0!important;flex:none!important;aspect-ratio:1/1;padding:0!important;margin:0!important;box-sizing:border-box;border-radius:50%!important}
 .abRow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--rc-line);font-size:var(--fs-1);color:var(--rc-tx)}.abRow:first-of-type{margin-top:6px}.abRow button{flex:none;border:0;border-radius:999px;background:var(--rc-soft);color:var(--rc-tx);padding:6px 14px;font-size:var(--fs-1)}
+
+/* ===== 피드백 반영 (2026-11-12) ===== */
+/* 2) TODAY 첫 날짜 상자 숨김 — 날짜는 머리글 달력 버튼으로 */
+#todayHealthFront>.section:first-child{display:none!important}
+/* 3) 데일리케어 4개 이상이면 좌우로 넘기기 */
+.dailyCareGrid.dcSlide{display:grid!important;grid-auto-flow:column;grid-template-columns:none!important;grid-auto-columns:calc((100% - 16px) / 3.3);overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px;overscroll-behavior-x:contain}
+.dailyCareGrid.dcSlide::-webkit-scrollbar{display:none}
+.dailyCareGrid.dcSlide>.dailyCareItemCard,.dailyCareGrid.dcSlide .dailyCareCustomGrid>.dailyCareItemCard{scroll-snap-align:start}
+.dcDots{display:flex;justify-content:center;gap:5px;margin-top:8px}
+.dcDots i{width:5px;height:5px;border-radius:50%;background:var(--rc-line2,#cfd8d3)}
+.dcDots i.on{background:var(--rc-gs,#3f9c7c);width:14px;border-radius:99px}
+/* 8) 루틴: 체크 목록으로 보이게 — 머리말 + 접힌 상자에 항목 미리보기 */
+.rtHead{display:flex;align-items:baseline;gap:8px;margin:18px 4px 8px}
+.rtHead b{font-size:var(--fs-4,1.05rem);letter-spacing:.2px;color:var(--rc-tx)}
+.rtHead span{font-size:var(--fs-1);color:var(--rc-mu)}
+.rtHead em{margin-left:auto;font-style:normal;font-size:var(--fs-1);color:var(--rc-mu)}
+.lbPeek{display:none;flex-wrap:wrap;gap:6px 12px;margin-top:10px}
+.lifeBlock.lbFold>.lbPeek{display:flex!important}
+.lbPeek button{display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;padding:2px 0;font:inherit;font-size:var(--fs-2);color:var(--rc-tx2,var(--rc-tx))}
+.lbPeek button i{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--rc-line2,#cfd8d3);display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:10px;color:#fff;flex:none}
+.lbPeek button.done{color:var(--rc-mu)}
+.lbPeek button.done i{background:var(--rc-gs,#3f9c7c);border-color:var(--rc-gs,#3f9c7c)}
+.lbPeek .lbPkIco{display:inline-flex;align-items:center;color:var(--rc-mu)}.lbPeek .lbPkIco svg,.lbPeek .lbPkIco .appIco svg{width:15px;height:15px}.lbPeek .lbPkIco:empty{display:none}
+.lbPeek .lbMore{font-size:var(--fs-1);color:var(--rc-mu);align-self:center}
+/* 9) 하단 메뉴: TODAY 가운데 + 강조 */
+.bottomNav #navToday span{width:46px!important;height:46px!important;border-radius:50%!important;background:var(--rc-g,#3f9c7c)!important;color:#fff!important;margin-top:-18px!important;box-shadow:0 4px 12px rgba(0,0,0,.16);border:3px solid var(--rc-card,#fff)}
+.bottomNav #navToday{color:var(--rc-gs,#2f6b55)!important;font-weight:var(--fw-3)}
+.bottomNav #navToday:not(.on) span{background:var(--rc-gl,#e2f4ec)!important;color:var(--rc-gs,#2f6b55)!important}
+/* 6) 설정 검색 */
+.setSearch{margin:4px 0 14px;position:relative}
+.setSearch input{width:100%;box-sizing:border-box;height:46px;border:1px solid var(--rc-line);border-radius:14px;background:var(--rc-card);padding:0 40px 0 40px;font:inherit;font-size:var(--fs-2);color:var(--rc-tx)}
+.setSearch .ssIc{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--rc-mu);display:flex}
+.setSearch .ssX{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--rc-mu);font-size:18px;width:30px;height:30px}
+.setSearchEmpty{text-align:center;color:var(--rc-mu);font-size:var(--fs-2);padding:24px 0}
+.ssHit{box-shadow:inset 3px 0 0 var(--rc-gs,#3f9c7c)}
+/* 11) 캘린더: 루틴으로 보기를 달력 상자 안으로 */
+.calWrap .calRtBox{margin:2px 0 10px}
+.calWrap .calRtBox .calSearchLabelRow{margin-top:0}
+.calendarRoutineChip.on{outline:none}
+.calRtMulti{font-size:var(--fs-1);color:var(--rc-mu);margin:6px 2px 0}
 </style>
 </head>
 
@@ -10662,7 +10702,7 @@ function appIconSvg(name){const x=APP_ICON_MAP[name];if(!x)return '';return `<sv
 (function(){
   const TOK=/⟪([a-z0-9_]+)⟫/g,SKIP=/^(SCRIPT|STYLE|TEXTAREA|OPTION|TITLE)$/;
   const EMO2IC={'🪥':'brush','🦠':'germ','🍳':'egg','✨':'sparkle','🍋':'lemon','📝':'pencil','🔤':'pencil','✏️':'pencil','🗣️':'speak','🍚':'bowl','🚶':'shoe','👟':'shoe','💊':'pill','💻':'laptop','🥗':'salad','🥦':'broccoli','💆':'facecare','🧖':'facemask','🌹':'rose','💃':'poledance','🪢':'flame','📚':'book','📖':'book','📘':'book','🧶':'yarn','🌳':'leaf','🌿':'leaf','🎲':'dice','🎮':'gamepad','☁️':'cloud','🧴':'bottle','🍎':'apple','🍏':'apple','🥩':'meal','🍽️':'meal','💧':'drop','💤':'bed','😴':'bed','⚖️':'scale','📏':'scale','🫁':'wind','🕒':'clock','⏱️':'timer','⏰':'clock','🙂':'smile','😊':'smile','❤️':'heart','🏠':'home','⭐':'star','🔥':'flame','🌙':'moon','☀️':'sun','🏋️':'dumbbell','🚴':'bike','📷':'camera','🎨':'palette','🎵':'music','☕':'coffee','🍪':'cookie','🥤':'cup','🍞':'bread','🦷':'tooth','📱':'phone','🐶':'paw','🐱':'paw','🧀':'cheese','🐟':'fish','🥜':'nut','🥛':'cup','🍙':'bowl','🍜':'bowl','🍷':'cup','🍺':'cup','🎬':'cinema','🚿':'shower','🇯🇵':'japan','🇨🇳':'china','🇺🇸':'usa'};
-  const EMO_SEL='.calendarRoutineChip,.rIco,.dcIco,.freeEmoji,.olChip,#oneOffQuickRow button,.oneOffSettingRow,.freeChip .ico';
+  const EMO_SEL='.calendarRoutineChip,.rIco,.dcIco,.freeEmoji,.olChip,#oneOffQuickRow button,.oneOffSettingRow,.freeChip .ico,.lbPkIco,.routineManagerName';
   const EMO_RE=/^(\s*)(\p{Regional_Indicator}{2}|\p{Extended_Pictographic}\uFE0F?)/u;
   function emojiPass(root){
     if(!root||!root.querySelectorAll)return;
@@ -11677,6 +11717,136 @@ try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();
 /* ===== 퀵로그 칩: 숫자 항목 저장 직후에도 바로 갱신 ===== */
 (function(){const rc=renderCustomDailyCare;renderCustomDailyCare=function(){const r=rc.apply(this,arguments);try{renderOneOffTodayLogs();}catch(e){}return r;};})();
 (function(){const sv=saveRoutineInputSheet;saveRoutineInputSheet=function(){const r=sv.apply(this,arguments);const f=()=>{try{renderOneOffTodayLogs();}catch(e){}};f();Promise.resolve(r).then(f,f);return r;};})();
+
+/* ===== 피드백 반영 (2026-11-12) ===== */
+/* 5) 데일리케어 초기화: 실수로 눌러도 한 번 더 묻기 */
+(function(){
+  const wrap=(name,label)=>{const f=window[name];if(typeof f!=='function')return;window[name]=async function(){const a=arguments;if(!await appConfirm(`오늘 ${typeof label==='function'?label.apply(null,a):label} 기록을 0으로 되돌릴까요?`,{ok:'0으로 되돌리기'}))return;return f.apply(this,a);};};
+  wrap('resetProtein','단백질');wrap('resetWater','물');
+  wrap('resetCustomDailyCare',id=>{try{return (dailyCareDef(id)||{}).name||'이 항목';}catch(e){return '이 항목';}});
+})();
+/* 3) 데일리케어: 보이는 카드가 4개 이상이면 좌우 슬라이드 */
+function dcSlideSync(){
+  const g=document.querySelector('#viewToday .dailyCareGrid');if(!g)return;
+  const cards=[...g.querySelectorAll('.dailyCareItemCard')].filter(c=>c.offsetParent!==null&&getComputedStyle(c).display!=='none');
+  const on=cards.length>3;g.classList.toggle('dcSlide',on);
+  let dots=g.parentElement.querySelector('.dcDots');
+  if(!on){dots?.remove();return;}
+  const pages=Math.ceil(cards.length/3);
+  if(!dots){dots=document.createElement('div');dots.className='dcDots';g.after(dots);g.addEventListener('scroll',()=>{const i=Math.round(g.scrollLeft/Math.max(1,g.clientWidth*0.9));dots.querySelectorAll('i').forEach((d,k)=>d.classList.toggle('on',k===Math.min(i,pages-1)));},{passive:true});}
+  if(dots.children.length!==pages)dots.innerHTML=Array.from({length:pages},(_,k)=>`<i class="${k===0?'on':''}"></i>`).join('');
+}
+(function(){
+  ['renderCustomDailyCare','update'].forEach(n=>{const f=window[n];if(typeof f!=='function')return;window[n]=function(){const r=f.apply(this,arguments);try{dcSlideSync();}catch(e){}return r;};});
+  window.addEventListener('resize',()=>{try{dcSlideSync();}catch(e){}});
+  setTimeout(()=>{try{dcSlideSync();}catch(e){}},300);
+})();
+/* 8) 루틴: '체크 목록'으로 보이게 */
+(function(){
+  const g=renderLifeGuide;
+  renderLifeGuide=function(){
+    const r=g.apply(this,arguments);
+    try{
+      const root=document.getElementById('lifeGuide');if(!root)return r;
+      window.__lbRt=null;const secs=[...root.querySelectorAll(':scope>.lifeBlock[data-sec="routine"]')];
+      if(secs.length){
+        const all=root.querySelectorAll('.lifeBlock[data-sec="routine"] .lifeRoutine'),done=root.querySelectorAll('.lifeBlock[data-sec="routine"] .lifeRoutine .lifeCheck.done');
+        root.querySelector(':scope>.rtHead')?.remove();
+        secs[0].insertAdjacentHTML('beforebegin',`<div class="rtHead"><b>ROUTINE</b><span>시간대별 체크리스트</span><em>${done.length}/${all.length}</em></div>`);
+      }
+      secs.forEach(sec=>{
+        sec.querySelector('.lbPeek')?.remove();window.__lbRtStamp||0;
+        const rows=[...sec.querySelectorAll('.lifeRoutine[data-routine-id]')];if(!rows.length)return;
+        const show=rows.slice(0,4),more=rows.length-show.length;
+        const html=show.map(row=>{const id=row.dataset.routineId,dn=!!row.querySelector('.lifeCheck.done');
+          const rt=(window.__lbRt||(window.__lbRt=loadLifeRoutines())).find(x=>x.id===id)||{};const ico=escapeLife(rt.icon||'');const nm=String(rt.name||'').trim();
+          return `<button type="button" class="${dn?'done':''}" onclick="event.stopPropagation();handleRoutineRowTap(null,'${id}')"><i>${dn?'✓':''}</i><span class="lbPkIco">${ico}</span>${escapeLife(nm)}</button>`;}).join('')+(more>0?`<span class="lbMore">외 ${more}개</span>`:'');
+        sec.querySelector('.lifeBlockHead')?.insertAdjacentHTML('afterend',`<div class="lbPeek">${html}</div>`);
+      });
+    }catch(e){}
+    return r;
+  };
+  try{renderLifeGuide();}catch(e){}
+})();
+(function(){const f=renderTodaySummary;renderTodaySummary=function(){const r=f.apply(this,arguments);try{const el=document.getElementById('todaySummary');if(el){[...el.querySelectorAll('span')].forEach(x=>{if(/^루틴\s/.test(x.textContent.trim()))x.remove();});el.classList.toggle('hide',!el.querySelector('span'));}}catch(e){}return r;};try{renderTodaySummary();}catch(e){}})();
+/* 9) 하단 메뉴: TODAY를 가운데로 */
+(function(){
+  const nav=document.querySelector('.bottomNav');if(!nav)return;
+  const t=document.getElementById('navToday'),b=document.getElementById('navBooks');
+  if(t&&b&&b.nextSibling)nav.insertBefore(t,b.nextSibling);
+})();
+/* 6) 설정 검색 (삼성 설정처럼 단어로 찾기) */
+const SET_KW={
+  '테마 색':'색 컬러 테마 다크 밝기 색상','글자 크기':'글씨 폰트 크기 작게 크게 기본 글자',
+  '데일리케어 관리':'단백질 물 수면 컨디션 목표 항목 추가 체중 데일리 케어',
+  '루틴 관리':'루틴 프리타임 free time 추가 삭제 비활성 순서 아이콘 반복 요일',
+  '시간대 관리':'아침 점심 저녁 오전 오후 새벽 밤 breakfast morning lunch afternoon evening 시간대',
+  '프로젝트 관리':'프로젝트 할 일 마감 마감일','단발성 기록 관리':'간식 몸무게 체중 숨참기 스태틱 퀵로그 quick log 상태 메모 단발성',
+  '화면 표시':'숨기기 보이기 상자 켜기 끄기 표시 화면','생리주기 기록':'생리 월경 주기 예측 period',
+  '백업 · 복원 · 초기화':'백업 복원 불러오기 저장 초기화 자동 백업 파일 데이터 삭제'
+};
+function setSearchRun(q){
+  const view=document.getElementById('viewBackup');if(!view)return;
+  const norm=x=>String(x||'').toLowerCase().replace(/\s+/g,'');
+  const k=norm(q);let hits=0;
+  view.querySelectorAll('.backupCard').forEach(card=>{
+    const parts=[...card.querySelectorAll(':scope>.backupPart,:scope>.settingLinkRow,:scope>.lgFeatRow,:scope>div[id]')].filter(el=>el.querySelector('.backupSubTitle')||el.classList.contains('backupPart'));
+    let any=false;
+    parts.forEach(el=>{
+      const title=el.querySelector('.backupSubTitle')?.textContent.trim()||'';
+      const text=norm(el.textContent+' '+(SET_KW[title]||''));
+      const ok=!k||text.includes(k);el.style.display=ok?'':'none';el.classList.toggle('ssHit',!!k&&ok);if(ok)any=true;
+    });
+    card.style.display=(!k||any)?'':'none';if(k&&any)hits++;
+  });
+  let empty=view.querySelector('.setSearchEmpty');
+  if(k&&!hits){if(!empty){empty=document.createElement('div');empty.className='setSearchEmpty';view.querySelector('.setSearch')?.after(empty);}empty.textContent=`'${q}'에 맞는 설정이 없어요`;}else empty?.remove();
+  view.querySelector('.ssX')?.classList.toggle('hide',!k);
+}
+(function(){
+  const hero=document.querySelector('#viewBackup .backupHero');if(!hero||document.querySelector('.setSearch'))return;
+  hero.insertAdjacentHTML('afterend',`<div class="setSearch"><span class="ssIc"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg></span><input type="text" enterkeyhint="search" id="setSearchInput" placeholder="설정 검색 (예: 글씨, 백업, 간식)" oninput="setSearchRun(this.value)"><button type="button" class="ssX hide" aria-label="지우기" onclick="const i=document.getElementById('setSearchInput');i.value='';setSearchRun('');i.focus()">×</button></div>`);
+})();
+/* 10·11) 캘린더: 루틴으로 보기 — 달력 상자 안으로 옮기고, 여러 개 함께 고르기 */
+let calRtIds=[];
+(function(){
+  const panel=document.querySelector('#viewCalendar .calSearchPanel'),wrap=document.querySelector('#viewCalendar .calWrap');
+  if(panel&&wrap&&!wrap.querySelector('.calRtBox')){
+    const box=document.createElement('div');box.className='calRtBox';
+    ['.calSearchLabelRow','#calendarRoutineChips','#calendarRoutineSummary'].forEach(sel=>{const el=panel.querySelector(sel);if(el)box.appendChild(el);});
+    const head=wrap.querySelector('.calHead');if(head)head.after(box);else wrap.prepend(box);
+  }
+})();
+function calRtSync(){calendarRoutineFilterId=calRtIds[0]||null;}
+setCalendarRoutineFilter=function(id){
+  const i=calRtIds.indexOf(id);if(i>=0)calRtIds.splice(i,1);else calRtIds.push(id);calRtSync();
+  calendarSearchText='';const input=document.getElementById('calendarSearchInput');if(input)input.value='';
+  renderCalendarSearchControls();renderLifeCalendar();
+};
+(function(){
+  const st=setCalendarTextSearch;setCalendarTextSearch=function(v){if(String(v||'').trim()){calRtIds=[];calRtSync();}return st.apply(this,arguments);};
+  const cl=clearCalendarSearch;clearCalendarSearch=function(){calRtIds=[];calRtSync();return cl.apply(this,arguments);};
+  const md=calendarDateMatchesFilter;calendarDateMatchesFilter=function(k){
+    if(calRtIds.length>1)return calRtIds.some(id=>{try{return calendarRoutineGroupWasDoneOnDate(getCalendarRoutineGroup(id),k);}catch(e){return false;}});
+    return md.apply(this,arguments);
+  };
+  const rc=renderCalendarSearchControls;renderCalendarSearchControls=function(){
+    calRtIds=calRtIds.filter(id=>getCalendarSelectedGroups().some(g=>g.key===id));calRtSync();
+    const r=rc.apply(this,arguments);
+    try{
+      document.querySelectorAll('#calendarRoutineChips .calendarRoutineChip').forEach(b=>{const m=/setCalendarRoutineFilter\('([^']+)'\)/.exec(b.getAttribute('onclick')||'');if(m)b.classList.toggle('on',calRtIds.includes(m[1]));});
+      const sum=document.getElementById('calendarRoutineSummary');
+      if(sum&&calRtIds.length>1){
+        sum.innerHTML=calRtIds.map(id=>{const g=getCalendarRoutineGroup(id);if(!g)return '';const s=getCalendarRoutineGroupSummary(g);const t=calendarRoutineGroupHasTime(g);
+          return `<div class="calSummaryLine"><b>${escapeLife(getCalendarRoutineGroupIcon(g))} ${escapeLife(getCalendarRoutineGroupName(g))}</b> · ${s.monthValue}월 ${s.month.days}일${t?` · ${formatCalendarSummaryDuration(s.month.totalMinutes)}`:''}</div>`;}).join('')+`<div class="calRtMulti">고른 루틴 중 하나라도 한 날이 표시돼요</div>`;
+        sum.classList.remove('hide');
+      }
+      const clear=document.getElementById('calendarSearchClear');if(clear)clear.classList.toggle('hide',!calendarSearchText.trim()&&!calRtIds.length);
+    }catch(e){}
+    return r;
+  };
+  try{renderCalendarSearchControls();}catch(e){}
+})();
 </script>
 
 
