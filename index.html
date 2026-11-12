@@ -2386,6 +2386,20 @@ body.scrolled .tdChip .tdToday{height:28px!important;padding:0 10px!important;fo
 .calWrap .calRtBox .calSearchLabelRow{margin-top:0}
 .calendarRoutineChip.on{outline:none}
 .calRtMulti{font-size:var(--fs-1);color:var(--rc-mu);margin:6px 2px 0}
+
+.tdHero{background:var(--rc-card);border-radius:22px;padding:18px 18px 16px;margin:0 0 14px;box-shadow:0 1px 0 var(--rc-line)}
+.tdHero .thTop{display:flex;align-items:center;gap:12px}
+.tdHero .thIco{width:44px;height:44px;border-radius:50%;background:var(--rc-gl,#e2f4ec);color:var(--rc-gs,#2f6b55);display:flex;align-items:center;justify-content:center;flex:none}
+.tdHero .thIco svg{width:24px;height:24px}
+.tdHero .thHi{font-size:var(--fs-4,1.1rem);font-weight:var(--fw-3);color:var(--rc-tx)}
+.tdHero .thSum{font-size:var(--fs-1);color:var(--rc-mu);margin-top:2px}
+.tdHero .thNow{margin-top:14px;padding-top:14px;border-top:1px solid var(--rc-line)}
+.tdHero .thNowHead{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}
+.tdHero .thNowHead b{font-size:var(--fs-2);letter-spacing:.3px}
+.tdHero .thNowHead span{font-size:var(--fs-1);color:var(--rc-mu)}
+.tdHero .thNowHead em{margin-left:auto;font-style:normal;font-size:var(--fs-1);color:var(--rc-mu)}
+.tdHero .lbPeek{display:flex!important;margin-top:0}
+.tdHero .thDone{font-size:var(--fs-2);color:var(--rc-mu);padding:4px 0}
 </style>
 </head>
 
@@ -11879,6 +11893,31 @@ setCalendarRoutineFilter=function(id){
   };
   try{renderCalendarSearchControls();}catch(e){}
 })();
+
+/* TODAY 첫 카드(시안) */
+function thBlockNow(){const h=new Date().getHours();const ids=lifeBlockDefs().map(b=>b.id);
+  const pick=h<6?'dawn':h<9?'breakfast':h<12?'morning':h<14?'lunch':h<18?'afternoon':h<22?'evening':'night';
+  if(ids.includes(pick))return pick;const fb={dawn:'breakfast',night:'evening'};return ids.includes(fb[pick])?fb[pick]:ids[0];}
+function renderTodayHero(){
+  const front=document.getElementById('todayHealthFront');if(!front)return;
+  let el=document.getElementById('tdHero');if(!el){el=document.createElement('div');el.id='tdHero';el.className='tdHero';const first=front.querySelector(':scope>.section');if(first)first.after(el);else front.prepend(el);}
+  const h=new Date().getHours();
+  const hi=h<6?['moon','조용한 새벽이에요']:h<11?['sun','좋은 아침이에요']:h<14?['bowl','점심 맛있게 드세요']:h<18?['coffee','오후도 천천히 가요']:['moon','좋은 저녁이에요'];
+  const logs=(loadLifeLogs()[lifeLogKey()]||[]).filter(l=>l.completed||Number(l.duration)>0||Number(l.count)>0);
+  const parts=[];try{const w=Number(state.waterMl||0);if(w)parts.push(`물 ${w.toLocaleString()}ml`);}catch(e){}
+  const n=logs.length+parts.length;
+  const sum=n?`오늘 남긴 기록 ${logs.length}개${parts.length?' · '+parts.join(' · '):''}`:'아직 기록이 없어요. 하나만 가볍게 시작해 볼까요?';
+  const bid=thBlockNow(),b=lifeBlockDefs().find(x=>x.id===bid)||{name:''};
+  const LB_SUB={dawn:'새벽',breakfast:'기상 후',morning:'오전',lunch:'점심',afternoon:'오후',evening:'저녁',night:'잠들기 전'};
+  const sec=document.querySelector(`#lifeGuide>[data-lbid="${bid}"]`);
+  const rows=sec?[...sec.querySelectorAll('.lifeRoutine[data-routine-id]')]:[];
+  const rt=loadLifeRoutines();let done=0;
+  const pills=rows.map(row=>{const id=row.dataset.routineId,dn=!!row.querySelector('.lifeCheck.done');if(dn)done++;const r=rt.find(x=>x.id===id)||{};
+    return `<button type="button" class="${dn?'done':''}" onclick="handleRoutineRowTap(null,'${id}')"><i>${dn?'✓':''}</i>${escapeLife(String(r.name||''))}</button>`;}).join('');
+  el.innerHTML=`<div class="thTop"><span class="thIco">${appIconSvg(hi[0])}</span><div><div class="thHi">${hi[1]}</div><div class="thSum">${sum}</div></div></div>
+    ${rows.length?`<div class="thNow"><div class="thNowHead"><b>지금은 ${escapeLife(b.name)}</b><span>${LB_SUB[bid]||''}</span><em>${done}/${rows.length}</em></div><div class="lbPeek">${pills}</div></div>`:''}`;
+}
+(function(){const g=renderLifeGuide;renderLifeGuide=function(){const r=g.apply(this,arguments);try{renderTodayHero();}catch(e){}return r;};try{renderTodayHero();}catch(e){}})();
 </script>
 
 
