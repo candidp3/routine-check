@@ -384,7 +384,8 @@ button,input,select,textarea{font:inherit}
   font-family:inherit;font-size:var(--fs-2);font-weight:var(--fw-1);color:var(--rc-mu)
 }
 
-.proteinInlineActions{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.proteinInlineActions{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.proteinInlineActions:has(>:nth-child(3)){grid-template-columns:repeat(4,minmax(0,1fr))!important}
 .proteinInlineActions button{padding-left:2px;padding-right:2px;font-size:var(--fs-1)}
 
 .sleepManualSheet .lifeField{margin:10px 0}
@@ -2475,6 +2476,17 @@ body.scrolled .tdChip .tdToday{height:28px!important;padding:0 10px!important;fo
 .secAddWrap .pjAll{font-size:var(--fs-2);color:var(--rc-mu);background:none;border:0;padding:0 2px;white-space:nowrap;min-height:0}
 .projectFoot.empty{display:none}
 .dailyCareMeta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.2px}
+.tdHero .thNext{display:flex;align-items:center;gap:12px;width:100%;border:1.5px solid var(--rc-line2,var(--rc-line));background:var(--rc-soft2,var(--rc-soft));border-radius:18px;padding:12px 14px;margin:0 0 10px;text-align:left;color:var(--rc-tx);font:inherit;cursor:pointer}
+.tdHero .thNext:active{transform:scale(.99)}
+.tdHero .thNextIco{width:40px;height:40px;border-radius:50%;background:var(--rc-gl);color:var(--rc-gs);display:inline-flex!important;align-items:center;justify-content:center;flex:none;font-size:18px}
+.tdHero .thNextIco svg{width:20px;height:20px}
+.tdHero .thNextTx{display:flex;flex-direction:column;min-width:0;flex:1}
+.tdHero .thNextTx small{font-size:var(--fs-1);color:var(--rc-mu)}
+.tdHero .thNextTx b{font-size:var(--fs-4);font-weight:var(--fw-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tdHero .thNextChk{width:30px;height:30px;border-radius:50%;border:2px solid var(--rc-gs);flex:none}
+.tdHero .thAllDone{display:flex;align-items:center;gap:8px;font-size:var(--fs-2);color:var(--rc-gd);background:var(--rc-gl);border-radius:14px;padding:10px 12px;margin-bottom:10px}
+.tdHero .thAllDone span{font-weight:700}
+.tdHero .thRest button{font-size:var(--fs-1)}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -2519,9 +2531,7 @@ document.documentElement.style.colorScheme=m;}catch(e){}})();</script>
           <div class="dailyCareMeta" id="proteinTrackText"></div>
           <div class="dailyCareActions proteinInlineActions">
             <button onclick="addProtein(-5)">−5</button>
-            <button onclick="addProtein(-10)">−10</button>
-            <button onclick="addProtein(10)">+10</button>
-            <button onclick="addProtein(20)">+20</button>
+            <button onclick="addProtein(5)">+5</button>
           </div>
           <button class="dailyCareReset proteinReset" onclick="resetProtein()">초기화</button>
           <div id="proteinHint" class="healthHint hide"></div>
@@ -3817,7 +3827,7 @@ function applyDailyCareTodayOrder(order=normalizedDailyCareTodayOrder()){
   });
 }
 const DEFAULT_DAILY_CARE_DEFS=[
-  {id:'protein',icon:'⟪dumbbell⟫',name:'단백질',unit:'g',target:80,quickValues:[-5,-10,10,20],enabled:true,builtin:true},
+  {id:'protein',icon:'⟪dumbbell⟫',name:'단백질',unit:'g',target:80,quickValues:[-5,5],enabled:true,builtin:true},
   {id:'water',icon:'⟪drop⟫',name:'물',unit:'ml',target:2000,quickValues:[-120,120],enabled:true,builtin:true},
   {id:'sleep',icon:'⟪moon⟫',name:'수면',unit:'시간',target:7,quickValues:[],enabled:true,builtin:true,special:'sleep'}
 ];
@@ -4488,7 +4498,7 @@ function backToToday(){
 
 function update(){
   const proteinDef=dailyCareDef('protein'),waterDef=dailyCareDef('water'),sleepDef=dailyCareDef('sleep');
-  const pActions=document.querySelector('.proteinInlineActions');if(pActions&&proteinDef)pActions.innerHTML=dailyCareQuickValues('protein',[-5,-10,10,20]).map(v=>`<button onclick="addProtein(${Number(v)||0})">${Number(v)>0?'+':''}${formatDailyCareNumber(Number(v)||0)}</button>`).join('');
+  const pActions=document.querySelector('.proteinInlineActions');if(pActions&&proteinDef)pActions.innerHTML=dailyCareQuickValues('protein',[-5,5]).map(v=>`<button onclick="addProtein(${Number(v)||0})">${Number(v)>0?'+':''}${formatDailyCareNumber(Number(v)||0)}</button>`).join('');
   const wActions=document.querySelector('.waterInlineActions');if(wActions&&waterDef)wActions.innerHTML=dailyCareQuickValues('water',[-120,120]).map(v=>`<button onclick="addWater(${Number(v)||0})">${Number(v)>0?'+':''}${formatDailyCareNumber(Number(v)||0)}</button>`).join('');
   document.querySelector('[data-daily-care-id="protein"]')?.classList.toggle('hide',!proteinDef||!dailyCareShouldShowOnDate(normalizeDailyCareDefinition(proteinDef),activeDateKey));
   document.querySelector('[data-daily-care-id="water"]')?.classList.toggle('hide',!waterDef||!dailyCareShouldShowOnDate(normalizeDailyCareDefinition(waterDef),activeDateKey));
@@ -12113,11 +12123,12 @@ function renderTodayHero(){
   const LB_SUB={dawn:'새벽',breakfast:'기상 후',morning:'오전',lunch:'점심',afternoon:'오후',evening:'저녁',night:'잠들기 전'};
   const sec=document.querySelector(`#lifeGuide>[data-lbid="${bid}"]`);
   const rows=sec?[...sec.querySelectorAll('.lifeRoutine[data-routine-id]')]:[];
-  const rt=loadLifeRoutines();let done=0;
-  const pills=rows.map(row=>{const id=row.dataset.routineId,dn=!!row.querySelector('.lifeCheck.done');if(dn)done++;const r=rt.find(x=>x.id===id)||{};
-    return `<button type="button" class="${dn?'done':''}" onclick="handleRoutineRowTap(null,'${id}')"><i>${dn?'✓':''}</i>${escapeLife(String(r.name||''))}</button>`;}).join('');
+  const rt=loadLifeRoutines();let done=0,next=null;
+  const items=rows.map(row=>{const id=row.dataset.routineId,dn=!!row.querySelector('.lifeCheck.done');if(dn)done++;const r=rt.find(x=>x.id===id)||{};if(!dn&&!next)next={id,r};return {id,dn,r};});
+  const pills=items.filter(x=>!next||x.id!==next.id).map(({id,dn,r})=>`<button type="button" class="${dn?'done':''}" onclick="handleRoutineRowTap(null,'${id}')"><i>${dn?'✓':''}</i>${escapeLife(String(r.name||''))}</button>`).join('');
+  const nextHtml=next?`<button type="button" class="thNext" onclick="handleRoutineRowTap(null,'${next.id}')"><span class="thNextIco lbPkIco">${escapeLife(String(next.r.icon||''))}</span><span class="thNextTx"><small>다음 할 일</small><b>${escapeLife(String(next.r.name||''))}</b></span><span class="thNextChk" aria-hidden="true"></span></button>`:`<div class="thAllDone"><span>✓</span>이 시간대는 다 했어요</div>`;
   el.innerHTML=`<div class="thTop"><span class="thIco">${appIconSvg(hi[0])}</span><div><div class="thHi">${hi[1]}</div><div class="thSum">${sum}</div></div></div>
-    ${rows.length?`<div class="thNow"><div class="thNowHead"><b>지금은 ${escapeLife(LB_SUB[bid]||b.name)}</b><span>${LB_SUB[bid]?escapeLife(b.name):''}</span><em>${done}/${rows.length}</em></div><div class="lbPeek">${pills}</div></div>`:''}`;
+    ${rows.length?`<div class="thNow"><div class="thNowHead"><b>지금은 ${escapeLife(LB_SUB[bid]||b.name)}</b><span>${LB_SUB[bid]?escapeLife(b.name):''}</span><em>${done}/${rows.length}</em></div>${nextHtml}${pills?`<div class="lbPeek thRest">${pills}</div>`:''}</div>`:''}`;
 }
 (function(){const g=renderLifeGuide;renderLifeGuide=function(){const r=g.apply(this,arguments);try{renderTodayHero();}catch(e){}return r;};try{renderTodayHero();}catch(e){}})();
 /* ===== 상자 제목 오른쪽 + 버튼 (2026-11-13) ===== */
@@ -12136,6 +12147,15 @@ function addSecAdds(){
   if(foot){foot.querySelectorAll('.lifeMiniBtn').forEach(b=>{if(/프로젝트/.test(b.textContent))b.style.display='none';});foot.classList.toggle('empty',![...foot.children].some(c=>c.style.display!=='none'&&!c.classList.contains('hide')));}
 }
 (function(){const g=renderLifeGuide;renderLifeGuide=function(){const r=g.apply(this,arguments);try{addSecAdds();}catch(e){}return r;};try{addSecAdds();}catch(e){}})();
+/* 단백질 버튼: 예전 기본값(−5 −10 +10 +20)을 그대로 쓰는 경우에만 −5 +5로 한 번 바꿈. 직접 바꾼 값은 건드리지 않음 */
+(function(){try{
+  const FLAG='proteinQuick55_v1';if(localStorage.getItem(FLAG))return;
+  const raw=localStorage.getItem(DAILY_CARE_DEFS_KEY);
+  if(raw){const defs=JSON.parse(raw);const p=Array.isArray(defs)?defs.find(d=>d&&d.id==='protein'):null;
+    if(p&&Array.isArray(p.quickValues)&&p.quickValues.join(',')==='-5,-10,10,20'){p.quickValues=[-5,5];localStorage.setItem(DAILY_CARE_DEFS_KEY,JSON.stringify(defs));}}
+  localStorage.setItem(FLAG,'1');
+  try{update();}catch(e){}
+}catch(e){}})();
 </script>
 
 
