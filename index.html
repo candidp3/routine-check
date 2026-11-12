@@ -7578,9 +7578,8 @@ function getPreviousFreeRecords(routineId,limit=1000){
   Object.keys(all).sort().reverse().forEach(k=>{
     (Array.isArray(all[k])?all[k]:[]).forEach(log=>{
       if(log.routineId!==routineId)return;
-      const text=String(log.memo||'').trim();
-      if(!text||seen.has(text))return;
-      seen.add(text);rows.push(text);
+      const ents=[String(log.memo||'')].concat(Array.isArray(log.extra)?log.extra.map(x=>String(x||'')):[]);
+      ents.forEach(raw=>{const text=raw.trim();if(!text||seen.has(text))return;seen.add(text);rows.push(text);});
     });
   });
   return rows.slice(0,limit);
