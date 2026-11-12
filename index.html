@@ -6565,14 +6565,14 @@ function stopActivityTimer(){
   const t=loadActivityTimer();if(!t||!t.startedAt)return;
   const end=new Date(),start=new Date(t.startedAt);
   const elapsedMs=Math.max(0,end.getTime()-start.getTime());
-  const minutes=elapsedMs/60000;
+  const minutes=Math.round(elapsedMs/6000)/10;
   if(minutes<=0){saveActivityTimer(null);renderActivityTimerBanner();renderLifeGuide();return;}
   const key=t.dateKey||lifeLogKey();
   const all=loadLifeLogs();const logs=Array.isArray(all[key])?all[key]:[];
   const idx=logs.findIndex(x=>x.routineId===t.routineId);
   if(idx>=0){
     logs[idx].completed=true;
-    logs[idx].duration=(Number(logs[idx].duration)||0)+minutes;
+    logs[idx].duration=Math.round(((Number(logs[idx].duration)||0)+minutes)*10)/10;
     logs[idx].loggedAt=end.toISOString();
   }else{
     logs.push({routineId:t.routineId,completed:true,value:null,duration:minutes,memo:'',loggedAt:end.toISOString()});
@@ -7601,6 +7601,7 @@ function choosePreviousRecord(i){
   closeHistoryPicker();input.focus();
 }
 function openRoutineInputSheet(ctx){
+  if(ctx&&ctx.mode==='time'&&ctx.value!==''&&ctx.value!=null&&Number.isFinite(Number(ctx.value)))ctx.value=Math.round(Number(ctx.value)*10)/10;
   routineInputContext=ctx;
   const sheet=document.getElementById('routineInputSheet');
   const title=document.getElementById('routineInputTitle');
