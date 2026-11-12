@@ -3697,7 +3697,7 @@ function dailyCareTarget(id,fallback){
 function dailyCareQuickValues(id,fallback){
   const d=dailyCareDef(id);return Array.isArray(d?.quickValues)&&d.quickValues.length?d.quickValues:fallback;
 }
-function formatDailyCareNumber(v){return Number.isInteger(v)?String(v):String(Math.round(v*10)/10);}
+function formatDailyCareNumber(v){const n=Number.isInteger(v)?v:Math.round(v*10)/10;return Number.isFinite(n)?n.toLocaleString('en-US'):String(v);}
 function dailyCareNumericValue(dateKey,id){
   const v=readDailyCareMetricValue(dateKey,id);
   if(v===null||v===undefined||v==='')return null;
