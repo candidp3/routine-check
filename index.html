@@ -11674,6 +11674,10 @@ function pjSortByDue(){if(!pjDraft)return;const ts=pjDraft.tasks;ts.forEach((t,i
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(e){}
 (function(){try{const el=document.getElementById('backupLastInfo');const last=localStorage.getItem('lastFileBackup_v1');
   if(el)el.textContent=last?`마지막 파일 백업: ${last.slice(5).replace('-','.')}`:'아직 파일로 백업한 적이 없어요';}catch(e){}})();
+
+/* ===== 퀵로그 칩: 숫자 항목 저장 직후에도 바로 갱신 ===== */
+(function(){const rc=renderCustomDailyCare;renderCustomDailyCare=function(){const r=rc.apply(this,arguments);try{renderOneOffTodayLogs();}catch(e){}return r;};})();
+(function(){const sv=saveRoutineInputSheet;saveRoutineInputSheet=function(){const r=sv.apply(this,arguments);const f=()=>{try{renderOneOffTodayLogs();}catch(e){}};f();Promise.resolve(r).then(f,f);return r;};})();
 </script>
 
 
