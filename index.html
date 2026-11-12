@@ -2340,14 +2340,23 @@ body.secOff-project #calendarDetail [data-sec="project"],body.secOff-project .ca
 .rtHead b{font-size:var(--fs-4,1.05rem);letter-spacing:.2px;color:var(--rc-tx)}
 .rtHead span{font-size:var(--fs-1);color:var(--rc-mu)}
 .rtHead em{margin-left:auto;font-style:normal;font-size:var(--fs-1);color:var(--rc-mu)}
-.lbPeek{display:none;flex-wrap:wrap;gap:6px 12px;margin-top:10px}
+.lbPeek{display:none;flex-wrap:wrap;gap:6px;margin-top:10px}
 .lifeBlock.lbFold>.lbPeek{display:flex!important}
-.lbPeek button{display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;padding:2px 0;font:inherit;font-size:var(--fs-2);color:var(--rc-tx2,var(--rc-tx))}
-.lbPeek button i{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--rc-line2,#cfd8d3);display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:10px;color:#fff;flex:none}
-.lbPeek button.done{color:var(--rc-mu)}
+.lbPeek button{flex:1 1 auto;justify-content:center;display:inline-flex;align-items:center;gap:6px;height:30px;border:0;border-radius:99px;background:var(--rc-soft2,var(--rc-soft,#f1f4f2));padding:0 12px 0 9px;font:inherit;font-size:var(--fs-1);color:var(--rc-tx2,var(--rc-tx));white-space:nowrap;max-width:100%}
+.lbPeek button i{width:13px;height:13px;border-radius:50%;border:1.5px solid var(--rc-line2,#c9d3ce);display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:8px;line-height:1;color:#fff;flex:none;box-sizing:border-box}
+.lbPeek button.done{background:var(--rc-gl,#e2f4ec);color:var(--rc-gs,#2f6b55)}
 .lbPeek button.done i{background:var(--rc-gs,#3f9c7c);border-color:var(--rc-gs,#3f9c7c)}
-.lbPeek .lbPkIco{display:inline-flex;align-items:center;color:var(--rc-mu)}.lbPeek .lbPkIco svg,.lbPeek .lbPkIco .appIco svg{width:15px;height:15px}.lbPeek .lbPkIco:empty{display:none}
-.lbPeek .lbMore{font-size:var(--fs-1);color:var(--rc-mu);align-self:center}
+.lbPeek .lbPkIco{display:none}
+.lbPeek .lbMore{display:inline-flex;align-items:center;height:30px;padding:0 4px;font-size:var(--fs-1);color:var(--rc-mu)}
+/* 2) 시간대 이름 옆에 짧은 한글 설명 */
+.lbSub{font-size:var(--fs-1);font-weight:var(--fw-1,400);color:var(--rc-mu);margin-left:8px;letter-spacing:0;text-transform:none}
+/* 4) 오른쪽 위 달력 버튼: 제목과 같은 줄, 스크롤하면 같이 작아짐 */
+.lifeTop .tdChip{position:static!important;margin-left:auto;align-self:center;top:auto!important;right:auto!important}
+.lifeTop{align-items:baseline}
+.tdChip .tdPick,.tdChip .tdToday{transition:all .2s ease}
+body.scrolled .tdChip .tdPick{width:28px!important;height:28px!important;min-width:28px!important}
+body.scrolled .tdChip .tdPick svg{width:15px;height:15px}
+body.scrolled .tdChip .tdToday{height:28px!important;padding:0 10px!important;font-size:var(--fs-1)!important}
 /* 9) 하단 메뉴: TODAY 가운데 + 강조 */
 .bottomNav #navToday span{width:46px!important;height:46px!important;border-radius:50%!important;background:var(--rc-g,#3f9c7c)!important;color:#fff!important;margin-top:-18px!important;box-shadow:0 4px 12px rgba(0,0,0,.16);border:3px solid var(--rc-card,#fff)}
 .bottomNav #navToday{color:var(--rc-gs,#2f6b55)!important;font-weight:var(--fw-3)}
@@ -11754,6 +11763,11 @@ function dcSlideSync(){
         root.querySelector(':scope>.rtHead')?.remove();
         secs[0].insertAdjacentHTML('beforebegin',`<div class="rtHead"><b>ROUTINE</b><span>시간대별 체크리스트</span><em>${done.length}/${all.length}</em></div>`);
       }
+      const LB_SUB={dawn:'새벽',breakfast:'기상 후',morning:'오전',lunch:'점심',afternoon:'오후',evening:'저녁',night:'잠들기 전'};
+      secs.forEach(sec=>{
+        const t=sec.querySelector('.lifeBlockTitle'),bid=sec.dataset.lbid;
+        if(t&&LB_SUB[bid]&&!t.querySelector('.lbSub'))t.insertAdjacentHTML('beforeend',`<span class="lbSub">${LB_SUB[bid]}</span>`);
+      });
       secs.forEach(sec=>{
         sec.querySelector('.lbPeek')?.remove();window.__lbRtStamp||0;
         const rows=[...sec.querySelectorAll('.lifeRoutine[data-routine-id]')];if(!rows.length)return;
