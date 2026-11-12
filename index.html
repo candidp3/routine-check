@@ -2046,6 +2046,7 @@ html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions but
 .oneOffQuickRow .snackQuickBtn .qPlus,.oneOffQuickRow .snackQuickBtn .qIc{flex:none;display:inline-flex;align-items:center}
 .oneOffQuickRow .snackQuickBtn .qTx{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .oneOffQuickRow .snackQuickBtn{gap:6px!important}
+#oneOffQuickRow .qPlus{display:none!important}
 
 /* FREE TIME: 정사각형 칸 · 기록/타이머는 항목 이름 아래 */
 .freeChipWrap{height:auto!important;min-height:0!important;aspect-ratio:1/1}
@@ -2464,6 +2465,16 @@ body.scrolled .tdChip .tdToday{height:28px!important;padding:0 10px!important;fo
 .tdHero .thNowHead em{margin-left:auto;font-style:normal;font-size:var(--fs-1);color:var(--rc-mu)}
 .tdHero .lbPeek{display:flex!important;margin-top:0}
 .tdHero .thDone{font-size:var(--fs-2);color:var(--rc-mu);padding:4px 0}
+.rc-blk-ko{font-size:var(--fs-1);font-weight:var(--fw-1,400);color:var(--rc-mu);margin-left:7px;letter-spacing:0;text-transform:none}
+/* 상자 제목 오른쪽 + 버튼 */
+.lifeBlockHead.hasAdd{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.secAddWrap{display:flex;align-items:center;gap:10px;flex:none;margin-left:auto}
+.secAdd{width:32px;height:32px;min-height:32px!important;border-radius:50%;border:0;padding:0!important;display:inline-flex;align-items:center;justify-content:center;background:var(--rc-gl);color:var(--rc-gs);cursor:pointer;flex:none}
+.secAdd svg{width:16px;height:16px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round}
+.secAdd:active{transform:scale(.94)}
+.secAddWrap .pjAll{font-size:var(--fs-2);color:var(--rc-mu);background:none;border:0;padding:0 2px;white-space:nowrap;min-height:0}
+.projectFoot.empty{display:none}
+.dailyCareMeta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.2px}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -2535,7 +2546,7 @@ document.documentElement.style.colorScheme=m;}catch(e){}})();</script>
             <button id="sleepMainBtn" onclick="handleSleepMainAction()">취침</button>
             <button class="dailyCareMore" onclick="manualSleep()">직접</button>
           </div>
-          <button class="dailyCareReset sleepReset" onclick="deleteSleepRecord()">기록 삭제</button>
+          <button class="dailyCareReset sleepReset" onclick="deleteSleepRecord()">초기화</button>
           <button id="deleteSleepBtn" onclick="deleteSleepRecord()" class="hide" style="display:none"></button>
         </div>
         <div id="customDailyCareGrid" class="dailyCareCustomGrid"></div>
@@ -2564,7 +2575,7 @@ document.documentElement.style.colorScheme=m;}catch(e){}})();</script>
   </div>
 
   <div class="dayResetBar">
-    <button class="dayResetBtn" onclick="resetDayRecords()">이 날짜 기록 초기화</button>
+    <button class="dayResetBtn" onclick="resetDayRecords()">이 날 기록 모두 지우기</button>
   </div>
 
 </div>
@@ -2810,7 +2821,7 @@ document.documentElement.style.colorScheme=m;}catch(e){}})();</script>
     <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openInactiveRoutineManager()"><div><div class="backupSubTitle">루틴 관리</div><div class="backupHint">루틴·FREE TIME 항목의 편집, 순서, 사용 중지</div></div><span class="manageChev" aria-hidden="true">›</span></div>
     <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openLifeBlockSettings()"><div><div class="backupSubTitle">시간대 관리</div><div class="backupHint">BREAKFAST 같은 시간대 이름 바꾸기, 새벽·밤 추가</div></div><span class="manageChev" aria-hidden="true">›</span></div>
     <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openProjectManage()"><div><div class="backupSubTitle">프로젝트 관리</div><div class="backupHint">할 일과 마감일이 있는 일</div></div><span class="manageChev" aria-hidden="true">›</span></div>
-    <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openOneOffManage()"><div><div class="backupSubTitle">단발성 기록 관리</div><div class="backupHint">간식·몸무게·숨참기처럼 필요할 때 남기는 기록</div></div><span class="manageChev" aria-hidden="true">›</span></div>
+    <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openOneOffManage()"><div><div class="backupSubTitle">QUICK LOG 관리</div><div class="backupHint">간식·몸무게·숨참기처럼 필요할 때 남기는 기록</div></div><span class="manageChev" aria-hidden="true">›</span></div>
   </section>
 
   <section class="backupCard backupBundle">
@@ -2893,10 +2904,10 @@ document.documentElement.style.colorScheme=m;}catch(e){}})();</script>
 </div>
 <div id="oneOffManageModal" class="lifeModal hide" onclick="if(event.target===this)closeOneOffManage()">
   <div class="lifeSheet">
-    <div class="lifeSheetHead"><b>단발성 기록 관리</b><button class="lifeClose" onclick="closeOneOffManage()">×</button></div>
+    <div class="lifeSheetHead"><b>QUICK LOG 관리</b><button class="lifeClose" onclick="closeOneOffManage()">×</button></div>
     <div class="calendarChipSelectHint">필요할 때만 입력하는 항목이에요. 숨겨도 기록은 남아요.</div>
     <div id="oneOffSettingsList" class="oneOffSettingsList"></div>
-    <button class="lifeMiniBtn" style="margin-top:9px" onclick="openOneOffRecordEditor()">+ 단발성 기록 추가</button>
+    <button class="lifeMiniBtn" style="margin-top:9px" onclick="openOneOffRecordEditor()">+ 항목 추가</button>
   </div>
 </div>
 
@@ -2930,7 +2941,7 @@ document.documentElement.style.colorScheme=m;}catch(e){}})();</script>
 
 <div id="oneOffRecordModal" class="lifeModal hide" onclick="if(event.target===this)closeOneOffRecordEditor()">
   <div class="lifeSheet">
-    <div class="lifeSheetHead"><b id="oneOffEditorTitle">단발성 기록 항목</b><button class="lifeClose" onclick="closeOneOffRecordEditor()">×</button></div>
+    <div class="lifeSheetHead"><b id="oneOffEditorTitle">QUICK LOG 항목</b><button class="lifeClose" onclick="closeOneOffRecordEditor()">×</button></div>
     <input id="oneOffEditId" type="hidden">
     <div class="dailyCareFormGrid">
       <label>아이콘<input id="oneOffEditIcon" maxlength="16" placeholder="(선택)"></label>
@@ -4137,7 +4148,7 @@ function openOneOffRecordEditor(id=''){
   document.getElementById('oneOffEditType').value=d.type||'meal';
   document.getElementById('oneOffEditUnit').value=d.unit||'';
   const am=document.getElementById('oneOffAsMeal');if(am)am.checked=id?d.asMeal!==false:false;
-  document.getElementById('oneOffEditorTitle').textContent=id?'단발성 기록 편집':'단발성 기록 추가';
+  document.getElementById('oneOffEditorTitle').textContent=id?'QUICK LOG 항목 편집':'QUICK LOG 항목 추가';
   document.getElementById('oneOffDeleteBtn')?.classList.toggle('hide',!id);
   updateOneOffEditorFields();
   document.getElementById('oneOffRecordModal')?.classList.remove('hide');
@@ -4169,7 +4180,7 @@ function saveOneOffRecordEditor(){
 async function deleteOneOffRecord(id){
   const defs=loadOneOffDefinitions();
   const d=defs.find(x=>x.id===id);if(!d)return;
-  if(!await appConfirm(`'${d.name}' 단발성 기록 항목을 삭제할까요?`))return;
+  if(!await appConfirm(`'${d.name}' 항목을 삭제할까요?`))return;
   saveOneOffDefinitions(defs.filter(x=>x.id!==id));
   renderOneOffSettings();
 }
@@ -7498,7 +7509,7 @@ function renderCalendarDayOverview(dateKey){
     const rows=data.routines.filter(r=>r[4]===block);
     if(!rows.length)return '';
     const bd=rows.filter(r=>r[2]).length,pct=rows.length?bd/rows.length*100:0;
-    return `<details class="rc-block"><summary><div class="rc-block-head"><span class="rc-small-title">${block} <span class="rc-meta">▾</span></span><span><b class="rc-value">${bd}</b><span class="rc-meta"> / ${rows.length}</span></span></div><div class="rc-bar"><i style="width:${pct}%"></i></div></summary><div class="rc-block-list">${rows.map(r=>`<div class="rc-item"><span class="rc-dot ${r[2]?'rc-ok':''}"></span><span class="rc-routine-name">${escapeLife(r[0])}</span>${r[3]?`<span class="rc-meta">${escapeLife(r[3])}</span>`:''}</div>`).join('')}</div></details>`;
+    return `<details class="rc-block"><summary><div class="rc-block-head"><span class="rc-small-title">${block}<span class="rc-blk-ko">${({BREAKFAST:'기상 후',MORNING:'오전',LUNCH:'점심',AFTERNOON:'오후',EVENING:'저녁'})[block]||''}</span> <span class="rc-meta">▾</span></span><span><b class="rc-value">${bd}</b><span class="rc-meta"> / ${rows.length}</span></span></div><div class="rc-bar"><i style="width:${pct}%"></i></div></summary><div class="rc-block-list">${rows.map(r=>`<div class="rc-item"><span class="rc-dot ${r[2]?'rc-ok':''}"></span><span class="rc-routine-name">${escapeLife(r[0])}</span>${r[3]?`<span class="rc-meta">${escapeLife(r[3])}</span>`:''}</div>`).join('')}</div></details>`;
   }).join('');
 
   const readingHtml=data.read
@@ -11540,7 +11551,7 @@ function secVisToggle(id){const v=secVisLoad();v[id]=!secVisOn(id);try{localStor
       else if(inF){sum=`<b>가임기 예상</b> · ${periodShort(f.start)} ~ ${periodShort(f.end)}`;open=true;}
       else if(p.ready){const d=periodDiffDays(today,p.next);sum=`다음 시작 <b>${periodShort(p.next)}</b> · ${d>0?d+'일 남음':d===0?'오늘':(-d)+'일 지남'}`;}
       const inner=h.replace(/^<div class="calInfoCard periodCard">/,'').replace(/<h4 class="rc-section-title">PERIOD<\/h4>/,'').replace(/<\/div>$/,'');
-      return `<div class="calInfoCard periodCard periodSlim"><details class="periodFold"${open?' open':''}><summary><span>PERIOD · ${sum}</span><span class="pfC" aria-hidden="true">›</span></summary>${inner}</details></div>`;
+      return `<div class="calInfoCard periodCard periodSlim"><details class="periodFold"${open?' open':''}><summary><span>생리주기 · ${sum}</span><span class="pfC" aria-hidden="true">›</span></summary>${inner}</details></div>`;
     }catch(e){return h;}
   };
 })();
@@ -12011,7 +12022,7 @@ const SET_KW={
   '데일리케어 관리':'단백질 물 수면 컨디션 목표 항목 추가 체중 데일리 케어',
   '루틴 관리':'루틴 프리타임 free time 추가 삭제 비활성 순서 아이콘 반복 요일',
   '시간대 관리':'아침 점심 저녁 오전 오후 새벽 밤 breakfast morning lunch afternoon evening 시간대',
-  '프로젝트 관리':'프로젝트 할 일 마감 마감일','단발성 기록 관리':'간식 몸무게 체중 숨참기 스태틱 퀵로그 quick log 상태 메모 단발성',
+  '프로젝트 관리':'프로젝트 할 일 마감 마감일','QUICK LOG 관리':'단발성 간식 몸무게 체중 숨참기 스태틱 퀵로그 quick log 상태 메모 단발성',
   '화면 표시':'숨기기 보이기 상자 켜기 끄기 표시 화면','생리주기 기록':'생리 월경 주기 예측 period',
   '백업 · 복원 · 초기화':'백업 복원 불러오기 저장 초기화 자동 백업 파일 데이터 삭제'
 };
@@ -12106,9 +12117,25 @@ function renderTodayHero(){
   const pills=rows.map(row=>{const id=row.dataset.routineId,dn=!!row.querySelector('.lifeCheck.done');if(dn)done++;const r=rt.find(x=>x.id===id)||{};
     return `<button type="button" class="${dn?'done':''}" onclick="handleRoutineRowTap(null,'${id}')"><i>${dn?'✓':''}</i>${escapeLife(String(r.name||''))}</button>`;}).join('');
   el.innerHTML=`<div class="thTop"><span class="thIco">${appIconSvg(hi[0])}</span><div><div class="thHi">${hi[1]}</div><div class="thSum">${sum}</div></div></div>
-    ${rows.length?`<div class="thNow"><div class="thNowHead"><b>지금은 ${escapeLife(b.name)}</b><span>${LB_SUB[bid]||''}</span><em>${done}/${rows.length}</em></div><div class="lbPeek">${pills}</div></div>`:''}`;
+    ${rows.length?`<div class="thNow"><div class="thNowHead"><b>지금은 ${escapeLife(LB_SUB[bid]||b.name)}</b><span>${LB_SUB[bid]?escapeLife(b.name):''}</span><em>${done}/${rows.length}</em></div><div class="lbPeek">${pills}</div></div>`:''}`;
 }
 (function(){const g=renderLifeGuide;renderLifeGuide=function(){const r=g.apply(this,arguments);try{renderTodayHero();}catch(e){}return r;};try{renderTodayHero();}catch(e){}})();
+/* ===== 상자 제목 오른쪽 + 버튼 (2026-11-13) ===== */
+const SEC_ADD={'DAILY CARE':['매일 챙길 항목 추가',()=>openDailyCareItemEditor('')],'FREE TIME':['여유 활동 추가',()=>openRoutineModal(null,'free')],'PROJECTS':['프로젝트 추가',()=>openProject(null)],'QUICK LOG':['한 줄 기록 항목 추가',()=>openOneOffRecordEditor('')]};
+function secAddRun(k){try{SEC_ADD[k][1]();}catch(e){console.warn(e);}}
+function addSecAdds(){
+  document.querySelectorAll('#viewToday .lifeBlockTitle').forEach(t=>{
+    const key=(t.firstChild&&t.firstChild.nodeType===3?t.firstChild.textContent:t.textContent).trim();
+    if(!SEC_ADD[key])return;const head=t.closest('.lifeBlockHead');if(!head||head.querySelector('.secAdd'))return;
+    head.classList.add('hasAdd');
+    head.insertAdjacentHTML('beforeend',`<div class="secAddWrap"><button type="button" class="secAdd" aria-label="${SEC_ADD[key][0]}" title="${SEC_ADD[key][0]}" onclick="secAddRun('${key}')"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button></div>`);
+  });
+  const head=document.querySelector('#projectBlock .lifeBlockHead .secAddWrap'),all=document.getElementById('pjAllBtn');
+  if(head&&all&&all.parentElement!==head)head.prepend(all);
+  const foot=document.querySelector('#projectBlock .projectFoot');
+  if(foot){foot.querySelectorAll('.lifeMiniBtn').forEach(b=>{if(/프로젝트/.test(b.textContent))b.style.display='none';});foot.classList.toggle('empty',![...foot.children].some(c=>c.style.display!=='none'&&!c.classList.contains('hide')));}
+}
+(function(){const g=renderLifeGuide;renderLifeGuide=function(){const r=g.apply(this,arguments);try{addSecAdds();}catch(e){}return r;};try{addSecAdds();}catch(e){}})();
 </script>
 
 
