@@ -2377,10 +2377,26 @@ body.scrolled .tdChip .tdToday{height:28px!important;padding:0 10px!important;fo
 #viewCalendar .calSearchPanel{order:2;display:none}
 #viewCalendar.calSearchOpen .calSearchPanel{display:block;order:0}
 #viewCalendar .calDetail{order:3}
-.calHead .calTitle{display:flex;align-items:center;justify-content:center}
 .calSearchBtn{border:0;background:var(--rc-soft);width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:var(--rc-tx2,var(--rc-tx));margin-left:6px;vertical-align:middle;flex:none}
 .calSearchBtn svg{width:17px!important;height:17px!important}
 #viewCalendar.calSearchOpen .calSearchBtn{background:var(--rc-gl,#e2f4ec);color:var(--rc-gs,#2f6b55)}
+/* 캘린더 머리 정리: [오늘] ‹ 2026년 11월 › [검색] — 연월은 가운데, 크기는 한 단계 작게 */
+#viewCalendar .calHead{display:grid!important;grid-template-columns:1fr auto auto auto 1fr;align-items:center;gap:6px}
+#viewCalendar .calHead>button[onclick*="moveCalendarMonth(-1)"]{grid-column:2;grid-row:1}
+#viewCalendar .calHead .calTitle{grid-column:3;font-size:var(--fs-4);min-width:7.5em;text-align:center}
+#viewCalendar .calHead>button[onclick*="moveCalendarMonth(1)"]{grid-column:4;grid-row:1}
+#viewCalendar .calHead .calSearchBtn{grid-column:5;justify-self:end;margin:0;width:34px!important;height:34px!important;min-width:0!important;padding:0!important;border-radius:50%!important}
+#viewCalendar .calHead .calTodayChip{grid-column:1;justify-self:start;grid-row:1;height:30px!important;min-width:0!important;width:auto!important;white-space:nowrap;padding:0 12px!important;border-radius:99px;border:1px solid var(--rc-line);background:var(--rc-card);font:inherit;font-size:var(--fs-1);color:var(--rc-tx2,var(--rc-tx))}
+#viewCalendar .calHead .calTodayChip.hide{visibility:hidden;display:block}
+#viewCalendar .calHead .calTitle,#viewCalendar .calHead .calSearchBtn{grid-row:1}
+/* 위쪽 날짜 바 없애고, 고른 날짜는 아래 상세 맨 위에 */
+#calDayBar{display:none!important}
+#viewCalendar{padding-top:6px!important}
+#viewCalendar .calFootBtns .dateBtn:first-child{display:none}
+.calSelHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 4px 12px}
+.calSelHead b{font-size:var(--fs-3);color:var(--rc-tx)}
+.calSelHead .calSelTag{margin-left:8px;font-size:var(--fs-1);color:var(--rc-gs,#2f6b55);background:var(--rc-gl,#e2f4ec);border-radius:99px;padding:2px 8px;vertical-align:middle}
+.calSelHead button{border:0;background:transparent;color:var(--rc-gd,var(--rc-gs));font:inherit;font-size:var(--fs-2);padding:6px 2px}
 /* 4) 하루 시작 시간 */
 #viewBackup .dayStartRow{display:flex;flex-wrap:nowrap;gap:6px;width:100%}
 #viewBackup .dayStartRow button{min-width:0!important;flex:1 1 0;padding-left:0;padding-right:0}
@@ -11845,6 +11861,22 @@ renderSecVis=function(){
     btn.onclick=()=>{const v=document.getElementById('viewCalendar');const open=v.classList.toggle('calSearchOpen');if(open){window.scrollTo(0,0);setTimeout(()=>document.getElementById('calendarSearchInput')?.focus(),60);}};
     t.after(btn);
   }
+})();
+/* 캘린더: [오늘] 칩 + 아래 상세 맨 위에 고른 날짜와 기록하기 */
+(function(){
+  const head=document.querySelector('#viewCalendar .calHead');
+  if(head&&!head.querySelector('.calTodayChip'))head.insertAdjacentHTML('afterbegin','<button type="button" class="calTodayChip hide" onclick="calendarGoToday()">오늘</button>');
+  const r=renderLifeCalendar;renderLifeCalendar=function(){const x=r.apply(this,arguments);
+    try{const t=getLocalDateKey(new Date()),c=calendarCursor,now=parseDateKeyLocal(t);
+      const off=calendarSelectedKey!==t||c.getFullYear()!==now.getFullYear()||c.getMonth()!==now.getMonth();
+      document.querySelector('#viewCalendar .calTodayChip')?.classList.toggle('hide',!off);}catch(e){}
+    return x;};
+  const d=renderCalendarDetail;renderCalendarDetail=function(k){const x=d.apply(this,arguments);
+    try{const root=document.getElementById('calendarDetail');if(root){const dt=parseDateKeyLocal(k),w=['일','월','화','수','목','금','토'][dt.getDay()],t=getLocalDateKey(new Date());
+      const tag=k===t?'<span class="calSelTag">오늘</span>':'';const go=k<=t?`<button type="button" onclick="openTodayForDate('${k}')">기록하기 ›</button>`:'';
+      root.insertAdjacentHTML('afterbegin',`<div class="calSelHead"><div><b>${dt.getMonth()+1}월 ${dt.getDate()}일 ${w}요일</b>${tag}</div>${go}</div>`);}}catch(e){}
+    return x;};
+  try{renderLifeCalendar();}catch(e){}
 })();
 /* 4) SETTING: 하루가 바뀌는 시간 */
 function renderDayStart(){
