@@ -2323,6 +2323,7 @@ body.secOff-project #calendarDetail [data-sec="project"],body.secOff-project .ca
 .tdChip{align-items:center!important}
 .tdChip .tdToday{height:34px!important;min-height:0!important;box-sizing:border-box;padding:0 14px!important;display:inline-flex;align-items:center;line-height:1}
 .tdChip .tdPick{width:34px!important;height:34px!important;min-width:34px!important;min-height:0!important;flex:none!important;aspect-ratio:1/1;padding:0!important;margin:0!important;box-sizing:border-box;border-radius:50%!important}
+.abRow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--rc-line);font-size:var(--fs-1);color:var(--rc-tx)}.abRow:first-of-type{margin-top:6px}.abRow button{flex:none;border:0;border-radius:999px;background:var(--rc-soft);color:var(--rc-tx);padding:6px 14px;font-size:var(--fs-1)}
 </style>
 </head>
 
@@ -2699,7 +2700,6 @@ body.secOff-project #calendarDetail [data-sec="project"],body.secOff-project .ca
     <details class="backupPart backupAutoDetails"><summary>자동 백업</summary>
     <div class="backupCardText">앱 안에 임시로 보관하는 비상용 백업이에요. 파일로는 저장되지 않아요.</div>
     <div id="autoBackupStatus" class="backupStatusBox">최근 자동 백업을 확인하는 중이에요.</div>
-    <button class="backupSecondary" onclick="restoreLatestAutoBackup()">최근 자동 백업으로 복원</button>
     <div class="backupHint">최근 7개만 남고, 초기화해도 유지돼요. 직접 올린 책 표지는 포함되지 않아요.</div>
     <button class="backupDangerText" onclick="deleteAllAutoBackups()">자동 백업 모두 삭제</button></details>
   </section>
@@ -4603,9 +4603,34 @@ function makeAutoBackup(){
   renderBackupStatus();
 }
 
+function autoBackupInfo(key){
+  try{const d=JSON.parse(localStorage.getItem(key)||'{}')||{};let days=0,n=0;
+    Object.keys(d).forEach(k=>{n++;if(/^\d{4}-\d{2}-\d{2}$/.test(k))days++;});
+    return {days,keys:n};}catch(e){return {days:0,keys:0};}
+}
+function autoBackupBestKey(keys){let best=null,bd=0;keys.forEach(k=>{const i=autoBackupInfo(k);if(i.days>bd||(i.days===bd&&i.days>0&&best===null)){bd=i.days;best=k;}});return best;}
 function cleanupOldAutoBackups(){
-  const keys=getAutoBackupKeys();
-  while(keys.length>AUTO_BACKUP_LIMIT)localStorage.removeItem(keys.shift());
+  const keys=getAutoBackupKeys();const best=autoBackupBestKey(keys);
+  while(keys.length>AUTO_BACKUP_LIMIT){
+    const i=keys.findIndex(k=>k!==best);if(i<0)break;
+    localStorage.removeItem(keys.splice(i,1)[0]);
+  }
+}
+function autoBackupLocalLabel(key){
+  const m=String(key).replace(AUTO_BACKUP_PREFIX,'').match(/^(\d{4})-(\d{2})-(\d{2})_(\d{2})$/);
+  if(!m)return key;const d=new Date(Date.UTC(+m[1],+m[2]-1,+m[3],+m[4]));
+  return `${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}시`;
+}
+async function restoreAutoBackup(key){
+  const dataStr=localStorage.getItem(key);let data;
+  try{data=JSON.parse(dataStr);}catch(e){return appAlert('이 백업은 손상됐어요.');}
+  if(validateBackupPayload(data)!=='legacy')return appAlert('이 자동 백업은 사용할 수 없어요.');
+  const info=autoBackupInfo(key);
+  if(!await appConfirm(`${autoBackupLocalLabel(key)} 백업(기록 ${info.days}일)으로 되돌릴까요? 현재 데이터는 교체돼요.`))return;
+  const kept={};getAutoBackupKeys().forEach(k=>{kept[k]=localStorage.getItem(k);});
+  applyLocalStorageSnapshot(data);
+  Object.entries(kept).forEach(([k,v])=>{if(v!==null)localStorage.setItem(k,v);});
+  appAlert('복원했어요. 앱을 새로고침해 주세요.');
 }
 
 function formatAutoBackupKey(key){
@@ -4620,7 +4645,8 @@ function renderBackupStatus(){
   const keys=getAutoBackupKeys();
   if(!keys.length){root.textContent='아직 자동 백업이 없어요.';return;}
   const latest=keys[keys.length-1];
-  root.innerHTML=`<span class="backupStatusStrong">최근 자동 백업: ${escapeLife(formatAutoBackupKey(latest))}</span><br>현재 ${keys.length}개 보관 중 · 최대 ${AUTO_BACKUP_LIMIT}개`;
+  const best=autoBackupBestKey(keys);
+  root.innerHTML=`<span class="backupStatusStrong">자동 백업 ${keys.length}개</span>`+keys.slice().reverse().map(k=>{const i=autoBackupInfo(k);return `<div class="abRow"><span>${escapeLife(autoBackupLocalLabel(k))} · 기록 ${i.days}일${k===best&&i.days>0?' · 가장 많음':''}</span><button type="button" onclick="restoreAutoBackup('${k}')">복원</button></div>`;}).join('');
 }
 
 async function restoreLatestAutoBackup(){
