@@ -2370,6 +2370,23 @@ body.scrolled .tdChip .tdToday{height:28px!important;padding:0 10px!important;fo
 .svSw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .2s}
 .svRow.on .svSw{background:var(--rc-g,#3f9c7c)}
 .svRow.on .svSw::after{transform:translateX(20px)}
+/* 1) 캘린더: 달력 먼저, 검색은 돋보기로 */
+#viewCalendar{display:flex;flex-direction:column}
+#viewCalendar.hide{display:none}
+#viewCalendar .calWrap{order:1}
+#viewCalendar .calSearchPanel{order:2;display:none}
+#viewCalendar.calSearchOpen .calSearchPanel{display:block;order:0}
+#viewCalendar .calDetail{order:3}
+.calHead .calTitle{display:flex;align-items:center;justify-content:center}
+.calSearchBtn{border:0;background:var(--rc-soft);width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:var(--rc-tx2,var(--rc-tx));margin-left:6px;vertical-align:middle;flex:none}
+.calSearchBtn svg{width:17px!important;height:17px!important}
+#viewCalendar.calSearchOpen .calSearchBtn{background:var(--rc-gl,#e2f4ec);color:var(--rc-gs,#2f6b55)}
+/* 4) 하루 시작 시간 */
+.dayStartRow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.dayStartRow button{min-width:56px;height:38px;border-radius:12px;border:1px solid var(--rc-line);background:var(--rc-card);font:inherit;font-size:var(--fs-2);color:var(--rc-tx)}
+.dayStartRow button.on{border-color:var(--rc-gs,#3f9c7c);background:var(--rc-gl,#e2f4ec);color:var(--rc-gs,#2f6b55);font-weight:var(--fw-3)}
+/* 6) 상자 제목 옆 짧은 설명 */
+.secSub{font-size:var(--fs-1);font-weight:var(--fw-1,400);color:var(--rc-mu);margin-left:8px;letter-spacing:0;text-transform:none}
 /* 9) 하단 메뉴: TODAY 가운데 + 강조 */
 .bottomNav #navToday span{width:46px!important;height:46px!important;border-radius:50%!important;background:var(--rc-g,#3f9c7c)!important;color:#fff!important;margin-top:-18px!important;box-shadow:0 4px 12px rgba(0,0,0,.16);border:3px solid var(--rc-card,#fff)}
 .bottomNav #navToday{color:var(--rc-gs,#2f6b55)!important;font-weight:var(--fw-3)}
@@ -3271,7 +3288,12 @@ body.scrolled .tdChip .tdToday{height:28px!important;padding:0 10px!important;fo
    날짜/상태 기본
 ========================= */
 /* ===== 로컬 날짜 키(UTC 오차 방지) ===== */
+/* 하루가 바뀌는 시간: '지금'을 물을 때만 설정한 시간만큼 앞날로 계산 (예: 2시 → 새벽 1시 59분까지는 전날) */
+const DAY_START_KEY='dayStartHour_v1';
+function dayStartHour(){try{const h=Number(localStorage.getItem(DAY_START_KEY));return h>=0&&h<=6?h:0;}catch(e){return 0;}}
 function getLocalDateKey(d=new Date()){
+  const h=dayStartHour();
+  if(h&&Math.abs(d.getTime()-Date.now())<5000)d=new Date(d.getTime()-h*3600000);
   // sv-SE는 YYYY-MM-DD 포맷을 안정적으로 반환
   return d.toLocaleDateString('sv-SE');
 }
@@ -11815,6 +11837,45 @@ renderSecVis=function(){
   const el=document.getElementById('secVisList');if(!el)return;
   el.innerHTML=SECVIS_DEFS.map(d=>{const on=secVisOn(d[0]);return `<div class="svRow${on?' on':''}" role="switch" aria-checked="${on}" tabindex="0" onclick="secVisToggle('${d[0]}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();secVisToggle('${d[0]}')}"><div class="svTxt"><div class="svName">${d[1]}</div><div class="svDesc">${d[2]}</div></div><span class="svState">${on?'보임':'숨김'}</span><span class="svSw" aria-hidden="true"></span></div>`;}).join('');
 };
+/* 1) 캘린더: 월 이름 옆 돋보기 */
+(function(){
+  const t=document.querySelector('#viewCalendar .calHead .calTitle');
+  if(t&&!document.querySelector('.calSearchBtn')){
+    const btn=document.createElement('button');btn.type='button';btn.className='calSearchBtn';btn.setAttribute('aria-label','기록 검색');
+    btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>';
+    btn.onclick=()=>{const v=document.getElementById('viewCalendar');const open=v.classList.toggle('calSearchOpen');if(open){window.scrollTo(0,0);setTimeout(()=>document.getElementById('calendarSearchInput')?.focus(),60);}};
+    t.after(btn);
+  }
+})();
+/* 4) SETTING: 하루가 바뀌는 시간 */
+function renderDayStart(){
+  const el=document.getElementById('dayStartRow');if(!el)return;const h=dayStartHour();
+  el.innerHTML=[0,1,2,3,4,5].map(x=>`<button type="button" class="${x===h?'on':''}" onclick="setDayStart(${x})">${x===0?'자정':`새벽 ${x}시`}</button>`).join('');
+}
+async function setDayStart(h){
+  if(h===dayStartHour())return;
+  try{localStorage.setItem(DAY_START_KEY,String(h));}catch(e){}
+  renderDayStart();
+  await appAlert(h?`이제 새벽 ${h}시까지는 전날 화면이 보여요. 바로 적용할게요.`:'이제 자정에 다음 날로 넘어가요. 바로 적용할게요.');
+  location.reload();
+}
+(function(){
+  const fs=[...document.querySelectorAll('#viewBackup .backupSubTitle')].find(x=>x.textContent.trim()==='글자 크기');
+  const part=fs?fs.closest('.backupPart'):null;
+  if(part&&!document.getElementById('dayStartRow')){
+    part.insertAdjacentHTML('afterend',`<div class="backupPart"><div class="backupSubTitle">하루가 바뀌는 시간</div><div class="backupHint">늦게 자는 편이면 새벽까지 전날 체크리스트를 볼 수 있어요.</div><div class="dayStartRow" id="dayStartRow"></div></div>`);
+    renderDayStart();
+  }
+})();
+/* 6) TODAY 상자 제목 옆 짧은 설명 */
+const SEC_SUB={'DAILY CARE':'매일 챙기는 것','FREE TIME':'여유 있을 때','QUICK LOG':'필요할 때 한 줄','PROJECTS':'진행 중인 일','NOTE':'오늘 한 줄'};
+function addSecSubs(){
+  document.querySelectorAll('#viewToday .lifeBlockTitle').forEach(t=>{
+    const key=(t.firstChild&&t.firstChild.nodeType===3?t.firstChild.textContent:t.textContent).trim();
+    if(SEC_SUB[key]&&!t.querySelector('.secSub'))t.insertAdjacentHTML('beforeend',`<span class="secSub">${SEC_SUB[key]}</span>`);
+  });
+}
+(function(){const g=renderLifeGuide;renderLifeGuide=function(){const r=g.apply(this,arguments);try{addSecSubs();}catch(e){}return r;};try{addSecSubs();}catch(e){}})();
 /* 9) 하단 메뉴: TODAY를 가운데로 */
 (function(){
   const nav=document.querySelector('.bottomNav');if(!nav)return;
@@ -11823,6 +11884,7 @@ renderSecVis=function(){
 })();
 /* 6) 설정 검색 (삼성 설정처럼 단어로 찾기) */
 const SET_KW={
+  '하루가 바뀌는 시간':'자정 새벽 날짜 넘어가는 시간 하루 시작 다음날 전날',
   '테마 색':'색 컬러 테마 다크 밝기 색상','글자 크기':'글씨 폰트 크기 작게 크게 기본 글자',
   '데일리케어 관리':'단백질 물 수면 컨디션 목표 항목 추가 체중 데일리 케어',
   '루틴 관리':'루틴 프리타임 free time 추가 삭제 비활성 순서 아이콘 반복 요일',
@@ -11895,7 +11957,7 @@ setCalendarRoutineFilter=function(id){
 })();
 
 /* TODAY 첫 카드(시안) */
-function thBlockNow(){const h=new Date().getHours();const ids=lifeBlockDefs().map(b=>b.id);
+function thBlockNow(){let h=new Date().getHours();if(h<dayStartHour())h=23; /* 하루 시작 전 새벽은 전날 밤으로 */const ids=lifeBlockDefs().map(b=>b.id);
   const pick=h<6?'dawn':h<9?'breakfast':h<12?'morning':h<14?'lunch':h<18?'afternoon':h<22?'evening':'night';
   if(ids.includes(pick))return pick;const fb={dawn:'breakfast',night:'evening'};return ids.includes(fb[pick])?fb[pick]:ids[0];}
 function renderTodayHero(){
