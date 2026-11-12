@@ -2487,6 +2487,66 @@ body.scrolled .tdChip .tdToday{height:28px!important;padding:0 10px!important;fo
 .tdHero .thAllDone{display:flex;align-items:center;gap:8px;font-size:var(--fs-2);color:var(--rc-gd);background:var(--rc-gl);border-radius:14px;padding:10px 12px;margin-bottom:10px}
 .tdHero .thAllDone span{font-weight:700}
 .tdHero .thRest button{font-size:var(--fs-1)}
+.obTop{display:flex;align-items:center;gap:12px;padding:calc(env(safe-area-inset-top,0px) + 14px) 20px 6px;min-height:44px}
+.obBack{border:0;background:transparent;color:var(--rc-tx2,#4a544f);width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:0}
+.obBack[hidden]{visibility:hidden;display:flex}
+.obBack svg{width:22px;height:22px}
+.obBar{flex:1;height:4px;border-radius:99px;background:var(--rc-line,#e3e8e5);overflow:hidden}
+.obBar i{display:block;height:100%;background:var(--rc-solid,#3f9c7c);border-radius:99px;transition:width .3s ease}
+.obSkip{border:0;background:transparent;color:var(--rc-mu,#8a938e);font-size:14px;padding:8px 4px;min-width:36px}
+.obBody{flex:1;overflow-y:auto;padding:22px 24px 24px;-webkit-overflow-scrolling:touch}
+.obTitle{font-size:25px;line-height:1.38;font-weight:700;letter-spacing:-.4px;margin:0 0 10px;white-space:pre-line}
+.obSub{font-size:15px;line-height:1.55;color:var(--rc-mu,#8a938e);margin:0 0 26px;white-space:pre-line}
+.obList{display:grid;gap:10px}
+.obItem{display:flex;align-items:center;gap:14px;width:100%;text-align:left;border:1.5px solid var(--rc-line,#e3e8e5);background:var(--rc-card,#fff);color:inherit;border-radius:18px;padding:14px 16px;font:inherit;transition:border-color .15s,background .15s}
+.obItem.on{border-color:var(--rc-solid,#3f9c7c);background:var(--accent-surface,#f8fbf9)}
+.obIco{width:42px;height:42px;border-radius:50%;background:var(--rc-soft,#eef3f0);color:var(--rc-gd,#2f6b55);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.obIco svg{width:22px;height:22px}
+.obTxt{flex:1;min-width:0}
+.obName{font-size:16px;font-weight:600}
+.obDesc{font-size:13px;color:var(--rc-mu,#8a938e);margin-top:3px;line-height:1.4}
+.obChk{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--rc-line2,#cfd8d3);flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:#fff}
+.obItem.on .obChk{background:var(--rc-solid,#3f9c7c);border-color:var(--rc-solid,#3f9c7c)}
+.obChk svg{width:14px;height:14px;opacity:0}
+.obItem.on .obChk svg{opacity:1}
+.obStep{display:flex;align-items:center;gap:6px;margin-top:9px}
+.obStep button{width:30px;height:30px;border-radius:10px;border:0;background:var(--rc-soft,#eef3f0);color:var(--rc-tx2,#4a544f);font-size:17px;line-height:1;padding:0}
+.obStep b{min-width:74px;text-align:center;font-size:14px;font-weight:600}
+.obItem:not(.on) .obStep{display:none}
+.obGroup{font-size:12px;letter-spacing:.6px;color:var(--rc-mu,#8a938e);margin:20px 4px 8px;font-weight:600}
+.obGroup:first-child{margin-top:0}
+.obFoot{padding:12px 20px calc(env(safe-area-inset-bottom,0px) + 18px)}
+.obBtn{width:100%;height:56px;border:0;border-radius:16px;background:var(--rc-solid,#3f9c7c);color:#fff;font-size:17px;font-weight:600;font-family:inherit}
+.obLink{border:0;background:none;padding:0;font:inherit;color:var(--rc-gd,#2f6b55);text-decoration:underline;text-underline-offset:2px}
+.obEx{display:inline-block;margin-top:6px;font-size:12px;color:var(--rc-gd,#2f6b55);background:var(--rc-soft,#eef3f0);border-radius:8px;padding:3px 8px;line-height:1.4}
+#rwRoot{position:fixed;inset:0;z-index:2000;background:var(--rc-bg,#f5f7f5);color:var(--rc-tx,#1d2420);display:flex;flex-direction:column;font-family:inherit}
+#rwRoot.hide{display:none}#rwRoot *{box-sizing:border-box}#rwRoot .obTitle,#rwRoot .obSub{text-align:left}
+.rwInput{width:100%;height:54px;border:1.5px solid var(--rc-line,#e3e8e5);border-radius:16px;background:var(--rc-card,#fff);padding:0 16px;font:inherit;font-size:16px;color:inherit;outline:none}
+.rwInput:focus{border-color:var(--rc-solid,#3f9c7c)}
+.rwIcoPreview{display:flex;align-items:center;gap:6px;min-height:22px;margin:8px 4px 0;font-size:12px;color:var(--rc-mu,#8a938e)}
+.rwChips{display:flex;flex-wrap:wrap;gap:8px}
+.rwChip{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--rc-line,#e3e8e5);background:var(--rc-card,#fff);color:inherit;border-radius:99px;padding:9px 14px 9px 10px;font:inherit;font-size:14px}
+.rwChip small{font-size:11px;color:var(--rc-mu,#8a938e)}
+.rwChip.on{border-color:var(--rc-solid,#3f9c7c);background:var(--rc-gl,#e2f4ec);color:var(--rc-gd,#2f6b55)}
+.rwInline{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:14px}
+.rwInline input{width:72px;height:36px;border:1.5px solid var(--rc-line,#e3e8e5);border-radius:10px;padding:0 10px;font:inherit;font-size:15px;background:var(--rc-card,#fff);color:inherit}
+.rwInline .rwUnit{width:56px}
+.rwDays{display:flex;gap:6px;margin-top:12px}
+.rwDays button{flex:1;height:42px;border-radius:12px;border:1.5px solid var(--rc-line,#e3e8e5);background:var(--rc-card,#fff);font:inherit;font-size:14px;color:inherit}
+.rwDays button.on{border-color:var(--rc-solid,#3f9c7c);background:var(--rc-gl,#e2f4ec);color:var(--rc-gd,#2f6b55);font-weight:600}
+.obNote{text-align:center;font-size:13px;color:var(--rc-mu,#8a938e);margin-top:12px}
+.obHero{display:flex;flex-direction:column;justify-content:center;min-height:100%;padding-bottom:40px}
+.obHeroIco{width:76px;height:76px;border-radius:26px;background:var(--rc-soft,#eef3f0);color:var(--rc-gd,#2f6b55);display:flex;align-items:center;justify-content:center;margin-bottom:28px}
+.obHeroIco svg{width:38px;height:38px}
+.obPane{animation:obIn .25s ease}
+@keyframes obIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+#swRoot{position:fixed;inset:0;z-index:2000;background:var(--rc-bg,#f5f7f5);color:var(--rc-tx,#1d2420);display:flex;flex-direction:column;font-family:inherit}
+.obItem.on .cuSw{background:var(--rc-solid,#3f9c7c)}.obItem.on .cuSw::after{transform:translateX(18px)}
+#swRoot.hide{display:none}#swRoot *{box-sizing:border-box}#swRoot .obTitle,#swRoot .obSub{text-align:left}
+#swRoot .obGroup{margin-top:20px}
+#swRoot .rwInline input:not(.rwUnit){width:96px}
+#swRoot .swArea{height:auto;min-height:140px;padding:14px 16px;line-height:1.6;resize:none}
+.obPvIc{display:inline-flex;width:18px;height:18px;color:var(--rc-gd,#2f6b55)}.obPvIc svg{width:18px;height:18px}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -12156,6 +12216,263 @@ function addSecAdds(){
   localStorage.setItem(FLAG,'1');
   try{update();}catch(e){}
 }catch(e){}})();
+/* ===== 단계별 추가 (로그온리에서 가져옴, 2026-11-13) ===== */
+const OB_CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+function obIcon(n){try{return appIconSvg(n)||'';}catch(e){return '';}}
+/* ===== 루틴 추가: 단계별(토스식) — 새로 만들 때만. 수정은 기존 한 화면 =====
+   원칙: 추천 항목은 2번 탭, 직접 만들어도 최대 3단계, 언제든 '바로 추가', 세부 옵션은 '자세히 설정' */
+const RW_PRESETS=[
+  {name:'물 한 잔',ic:'drop',type:'check'},{name:'영양제',ic:'pill',type:'check'},{name:'양치',ic:'tooth',type:'check'},
+  {name:'스트레칭',ic:'pulse',type:'time',target:10},{name:'산책',ic:'shoe',type:'time',target:20},{name:'독서',ic:'book',type:'time',target:30},
+  {name:'명상',ic:'wind',type:'time',target:5},{name:'일기 쓰기',ic:'pencil',type:'check'},{name:'정리정돈',ic:'sparkle',type:'check'},
+  {name:'외국어 공부',ic:'speak',type:'time',target:20},{name:'샤워',ic:'shower',type:'check'},{name:'일찍 자기',ic:'bed',type:'check'}
+];
+const RW_FREE_PRESETS=[
+  {name:'독서',ic:'book',type:'time'},{name:'산책',ic:'shoe',type:'time'},{name:'운동',ic:'dumbbell',type:'check'},{name:'음악 듣기',ic:'music',type:'check'},
+  {name:'그림 그리기',ic:'palette',type:'time'},{name:'게임',ic:'gamepad',type:'time'},{name:'영화·드라마',ic:'cinema',type:'check'},{name:'자전거',ic:'bike',type:'time'},{name:'그냥 쉬기',ic:'cloud',type:'check'}
+];
+const RW_ICON_WORDS=[[/물|수분/,'drop'],[/약|영양|비타민/,'pill'],[/책|독서|읽/,'book'],[/걷|산책/,'shoe'],[/스트레칭|요가/,'pulse'],[/운동|헬스|근력|스쿼트|푸시업|플랭크|런지/,'dumbbell'],[/폴/,'poledance'],
+  [/명상|호흡/,'wind'],[/일기|메모|쓰기|글/,'pencil'],[/양치|치실/,'tooth'],[/잠|수면|취침/,'bed'],[/커피/,'coffee'],[/청소|정리/,'sparkle'],[/밥|식사|아침|점심|저녁/,'bowl'],
+  [/영어|외국어|말하기|회화/,'speak'],[/공부|업무|일하기|코딩/,'laptop'],[/샤워|목욕/,'shower'],[/세안|스킨|팩/,'facecare'],[/음악|노래|피아노|기타/,'music'],[/그림|드로잉/,'palette'],
+  [/자전거/,'bike'],[/게임/,'gamepad'],[/영화|드라마/,'cinema'],[/사진/,'camera'],[/강아지|고양이|산책시키/,'paw'],[/과일|사과/,'apple'],[/채소|샐러드/,'salad'],[/뜨개/,'yarn'],[/휴식|쉬기/,'cloud'],[/전화|연락/,'phone']];
+function rwGuessIcon(name){const n=String(name||'');for(const [re,ic] of RW_ICON_WORDS)if(re.test(n)&&APP_ICON_MAP[ic])return ic;return 'star';}
+const RW_TYPES=[
+  {id:'check',ic:'star',name:'체크',desc:'했는지만 톡 표시',ex:'영양제 ✓'},
+  {id:'time',ic:'timer',name:'시간',desc:'몇 분 했는지 기록 (타이머 가능)',ex:'스트레칭 12분'},
+  {id:'count',ic:'pulse',name:'횟수·개수',desc:'몇 번, 몇 개 했는지',ex:'스쿼트 30 / 50회'},
+  {id:'free',ic:'pencil',name:'메모',desc:'짧은 글로 남기기',ex:'점심: 샐러드'}
+];
+const RW_DAYS=[[1,'월'],[2,'화'],[3,'수'],[4,'목'],[5,'금'],[6,'토'],[0,'일']];
+let rw=null;
+function rwOpen(block){
+  const isFree=block==='free';
+  rw={step:0,isFree,block:isFree?'free':(block||'morning'),name:'',ic:'',type:'check',target:'',unit:'',rec:'daily',days:[1,2,3,4,5],fromPreset:false};
+  let el=document.getElementById('rwRoot');
+  if(!el){el=document.createElement('div');el.id='rwRoot';el.innerHTML=`<div class="obTop"><button type="button" class="obBack" onclick="rwBack()" aria-label="이전"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><div class="obBar"><i id="rwBar"></i></div><button type="button" class="obSkip" onclick="rwClose()">닫기</button></div><div class="obBody" id="rwBody"></div><div class="obFoot" id="rwFoot"></div>`;document.body.appendChild(el);}
+  el.classList.remove('hide');rwRender();
+}
+function rwClose(){document.getElementById('rwRoot')?.classList.add('hide');rw=null;}
+function rwSteps(){return rw.isFree?['name','type']:(rw.fromPreset?['name','when']:['name','type','when']);}
+function rwBack(){if(!rw)return;if(rw.step===0){rwClose();return;}rw.step--;if(rw.step===0)rw.fromPreset=false;rwRender();}
+function rwNext(){
+  if(!rw)return;const st=rwSteps();
+  if(st[rw.step]==='name'){const v=(document.getElementById('rwName')?.value||'').trim();if(!v){document.getElementById('rwName')?.focus();return;}rw.name=v;if(!rw.ic)rw.ic=rwGuessIcon(v);}
+  if(rw.step>=st.length-1){rwSave();return;}
+  rw.step++;rwRender();
+}
+function rwPick(i){
+  const list=rw.isFree?RW_FREE_PRESETS:RW_PRESETS,p=list[i];if(!p)return;
+  Object.assign(rw,{name:p.name,ic:p.ic,type:p.type,target:p.target||'',unit:'',fromPreset:true});
+  if(rw.isFree){rwSave();return;}
+  rw.step=1;rwRender();
+}
+function rwQuick(){ /* 이름만 쓰고 바로 추가: 체크 · 매일 */
+  const v=(document.getElementById('rwName')?.value||'').trim();if(!v){document.getElementById('rwName')?.focus();return;}
+  Object.assign(rw,{name:v,ic:rw.ic||rwGuessIcon(v)});rwSave();
+}
+function rwDetail(){ /* 세부 옵션은 기존 편집 화면에서 */
+  const v=(document.getElementById('rwName')?.value||rw.name||'').trim();const b=rw.block;const snap={...rw,name:v};rwClose();
+  RW_ORIG_OPEN(null,b);
+  if(snap.name){document.getElementById('rName').value=snap.name;document.getElementById('rIcon').value=`⟪${snap.ic||rwGuessIcon(snap.name)}⟫`;try{document.getElementById('rIcon').dispatchEvent(new Event('input'));}catch(e){}}
+}
+function rwSet(k,v){rw[k]=v;const y=document.getElementById('rwBody').scrollTop;rwRender();document.getElementById('rwBody').scrollTop=y;}
+function rwDay(d){const i=rw.days.indexOf(d);if(i>=0)rw.days.splice(i,1);else rw.days.push(d);rwRender();}
+function rwRender(){
+  const st=rwSteps(),key=st[rw.step],body=document.getElementById('rwBody'),foot=document.getElementById('rwFoot');
+  document.getElementById('rwBar').style.width=`${Math.round((rw.step+1)/st.length*100)}%`;
+  let h='',f='';
+  const kind=rw.isFree?'FREE TIME':'루틴';
+  if(key==='name'){
+    const list=rw.isFree?RW_FREE_PRESETS:RW_PRESETS;const have=new Set(loadLifeRoutines().map(r=>String(r.name).trim()));
+    h=`<h1 class="obTitle">어떤 ${rw.isFree?'활동':'루틴'}을\n추가할까요?</h1><p class="obSub">${rw.isFree?'여유 있을 때 고르는 활동이에요.':'추천에서 고르거나 직접 써 주세요.'}</p>
+      <input id="rwName" class="rwInput" maxlength="30" placeholder="직접 입력 (예: ${rw.isFree?'뜨개질':'영어 단어 10개'})" value="${escapeLife(rw.name)}" oninput="rw.name=this.value;rw.ic='';rwIcoPreview()" onkeydown="if(event.key==='Enter'){event.preventDefault();rwNext();}">
+      <div id="rwIcoPreview" class="rwIcoPreview"></div>
+      <div class="obGroup">추천</div><div class="rwChips">${list.map((p,i)=>have.has(p.name)?'':`<button type="button" class="rwChip" onclick="rwPick(${i})"><span class="obPvIc">${obIcon(p.ic)}</span>${p.name}${p.target?` <small>${p.target}분</small>`:''}</button>`).join('')}</div>`;
+    f=`<button type="button" class="obBtn" onclick="rwNext()">다음</button><div class="obNote"><button type="button" class="obLink" onclick="rwQuick()">이름만으로 바로 추가</button> · <button type="button" class="obLink" onclick="rwDetail()">자세히 설정</button></div>`;
+  }else if(key==='type'){
+    h=`<h1 class="obTitle">어떻게 기록할까요?</h1><p class="obSub">${escapeLife(rw.name)}</p><div class="obList">`+
+      RW_TYPES.filter(t=>!rw.isFree||t.id==='check'||t.id==='time').map(t=>`<div class="obItem${rw.type===t.id?' on':''}" role="button" tabindex="0" onclick="rwSet('type','${t.id}')"><span class="obIco">${obIcon(t.ic)}</span><span class="obTxt"><div class="obName">${t.name}</div><div class="obDesc">${t.desc}</div><div class="obEx">예) ${t.ex}</div>
+        ${!rw.isFree&&rw.type===t.id&&t.id==='time'?`<div class="rwInline" onclick="event.stopPropagation()">목표 <input type="number" inputmode="numeric" min="1" value="${escapeLife(rw.target)}" placeholder="없음" oninput="rw.target=this.value"> 분</div>`:''}
+        ${rw.type===t.id&&t.id==='count'?`<div class="rwInline" onclick="event.stopPropagation()">목표 <input type="number" inputmode="numeric" min="1" value="${escapeLife(rw.target)}" placeholder="30" oninput="rw.target=this.value"> <input class="rwUnit" maxlength="4" value="${escapeLife(rw.unit)}" placeholder="회" oninput="rw.unit=this.value"></div>`:''}
+        </span><span class="obChk">${OB_CHECK}</span></div>`).join('')+`</div>`;
+    f=`<button type="button" class="obBtn" onclick="rwNext()">${rw.isFree?'추가하기':'다음'}</button>`;
+  }else{
+    const blocks=lifeBlockDefs();
+    h=`<h1 class="obTitle">언제 할까요?</h1><p class="obSub">${escapeLife(rw.name)}${rw.type==='time'&&rw.target?` · ${escapeLife(rw.target)}분`:''}</p>
+      <div class="obGroup">시간대</div><div class="rwChips">${blocks.map(b=>`<button type="button" class="rwChip${rw.block===b.id?' on':''}" onclick="rwSet('block','${b.id}')">${escapeLife(b.name)} <small>${escapeLife(b.sub)}</small></button>`).join('')}</div>
+      <div class="obGroup">반복</div><div class="rwChips"><button type="button" class="rwChip${rw.rec==='daily'?' on':''}" onclick="rwSet('rec','daily')">매일</button><button type="button" class="rwChip${rw.rec==='weekdays'?' on':''}" onclick="rwSet('rec','weekdays')">요일 고르기</button></div>
+      ${rw.rec==='weekdays'?`<div class="rwDays">${RW_DAYS.map(([d,l])=>`<button type="button" class="${rw.days.includes(d)?'on':''}" onclick="rwDay(${d})">${l}</button>`).join('')}</div>`:''}
+      <p class="obSub" style="margin-top:18px">격주·매달 같은 반복은 '자세히 설정'에서 할 수 있어요.</p>`;
+    f=`<button type="button" class="obBtn" onclick="rwNext()">추가하기</button><div class="obNote"><button type="button" class="obLink" onclick="rwDetail()">자세히 설정</button></div>`;
+  }
+  body.innerHTML=`<div class="obPane">${h}</div>`;foot.innerHTML=f;
+  if(key==='name'){rwIcoPreview();setTimeout(()=>{const i=document.getElementById('rwName');if(i&&!rw.name)i.focus();},50);}
+}
+function rwIcoPreview(){const el=document.getElementById('rwIcoPreview');if(!el)return;const n=(rw.name||'').trim();el.innerHTML=n?`<span class="obPvIc">${obIcon(rw.ic||rwGuessIcon(n))}</span> 아이콘은 이름을 보고 골랐어요`:'';}
+function rwSave(){
+  const r=rw;if(!r||!r.name)return;
+  if(!r.isFree&&r.rec==='weekdays'&&!r.days.length){r.rec='daily';}
+  rwClose();
+  RW_ORIG_OPEN(null,r.block);
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v;};
+  set('rName',r.name);set('rIcon',`⟪${r.ic||rwGuessIcon(r.name)}⟫`);
+  set('rType',r.type);set('rBlock',r.block);
+  set('rRecurrence',r.isFree?'free':r.rec);
+  document.querySelectorAll('input[name="rDay"]').forEach(x=>x.checked=r.rec==='weekdays'&&r.days.includes(Number(x.value)));
+  set('rTarget',r.type==='time'?(r.target||''):'');set('rCountTarget',r.type==='count'?(r.target||''):'');set('rCountUnit',r.type==='count'?(r.unit||'회'):'');
+  try{toggleRoutineDays();toggleRoutineTypeFields();}catch(e){}
+  saveRoutineFromModal();
+  try{appToast?appToast(`'${r.name}' 추가했어요`):null;}catch(e){}
+}
+const RW_ORIG_OPEN=openRoutineModal;
+openRoutineModal=function(id,block){if(!id){rwOpen(block);return;}return RW_ORIG_OPEN.apply(this,arguments);};
+/* ===== 단계별 추가 (공개용): DAILY CARE · QUICK LOG · 프로젝트 · 책 ===== */
+const SW_ORIG={dc:openDailyCareItemEditor,ql:openOneOffRecordEditor,pj:openProject,bk:openBookModal};
+const SW_BACK_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>';
+let sw=null;
+function swEsc(v){return escapeLife(String(v??''));}
+function swIco(name,fallback){const g=rwGuessIcon(name);if(g!=='star')return g;const n=String(name||'');
+  if(/체중|몸무게/.test(n))return 'scale';if(/걸음/.test(n))return 'shoe';if(/술|음주|맥주|와인/.test(n))return 'cup';if(/간식|과자/.test(n))return 'cookie';if(/기분|감정/.test(n))return 'smile';if(/두통|아픔|통증/.test(n))return 'alert';
+  return fallback||'star';}
+function swOpen(kind,init){
+  sw={kind,step:0,d:Object.assign({},init||{})};
+  let el=document.getElementById('swRoot');
+  if(!el){el=document.createElement('div');el.id='swRoot';el.innerHTML=`<div class="obTop"><button type="button" class="obBack" onclick="swBack()" aria-label="이전">${SW_BACK_SVG}</button><div class="obBar"><i id="swBar"></i></div><button type="button" class="obSkip" onclick="swClose()">닫기</button></div><div class="obBody" id="swBody"></div><div class="obFoot" id="swFoot"></div>`;document.body.appendChild(el);}
+  el.classList.remove('hide');swRender();
+}
+function swClose(){document.getElementById('swRoot')?.classList.add('hide');sw=null;}
+function swBack(){if(!sw)return;if(sw.step===0){swClose();return;}sw.step--;swRender();}
+function swSet(k,v){sw.d[k]=v;const b=document.getElementById('swBody'),y=b?b.scrollTop:0;swRender();if(b)b.scrollTop=y;}
+function swNext(){
+  if(!sw)return;const def=SW_DEFS[sw.kind],st=def.steps(sw.d),cur=st[sw.step];
+  if(cur.check&&!cur.check(sw.d))return;
+  if(sw.step>=st.length-1){const k=sw.kind,d={...sw.d};swClose();Promise.resolve(def.save(d)).catch(e=>console.warn(e));return;}
+  sw.step++;swRender();
+}
+function swPreset(i){const def=SW_DEFS[sw.kind];const p=def.presets()[i];if(!p)return;Object.assign(sw.d,p,{preset:true});if(def.afterPreset){sw.step=def.afterPreset(sw.d);}else sw.step++;swRender();}
+function swDetail(){const def=SW_DEFS[sw.kind],d={...sw.d};const n=document.getElementById('swName');if(n)d.name=n.value.trim();swClose();def.detail(d);}
+function swNameStep(o){
+  return {check:d=>{const v=(document.getElementById('swName')?.value||'').trim();if(!v){document.getElementById('swName')?.focus();return false;}d.name=v;if(!d.ic||!d.preset)d.ic=swIco(v,o.icon);return true;},
+    render:d=>{const ps=o.presets?o.presets():[];
+      return {h:`<h1 class="obTitle">${o.title}</h1><p class="obSub">${o.sub}</p>
+        <input id="swName" class="rwInput" maxlength="30" placeholder="${o.ph}" value="${swEsc(d.name)}" oninput="sw.d.name=this.value;sw.d.preset=false" onkeydown="if(event.key==='Enter'){event.preventDefault();swNext();}">
+        ${o.extra?o.extra(d):''}
+        ${ps.length?`<div class="obGroup">추천</div><div class="rwChips">${ps.map((p,i)=>p.hide?'':`<button type="button" class="rwChip" onclick="swPreset(${i})"><span class="obPvIc">${obIcon(p.ic)}</span>${swEsc(p.name)}${p.tag?` <small>${swEsc(p.tag)}</small>`:''}</button>`).join('')}</div>`:''}`,
+        f:`<button type="button" class="obBtn" onclick="swNext()">다음</button>${o.detail!==false?`<div class="obNote"><button type="button" class="obLink" onclick="swDetail()">자세히 설정</button></div>`:''}`};},focus:'swName'};
+}
+function swPickStep(o){
+  return {render:d=>({h:`<h1 class="obTitle">${o.title}</h1><p class="obSub">${swEsc(d.name)}</p><div class="obList">`+
+      o.items(d).map(t=>`<div class="obItem${d[o.key]===t.id?' on':''}" role="button" tabindex="0" onclick="swSet('${o.key}','${t.id}')"><span class="obIco">${obIcon(t.ic)}</span><span class="obTxt"><div class="obName">${t.name}</div><div class="obDesc">${t.desc}</div>${t.ex?`<div class="obEx">예) ${t.ex}</div>`:''}${d[o.key]===t.id&&t.more?`<div onclick="event.stopPropagation()">${t.more(d)}</div>`:''}</span><span class="obChk">${OB_CHECK}</span></div>`).join('')+`</div>`,
+    f:`<button type="button" class="obBtn" onclick="swNext()">${o.last?'추가하기':'다음'}</button>`}),
+    check:o.check};
+}
+function swInline(label,key,ph,unit,num){return `<div class="rwInline">${label} <input ${num!==false?'type="number" inputmode="decimal" min="0" step="any"':'maxlength="6" class="rwUnit"'} value="${swEsc(sw.d[key])}" placeholder="${ph}" oninput="sw.d['${key}']=this.value"> ${unit||''}</div>`;}
+const SW_DEFS={
+  dc:{
+    presets:()=>{const have=new Set(loadDailyCareDefinitions().filter(x=>x.enabled!==false).map(x=>String(x.name).trim()));return [
+      {name:'커피',ic:'coffee',type:'cumulative',unit:'잔',target:'',step:1,tag:'잔'},{name:'체중',ic:'scale',type:'numeric',unit:'kg',target:'',tag:'kg'},
+      {name:'걸음 수',ic:'shoe',type:'numeric',unit:'걸음',target:6000,tag:'걸음'},{name:'영양제',ic:'pill',type:'cumulative',unit:'개',target:1,step:1,tag:'개'},
+      {name:'낮잠',ic:'bed',type:'duration',target:'',tag:'시간'},{name:'스트레칭',ic:'yoga',type:'cumulative',unit:'분',target:10,step:5,tag:'분'}
+    ].map(p=>({...p,hide:have.has(p.name)}));},
+    afterPreset:()=>2,
+    steps:d=>[
+      swNameStep({title:'매일 챙길 것을\n추가할까요?',sub:'물·수면처럼 매일 한눈에 보는 기록이에요.',ph:'직접 입력 (예: 커피, 체중)',presets:()=>SW_DEFS.dc.presets(),icon:'sparkle'}),
+      swPickStep({title:'어떻게 기록할까요?',key:'type',items:()=>[
+        {id:'cumulative',ic:'drop',name:'더해 가며 기록',desc:'버튼을 눌러 조금씩 더해요',ex:'커피 2잔, 물 1,200ml'},
+        {id:'numeric',ic:'scale',name:'숫자 하나 기록',desc:'그날의 값을 한 번 적어요',ex:'체중 52.3kg, 걸음 8,000걸음'},
+        {id:'duration',ic:'bed',name:'시작~끝 시간',desc:'시작과 끝을 눌러 시간을 재요',ex:'낮잠 40분'}],
+        check:d=>{if(!d.type)d.type='cumulative';return true;}}),
+      {render:d=>{const t=d.type||'cumulative';
+        const body=t==='duration'
+          ?`<div class="obGroup">하루 목표 (선택)</div>${swInline('목표','target','없음','분')}<p class="obSub" style="margin-top:14px">TODAY 카드에서 시작·끝을 누르면 시간이 기록돼요.</p>`
+          :`<div class="obGroup">단위</div>${swInline('','unit',t==='numeric'?'kg':'잔','',false)}
+            <div class="obGroup">하루 목표 (선택)</div>${swInline('목표','target','없음',swEsc(d.unit||''))}
+            ${t==='cumulative'?`<div class="obGroup">한 번 누를 때 더할 양</div>${swInline('','step','1',swEsc(d.unit||''))}`:''}`;
+        return {h:`<h1 class="obTitle">조금만 정해 볼까요?</h1><p class="obSub">${swEsc(d.name)} · 나중에 언제든 바꿀 수 있어요.</p>${body}`,
+          f:`<button type="button" class="obBtn" onclick="swNext()">추가하기</button><div class="obNote"><button type="button" class="obLink" onclick="swDetail()">자세히 설정</button></div>`};},
+       check:d=>{if((d.type||'cumulative')!=='duration'&&!String(d.unit||'').trim()){appAlert('단위를 적어 주세요. (예: 잔, kg)');return false;}return true;}}
+    ],
+    fill:d=>{SW_ORIG.dc('');const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v;};
+      set('dailyCareEditName',d.name||'');set('dailyCareEditIcon',`⟪${d.ic||swIco(d.name,'sparkle')}⟫`);
+      if(d.type){set('dailyCareEditType',d.type);try{updateDailyCareEditorFields();}catch(e){}}
+      if(d.type==='duration'){const m=Number(d.target)||0;set('dailyCareDurationGoalHours',m?Math.floor(m/60):'');set('dailyCareDurationGoalMinutes',m?m%60:'');}
+      else{set('dailyCareEditUnit',d.unit||'');set('dailyCareEditTarget',d.target||'');const st=Math.abs(Number(d.step)||1);set('dailyCareQuickValues',d.type==='cumulative'?`-${st}, +${st}`:'');}},
+    save:d=>{SW_DEFS.dc.fill(d);saveDailyCareItemEditor();if(document.getElementById('dailyCareItemModal')?.classList.contains('hide'))appToast(`'${d.name}' 추가했어요`);},
+    detail:d=>{SW_DEFS.dc.fill(d);}
+  },
+  ql:{
+    presets:()=>{const have=new Set(loadOneOffDefinitions().map(x=>String(x.name).trim()));return [
+      {name:'몸무게',ic:'scale',type:'numeric',unit:'kg'},{name:'간식',ic:'cookie',type:'meal',asMeal:true},{name:'야식',ic:'bowl',type:'meal',asMeal:true},
+      {name:'음주',ic:'cup',type:'check'},{name:'두통',ic:'alert',type:'check'},{name:'기분',ic:'smile',type:'mood'}
+    ].map(p=>({...p,hide:have.has(p.name)}));},
+    afterPreset:null,
+    steps:d=>[
+      swNameStep({title:'필요할 때 남길 기록을\n추가할까요?',sub:'매일은 아니고, 생길 때만 한 줄 남겨요.',ph:'직접 입력 (예: 야식, 몸무게)',presets:()=>SW_DEFS.ql.presets(),icon:'pencil'}),
+      swPickStep({title:'어떻게 기록할까요?',key:'type',last:true,items:()=>[
+        {id:'check',ic:'star',name:'했는지만',desc:'톡 눌러서 표시해요',ex:'음주 ✓'},
+        {id:'numeric',ic:'scale',name:'숫자',desc:'값을 적어요',ex:'몸무게 52.3kg',more:d=>swInline('단위','unit','kg','',false)},
+        {id:'meal',ic:'pencil',name:'메모',desc:'짧은 글로 남겨요',ex:'간식: 쿠키 2개'},
+        {id:'mood',ic:'smile',name:'상태',desc:'1~5단계로 고르고 메모도 남겨요',ex:'두통 3단계'}],
+        check:d=>{if(!d.type)d.type='check';if(d.type==='numeric'&&!String(d.unit||'').trim()){appAlert('단위를 적어 주세요. (예: kg)');return false;}return true;}})
+    ],
+    fill:d=>{SW_ORIG.ql('');const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v;};
+      set('oneOffEditName',d.name||'');set('oneOffEditIcon',`⟪${d.ic||swIco(d.name,'pencil')}⟫`);if(d.type)set('oneOffEditType',d.type);set('oneOffEditUnit',d.unit||'');
+      const am=document.getElementById('oneOffAsMeal');if(am)am.checked=!!d.asMeal;try{updateOneOffEditorFields();}catch(e){}},
+    save:d=>{SW_DEFS.ql.fill(d);saveOneOffRecordEditor();try{renderOneOffQuick();}catch(e){}if(document.getElementById('oneOffRecordModal')?.classList.contains('hide'))appToast(`'${d.name}' 추가했어요`);},
+    detail:d=>{SW_DEFS.ql.fill(d);}
+  },
+  pj:{
+    presets:()=>[],
+    steps:d=>[
+      swNameStep({title:'어떤 일을\n진행하고 있나요?',sub:'끝날 때까지 TODAY에서 챙겨 볼 수 있어요.',ph:'예: 이사 준비, 자격증 공부',icon:'calendar'}),
+      {render:d=>{const c=d.dueMode||'none';const chip=(k,l)=>`<button type="button" class="rwChip${c===k?' on':''}" onclick="swSet('dueMode','${k}')">${l}</button>`;
+        return {h:`<h1 class="obTitle">언제까지 할까요?</h1><p class="obSub">${swEsc(d.name)} · 마감이 없어도 괜찮아요.</p>
+          <div class="rwChips">${chip('none','정하지 않기')}${chip('week','이번 주')}${chip('month','이번 달')}${chip('pick','날짜 고르기')}</div>
+          ${c==='pick'?`<input type="date" class="rwInput" style="margin-top:14px" value="${swEsc(d.due||'')}" oninput="sw.d.due=this.value">`:''}`,
+          f:`<button type="button" class="obBtn" onclick="swNext()">다음</button>`};},
+       check:d=>{const c=d.dueMode||'none',t=new Date();
+         if(c==='none')d.due='';
+         else if(c==='week'){const x=new Date(t);x.setDate(t.getDate()+((7-t.getDay())%7));d.due=x.toLocaleDateString('sv-SE');}
+         else if(c==='month'){d.due=new Date(t.getFullYear(),t.getMonth()+1,0).toLocaleDateString('sv-SE');}
+         else if(!d.due){appAlert('날짜를 골라 주세요.');return false;}
+         return true;}},
+      {render:d=>({h:`<h1 class="obTitle">첫 할 일을\n적어 볼까요?</h1><p class="obSub">한 줄에 하나씩 적어요. 비워 두고 나중에 적어도 돼요.</p>
+          <textarea id="swTasks" class="rwInput swArea" rows="5" placeholder="예: 견적 받기&#10;짐 정리하기" oninput="sw.d.tasks=this.value">${swEsc(d.tasks||'')}</textarea>`,
+         f:`<button type="button" class="obBtn" onclick="swNext()">추가하기</button>`})}
+    ],
+    fill:d=>{SW_ORIG.pj(null);document.getElementById('pjName').value=d.name||'';document.getElementById('pjDue').value=d.due||'';try{pjDateSync();}catch(e){}
+      String(d.tasks||'').split('\n').map(x=>x.trim()).filter(Boolean).forEach((t,i)=>pjDraft.tasks.push({id:'t'+Date.now().toString(36)+i+Math.random().toString(36).slice(2,5),text:t,done:false}));
+      try{pjRenderTasks();pjRenderSeg();}catch(e){}},
+    save:d=>{SW_DEFS.pj.fill(d);pjSave();if(document.getElementById('projectModal')?.classList.contains('hide'))appToast(`'${d.name}' 추가했어요`);},
+    detail:d=>{SW_DEFS.pj.fill(d);}
+  },
+  bk:{
+    presets:()=>[],
+    steps:d=>[
+      swNameStep({title:'어떤 책을\n추가할까요?',sub:'제목만 적어도 돼요.',ph:'책 제목',icon:'book',
+        extra:d=>`<input class="rwInput" style="margin-top:10px" maxlength="40" placeholder="저자 (선택)" value="${swEsc(d.author||'')}" oninput="sw.d.author=this.value" onkeydown="if(event.key==='Enter'){event.preventDefault();swNext();}">`}),
+      swPickStep({title:'지금 어떤 상태인가요?',key:'status',last:true,items:()=>[
+        {id:'읽고싶어',ic:'heart',name:'읽고 싶어요',desc:'담아 두고 나중에 읽어요'},
+        {id:'읽고있어',ic:'book',name:'읽고 있어요',desc:'오늘부터 읽는 중으로 표시해요'},
+        {id:'완독',ic:'star',name:'다 읽었어요',desc:'오늘 다 읽은 책으로 기록해요'}],
+        check:d=>{if(!d.status)d.status='읽고싶어';return true;}})
+    ],
+    fill:async d=>{await SW_ORIG.bk();const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v;};
+      set('bookTitle',d.name||'');set('bookAuthor',d.author||'');if(d.status){set('bookStatus',d.status);try{autoFillBookReadingDates();}catch(e){}}},
+    save:async d=>{await SW_DEFS.bk.fill(d);await saveBook();if(document.getElementById('bookModal')?.classList.contains('hide'))appToast(`'${d.name}' 추가했어요`);},
+    detail:d=>{SW_DEFS.bk.fill(d);}
+  }
+};
+function swRender(){
+  const def=SW_DEFS[sw.kind],st=def.steps(sw.d),cur=st[sw.step];
+  document.getElementById('swBar').style.width=`${Math.round((sw.step+1)/st.length*100)}%`;
+  const r=cur.render(sw.d);
+  document.getElementById('swBody').innerHTML=`<div class="obPane">${r.h}</div>`;document.getElementById('swFoot').innerHTML=r.f;
+  if(cur.focus)setTimeout(()=>{const i=document.getElementById(cur.focus);if(i&&!sw?.d.name)i.focus();},50);
+}
+openDailyCareItemEditor=function(id){if(!id)return swOpen('dc');return SW_ORIG.dc.apply(this,arguments);};
+openOneOffRecordEditor=function(id){if(!id)return swOpen('ql');return SW_ORIG.ql.apply(this,arguments);};
+openProject=function(id){if(!id)return swOpen('pj');return SW_ORIG.pj.apply(this,arguments);};
 </script>
 
 
