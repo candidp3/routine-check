@@ -3790,7 +3790,7 @@ function renderCustomDailyCare(){
     const target=Number(d.target)||0,left=Math.max(0,target-v);
     const meta=target
       ?(v>=target
-        ?`${formatDailyCareNumber(v)}${escapeLife(d.unit||'')} · 오늘 기준 ${formatDailyCareNumber(target)}${escapeLife(d.unit||'')}`
+        ?`${formatDailyCareNumber(v)}${escapeLife(d.unit||'')} · 달성`
         :`${formatDailyCareNumber(v)}${escapeLife(d.unit||'')} · ${formatDailyCareNumber(left)}${escapeLife(d.unit||'')} 남음`)
       :`${formatDailyCareNumber(v)}${escapeLife(d.unit||'')}`;
     const quick=Array.isArray(d.quickValues)?d.quickValues:[];
@@ -4177,7 +4177,7 @@ function renderProtein(){
   const target=dailyCareTarget("protein",getProteinTarget(state.mode||"base"));
   const left=Math.max(0,target-g);
   const el=document.getElementById("proteinTrackText");
-  if(el) el.textContent=g>=target?`${g}g · 오늘 기준 ${target}g`:`${g}g · ${left}g 남음`;
+  if(el) el.textContent=g>=target?`${g}g · 달성`:`${g}g · ${left}g 남음`;
   const hintEl=document.getElementById("proteinHint");
   if(hintEl) hintEl.textContent="";
 }
@@ -4199,7 +4199,7 @@ function renderWater(){
   const target=dailyCareTarget("water",WATER_TARGET);
   const left=Math.max(0,target-ml);
   const el=document.getElementById("waterText");
-  if(el) el.textContent=ml>=target?`${ml.toLocaleString()}ml · 오늘 기준 ${target.toLocaleString()}ml`:`${ml.toLocaleString()}ml · ${left.toLocaleString()}ml 남음`;
+  if(el) el.textContent=ml>=target?`${ml.toLocaleString()}ml · 달성`:`${ml.toLocaleString()}ml · ${left.toLocaleString()}ml 남음`;
 }
 
 function nOrNull(v){
