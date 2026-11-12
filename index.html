@@ -3765,7 +3765,7 @@ function renderCustomDailyCare(){
   root.innerHTML=defs.map(d=>{
     if(d.type==='numeric'){
       const v=dailyCareNumericValue(activeDateKey,d.id);
-      const valueText=v===null?'기록 없음':`${formatDailyCareNumber(v)}${escapeLife(d.unit||'')}`;
+      const valueText=v===null?'기록 없음':`${formatDailyCareNumber(v)}${escapeLife(d.unit||'')}${Number(d.target)>0?` · 목표 ${formatDailyCareNumber(Number(d.target))}`:''}`;
       return `<div class="dailyCareItem dailyCareItemCard dailyCareNumericCard" data-daily-care-id="${escapeLife(d.id)}" role="button" tabindex="0" onclick="openCustomDailyCareNumericPopup('${d.id}')" onkeydown="if(event.key==='Enter'||event.key===' ')openCustomDailyCareNumericPopup('${d.id}')"><div class="dailyCareName">${escapeLife(d.icon||'')} ${escapeLife(d.name)}</div><div class="dailyCareMeta">${valueText}</div></div>`;
     }
 
@@ -4039,7 +4039,7 @@ function renderDailyCareSettings(){
   const root=document.getElementById('dailyCareSettingsList');if(!root)return;
   root.innerHTML=loadDailyCareDefinitions().filter(raw=>!raw.oneOff).map(raw=>{
     const d=normalizeDailyCareDefinition(raw);
-    const target=d.type==='cumulative'&&Number(d.target)>0?` · 목표 ${formatDailyCareNumber(Number(d.target))}${escapeLife(d.unit||'')}`:'';
+    const target=d.type!=='duration'&&Number(d.target)>0?` · 목표 ${formatDailyCareNumber(Number(d.target))}${escapeLife(d.unit||'')}`:'';
     const durationMeta=d.type==='duration'
       ?` · ${durationEnabledMetrics(d).map(x=>x.label).join(' / ')}`
       :'';
@@ -4056,7 +4056,7 @@ function updateDailyCareEditorFields(){
   const hint=document.getElementById('dailyCareTypeHint');
 
   if(unitField)unitField.hidden=type==='duration';
-  if(targetField)targetField.hidden=type!=='cumulative';
+  if(targetField){targetField.hidden=type==='duration';if(targetField.firstChild)targetField.firstChild.textContent=type==='numeric'?'목표':'하루 목표';}
   if(quickField)quickField.hidden=type!=='cumulative';
   if(durationFields)durationFields.hidden=type!=='duration';
 
@@ -4112,7 +4112,7 @@ function saveDailyCareItemEditor(){
   const name=document.getElementById('dailyCareEditName').value.trim();if(!name)return appAlert('항목명을 입력해 주세요.');
   const type=document.getElementById('dailyCareEditType').value;
   const unit=type==='duration'?'시간':document.getElementById('dailyCareEditUnit').value.trim();
-  const target=type==='cumulative'?Math.max(0,Number(document.getElementById('dailyCareEditTarget').value)||0):0;
+  const target=type!=='duration'?Math.max(0,Number(document.getElementById('dailyCareEditTarget').value)||0):0;
   const quickValues=type==='cumulative'
     ?document.getElementById('dailyCareQuickValues').value.split(',').map(v=>Number(v.trim().replace('+',''))).filter(Number.isFinite)
     :[];
@@ -5324,8 +5324,8 @@ function renderDailyCareItemDashboard(def,start,end){
   }
   const latest=summary.latest?formatRecordDailyCareValue(d,summary.latest.value):'-';
   const avg=formatRecordDailyCareValue(d,summary.avg);
-  const third=d.type==='cumulative'&&Number(d.target)>0
-    ?`<div class="dashMetric"><div class="dashMetricValue">${formatRecordDailyCareValue(d,d.target)}</div><div class="dashMetricLabel">하루 목표</div></div>`
+  const third=d.type!=='duration'&&Number(d.target)>0
+    ?`<div class="dashMetric"><div class="dashMetricValue">${formatRecordDailyCareValue(d,d.target)}</div><div class="dashMetricLabel">${d.type==='numeric'?'목표':'하루 목표'}</div></div>`
     :`<div class="dashMetric"><div class="dashMetricValue">${summary.count}일</div><div class="dashMetricLabel">기록한 날</div></div>`;
   const periodLabel=recordPeriodBounds().label;
   root.innerHTML=`<div class="dashMetrics"><div class="dashMetric"><div class="dashMetricValue">${latest}</div><div class="dashMetricLabel">최근 기록</div></div><div class="dashMetric"><div class="dashMetricValue">${avg}</div><div class="dashMetricLabel">기간 평균</div></div>${third}</div><div class="recordInterpretation">${escapeLife(dailyCareInterpretationText(d,summary,periodLabel))}</div>${renderDailyCareTrendChart(d,summary)}`;
