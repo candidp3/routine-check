@@ -10699,21 +10699,31 @@ function appIconSvg(name){const x=APP_ICON_MAP[name];if(!x)return '';return `<sv
     });
   }
   const NAME=/^(⟪[a-z0-9_]+⟫|\p{Regional_Indicator}{2}|(?:\p{Extended_Pictographic}\uFE0F?(?:\u200D\p{Extended_Pictographic}\uFE0F?)*))\s*([\s\S]*)$/u;
+  const SEG=(typeof Intl!=='undefined'&&Intl.Segmenter)?new Intl.Segmenter(undefined,{granularity:'grapheme'}):null;
+  function splitIcon(text){
+    const t=String(text||'');
+    const tok=/^(⟪[a-z0-9_]+⟫)\s*([\s\S]*)$/.exec(t);if(tok)return [tok[1],tok[2]];
+    let first='';
+    if(SEG){const it=SEG.segment(t)[Symbol.iterator]().next();first=it.done?'':it.value.segment;}
+    else{const m=NAME.exec(t);return m?[m[1],m[2]]:null;}
+    if(!first||!/(\p{Extended_Pictographic}|\p{Regional_Indicator}|\u20E3)/u.test(first))return null;
+    return [first,t.slice(first.length).replace(/^\s+/,'')];
+  }
   function wrapNames(){
     document.querySelectorAll('.lifeRoutineName').forEach(el=>{
       if(el.querySelector(':scope>.rIco')||el.children.length)return;
-      const m=el.textContent.match(NAME);if(!m)return;
+      const m=splitIcon(el.textContent);if(!m)return;
       el.textContent='';el.classList.add('hasIco');
-      const i=document.createElement('span');i.className='rIco';i.textContent=m[1];
-      const n=document.createElement('span');n.className='rTxt';n.textContent=m[2];
+      const i=document.createElement('span');i.className='rIco';i.textContent=m[0];
+      const n=document.createElement('span');n.className='rTxt';n.textContent=m[1];
       el.append(i,n);
     });
     document.querySelectorAll('.dailyCareName').forEach(el=>{
       if(el.querySelector(':scope>.dcIco')||el.children.length)return;
-      const m=el.textContent.match(NAME);if(!m)return;
+      const m=splitIcon(el.textContent);if(!m)return;
       el.textContent='';
-      const i=document.createElement('span');i.className='dcIco';i.textContent=m[1];
-      const n=document.createElement('span');n.className='dcTxt';n.textContent=m[2];
+      const i=document.createElement('span');i.className='dcIco';i.textContent=m[0];
+      const n=document.createElement('span');n.className='dcTxt';n.textContent=m[1];
       el.append(i,n);
     });
   }
@@ -10751,6 +10761,7 @@ function appIconSvg(name){const x=APP_ICON_MAP[name];if(!x)return '';return `<sv
   }
   function sync(id){
     const inp=document.getElementById(id);if(!inp||!inp._icRow)return;
+    {const raw=inp.value.trim().replace(/\uFE0F/g,''),ic=EMO2IC[inp.value.trim()]||EMO2IC[raw];if(ic&&APP_ICON_MAP[ic]&&document.activeElement!==inp)inp.value=`⟪${ic}⟫`;}
     const m=/^⟪([a-z0-9_]+)⟫$/.exec(inp.value.trim());const name=m&&APP_ICON_MAP[m[1]]?m[1]:'';
     inp.classList.toggle('icTok',!!name);
     const ci=inp._icRow.querySelector('.icCurIco');ci.hidden=!name;ci.innerHTML=name?`<span class="appIco">${appIconSvg(name)}</span>`:'';
