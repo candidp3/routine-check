@@ -2416,6 +2416,19 @@ body.scrolled .tdChip .tdToday{height:28px!important;padding:0 10px!important;fo
 .noteAllMini+.photoMini{margin-left:6px}
 #viewCalendar .calFootBtns{display:none!important}
 .calInfoCard.ndFlash{box-shadow:0 0 0 2px var(--rc-gs,#3f9c7c);transition:box-shadow .6s}
+/* 캘린더 루틴 칩: TODAY 알약과 같은 크기 + 여러 개 고르면 색으로 구분 */
+#calendarRoutineChips .calendarRoutineChip{font-size:var(--fs-1)!important;height:30px;min-height:30px!important;padding:0 12px!important;display:inline-flex;align-items:center;gap:5px;line-height:1}
+#calendarRoutineChips .calendarRoutineChip svg,#calendarRoutineChips .calendarRoutineChip .appIco svg{width:14px!important;height:14px!important}
+#calendarRoutineChips .calendarRoutineChip.on{border-color:var(--chip-c)!important;background:color-mix(in srgb,var(--chip-c) 14%,var(--rc-card))!important;color:var(--rc-tx)!important}
+#calendarRoutineChips .calendarRoutineChip.on::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--chip-c);flex:none}
+.calRtSw{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.calRtDots{position:absolute;left:0;right:0;bottom:4px;display:flex;justify-content:center;gap:2px;pointer-events:none}
+.calRtDots i{width:6px;height:6px;border-radius:50%}
+#calendarGrid.rtColor .calDay{position:relative}
+#calendarGrid.rtColor .calDay .calDot{display:none}
+#calendarGrid.rtColor .calDay.filterHit,#calendarGrid.rtColor .calDay.filterMiss{background:transparent!important;box-shadow:none!important;border-color:transparent;opacity:1;font-weight:inherit}
+#calendarGrid.rtColor .calDay.filterMiss{opacity:.45}
+#calendarGrid.rtColor .calDay.selected{border-color:var(--rc-gs,#3f9c7c)!important}
 /* 4) 하루 시작 시간 */
 #viewBackup .dayStartRow{display:flex;flex-wrap:nowrap;gap:6px;width:100%}
 #viewBackup .dayStartRow button{min-width:0!important;flex:1 1 0;padding-left:0;padding-right:0}
@@ -11932,6 +11945,29 @@ function setThemeMode(v){try{localStorage.setItem(THEME_MODE_KEY,v);}catch(e){}a
   if(part&&!document.getElementById('themeModeRow'))part.insertAdjacentHTML('afterend','<div class="backupPart"><div class="backupSubTitle">화면 모드</div><div class="backupHint">시스템은 폰 설정(라이트·다크)을 따라가요.</div><div class="settingsRow"><div class="fontScaleButtons" id="themeModeRow"></div></div></div>');
   applyThemeMode();
 })();
+/* 캘린더: 고른 루틴마다 테마 색 순서(지금 테마 색부터)로 칩·날짜 점 표시 */
+function calRtColor(i){
+  const cyc=['red','orange','yellow','green','blue','purple','pink'];let st=cyc.indexOf(getThemeColor());if(st<0)st=3;
+  let dark=false;try{const m=themeMode();dark=m==='dark'||(m==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);}catch(e){}
+  const c=cyc[(st+i)%cyc.length];try{return THEME_PALETTES[c][dark?'dark':'light'].base.gs;}catch(e){return '#3f9c7c';}
+}
+(function(){
+  const r=renderLifeCalendar;renderLifeCalendar=function(){const x=r.apply(this,arguments);
+    try{
+      const grid=document.getElementById('calendarGrid');if(!grid)return x;
+      const ids=(typeof calRtIds!=='undefined'?calRtIds:[]).slice();
+      grid.classList.toggle('rtColor',ids.length>0);
+      grid.querySelectorAll('.calRtDots').forEach(e=>e.remove());
+      document.querySelectorAll('#calendarRoutineChips .calendarRoutineChip').forEach(b=>{const m=/setCalendarRoutineFilter\('([^']+)'\)/.exec(b.getAttribute('onclick')||'');const i=m?ids.indexOf(m[1]):-1;if(i>=0)b.style.setProperty('--chip-c',calRtColor(i));else b.style.removeProperty('--chip-c');});
+      if(!ids.length)return x;
+      const groups=ids.map(id=>getCalendarRoutineGroup(id));
+      grid.querySelectorAll('.calDay:not(.blank)').forEach(b=>{const m=/selectCalendarDate\('([^']+)'\)/.exec(b.getAttribute('onclick')||'');if(!m)return;
+        const dots=groups.map((g,i)=>{try{return g&&calendarRoutineGroupWasDoneOnDate(g,m[1])?`<i style="background:${calRtColor(i)}"></i>`:'';}catch(e){return '';}}).join('');
+        if(dots)b.insertAdjacentHTML('beforeend',`<span class="calRtDots">${dots}</span>`);});
+    }catch(e){}
+    return x;};
+  const rc=renderCalendarSearchControls;renderCalendarSearchControls=function(){const x=rc.apply(this,arguments);try{renderLifeCalendar.__sync&&0;}catch(e){}return x;};
+})();
 /* 4) SETTING: 하루가 바뀌는 시간 */
 function renderDayStart(){
   const el=document.getElementById('dayStartRow');if(!el)return;const h=dayStartHour();
@@ -12031,8 +12067,8 @@ setCalendarRoutineFilter=function(id){
       document.querySelectorAll('#calendarRoutineChips .calendarRoutineChip').forEach(b=>{const m=/setCalendarRoutineFilter\('([^']+)'\)/.exec(b.getAttribute('onclick')||'');if(m)b.classList.toggle('on',calRtIds.includes(m[1]));});
       const sum=document.getElementById('calendarRoutineSummary');
       if(sum&&calRtIds.length>1){
-        sum.innerHTML=calRtIds.map(id=>{const g=getCalendarRoutineGroup(id);if(!g)return '';const s=getCalendarRoutineGroupSummary(g);const t=calendarRoutineGroupHasTime(g);
-          return `<div class="calSummaryLine"><b>${escapeLife(getCalendarRoutineGroupIcon(g))} ${escapeLife(getCalendarRoutineGroupName(g))}</b> · ${s.monthValue}월 ${s.month.days}일${t?` · ${formatCalendarSummaryDuration(s.month.totalMinutes)}`:''}</div>`;}).join('')+`<div class="calRtMulti">고른 루틴 중 하나라도 한 날이 표시돼요</div>`;
+        sum.innerHTML=calRtIds.map((id,ix)=>{const g=getCalendarRoutineGroup(id);if(!g)return '';const s=getCalendarRoutineGroupSummary(g);const t=calendarRoutineGroupHasTime(g);
+          return `<div class="calSummaryLine"><i class="calRtSw" style="background:${calRtColor(ix)}"></i><b>${escapeLife(getCalendarRoutineGroupName(g))}</b> · ${s.monthValue}월 ${s.month.days}일${t?` · ${formatCalendarSummaryDuration(s.month.totalMinutes)}`:''}</div>`;}).join('')+`<div class="calRtMulti">날짜 아래 점 색깔로 어떤 루틴을 한 날인지 구분돼요</div>`;
         sum.classList.remove('hide');
       }
       const clear=document.getElementById('calendarSearchClear');if(clear)clear.classList.toggle('hide',!calendarSearchText.trim()&&!calRtIds.length);
