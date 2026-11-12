@@ -2690,7 +2690,7 @@ body.secOff-project #calendarDetail [data-sec="project"],body.secOff-project .ca
     <div class="backupCardText">기록과 직접 올린 책 표지를 파일 하나로 저장해요.</div>
     <button class="backupPrimary uiWideAction" onclick="downloadBackup()">백업 파일 저장</button>
     <div class="backupHint">저장한 파일은 <b>내 파일 → 다운로드</b>에서 찾을 수 있어요.</div>
-    <div id="backupSaveStatus" class="backupStatusBox">아직 이번 접속에서 저장한 백업 파일이 없어요.</div></div>
+    <div id="backupSaveStatus" class="backupStatusBox"><span id="backupLastInfo">아직 이번 접속에서 저장한 백업 파일이 없어요.</span></div></div>
     <div class="backupPart"><div class="backupSubTitle">불러오기</div>
     <div class="backupCardText">저장해 둔 백업 파일을 골라 복원해요. 현재 데이터는 백업 내용으로 바뀌어요.</div>
     <input id="backupFile" class="backupFilePicker" type="file" accept="application/json,.json" onchange="loadBackupFile()">
@@ -8316,7 +8316,7 @@ function renderBackupNudge(){
     guide.parentNode.insertBefore(el,guide);
   }
   const d=backupNudgeDays();
-  if(d>=14){document.getElementById('backupNudgeText').textContent=`마지막 백업 후 ${d}일이 지났어요`;el.classList.remove('hide');}
+  if(d>=7){document.getElementById('backupNudgeText').textContent=localStorage.getItem('lastFileBackup_v1')?`마지막 파일 백업 후 ${d}일이 지났어요`:'아직 파일로 백업한 적이 없어요';el.classList.remove('hide');}
   else el.classList.add('hide');
 }
 function snoozeBackupNudge(){
@@ -11658,6 +11658,11 @@ function pjBulkAdd(){
 }
 
 function pjSortByDue(){if(!pjDraft)return;const ts=pjDraft.tasks;ts.forEach((t,i)=>t._o=i);ts.sort((a,b)=>(a.due?0:1)-(b.due?0:1)||(a.due&&b.due&&a.due!==b.due?(a.due<b.due?-1:1):0)||a._o-b._o);ts.forEach(t=>delete t._o);}
+
+/* ===== 데이터 보호: 영구 저장 요청 + 마지막 파일 백업 표시 ===== */
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(e){}
+(function(){try{const el=document.getElementById('backupLastInfo');const last=localStorage.getItem('lastFileBackup_v1');
+  if(el)el.textContent=last?`마지막 파일 백업: ${last.slice(5).replace('-','.')}`:'아직 파일로 백업한 적이 없어요';}catch(e){}})();
 </script>
 
 
