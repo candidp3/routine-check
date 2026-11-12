@@ -12066,9 +12066,16 @@ setCalendarRoutineFilter=function(id){
     try{
       document.querySelectorAll('#calendarRoutineChips .calendarRoutineChip').forEach(b=>{const m=/setCalendarRoutineFilter\('([^']+)'\)/.exec(b.getAttribute('onclick')||'');if(m)b.classList.toggle('on',calRtIds.includes(m[1]));});
       const sum=document.getElementById('calendarRoutineSummary');
+      if(sum&&calRtIds.length===1){
+        const g=getCalendarRoutineGroup(calRtIds[0]);
+        if(g){const s=getCalendarRoutineGroupSummary(g);const t=calendarRoutineGroupHasTime(g);const tm=m=>t&&m?` · 총 ${formatCalendarSummaryDuration(m)}`:'';
+          sum.innerHTML=`<div class="calSummaryName"><i class="calRtSw" style="background:${calRtColor(0)}"></i>${escapeLife(getCalendarRoutineGroupName(g))}</div>
+            <div class="calSummaryLine">${s.monthValue}월에 ${s.month.days}일 했어요${tm(s.month.totalMinutes)}</div>
+            <div class="calSummaryLine">${s.yearValue}년 전체로는 ${s.year.days}일${tm(s.year.totalMinutes)}</div>`;sum.classList.remove('hide');}
+      }
       if(sum&&calRtIds.length>1){
         sum.innerHTML=calRtIds.map((id,ix)=>{const g=getCalendarRoutineGroup(id);if(!g)return '';const s=getCalendarRoutineGroupSummary(g);const t=calendarRoutineGroupHasTime(g);
-          return `<div class="calSummaryLine"><i class="calRtSw" style="background:${calRtColor(ix)}"></i><b>${escapeLife(getCalendarRoutineGroupName(g))}</b> · ${s.monthValue}월 ${s.month.days}일${t?` · ${formatCalendarSummaryDuration(s.month.totalMinutes)}`:''}</div>`;}).join('')+`<div class="calRtMulti">날짜 아래 점 색깔로 어떤 루틴을 한 날인지 구분돼요</div>`;
+          return `<div class="calSummaryLine"><i class="calRtSw" style="background:${calRtColor(ix)}"></i><b>${escapeLife(getCalendarRoutineGroupName(g))}</b> · ${s.monthValue}월에 ${s.month.days}일${t&&s.month.totalMinutes?` · ${formatCalendarSummaryDuration(s.month.totalMinutes)}`:''}</div>`;}).join('')+`<div class="calRtMulti">점 색깔을 보면 그날 어떤 루틴을 했는지 알 수 있어요</div>`;
         sum.classList.remove('hide');
       }
       const clear=document.getElementById('calendarSearchClear');if(clear)clear.classList.toggle('hide',!calendarSearchText.trim()&&!calRtIds.length);
