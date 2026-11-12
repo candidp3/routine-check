@@ -3765,7 +3765,7 @@ function renderCustomDailyCare(){
   root.innerHTML=defs.map(d=>{
     if(d.type==='numeric'){
       const v=dailyCareNumericValue(activeDateKey,d.id);
-      const valueText=v===null?'기록 없음':`${formatDailyCareNumber(v)}${escapeLife(d.unit||'')}${Number(d.target)>0?` · 목표 ${formatDailyCareNumber(Number(d.target))}`:''}`;
+      const valueText=v===null?(Number(d.target)>0?`목표 ${formatDailyCareNumber(Number(d.target))}${escapeLife(d.unit||'')}`:'기록 없음'):`기록 ${formatDailyCareNumber(v)}${escapeLife(d.unit||'')}`;
       return `<div class="dailyCareItem dailyCareItemCard dailyCareNumericCard" data-daily-care-id="${escapeLife(d.id)}" role="button" tabindex="0" onclick="openCustomDailyCareNumericPopup('${d.id}')" onkeydown="if(event.key==='Enter'||event.key===' ')openCustomDailyCareNumericPopup('${d.id}')"><div class="dailyCareName">${escapeLife(d.icon||'')} ${escapeLife(d.name)}</div><div class="dailyCareMeta">${valueText}</div></div>`;
     }
 
@@ -3774,6 +3774,8 @@ function renderCustomDailyCare(){
       const val=raw&&typeof raw==='object'?raw:null;
       const sess=getDailyCareDurationSession(d.id);
       let meta=durationRecordSummary(d,val),mainLabel=d.durationStartLabel||'시작';
+      if(meta==='기록 없음'&&d.durationGoalMinutes>0)meta=`목표 ${formatDailyCareDuration(d.durationGoalMinutes)}`;
+      else if(val&&d.durationTrackMinutes&&Number.isFinite(Number(val.minutes)))meta=`기록 ${formatDailyCareDuration(Number(val.minutes))}`;
       if(sess?.startAt){
         const start=new Date(sess.startAt);
         const mins=Math.max(0,Math.floor((Date.now()-start.getTime())/60000));
