@@ -2197,7 +2197,7 @@ html[data-tc="yellow"] .lifeSave,html[data-tc="yellow"] .routineInputActions but
 .pjManageMain{min-width:0}
 .pjManageMeta{font-size:var(--fs-1);color:var(--rc-mu);margin-top:2px}
 
-body.secOff-dailycare .dailyCareBlock,body.secOff-project #projectBlock,body.secOff-quicklog #quickLogBlock,body.secOff-routine #lifeGuide>[data-sec="routine"],body.secOff-freetime #lifeGuide>[data-sec="freetime"],body.secOff-dailycare #calendarDetail [data-sec="dailycare"],body.secOff-routine #calendarDetail [data-sec="routine"],body.secOff-freetime #calendarDetail [data-sec="freetime"],body.secOff-quicklog #calendarDetail [data-sec="quicklog"]{display:none!important}
+body.secOff-routine #lifeGuide>.rtHead,body.secOff-dailycare .dailyCareBlock,body.secOff-project #projectBlock,body.secOff-quicklog #quickLogBlock,body.secOff-routine #lifeGuide>[data-sec="routine"],body.secOff-freetime #lifeGuide>[data-sec="freetime"],body.secOff-dailycare #calendarDetail [data-sec="dailycare"],body.secOff-routine #calendarDetail [data-sec="routine"],body.secOff-freetime #calendarDetail [data-sec="freetime"],body.secOff-quicklog #calendarDetail [data-sec="quicklog"]{display:none!important}
 .periodFold{margin:0}
 .periodFold>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;padding:2px 0;font-size:var(--fs-1);color:var(--rc-mu)}
 .periodFold>summary::-webkit-details-marker{display:none}
@@ -2344,7 +2344,8 @@ body.secOff-project #calendarDetail [data-sec="project"],body.secOff-project .ca
 .lifeBlock.lbFold>.lbPeek{display:flex!important}
 .lbPeek button{flex:1 1 auto;justify-content:center;display:inline-flex;align-items:center;gap:6px;height:30px;border:0;border-radius:99px;background:var(--rc-soft2,var(--rc-soft,#f1f4f2));padding:0 12px 0 9px;font:inherit;font-size:var(--fs-1);color:var(--rc-tx2,var(--rc-tx));white-space:nowrap;max-width:100%}
 .lbPeek button i{width:13px;height:13px;border-radius:50%;border:1.5px solid var(--rc-line2,#c9d3ce);display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:8px;line-height:1;color:#fff;flex:none;box-sizing:border-box}
-.lbPeek button.done{background:var(--rc-gl,#e2f4ec);color:var(--rc-gs,#2f6b55)}
+.lbPeek button.done{color:var(--rc-mu)}
+.lbPeek button.done span,.lbPeek button.done{text-decoration:none}
 .lbPeek button.done i{background:var(--rc-gs,#3f9c7c);border-color:var(--rc-gs,#3f9c7c)}
 .lbPeek .lbPkIco{display:none}
 .lbPeek .lbMore{display:inline-flex;align-items:center;height:30px;padding:0 4px;font-size:var(--fs-1);color:var(--rc-mu)}
@@ -2357,6 +2358,18 @@ body.secOff-project #calendarDetail [data-sec="project"],body.secOff-project .ca
 body.scrolled .tdChip .tdPick{width:28px!important;height:28px!important;min-width:28px!important}
 body.scrolled .tdChip .tdPick svg{width:15px;height:15px}
 body.scrolled .tdChip .tdToday{height:28px!important;padding:0 10px!important;font-size:var(--fs-1)!important}
+/* 3) 화면 표시: 눌리지 않던 버튼 → 분명한 스위치 */
+.svRow{display:flex;align-items:center;gap:12px;padding:14px 4px;border-top:1px solid var(--rc-line)}
+.svRow:first-child{border-top:0}
+.svRow .svTxt{flex:1;min-width:0}
+.svRow .svName{font-size:var(--fs-2);font-weight:var(--fw-3);color:var(--rc-tx)}
+.svRow .svDesc{font-size:var(--fs-1);color:var(--rc-mu);margin-top:2px}
+.svRow .svState{font-size:var(--fs-1);color:var(--rc-mu);min-width:28px;text-align:right}
+.svRow.on .svState{color:var(--rc-gs,#2f6b55)}
+.svSw{position:relative;width:50px;height:30px;border-radius:99px;border:0;background:var(--rc-line2,#cfd8d3);flex:none;padding:0;cursor:pointer;transition:background .2s}
+.svSw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .2s}
+.svRow.on .svSw{background:var(--rc-g,#3f9c7c)}
+.svRow.on .svSw::after{transform:translateX(20px)}
 /* 9) 하단 메뉴: TODAY 가운데 + 강조 */
 .bottomNav #navToday span{width:46px!important;height:46px!important;border-radius:50%!important;background:var(--rc-g,#3f9c7c)!important;color:#fff!important;margin-top:-18px!important;box-shadow:0 4px 12px rgba(0,0,0,.16);border:3px solid var(--rc-card,#fff)}
 .bottomNav #navToday{color:var(--rc-gs,#2f6b55)!important;font-weight:var(--fw-3)}
@@ -11783,6 +11796,11 @@ function dcSlideSync(){
   try{renderLifeGuide();}catch(e){}
 })();
 (function(){const f=renderTodaySummary;renderTodaySummary=function(){const r=f.apply(this,arguments);try{const el=document.getElementById('todaySummary');if(el){[...el.querySelectorAll('span')].forEach(x=>{if(/^루틴\s/.test(x.textContent.trim()))x.remove();});el.classList.toggle('hide',!el.querySelector('span'));}}catch(e){}return r;};try{renderTodaySummary();}catch(e){}})();
+/* 3) 화면 표시: 스위치로 켜고 끄기 (행 전체를 눌러도 됨) */
+renderSecVis=function(){
+  const el=document.getElementById('secVisList');if(!el)return;
+  el.innerHTML=SECVIS_DEFS.map(d=>{const on=secVisOn(d[0]);return `<div class="svRow${on?' on':''}" role="switch" aria-checked="${on}" tabindex="0" onclick="secVisToggle('${d[0]}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();secVisToggle('${d[0]}')}"><div class="svTxt"><div class="svName">${d[1]}</div><div class="svDesc">${d[2]}</div></div><span class="svState">${on?'보임':'숨김'}</span><span class="svSw" aria-hidden="true"></span></div>`;}).join('');
+};
 /* 9) 하단 메뉴: TODAY를 가운데로 */
 (function(){
   const nav=document.querySelector('.bottomNav');if(!nav)return;
