@@ -2382,9 +2382,8 @@ body.scrolled .tdChip .tdToday{height:28px!important;padding:0 10px!important;fo
 .calSearchBtn svg{width:17px!important;height:17px!important}
 #viewCalendar.calSearchOpen .calSearchBtn{background:var(--rc-gl,#e2f4ec);color:var(--rc-gs,#2f6b55)}
 /* 4) 하루 시작 시간 */
-.dayStartRow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.dayStartRow button{min-width:56px;height:38px;border-radius:12px;border:1px solid var(--rc-line);background:var(--rc-card);font:inherit;font-size:var(--fs-2);color:var(--rc-tx)}
-.dayStartRow button.on{border-color:var(--rc-gs,#3f9c7c);background:var(--rc-gl,#e2f4ec);color:var(--rc-gs,#2f6b55);font-weight:var(--fw-3)}
+#viewBackup .dayStartRow{display:flex;flex-wrap:nowrap;gap:6px;width:100%}
+#viewBackup .dayStartRow button{min-width:0!important;flex:1 1 0;padding-left:0;padding-right:0}
 /* 6) 상자 제목 옆 짧은 설명 */
 .secSub{font-size:var(--fs-1);font-weight:var(--fw-1,400);color:var(--rc-mu);margin-left:8px;letter-spacing:0;text-transform:none}
 /* 9) 하단 메뉴: TODAY 가운데 + 강조 */
@@ -11850,7 +11849,7 @@ renderSecVis=function(){
 /* 4) SETTING: 하루가 바뀌는 시간 */
 function renderDayStart(){
   const el=document.getElementById('dayStartRow');if(!el)return;const h=dayStartHour();
-  el.innerHTML=[0,1,2,3,4,5].map(x=>`<button type="button" class="${x===h?'on':''}" onclick="setDayStart(${x})">${x===0?'자정':`새벽 ${x}시`}</button>`).join('');
+  el.innerHTML=[0,1,2,3,4,5].map(x=>`<button type="button" class="settingsBtn uiActionSm${x===h?' on':''}" onclick="setDayStart(${x})">${x===0?'자정':`${x}시`}</button>`).join('');
 }
 async function setDayStart(h){
   if(h===dayStartHour())return;
@@ -11863,7 +11862,7 @@ async function setDayStart(h){
   const fs=[...document.querySelectorAll('#viewBackup .backupSubTitle')].find(x=>x.textContent.trim()==='글자 크기');
   const part=fs?fs.closest('.backupPart'):null;
   if(part&&!document.getElementById('dayStartRow')){
-    part.insertAdjacentHTML('afterend',`<div class="backupPart"><div class="backupSubTitle">하루가 바뀌는 시간</div><div class="backupHint">늦게 자는 편이면 새벽까지 전날 체크리스트를 볼 수 있어요.</div><div class="dayStartRow" id="dayStartRow"></div></div>`);
+    part.insertAdjacentHTML('afterend',`<div class="backupPart"><div class="backupSubTitle">하루가 바뀌는 시간</div><div class="backupHint">늦게 자는 편이면 새벽 몇 시까지 전날로 볼지 골라요.</div><div class="settingsRow"><div class="fontScaleButtons dayStartRow" id="dayStartRow"></div></div></div>`);
     renderDayStart();
   }
 })();
