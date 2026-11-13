@@ -2609,6 +2609,19 @@ body.thTimerOn.thHeroSeen #activityTimerFloat{display:none!important}
 .tplOpen{align-self:flex-start;border:0;background:none;color:var(--rc-mu);font:inherit;font-size:12px;padding:4px 2px;min-height:0}
 .pjCatBox{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0 6px}
 .pjCatLab{font-size:12px;color:var(--rc-mu);margin-right:2px}
+/* 기록 창 정리: 칩은 한 줄로 옆으로 밀기, 미리보기는 채웠을 때만 작게 */
+#routineInputWrap .tplF .tplChips:not(.tplSel),#routineInputWrap .rcChips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 -2px;padding:0 2px 2px;mask-image:linear-gradient(90deg,#000 88%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent)}
+#routineInputWrap .tplF .tplChips:not(.tplSel)::-webkit-scrollbar,#routineInputWrap .rcChips::-webkit-scrollbar{display:none}
+#routineInputWrap .tplChip,#routineInputWrap .rcChip{flex:none;padding:5px 11px;font-size:13px}
+#routineInputWrap .tplBox{gap:10px}
+#routineInputWrap .tplPrevWrap{background:none;padding:0 2px}
+#routineInputWrap .tplPrevWrap span{display:none}
+#routineInputWrap .tplPrev{font-size:12px;color:var(--rc-mu)}
+#routineInputWrap .tplPrevWrap.empty{display:none}
+#routineInputWrap .rcBox{display:flex;align-items:center;gap:8px;margin:2px 0}
+#routineInputWrap .rcBox .rcHead{flex:none;margin:0;font-size:12px}
+#routineInputWrap .rcBox .rcChips{flex:1;min-width:0}
+#routineInputWrap .tplLinks button{text-decoration:none;color:var(--rc-mu);font-size:12px}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -12559,7 +12572,7 @@ function rcRender(){
   if(q)ids=o.items.map((x,i)=>i).filter(i=>{const t=o.textOf(o.items[i]).toLowerCase();return t.includes(q)&&t!==q;});
   const shown=ids.slice(0,4);
   if(!shown.length&&q){o.box.innerHTML='';return;}
-  o.box.innerHTML=`<div class="rcHead">${q?'이전 기록에서 찾기':'자주 쓰는 기록'}</div><div class="rcChips">`+
+  o.box.innerHTML=`<div class="rcHead">${q?'찾기':'이전 기록'}</div><div class="rcChips">`+
     shown.map(i=>`<button type="button" class="rcChip" onclick="rcPick(${i})">${escapeLife(o.textOf(o.items[i]))}</button>`).join('')+
     (o.more&&o.items.length>shown.length?`<button type="button" class="rcChip rcMore" onclick="rcState.more()">더 보기</button>`:'')+`</div>`;
 }
@@ -12718,7 +12731,7 @@ function tplMount(rid){
   const box=document.createElement('div');box.className='tplBox';ta.insertAdjacentElement('afterend',box);
   tplRender();
 }
-function tplSync(){const ta=document.getElementById('routineInputValue');if(ta&&tplS&&!tplS.free)ta.value=tplCompose(tplS.tpl,tplS.vals);const p=document.getElementById('tplPrev');if(p&&tplS)p.textContent=tplCompose(tplS.tpl,tplS.vals)||'칸을 채우면 이렇게 저장돼요';}
+function tplSync(){const ta=document.getElementById('routineInputValue');if(ta&&tplS&&!tplS.free)ta.value=tplCompose(tplS.tpl,tplS.vals);const p=document.getElementById('tplPrev');if(p&&tplS){const t=tplCompose(tplS.tpl,tplS.vals);p.textContent=t?'→ '+t:'';p.parentElement.classList.toggle('empty',!t);}}
 function tplRender(){
   const box=document.querySelector('#routineInputWrap .tplBox');if(!box||!tplS)return;
   const ta=document.getElementById('routineInputValue'),rc=ta?.parentElement.querySelector('.rcBox');
@@ -12902,7 +12915,7 @@ function pjTidyLine(t){
   tplRender=function(){
     const r=tr.apply(this,arguments);
     try{const ta=document.getElementById('routineInputValue'),rc=ta?.parentElement.querySelector('.rcBox'),box=ta?.parentElement.querySelector('.tplBox');
-      if(rc&&box&&tplS&&!tplS.free){rc.classList.remove('tplHid');box.after(rc);const h=rc.querySelector('.rcHead');if(h&&!String(o_q()).trim())h.textContent='이전 기록 그대로 불러오기';}}catch(e){}
+      if(rc&&box&&tplS&&!tplS.free){rc.classList.remove('tplHid');box.after(rc);const h=rc.querySelector('.rcHead');if(h)h.textContent='이전 기록';}}catch(e){}
     return r;
   };
   function o_q(){return '';}
