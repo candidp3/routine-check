@@ -2628,6 +2628,21 @@ body.thTimerOn.thHeroSeen #activityTimerFloat{display:none!important}
 .icTab{flex:none;border:1px solid var(--rc-line);background:var(--rc-card);color:var(--rc-tx2,var(--rc-tx));border-radius:999px;padding:6px 9px;font:inherit;font-size:12.5px;min-height:0;cursor:pointer}
 .icTab.on{border-color:var(--rc-gs);background:var(--rc-gl);color:var(--rc-gd,var(--rc-tx));font-weight:600}
 .icPick[hidden]{display:none!important}
+.tdJump{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 0 14px;padding:0 2px}
+.tdJump::-webkit-scrollbar{display:none}
+.tdJumpBtn{flex:1 1 0;min-width:0;justify-content:center;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;height:36px;min-height:36px;padding:0 8px;border:1px solid var(--rc-line);border-radius:999px;background:var(--rc-card);color:var(--rc-tx);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+.tdJumpBtn b{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--rc-gs);color:#fff;font-size:11px;display:inline-flex;align-items:center;justify-content:center}
+.tdJumpIc{display:inline-flex;color:var(--rc-gs)}.tdJumpIc svg{width:16px;height:16px}
+.tdFlash{animation:tdFlash 1.4s ease}
+@keyframes tdFlash{0%,40%{box-shadow:0 0 0 3px color-mix(in srgb,var(--rc-gs) 45%,transparent)}100%{box-shadow:0 0 0 0 transparent}}
+.qlFab{position:fixed;right:max(16px,calc((100vw - 560px)/2 + 16px));bottom:84px;z-index:72;width:52px;height:52px;min-height:52px;border-radius:50%;border:0;background:var(--rc-gs);color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer}
+.qlFab svg{width:24px;height:24px}.qlFab[hidden]{display:none}
+.qlFab:active{transform:scale(.94)}
+body.qlFabOn #viewToday{padding-bottom:64px}
+body.qlFabOn .activityTimerFloat{right:auto!important;left:max(14px,calc((100vw - 560px)/2 + 14px))!important}
+.qlFabHint{font-size:12px;color:var(--rc-mu);margin:-4px 0 10px;text-align:center}
+.qlFabList{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:10px}
+.qlFabAdd{display:block;margin:0 auto 6px;border:0;background:none;color:var(--rc-gd,var(--rc-gs));font:inherit;font-size:13px;min-height:0}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -12998,6 +13013,49 @@ function tplMealFill(added){
       if(d&&d.type==='meal'&&m){TPL_TA='olMemo';tplS=null;tplMount('ol:'+defId);}}catch(e){console.warn(e);}
     return r;
   };
+})();
+/* ===== TODAY 바로가기 칩 + QUICK LOG 떠 있는 버튼 (2026-11-13) ===== */
+function tdJumpTargets(){
+  const t=[];const on=id=>!document.body.classList.contains('secOff-'+id);
+  const ft=document.querySelector('#lifeGuide>.lifeBlock[data-sec="freetime"]');if(ft&&on('freetime')&&ft.offsetParent)t.push(['freetime','⟪timer⟫','FREE TIME','',ft]);
+  const pj=document.getElementById('projectBlock');if(pj&&on('project')&&pj.offsetParent){let n=0;try{n=pjLoad().filter(p=>p.status==='active').length;}catch(e){}t.push(['project','⟪calendar⟫','PROJECTS',n?String(n):'',pj]);}
+  const ql=document.getElementById('quickLogBlock');if(ql&&on('quicklog')&&ql.offsetParent)t.push(['quicklog','⟪pencil⟫','QUICK LOG','',ql]);
+  return t;
+}
+function tdJump(id){
+  const x=tdJumpTargets().find(a=>a[0]===id);if(!x)return;const el=x[4];
+  const top=el.getBoundingClientRect().top+window.scrollY-72;window.scrollTo({top,behavior:'smooth'});
+  el.classList.remove('tdFlash');void el.offsetWidth;el.classList.add('tdFlash');setTimeout(()=>el.classList.remove('tdFlash'),1400);
+}
+function renderTdJump(){
+  const hero=document.getElementById('tdHero');if(!hero)return;
+  let row=document.getElementById('tdJump');const t=tdJumpTargets();
+  if(!t.length){row?.remove();return;}
+  if(!row){row=document.createElement('div');row.id='tdJump';row.className='tdJump';}
+  if(row.previousElementSibling!==hero)hero.after(row);
+  row.innerHTML=t.map(([id,ic,name,n])=>`<button type="button" class="tdJumpBtn" onclick="tdJump('${id}')"><span class="tdJumpIc">${ic}</span>${name}${n?`<b>${n}</b>`:''}</button>`).join('');
+}
+function qlFabSync(){
+  const v=document.getElementById('viewToday');if(!v)return;
+  let f=document.getElementById('qlFab');
+  const on=!document.body.classList.contains('secOff-quicklog')&&!!document.getElementById('quickLogBlock');
+  if(!f){f=document.createElement('button');f.type='button';f.id='qlFab';f.className='qlFab';f.setAttribute('aria-label','QUICK LOG 기록');f.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';f.onclick=qlFabOpen;v.appendChild(f);}
+  f.hidden=!on;document.body.classList.toggle('qlFabOn',on);
+}
+function qlFabOpen(){
+  let o=document.getElementById('qlFabSheet');
+  if(!o){o=document.createElement('div');o.id='qlFabSheet';o.className='routineActionOverlay hide';
+    o.addEventListener('click',e=>{if(e.target===o||e.target.closest('.qlFabClose')){o.classList.add('hide');return;}if(e.target.closest('.snackQuickBtn,.qlFabAdd'))setTimeout(()=>o.classList.add('hide'),0);});
+    document.body.appendChild(o);}
+  const row=document.getElementById('oneOffQuickRow');
+  o.innerHTML=`<div class="routineInputCard qlFabCard" role="dialog" aria-modal="true"><div class="routineActionTitle">QUICK LOG</div><div class="qlFabHint">지금 남길 기록을 골라요</div><div class="qlFabList">${row?row.innerHTML:''}</div><button type="button" class="qlFabAdd" onclick="openOneOffRecordEditor()">+ 항목 추가</button><div class="routineInputActions"><button type="button" class="qlFabClose">닫기</button></div></div>`;
+  o.classList.remove('hide');
+}
+(function(){
+  const g=renderLifeGuide;renderLifeGuide=function(){const r=g.apply(this,arguments);try{renderTdJump();qlFabSync();}catch(e){}return r;};
+  try{const pr=renderProjects;renderProjects=function(){const r=pr.apply(this,arguments);try{renderTdJump();}catch(e){}return r;};}catch(e){}
+  try{const sa=secVisApply;secVisApply=function(){const r=sa.apply(this,arguments);try{renderTdJump();qlFabSync();}catch(e){}return r;};}catch(e){}
+  setTimeout(()=>{try{renderTdJump();qlFabSync();}catch(e){}},300);
 })();
 </script>
 
