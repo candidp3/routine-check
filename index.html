@@ -2610,19 +2610,19 @@ body.thTimerOn.thHeroSeen #activityTimerFloat{display:none!important}
 .pjCatBox{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0 6px}
 .pjCatLab{font-size:12px;color:var(--rc-mu);margin-right:2px}
 /* 기록 창 정리: 칩은 한 줄로 옆으로 밀기, 미리보기는 채웠을 때만 작게 */
-#routineInputWrap .tplF .tplChips:not(.tplSel),#routineInputWrap .rcChips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 -2px;padding:0 2px 2px;mask-image:linear-gradient(90deg,#000 88%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent)}
-#routineInputWrap .tplF .tplChips:not(.tplSel)::-webkit-scrollbar,#routineInputWrap .rcChips::-webkit-scrollbar{display:none}
-#routineInputWrap .tplChips:empty{display:none}
-#routineInputWrap .tplChip,#routineInputWrap .rcChip{flex:none;padding:5px 11px;font-size:13px}
-#routineInputWrap .tplBox{gap:10px}
-#routineInputWrap .tplPrevWrap{background:none;padding:0 2px}
-#routineInputWrap .tplPrevWrap span{display:none}
-#routineInputWrap .tplPrev{font-size:12px;color:var(--rc-mu)}
-#routineInputWrap .tplPrevWrap.empty{display:none}
-#routineInputWrap .rcBox{display:flex;align-items:center;gap:8px;margin:2px 0}
-#routineInputWrap .rcBox .rcHead{flex:none;margin:0;font-size:12px}
-#routineInputWrap .rcBox .rcChips{flex:1;min-width:0}
-#routineInputWrap .tplLinks button{text-decoration:none;color:var(--rc-mu);font-size:12px}
+:is(#routineInputWrap,#oneOffLogModal) .tplF .tplChips:not(.tplSel),:is(#routineInputWrap,#oneOffLogModal) .rcChips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 -2px;padding:0 2px 2px;mask-image:linear-gradient(90deg,#000 88%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent)}
+:is(#routineInputWrap,#oneOffLogModal) .tplF .tplChips:not(.tplSel)::-webkit-scrollbar,:is(#routineInputWrap,#oneOffLogModal) .rcChips::-webkit-scrollbar{display:none}
+:is(#routineInputWrap,#oneOffLogModal) .tplChips:empty{display:none}
+:is(#routineInputWrap,#oneOffLogModal) .tplChip,:is(#routineInputWrap,#oneOffLogModal) .rcChip{flex:none;padding:5px 11px;font-size:13px}
+:is(#routineInputWrap,#oneOffLogModal) .tplBox{gap:10px}
+:is(#routineInputWrap,#oneOffLogModal) .tplPrevWrap{background:none;padding:0 2px}
+:is(#routineInputWrap,#oneOffLogModal) .tplPrevWrap span{display:none}
+:is(#routineInputWrap,#oneOffLogModal) .tplPrev{font-size:12px;color:var(--rc-mu)}
+:is(#routineInputWrap,#oneOffLogModal) .tplPrevWrap.empty{display:none}
+:is(#routineInputWrap,#oneOffLogModal) .rcBox{display:flex;align-items:center;gap:8px;margin:2px 0}
+:is(#routineInputWrap,#oneOffLogModal) .rcBox .rcHead{flex:none;margin:0;font-size:12px}
+:is(#routineInputWrap,#oneOffLogModal) .rcBox .rcChips{flex:1;min-width:0}
+:is(#routineInputWrap,#oneOffLogModal) .tplLinks button{text-decoration:none;color:var(--rc-mu);font-size:12px}
 .icTabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:8px -2px 0;padding:0 2px 2px}
 .icTabs::-webkit-scrollbar{display:none}
 .icTab{flex:none;border:1px solid var(--rc-line);background:var(--rc-card);color:var(--rc-tx2,var(--rc-tx));border-radius:999px;padding:6px 9px;font:inherit;font-size:12.5px;min-height:0;cursor:pointer}
@@ -12696,6 +12696,17 @@ function thTimerHTML(){
 })();
 /* ===== 기록 틀: 자유 기록 루틴을 칸으로 나눠 쉽게 입력 (2026-11-13) =====
    저장은 지금과 같은 한 줄 글 (예: PT 17:00-18:00 | 상체 · 바이시클크런치) → 달력·기록·검색 그대로 */
+let TPL_TA='routineInputValue';
+/* 기록 틀 대상: 루틴(id) 또는 QUICK LOG('ol:'+항목 id) */
+function tplItemName(rid){rid=String(rid);if(rid.startsWith('ol:')){const d=loadOneOffDefinitions().find(x=>x.id===rid.slice(3));return d?d.name:'';}const r=loadLifeRoutines().find(x=>x.id===rid);return r?r.name:'';}
+function tplHistTexts(rid){
+  rid=String(rid);
+  try{
+    if(rid.startsWith('ol:')){const id=rid.slice(3),all=loadOneOffLogs(),out=[],seen=new Set();
+      Object.keys(all).sort().reverse().forEach(k=>(Array.isArray(all[k])?all[k]:[]).slice().reverse().forEach(x=>{if(!x||x.defId!==id)return;const t=String(x.memo||'').trim();if(t&&!seen.has(t)){seen.add(t);out.push(t);}}));return out;}
+    const r=loadLifeRoutines().find(x=>x.id===rid);const items=isMealFreeRoutine(r)?getPreviousMealRecords(rid):getPreviousFreeRecords(rid);return items.map(x=>typeof x==='string'?x:x.text);
+  }catch(e){return [];}
+}
 const TPL_KEY='recordTemplates_v1';
 const TPL_TYPES={pick:'고르기',time:'시간',multi:'여러 개',text:'글'};
 const TPL_PRESETS=[
@@ -12736,14 +12747,14 @@ function tplCompose(tpl,vals){
 }
 let tplS=null;
 function tplHistory(rid,tpl){
-  let texts=[];try{const r=loadLifeRoutines().find(x=>x.id===rid);const items=isMealFreeRoutine(r)?getPreviousMealRecords(rid):getPreviousFreeRecords(rid);texts=items.map(x=>typeof x==='string'?x:x.text);}catch(e){}
+  let texts=tplHistTexts(rid);
   const opts={};tpl.fields.forEach((f,i)=>{opts[i]=new Map();});
   texts.forEach(t=>{const v=tplParse(tpl,t);tpl.fields.forEach((f,i)=>{if(f.type==='pick'||f.type==='multi'){const arr=f.type==='multi'?(v[i]||[]):[v[i]];arr.forEach(x=>{x=String(x||'').trim();if(x&&x.length<=24)opts[i].set(x,(opts[i].get(x)||0)+1);});}});});
   const out={};Object.keys(opts).forEach(i=>{out[i]=[...opts[i].entries()].sort((a,b)=>b[1]-a[1]).map(x=>x[0]).slice(0,40);});
   return out;
 }
 function tplMount(rid){
-  const ta=document.getElementById('routineInputValue');if(!ta)return;
+  const ta=document.getElementById(TPL_TA);if(!ta)return;
   ta.parentElement.querySelectorAll('.tplBox,.tplMake').forEach(e=>e.remove());
   const tpl=tplGet(rid);
   if(!tpl){ta.classList.remove('tplHid');ta.parentElement.querySelector('.rcBox')?.classList.remove('tplHid');
@@ -12752,12 +12763,12 @@ function tplMount(rid){
   const box=document.createElement('div');box.className='tplBox';ta.insertAdjacentElement('afterend',box);
   tplRender();
 }
-function tplSync(){const ta=document.getElementById('routineInputValue');if(ta&&tplS&&!tplS.free)ta.value=tplCompose(tplS.tpl,tplS.vals);const p=document.getElementById('tplPrev');if(p&&tplS){const t=tplCompose(tplS.tpl,tplS.vals);p.textContent=t?'→ '+t:'';p.parentElement.classList.toggle('empty',!t);}}
+function tplSync(){const ta=document.getElementById(TPL_TA);if(ta&&tplS&&!tplS.free)ta.value=tplCompose(tplS.tpl,tplS.vals);const p=document.getElementById('tplPrev');if(p&&tplS){const t=tplCompose(tplS.tpl,tplS.vals);p.textContent=t?'→ '+t:'';p.parentElement.classList.toggle('empty',!t);}}
 function tplRender(){
-  const box=document.querySelector('#routineInputWrap .tplBox');if(!box||!tplS)return;
-  const ta=document.getElementById('routineInputValue'),rc=ta?.parentElement.querySelector('.rcBox');
+  const box=document.getElementById(TPL_TA)?.parentElement?.querySelector('.tplBox');if(!box||!tplS)return;
+  const ta=document.getElementById(TPL_TA),rc=ta?.parentElement.querySelector('.rcBox');
   ta?.classList.toggle('tplHid',!tplS.free);rc?.classList.toggle('tplHid',!tplS.free);
-  if(tplS.free){box.innerHTML=`<div class="tplLinks"><button type="button" onclick="tplS.free=false;tplS.vals=tplParse(tplS.tpl,document.getElementById('routineInputValue').value);tplRender()">칸으로 쓰기</button><button type="button" onclick="tplEdit('${tplS.rid}')">틀 고치기</button></div>`;return;}
+  if(tplS.free){box.innerHTML=`<div class="tplLinks"><button type="button" onclick="tplS.free=false;tplS.vals=tplParse(tplS.tpl,document.getElementById(TPL_TA).value);tplRender()">칸으로 쓰기</button><button type="button" onclick="tplEdit('${tplS.rid}')">틀 고치기</button></div>`;return;}
   const {tpl,vals,hist}=tplS,E=escapeLife;
   box.innerHTML=tpl.fields.map((f,i)=>{
     if(f.type==='bar')return '<div class="tplBar"></div>';
@@ -12780,7 +12791,7 @@ function tplRender(){
 }
 function tplRefreshChips(i){document.querySelectorAll('#routineInputWrap .tplF').forEach(()=>{});}
 function tplPick(i,v){tplS.vals[i]=tplS.vals[i]===v?'':v;tplRender();}
-function tplMultiAdd(i,v){document.querySelectorAll('#routineInputWrap .tplAdd').forEach(x=>x.value='');v=String(v||'').replace(/,/g,' ').trim();if(!v)return;const a=tplS.vals[i]=tplS.vals[i]||[];if(!a.includes(v))a.push(v);tplRender();setTimeout(()=>document.querySelectorAll('#routineInputWrap .tplAdd')[0]&&[...document.querySelectorAll('#routineInputWrap .tplF')][tplS.tpl.fields.slice(0,i).filter(f=>f.type!=='bar').length]?.querySelector('.tplAdd')?.focus(),0);}
+function tplMultiAdd(i,v){document.querySelectorAll('.tplAdd').forEach(x=>x.value='');v=String(v||'').replace(/,/g,' ').trim();if(!v)return;const a=tplS.vals[i]=tplS.vals[i]||[];if(!a.includes(v))a.push(v);tplRender();setTimeout(()=>document.querySelectorAll('.tplAdd')[0]&&[...document.querySelectorAll('#routineInputWrap .tplF')][tplS.tpl.fields.slice(0,i).filter(f=>f.type!=='bar').length]?.querySelector('.tplAdd')?.focus(),0);}
 function tplMultiDel(i,k){(tplS.vals[i]||[]).splice(k,1);tplRender();}
 function tplTimeAdd(i){const a=tplS.vals[i]=tplS.vals[i]||[];const d=new Date();const now=`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()<30?0:30).padStart(2,'0')}`;a.push(now);tplRender();}
 function tplTimeSet(i,k,part,v){const a=tplS.vals[i]=tplS.vals[i]||[];const m=String(a[k]||'').match(/(\d{1,2}:\d{2})?(?:-(\d{1,2}:\d{2}))?/)||[];let s=m[1]||'',e=m[2]||'';if(part===0)s=v;else e=v;a[k]=s&&e?`${s}-${e}`:(s||e);tplSync();}
@@ -12788,7 +12799,7 @@ function tplTimeDel(i,k){(tplS.vals[i]||[]).splice(k,1);tplRender();}
 /* 틀 만들기·고치기 */
 let tplEd=null;
 function tplEdit(rid){
-  const cur=tplGet(rid);const r=loadLifeRoutines().find(x=>x.id===rid)||{};
+  const cur=tplGet(rid);const r={name:tplItemName(rid)};
   tplEd={rid,name:r.name||'',fields:cur?JSON.parse(JSON.stringify(cur.fields)):[]};
   let el=document.getElementById('tplEdRoot');
   if(!el){el=document.createElement('div');el.id='tplEdRoot';el.className='routineActionOverlay';el.onclick=e=>{if(e.target===el)tplEdClose();};document.body.appendChild(el);}
@@ -12841,10 +12852,11 @@ TPL_PRESETS.push(
   {name:'분류 + 내용',ex:'연구 | 보고서 초안',fields:[{type:'pick',label:'분류'},{type:'bar'},{type:'text',label:'내용'}]}
 );
 function tplSame(a,b){const n=x=>JSON.stringify((x||[]).map(f=>f.type==='bar'?'bar':f.type+':'+(f.label||'')));return n(a)===n(b);}
-function tplLastText(rid){try{const r=loadLifeRoutines().find(x=>x.id===rid);const it=(isMealFreeRoutine(r)?getPreviousMealRecords(rid):getPreviousFreeRecords(rid))[0];return it?(typeof it==='string'?it:it.text):'';}catch(e){return '';}}
+function tplLastText(rid){return tplHistTexts(rid)[0]||'';}
 function tplFreeRoutines(){return loadLifeRoutines().filter(r=>r&&r.type==='free'&&r.enabled!==false);}
+function tplOthers(rid){return String(rid).startsWith('ol:')?loadOneOffDefinitions().filter(d=>d.type==='meal').map(d=>({id:'ol:'+d.id,name:d.name})):tplFreeRoutines().map(r=>({id:r.id,name:r.name}));}
 tplEdit=function(rid){
-  const cur=tplGet(rid);const r=loadLifeRoutines().find(x=>x.id===rid)||{};
+  const cur=tplGet(rid);const r={name:tplItemName(rid)};
   const fields=cur?JSON.parse(JSON.stringify(cur.fields)):[];
   tplEd={rid,name:r.name||'',fields,also:new Set(),open:!!cur&&!TPL_PRESETS.some(p=>tplSame(p.fields,fields))};
   let el=document.getElementById('tplEdRoot');
@@ -12853,9 +12865,9 @@ tplEdit=function(rid){
 };
 tplEdRender=function(){
   const el=document.getElementById('tplEdRoot');if(!el||!tplEd)return;const E=escapeLife,fs=tplEd.fields;
-  const mine=Object.keys(tplLoadAll()).filter(id=>id!==tplEd.rid&&tplGet(id)).map(id=>({id,r:loadLifeRoutines().find(x=>x.id===id)})).filter(x=>x.r);
+  const mine=Object.keys(tplLoadAll()).filter(id=>id!==tplEd.rid&&tplGet(id)).map(id=>({id,r:{name:tplItemName(id)}})).filter(x=>x.r.name);
   const card=(on,name,ex,click)=>`<button type="button" class="tplCard${on?' on':''}" onclick="${click}"><b>${E(name)}</b><span>${E(ex)}</span></button>`;
-  const others=tplFreeRoutines().filter(r=>r.id!==tplEd.rid);
+  const others=tplOthers(tplEd.rid).filter(r=>r.id!==tplEd.rid);
   const prev=fs.length?fs.map(f=>f.type==='bar'?'|':`[${f.label||TPL_TYPES[f.type]}]`).join(' '):'칸을 추가해 주세요';
   el.innerHTML=`<div class="routineInputCard tplEdCard" role="dialog" aria-modal="true">
     <div class="routineActionTitle">${E(tplEd.name)} 기록 틀</div>
@@ -12929,13 +12941,13 @@ function pjTidyLine(t){
   const cp=choosePreviousRecord;
   choosePreviousRecord=function(){
     const r=cp.apply(this,arguments);
-    try{if(tplS&&!tplS.free){const ta=document.getElementById('routineInputValue');if(ta){tplS.vals=tplParse(tplS.tpl,ta.value);tplRender();}}}catch(e){}
+    try{if(tplS&&!tplS.free){const ta=document.getElementById(TPL_TA);if(ta){tplS.vals=tplParse(tplS.tpl,ta.value);tplRender();}}}catch(e){}
     return r;
   };
   const tr=tplRender;
   tplRender=function(){
     const r=tr.apply(this,arguments);
-    try{const ta=document.getElementById('routineInputValue'),rc=ta?.parentElement.querySelector('.rcBox'),box=ta?.parentElement.querySelector('.tplBox');
+    try{const ta=document.getElementById(TPL_TA),rc=ta?.parentElement.querySelector('.rcBox'),box=ta?.parentElement.querySelector('.tplBox');
       if(rc&&box&&tplS&&!tplS.free){rc.classList.remove('tplHid');box.after(rc);const h=rc.querySelector('.rcHead');if(h)h.textContent='이전 기록';}}catch(e){}
     return r;
   };
@@ -12957,7 +12969,7 @@ function tplFilterChips(i,q){
 function tplMealFill(added){
   try{
     if(!tplS)return;const r=loadLifeRoutines().find(x=>x.id===tplS.rid);if(!isMealFreeRoutine(r))return;
-    const ta=document.getElementById('routineInputValue');if(!ta)return;
+    const ta=document.getElementById(TPL_TA);if(!ta)return;
     const recs=getPreviousMealRecords(tplS.rid);const now=ta.value.trim();
     const set=(x,add)=>{
       document.querySelectorAll('.mealLinkInput').forEach(inp=>{const v=Number(x.vals?.[inp.dataset.id])||0;if(!v&&!add)return;const cur=Number(inp.value)||0;const nv=add?cur+v:v;inp.value=nv>0?Math.round(nv*10)/10:'';});
@@ -12973,6 +12985,19 @@ function tplMealFill(added){
   tplMultiAdd=function(i,v){const before=(tplS?.vals?.[i]||[]).length;const r=add.apply(this,arguments);try{const a=tplS?.vals?.[i]||[];if(a.length>before)tplMealFill(a[a.length-1]);}catch(e){}return r;};
   const del=tplMultiDel;
   tplMultiDel=function(){const r=del.apply(this,arguments);tplMealFill(null);return r;};
+})();
+/* QUICK LOG 메모형 항목에도 기록 틀 */
+(function(){
+  const rs=openRoutineInputSheet;
+  openRoutineInputSheet=function(){TPL_TA='routineInputValue';return rs.apply(this,arguments);};
+  const ol=openOneOffLog;
+  openOneOffLog=function(defId){
+    const r=ol.apply(this,arguments);
+    try{const d=loadOneOffDefinitions().find(x=>x.id===defId);const m=document.getElementById('olMemo');
+      document.querySelectorAll('#oneOffLogModal .tplBox,#oneOffLogModal .tplMake').forEach(e=>e.remove());
+      if(d&&d.type==='meal'&&m){TPL_TA='olMemo';tplS=null;tplMount('ol:'+defId);}}catch(e){console.warn(e);}
+    return r;
+  };
 })();
 </script>
 
