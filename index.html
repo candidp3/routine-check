@@ -2554,6 +2554,15 @@ body.scrolled .tdChip .tdToday{height:28px!important;padding:0 10px!important;fo
 .rcChip:active{background:var(--rc-gl)}
 .rcChip.rcMore{color:var(--rc-gd,#2f6b55);background:transparent;border-style:dashed}
 .rcHidden{display:none!important}
+body.thTimerOn #viewToday #activityTimerBanner{display:none!important}
+body.thTimerOn.thHeroSeen #activityTimerFloat{display:none!important}
+.tdHero .thTimer{border:1.5px solid var(--rc-gs);background:var(--rc-gl);border-radius:18px;padding:12px 14px;margin:0 0 10px}
+.tdHero .thTimerRow{display:flex;align-items:center;gap:12px}
+.tdHero .thTimer .thNextIco{background:var(--rc-card)}
+.tdHero .thClock{font-size:var(--fs-5,22px);font-weight:var(--fw-3);font-variant-numeric:tabular-nums;color:var(--rc-gd,var(--rc-tx));flex:none}
+.tdHero .thTimerBtns{display:flex;gap:8px;margin-top:10px}
+.tdHero .thTimerBtns button{flex:1;height:38px;min-height:38px;border-radius:12px;border:1px solid var(--rc-line);background:var(--rc-card);color:var(--rc-tx);font:inherit;font-size:var(--fs-2)}
+.tdHero .thTimerBtns button.pri{flex:2;border:0;background:var(--rc-gs);color:#fff;font-weight:var(--fw-3)}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -8582,7 +8591,7 @@ function renderTodaySummary(){
       if(rec.read&&rec.read.min>0)parts.push(`독서 <b>${Math.round(rec.read.min)}</b>분`);
     }
     const t=loadActivityTimer();
-    if(t&&t.startedAt){const r=loadLifeRoutines().find(x=>x.id===t.routineId);parts.push(`${escapeLife(r?.name||'활동')} 진행 중`);}
+    if(t&&t.startedAt&&!document.getElementById('tdHero')){const r=loadLifeRoutines().find(x=>x.id===t.routineId);parts.push(`${escapeLife(r?.name||'활동')} 진행 중`);}
     el.innerHTML=parts.map(x=>`<span>${x}</span>`).join('');
     el.classList.toggle('hide',!parts.length);
   }catch(e){}
@@ -12567,6 +12576,42 @@ thBlockNow=function(){
   if(h<dayStartHour()){const hs=lbHours();return defs.map(d=>d.id).sort((a,b)=>hs[b][1]-hs[a][1])[0]||'';}
   return lbCurrentId(defs);
 };
+/* ===== TODAY 맨 위: 타이머가 돌고 있으면 '다음 할 일' 자리에 타이머 (2026-11-13) ===== */
+function thTimerHTML(){
+  const t=loadActivityTimer();if(!t||!t.startedAt)return '';
+  const r=loadLifeRoutines().find(x=>x.id===t.routineId)||{};
+  const clock=formatTimerElapsed(Math.max(0,(Date.now()-new Date(t.startedAt).getTime())/60000));
+  return `<div class="thTimer"><div class="thTimerRow"><span class="thNextIco lbPkIco">⟪timer⟫</span><span class="thNextTx"><small>타이머 진행 중</small><b>${escapeLife(String(r.name||'활동'))}</b></span><b class="thClock" id="thClock">${clock}</b></div>
+    <div class="thTimerBtns"><button type="button" onclick="cancelActivityTimer()">취소</button><button type="button" class="pri" onclick="stopActivityTimer()">종료하고 기록</button></div></div>`;
+}
+(function(){
+  const base=renderTodayHero;
+  renderTodayHero=function(){
+    const r=base.apply(this,arguments);
+    try{
+      const el=document.getElementById('tdHero');if(!el)return r;const tm=thTimerHTML();
+      document.body.classList.toggle('thTimerOn',!!tm);
+      if(!tm)return r;
+      const slot=el.querySelector('.thNext,.thAllDone');
+      if(slot)slot.outerHTML=tm;
+      else{const now=el.querySelector('.thNow');if(now)now.insertAdjacentHTML('beforeend',tm);else el.insertAdjacentHTML('beforeend',`<div class="thNow">${tm}</div>`);}
+    }catch(e){console.warn(e);}
+    return r;
+  };
+  const rb=renderActivityTimerBanner;
+  renderActivityTimerBanner=function(){
+    const r=rb.apply(this,arguments);
+    try{
+      const t=loadActivityTimer(),c=document.getElementById('thClock');
+      if(t&&t.startedAt){if(c)c.textContent=formatTimerElapsed(Math.max(0,(Date.now()-new Date(t.startedAt).getTime())/60000));else if(document.getElementById('tdHero'))renderTodayHero();}
+      else if(document.body.classList.contains('thTimerOn')&&document.getElementById('tdHero'))renderTodayHero();
+    }catch(e){}
+    return r;
+  };
+  /* 맨 위 상자가 보일 때는 아래쪽 떠 있는 캡슐을 숨김 */
+  try{const io=new IntersectionObserver(es=>{es.forEach(e=>document.body.classList.toggle('thHeroSeen',e.isIntersecting));});
+    const watch=()=>{const h=document.getElementById('tdHero');if(h&&!h._io){h._io=1;io.observe(h);}};watch();setInterval(watch,2000);}catch(e){}
+})();
 </script>
 
 
