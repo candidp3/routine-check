@@ -10913,7 +10913,7 @@ function appIconSvg(name){const x=APP_ICON_MAP[name];if(!x)return '';return `<sv
       list.forEach(n=>{
         if(n.parentNode.closest('textarea,script,style,.appIco'))return;
         const m=EMO_RE.exec(n.nodeValue);if(!m)return;
-        const ic=EMO2IC[m[2]]||EMO2IC[m[2].replace(/\uFE0F/g,'')];if(!ic||!APP_ICON_MAP[ic])return;
+        const ic=EMO2IC[m[2]]||EMO2IC[m[2].replace(/\uFE0F/g,'')]||(typeof emoFallbackIc==='function'?emoFallbackIc(n.nodeValue.slice(m[0].length).trim()||(h.closest('[data-routine-id]')||h).textContent):'');if(!ic||!APP_ICON_MAP[ic])return;
         n.nodeValue=n.nodeValue.slice(m[0].length);
         const sp=document.createElement('span');sp.className='appIco';sp.setAttribute('role','img');sp.setAttribute('aria-label',APP_ICON_MAP[ic][1]);sp.innerHTML=appIconSvg(ic);
         n.parentNode.insertBefore(sp,n);
