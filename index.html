@@ -2612,6 +2612,7 @@ body.thTimerOn.thHeroSeen #activityTimerFloat{display:none!important}
 /* 기록 창 정리: 칩은 한 줄로 옆으로 밀기, 미리보기는 채웠을 때만 작게 */
 #routineInputWrap .tplF .tplChips:not(.tplSel),#routineInputWrap .rcChips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 -2px;padding:0 2px 2px;mask-image:linear-gradient(90deg,#000 88%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent)}
 #routineInputWrap .tplF .tplChips:not(.tplSel)::-webkit-scrollbar,#routineInputWrap .rcChips::-webkit-scrollbar{display:none}
+#routineInputWrap .tplChips:empty{display:none}
 #routineInputWrap .tplChip,#routineInputWrap .rcChip{flex:none;padding:5px 11px;font-size:13px}
 #routineInputWrap .tplBox{gap:10px}
 #routineInputWrap .tplPrevWrap{background:none;padding:0 2px}
@@ -12718,7 +12719,7 @@ function tplHistory(rid,tpl){
   let texts=[];try{const r=loadLifeRoutines().find(x=>x.id===rid);const items=isMealFreeRoutine(r)?getPreviousMealRecords(rid):getPreviousFreeRecords(rid);texts=items.map(x=>typeof x==='string'?x:x.text);}catch(e){}
   const opts={};tpl.fields.forEach((f,i)=>{opts[i]=new Map();});
   texts.forEach(t=>{const v=tplParse(tpl,t);tpl.fields.forEach((f,i)=>{if(f.type==='pick'||f.type==='multi'){const arr=f.type==='multi'?(v[i]||[]):[v[i]];arr.forEach(x=>{x=String(x||'').trim();if(x&&x.length<=24)opts[i].set(x,(opts[i].get(x)||0)+1);});}});});
-  const out={};Object.keys(opts).forEach(i=>{out[i]=[...opts[i].entries()].sort((a,b)=>b[1]-a[1]).map(x=>x[0]).slice(0,10);});
+  const out={};Object.keys(opts).forEach(i=>{out[i]=[...opts[i].entries()].sort((a,b)=>b[1]-a[1]).map(x=>x[0]).slice(0,40);});
   return out;
 }
 function tplMount(rid){
@@ -12741,13 +12742,13 @@ function tplRender(){
   box.innerHTML=tpl.fields.map((f,i)=>{
     if(f.type==='bar')return '<div class="tplBar"></div>';
     const lab=`<div class="tplLab">${E(f.label||TPL_TYPES[f.type])}</div>`;
-    const chips=(arr,on,fn)=>arr.length?`<div class="tplChips">${arr.map(x=>`<button type="button" class="tplChip${on(x)?' on':''}" onclick="${fn}(${i},this.dataset.v)" data-v="${E(x)}">${E(x)}</button>`).join('')}</div>`:'';
-    if(f.type==='pick')return `<div class="tplF">${lab}<input class="tplIn" value="${E(vals[i]||'')}" placeholder="직접 입력" oninput="tplS.vals[${i}]=this.value.trim();tplSync();tplRefreshChips(${i})">${chips(hist[i]||[],x=>x===vals[i],'tplPick')}</div>`;
+    const chips=(arr,on,fn)=>`<div class="tplChips" id="tplCh${i}">${arr.map(x=>`<button type="button" class="tplChip${on(x)?' on':''}" onpointerdown="event.preventDefault()" onclick="${fn}(${i},this.dataset.v)" data-v="${E(x)}">${E(x)}</button>`).join('')}</div>`;
+    if(f.type==='pick')return `<div class="tplF">${lab}<input class="tplIn" value="${E(vals[i]||'')}" placeholder="직접 입력" oninput="tplS.vals[${i}]=this.value.trim();tplSync();tplFilterChips(${i},this.value)">${chips((hist[i]||[]).slice(0,TPL_SHOW),x=>x===vals[i],'tplPick')}</div>`;
     if(f.type==='text')return `<div class="tplF">${lab}<input class="tplIn" value="${E(vals[i]||'')}" placeholder="적어 주세요" oninput="tplS.vals[${i}]=this.value;tplSync()"></div>`;
     if(f.type==='multi'){const cur=vals[i]||[];
       return `<div class="tplF">${lab}<div class="tplChips tplSel">${cur.map((x,k)=>`<span class="tplTag">${E(x)}<button type="button" aria-label="빼기" onclick="tplMultiDel(${i},${k})">×</button></span>`).join('')}
-        <input class="tplIn tplAdd" placeholder="${cur.length?'더 추가':'입력 후 엔터'}" enterkeyhint="done" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();tplMultiAdd(${i},this.value)}" onblur="if(this.value.trim())tplMultiAdd(${i},this.value)"></div>
-        ${chips((hist[i]||[]).filter(x=>!cur.includes(x)).slice(0,8),()=>false,'tplMultiAdd')}</div>`;}
+        <input class="tplIn tplAdd" placeholder="${cur.length?'더 추가':'입력하면 이전 메뉴를 찾아요'}" enterkeyhint="done" oninput="tplFilterChips(${i},this.value)" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();tplMultiAdd(${i},this.value)}" onblur="if(this.value.trim())tplMultiAdd(${i},this.value)"></div>
+        ${chips((hist[i]||[]).filter(x=>!cur.includes(x)).slice(0,TPL_SHOW),()=>false,'tplMultiAdd')}</div>`;}
     if(f.type==='time'){const cur=vals[i]||[];
       return `<div class="tplF">${lab}${cur.map((x,k)=>{const m=String(x).match(/(\d{1,2}:\d{2})(?:-(\d{1,2}:\d{2}))?/)||[];const pad=t=>t?t.padStart(5,'0'):'';
         return `<div class="tplTime"><input type="time" value="${pad(m[1])}" onchange="tplTimeSet(${i},${k},0,this.value)"><span>~</span><input type="time" value="${pad(m[2])}" onchange="tplTimeSet(${i},${k},1,this.value)"><button type="button" class="tplX" onclick="tplTimeDel(${i},${k})" aria-label="지우기">×</button></div>`;}).join('')}
@@ -12759,7 +12760,7 @@ function tplRender(){
 }
 function tplRefreshChips(i){document.querySelectorAll('#routineInputWrap .tplF').forEach(()=>{});}
 function tplPick(i,v){tplS.vals[i]=tplS.vals[i]===v?'':v;tplRender();}
-function tplMultiAdd(i,v){v=String(v||'').replace(/,/g,' ').trim();if(!v)return;const a=tplS.vals[i]=tplS.vals[i]||[];if(!a.includes(v))a.push(v);tplRender();setTimeout(()=>document.querySelectorAll('#routineInputWrap .tplAdd')[0]&&[...document.querySelectorAll('#routineInputWrap .tplF')][tplS.tpl.fields.slice(0,i).filter(f=>f.type!=='bar').length]?.querySelector('.tplAdd')?.focus(),0);}
+function tplMultiAdd(i,v){document.querySelectorAll('#routineInputWrap .tplAdd').forEach(x=>x.value='');v=String(v||'').replace(/,/g,' ').trim();if(!v)return;const a=tplS.vals[i]=tplS.vals[i]||[];if(!a.includes(v))a.push(v);tplRender();setTimeout(()=>document.querySelectorAll('#routineInputWrap .tplAdd')[0]&&[...document.querySelectorAll('#routineInputWrap .tplF')][tplS.tpl.fields.slice(0,i).filter(f=>f.type!=='bar').length]?.querySelector('.tplAdd')?.focus(),0);}
 function tplMultiDel(i,k){(tplS.vals[i]||[]).splice(k,1);tplRender();}
 function tplTimeAdd(i){const a=tplS.vals[i]=tplS.vals[i]||[];const d=new Date();const now=`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()<30?0:30).padStart(2,'0')}`;a.push(now);tplRender();}
 function tplTimeSet(i,k,part,v){const a=tplS.vals[i]=tplS.vals[i]||[];const m=String(a[k]||'').match(/(\d{1,2}:\d{2})?(?:-(\d{1,2}:\d{2}))?/)||[];let s=m[1]||'',e=m[2]||'';if(part===0)s=v;else e=v;a[k]=s&&e?`${s}-${e}`:(s||e);tplSync();}
@@ -12920,6 +12921,16 @@ function pjTidyLine(t){
   };
   function o_q(){return '';}
 })();
+/* 칸 칩은 자주 쓴 5개만, 입력하면 전체에서 찾아 줌 */
+const TPL_SHOW=5;
+function tplFilterChips(i,q){
+  const box=document.getElementById('tplCh'+i);if(!box||!tplS)return;const f=tplS.tpl.fields[i];
+  const cur=f.type==='multi'?(tplS.vals[i]||[]):[];q=String(q||'').trim().toLowerCase();
+  let arr=(tplS.hist[i]||[]).filter(x=>!cur.includes(x));
+  arr=q?arr.filter(x=>x.toLowerCase().includes(q)&&x.toLowerCase()!==q).slice(0,8):arr.slice(0,TPL_SHOW);
+  const fn=f.type==='multi'?'tplMultiAdd':'tplPick',E=escapeLife;
+  box.innerHTML=arr.map(x=>`<button type="button" class="tplChip${f.type==='pick'&&x===tplS.vals[i]?' on':''}" onpointerdown="event.preventDefault()" onclick="${fn}(${i},this.dataset.v)" data-v="${E(x)}">${E(x)}</button>`).join('');
+}
 </script>
 
 
