@@ -12713,12 +12713,14 @@ function thTimerHTML(){
    저장은 지금과 같은 한 줄 글 (예: PT 17:00-18:00 | 상체 · 바이시클크런치) → 달력·기록·검색 그대로 */
 let TPL_TA='routineInputValue';
 /* 기록 틀 대상: 루틴(id) 또는 QUICK LOG('ol:'+항목 id) */
-function tplItemName(rid){rid=String(rid);if(rid.startsWith('ol:')){const d=loadOneOffDefinitions().find(x=>x.id===rid.slice(3));return d?d.name:'';}const r=loadLifeRoutines().find(x=>x.id===rid);return r?r.name:'';}
+function tplItemName(rid){rid=String(rid);if(rid==='ol:snack')return '간식';if(rid.startsWith('ol:')){const d=loadOneOffDefinitions().find(x=>x.id===rid.slice(3));return d?d.name:'';}const r=loadLifeRoutines().find(x=>x.id===rid);return r?r.name:'';}
 function tplHistTexts(rid){
   rid=String(rid);
   try{
-    if(rid.startsWith('ol:')){const id=rid.slice(3),all=loadOneOffLogs(),out=[],seen=new Set();
-      Object.keys(all).sort().reverse().forEach(k=>(Array.isArray(all[k])?all[k]:[]).slice().reverse().forEach(x=>{if(!x||x.defId!==id)return;const t=String(x.memo||'').trim();if(t&&!seen.has(t)){seen.add(t);out.push(t);}}));return out;}
+    if(rid.startsWith('ol:')){const id=rid.slice(3),name=id==='snack'?'':tplItemName(rid),all=loadOneOffLogs(),sn=loadSnackRecords(),out=[],seen=new Set();
+      const days=[...new Set(Object.keys(all).concat(Object.keys(sn)))].sort().reverse();
+      days.forEach(k=>{(Array.isArray(sn[k])?sn[k]:[]).slice().reverse().forEach(x=>{if(!x)return;if(String(x.label||'')!==name)return;const t=String(x.text||'').trim();if(t&&!seen.has(t)){seen.add(t);out.push(t);}});
+        (Array.isArray(all[k])?all[k]:[]).slice().reverse().forEach(x=>{if(!x||x.defId!==id)return;const t=String(x.memo||'').trim();if(t&&!seen.has(t)){seen.add(t);out.push(t);}});});return out;}
     const r=loadLifeRoutines().find(x=>x.id===rid);const items=isMealFreeRoutine(r)?getPreviousMealRecords(rid):getPreviousFreeRecords(rid);return items.map(x=>typeof x==='string'?x:x.text);
   }catch(e){return [];}
 }
@@ -12854,7 +12856,7 @@ async function tplEdClear(){
   const base=openRoutineInputSheet;
   openRoutineInputSheet=function(ctx){
     const r=base.apply(this,arguments);
-    try{tplS=null;if(ctx&&ctx.mode==='free'&&ctx.id)tplMount(ctx.id);}catch(e){console.warn(e);}
+    try{tplS=null;if(ctx&&ctx.mode==='free'&&ctx.id)tplMount(ctx.id);else if(ctx&&ctx.mode==='snack'){const d=ctx.label?loadOneOffDefinitions().find(x=>x.name===ctx.label):null;tplMount(d?'ol:'+d.id:'ol:snack');}}catch(e){console.warn(e);}
     return r;
   };
 })();
@@ -12869,7 +12871,7 @@ TPL_PRESETS.push(
 function tplSame(a,b){const n=x=>JSON.stringify((x||[]).map(f=>f.type==='bar'?'bar':f.type+':'+(f.label||'')));return n(a)===n(b);}
 function tplLastText(rid){return tplHistTexts(rid)[0]||'';}
 function tplFreeRoutines(){return loadLifeRoutines().filter(r=>r&&r.type==='free'&&r.enabled!==false);}
-function tplOthers(rid){return String(rid).startsWith('ol:')?loadOneOffDefinitions().filter(d=>d.type==='meal').map(d=>({id:'ol:'+d.id,name:d.name})):tplFreeRoutines().map(r=>({id:r.id,name:r.name}));}
+function tplOthers(rid){return String(rid).startsWith('ol:')?[{id:'ol:snack',name:'간식'}].concat(loadOneOffDefinitions().filter(d=>d.type==='meal').map(d=>({id:'ol:'+d.id,name:d.name}))):tplFreeRoutines().map(r=>({id:r.id,name:r.name}));}
 tplEdit=function(rid){
   const cur=tplGet(rid);const r={name:tplItemName(rid)};
   const fields=cur?JSON.parse(JSON.stringify(cur.fields)):[];
