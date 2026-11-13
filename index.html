@@ -2599,6 +2599,16 @@ body.thTimerOn.thHeroSeen #activityTimerFloat{display:none!important}
 .tplEdRow button{width:32px;height:32px;min-height:0;border:0;border-radius:10px;background:var(--rc-soft);color:var(--rc-tx2,var(--rc-tx));flex:none}
 .tplEdBarRow span{flex:1;color:var(--rc-mu);font-size:12px;text-align:center}
 .tplTypeHelp{font-size:11px;color:var(--rc-mu);line-height:1.6}
+/* 기록 창·선택 창: 화면 가운데에 */
+.routineActionOverlay{align-items:center!important}
+.routineActionOverlay .routineInputCard,.routineActionOverlay .routineActionCard{max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px)}
+.tplCards{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tplCard{display:flex;flex-direction:column;gap:4px;text-align:left;border:1.5px solid var(--rc-line);background:var(--rc-card);color:var(--rc-tx);border-radius:14px;padding:10px 12px;font:inherit;min-height:0;cursor:pointer}
+.tplCard b{font-size:var(--fs-2)}.tplCard span{font-size:11px;color:var(--rc-mu);line-height:1.4;word-break:keep-all}
+.tplCard.on{border-color:var(--rc-gs);background:var(--rc-gl)}
+.tplOpen{align-self:flex-start;border:0;background:none;color:var(--rc-mu);font:inherit;font-size:12px;padding:4px 2px;min-height:0}
+.pjCatBox{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0 6px}
+.pjCatLab{font-size:12px;color:var(--rc-mu);margin-right:2px}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -12786,6 +12796,98 @@ async function tplEdClear(){
     try{tplS=null;if(ctx&&ctx.mode==='free'&&ctx.id)tplMount(ctx.id);}catch(e){console.warn(e);}
     return r;
   };
+})();
+/* ===== 기록 틀 v2: 추천은 예시로 간단히 · 내 틀 복사 · 같은 틀 여러 활동에 (2026-11-13) ===== */
+TPL_PRESETS.length=0;
+TPL_PRESETS.push(
+  {name:'운동·활동',ex:'PT 17:00-18:00 | 상체 · 스쿼트',fields:[{type:'pick',label:'종류'},{type:'time',label:'시간'},{type:'bar'},{type:'multi',label:'내용'}]},
+  {name:'보기·읽기',ex:'넷플릭스 | 흑백요리사',fields:[{type:'pick',label:'어디서'},{type:'bar'},{type:'text',label:'제목'}]},
+  {name:'여러 개 적기',ex:'사과 · 요거트 · 고구마',fields:[{type:'multi',label:'내용'}]},
+  {name:'분류 + 내용',ex:'연구 | 보고서 초안',fields:[{type:'pick',label:'분류'},{type:'bar'},{type:'text',label:'내용'}]}
+);
+function tplSame(a,b){const n=x=>JSON.stringify((x||[]).map(f=>f.type==='bar'?'bar':f.type+':'+(f.label||'')));return n(a)===n(b);}
+function tplLastText(rid){try{const r=loadLifeRoutines().find(x=>x.id===rid);const it=(isMealFreeRoutine(r)?getPreviousMealRecords(rid):getPreviousFreeRecords(rid))[0];return it?(typeof it==='string'?it:it.text):'';}catch(e){return '';}}
+function tplFreeRoutines(){return loadLifeRoutines().filter(r=>r&&r.type==='free'&&r.enabled!==false);}
+tplEdit=function(rid){
+  const cur=tplGet(rid);const r=loadLifeRoutines().find(x=>x.id===rid)||{};
+  const fields=cur?JSON.parse(JSON.stringify(cur.fields)):[];
+  tplEd={rid,name:r.name||'',fields,also:new Set(),open:!!cur&&!TPL_PRESETS.some(p=>tplSame(p.fields,fields))};
+  let el=document.getElementById('tplEdRoot');
+  if(!el){el=document.createElement('div');el.id='tplEdRoot';el.className='routineActionOverlay';el.onclick=e=>{if(e.target===el)tplEdClose();};document.body.appendChild(el);}
+  el.classList.remove('hide');tplEdRender();
+};
+tplEdRender=function(){
+  const el=document.getElementById('tplEdRoot');if(!el||!tplEd)return;const E=escapeLife,fs=tplEd.fields;
+  const mine=Object.keys(tplLoadAll()).filter(id=>id!==tplEd.rid&&tplGet(id)).map(id=>({id,r:loadLifeRoutines().find(x=>x.id===id)})).filter(x=>x.r);
+  const card=(on,name,ex,click)=>`<button type="button" class="tplCard${on?' on':''}" onclick="${click}"><b>${E(name)}</b><span>${E(ex)}</span></button>`;
+  const others=tplFreeRoutines().filter(r=>r.id!==tplEd.rid);
+  const prev=fs.length?fs.map(f=>f.type==='bar'?'|':`[${f.label||TPL_TYPES[f.type]}]`).join(' '):'칸을 추가해 주세요';
+  el.innerHTML=`<div class="routineInputCard tplEdCard" role="dialog" aria-modal="true">
+    <div class="routineActionTitle">${E(tplEd.name)} 기록 틀</div>
+    <div class="tplEdHint">어떤 모양으로 기록할지 골라요. 기록할 때 칸만 채우면 |와 ·는 자동으로 들어가요.</div>
+    <div class="tplCards">${TPL_PRESETS.map((p,i)=>card(tplSame(p.fields,fs),p.name,p.ex,`tplEdUse(TPL_PRESETS[${i}].fields)`)).join('')}</div>
+    ${mine.length?`<div class="tplLab">내가 만든 틀 가져오기</div><div class="tplCards">${mine.map(m=>card(tplSame(tplGet(m.id).fields,fs),m.r.name,tplLastText(m.id)||tplGet(m.id).fields.map(f=>f.type==='bar'?'|':`[${f.label}]`).join(' '),`tplEdUse(tplGet('${m.id}').fields)`)).join('')}</div>`:''}
+    <button type="button" class="tplOpen" onclick="tplEd.open=!tplEd.open;tplEdRender()">${tplEd.open?'칸 직접 고치기 접기 ▴':'칸 직접 고치기 ▾'}</button>
+    ${tplEd.open?`<div class="tplEdList">${fs.map((f,i)=>f.type==='bar'
+      ?`<div class="tplEdRow tplEdBarRow"><span>── 구분선 | ──</span><button type="button" onclick="tplEdMove(${i},-1)" aria-label="위로">↑</button><button type="button" onclick="tplEd.fields.splice(${i},1);tplEdRender()" aria-label="빼기">×</button></div>`
+      :`<div class="tplEdRow"><input value="${E(f.label||'')}" placeholder="칸 이름" oninput="tplEd.fields[${i}].label=this.value;document.getElementById('tplEdPrev').textContent=tplEdPrevText()"><select onchange="tplEd.fields[${i}].type=this.value;tplEdRender()">${Object.entries(TPL_TYPES).map(([k,v])=>`<option value="${k}"${f.type===k?' selected':''}>${v}</option>`).join('')}</select><button type="button" onclick="tplEdMove(${i},-1)" aria-label="위로">↑</button><button type="button" onclick="tplEd.fields.splice(${i},1);tplEdRender()" aria-label="빼기">×</button></div>`).join('')}</div>
+      <div class="tplChips"><button type="button" class="tplChip tplPlus" onclick="tplEd.fields.push({type:'pick',label:''});tplEdRender()">+ 칸 추가</button><button type="button" class="tplChip tplPlus" onclick="tplEd.fields.push({type:'bar'});tplEdRender()">+ 구분선 |</button></div>
+      <div class="tplTypeHelp"><b>고르기</b> 전에 쓴 것 중 하나 · <b>시간</b> 17:00-18:00 · <b>여러 개</b> 사과 · 요거트 · <b>글</b> 자유롭게</div>
+      <div class="tplPrevWrap"><span>모양</span><div class="tplPrev" id="tplEdPrev">${E(prev)}</div></div>`:''}
+    ${others.length&&fs.length?`<div class="tplLab">이 틀을 같이 쓸 활동 (선택)</div><div class="tplChips">${others.map(r=>`<button type="button" class="tplChip${tplEd.also.has(r.id)?' on':''}" onclick="tplEd.also.has('${r.id}')?tplEd.also.delete('${r.id}'):tplEd.also.add('${r.id}');tplEdRender()">${E(r.name)}${tplGet(r.id)?' ·틀있음':''}</button>`).join('')}</div>`:''}
+    <div class="routineInputActions"><button type="button" onclick="tplEdClear()">${tplGet(tplEd.rid)?'틀 없이 쓰기':'취소'}</button><button type="button" class="primary" onclick="tplEdSave()">저장</button></div>
+  </div>`;
+};
+function tplEdUse(f){tplEd.fields=JSON.parse(JSON.stringify(f));tplEdRender();}
+tplEdSave=function(){
+  const fs=tplEd.fields.filter((f,i,a)=>f.type!=='bar'||(i>0&&i<a.length-1&&a[i-1].type!=='bar'));
+  if(!fs.some(f=>f.type!=='bar')){appAlert('모양을 하나 골라 주세요.');return;}
+  fs.forEach(f=>{if(f.type!=='bar'&&!String(f.label||'').trim())f.label=TPL_TYPES[f.type];});
+  const rid=tplEd.rid,also=[...tplEd.also];tplSet(rid,{fields:fs});also.forEach(id=>tplSet(id,{fields:JSON.parse(JSON.stringify(fs))}));
+  tplEdClose();tplMount(rid);appToast(also.length?`기록 틀을 ${also.length+1}개 활동에 저장했어요`:'기록 틀을 저장했어요');
+};
+/* ===== 프로젝트 할 일: 분류 칩 + 붙여넣기 자동 정리 (2026-11-13) =====
+   저장 모양은 지금과 같음: "분류 | 할 일" (날짜는 앞에 11.10처럼) */
+let pjCat='';
+function pjCats(){
+  const m=new Map();const add=t=>{const x=String(t||'').split(/\s*\|\s*/);if(x.length>1&&x[0].trim()&&x[0].length<=16)m.set(x[0].trim(),(m.get(x[0].trim())||0)+1);};
+  (pjDraft?.tasks||[]).forEach(t=>add(t.text));if(m.size<6)pjLoad().forEach(p=>(p.tasks||[]).forEach(t=>add(t.text)));
+  return [...m.entries()].sort((a,b)=>b[1]-a[1]).map(x=>x[0]).slice(0,10);
+}
+function pjCatRender(){
+  const box=document.getElementById('pjCatBox');if(!box)return;const cs=pjCats();if(pjCat&&!cs.includes(pjCat))cs.unshift(pjCat);
+  box.innerHTML=`<span class="pjCatLab">분류</span>${cs.map(c=>`<button type="button" class="tplChip${c===pjCat?' on':''}" onclick="pjCat=pjCat===this.dataset.c?'':this.dataset.c;pjCatRender()" data-c="${escapeLife(c)}">${escapeLife(c)}</button>`).join('')}<button type="button" class="tplChip tplPlus" onclick="pjCatNew()">+ 새 분류</button>`;
+  const inp=document.getElementById('pjNewTask');if(inp)inp.placeholder=pjCat?`${pjCat} | 할 일 추가`:'할 일 추가';
+}
+async function pjCatNew(){const v=await appPrompt('새 분류 이름','');const t=String(v||'').replace(/\|/g,'').trim().slice(0,16);if(t){pjCat=t;pjCatRender();}}
+function pjWithCat(t){t=String(t||'').trim();if(!t||!pjCat||/\|/.test(t))return t;return `${pjCat} | ${t}`;}
+/* 붙여넣은 줄 정리: "- 할일", "1. 할일", "[분류] 할일", "분류: 할일" → "분류 | 할일" */
+function pjTidyLine(t){
+  t=String(t||'').trim().replace(/^[-*•·▪︎▶︎✔✓☐☑□■]\s*/,'').replace(/^\(?\d{1,2}[.)]\s+(?=\D)/,'');
+  let m=t.match(/^\[([^\]]{1,16})\]\s*(.+)$/);if(m)return `${m[1].trim()} | ${m[2].trim()}`;
+  m=t.match(/^([^:|]{1,16})\s*[:：]\s+(.+)$/);if(m&&!/^\d{1,2}$/.test(m[1].trim()))return `${m[1].trim()} | ${m[2].trim()}`;
+  return t;
+}
+(function(){
+  const add=pjAddTask;
+  pjAddTask=function(){const inp=document.getElementById('pjNewTask');if(inp&&inp.value.trim())inp.value=pjWithCat(pjTidyLine(inp.value));return add.apply(this,arguments);};
+  const bulk=pjBulkAdd;
+  pjBulkAdd=function(){
+    const ta=document.getElementById('pjBulk');
+    if(ta)ta.value=ta.value.split(/\r?\n/).map(line=>{
+      let t=line.trim();if(!t)return '';
+      const d=t.match(/^((?:\d{4}[./-])?\d{1,2}(?:[./-]|월\s*)\d{1,2}일?)\s+(.+)$/);
+      if(d)return d[1]+' '+pjWithCat(pjTidyLine(d[2]));
+      return pjWithCat(pjTidyLine(t));
+    }).filter(Boolean).join('\n');
+    const r=bulk.apply(this,arguments);pjCatRender();return r;
+  };
+  const wrapOpen=op=>function(){const r=op.apply(this,arguments);try{pjCat='';
+    const row=document.querySelector('#projectModal .pjAddRow');if(row&&!document.getElementById('pjCatBox'))row.insertAdjacentHTML('beforebegin','<div id="pjCatBox" class="pjCatBox"></div>');
+    const ta=document.getElementById('pjBulk');if(ta)ta.placeholder='할 일을 줄마다 붙여넣어요\n11.10 포스터 제작\n연구: 보고서 초안\n- 자료 정리\n(분류를 고르면 앞에 자동으로 붙어요)';
+    pjCatRender();}catch(e){console.warn(e);}return r;};
+  openProject=wrapOpen(openProject);
+  try{if(typeof SW_ORIG==='object'&&SW_ORIG.pj)SW_ORIG.pj=wrapOpen(SW_ORIG.pj);}catch(e){}
 })();
 </script>
 
