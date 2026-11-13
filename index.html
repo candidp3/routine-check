@@ -2565,6 +2565,40 @@ body.thTimerOn.thHeroSeen #activityTimerFloat{display:none!important}
 .tdHero .thTimerBtns button.pri{flex:2;border:0;background:var(--rc-gs);color:#fff;font-weight:var(--fw-3)}
 .lifeBlock.lbNow{box-shadow:inset 0 0 0 1.5px var(--rc-gs)}
 .lifeBlock.lbNow .lifeBlockTitle::after{content:'지금';display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--rc-gl);color:var(--rc-gd,var(--rc-gs));font-size:11px;font-weight:600;letter-spacing:0;vertical-align:middle}
+.tplHid{display:none!important}
+.tplMake{display:block;margin:8px 0 0 auto;border:0;background:none;color:var(--rc-gd,var(--rc-gs));font:inherit;font-size:12px;padding:4px 2px;min-height:0}
+.tplBox{display:flex;flex-direction:column;gap:12px;text-align:left}
+.tplF{display:flex;flex-direction:column;gap:6px}
+.tplLab{font-size:12px;color:var(--rc-mu);font-weight:600;margin:2px 2px 0}
+.tplIn{width:100%;box-sizing:border-box;height:42px;border:1.5px solid var(--rc-line);border-radius:12px;background:var(--rc-card);color:var(--rc-tx);padding:0 12px;font:inherit;font-size:var(--fs-2)}
+.tplIn:focus{outline:none;border-color:var(--rc-gs)}
+.tplChips{display:flex;flex-wrap:wrap;gap:6px}
+.tplChip{border:1px solid var(--rc-line);background:var(--rc-card);color:var(--rc-tx);border-radius:999px;padding:6px 12px;font:inherit;font-size:var(--fs-1);min-height:0;cursor:pointer;white-space:nowrap}
+.tplChip.on{border-color:var(--rc-gs);background:var(--rc-gl);color:var(--rc-gd,var(--rc-tx));font-weight:600}
+.tplChip.tplPlus{border-style:dashed;color:var(--rc-gd,var(--rc-gs));background:transparent;align-self:flex-start}
+.tplSel{align-items:center;border:1.5px solid var(--rc-line);border-radius:12px;padding:6px;background:var(--rc-card);min-height:42px;box-sizing:border-box}
+.tplSel .tplAdd{flex:1;min-width:90px;height:30px;border:0;padding:0 6px;background:transparent}
+.tplTag{display:inline-flex;align-items:center;gap:2px;background:var(--rc-gl);color:var(--rc-gd,var(--rc-tx));border-radius:999px;padding:4px 4px 4px 10px;font-size:var(--fs-1)}
+.tplTag button{border:0;background:none;color:inherit;font-size:15px;line-height:1;padding:0 5px;min-height:0;cursor:pointer}
+.tplTime{display:flex;align-items:center;gap:6px}
+.tplTime input{flex:1;min-width:0;height:40px;border:1.5px solid var(--rc-line);border-radius:12px;background:var(--rc-card);color:var(--rc-tx);padding:0 8px;font:inherit;font-size:var(--fs-2)}
+.tplX{border:0;background:none;color:var(--rc-mu);font-size:18px;padding:0 6px;min-height:0}
+.tplBar{height:1px;background:var(--rc-line);margin:2px 0}
+.tplPrevWrap{background:var(--rc-soft);border-radius:12px;padding:9px 12px}
+.tplPrevWrap span{display:block;font-size:11px;color:var(--rc-mu);margin-bottom:2px}
+.tplPrev{font-size:var(--fs-2);color:var(--rc-tx);word-break:keep-all}
+.tplLinks{display:flex;justify-content:space-between;gap:8px}
+.tplLinks button{border:0;background:none;color:var(--rc-gd,var(--rc-gs));font:inherit;font-size:12px;text-decoration:underline;text-underline-offset:3px;padding:2px;min-height:0}
+#tplEdRoot{z-index:3000}
+.tplEdCard{max-height:86vh;overflow-y:auto;text-align:left;display:flex;flex-direction:column;gap:10px}
+.tplEdHint{font-size:12px;color:var(--rc-mu);line-height:1.5}
+.tplEdList{display:flex;flex-direction:column;gap:6px}
+.tplEdRow{display:flex;align-items:center;gap:6px}
+.tplEdRow input{flex:1;min-width:0;height:40px;border:1.5px solid var(--rc-line);border-radius:10px;background:var(--rc-card);color:var(--rc-tx);padding:0 10px;font:inherit;font-size:var(--fs-2)}
+.tplEdRow select{height:40px;border:1.5px solid var(--rc-line);border-radius:10px;background:var(--rc-card);color:var(--rc-tx);padding:0 6px;font:inherit;font-size:var(--fs-1)}
+.tplEdRow button{width:32px;height:32px;min-height:0;border:0;border-radius:10px;background:var(--rc-soft);color:var(--rc-tx2,var(--rc-tx));flex:none}
+.tplEdBarRow span{flex:1;color:var(--rc-mu);font-size:12px;text-align:center}
+.tplTypeHelp{font-size:11px;color:var(--rc-mu);line-height:1.6}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -12614,6 +12648,144 @@ function thTimerHTML(){
   /* 맨 위 상자가 보일 때는 아래쪽 떠 있는 캡슐을 숨김 */
   try{const io=new IntersectionObserver(es=>{es.forEach(e=>document.body.classList.toggle('thHeroSeen',e.isIntersecting));});
     const watch=()=>{const h=document.getElementById('tdHero');if(h&&!h._io){h._io=1;io.observe(h);}};watch();setInterval(watch,2000);}catch(e){}
+})();
+/* ===== 기록 틀: 자유 기록 루틴을 칸으로 나눠 쉽게 입력 (2026-11-13) =====
+   저장은 지금과 같은 한 줄 글 (예: PT 17:00-18:00 | 상체 · 바이시클크런치) → 달력·기록·검색 그대로 */
+const TPL_KEY='recordTemplates_v1';
+const TPL_TYPES={pick:'고르기',time:'시간',multi:'여러 개',text:'글'};
+const TPL_PRESETS=[
+  {name:'운동',fields:[{type:'pick',label:'종류'},{type:'time',label:'시간'},{type:'bar'},{type:'multi',label:'내용'}]},
+  {name:'영상·웹툰',fields:[{type:'pick',label:'어디서'},{type:'bar'},{type:'text',label:'제목'}]},
+  {name:'물놀이·여행',fields:[{type:'pick',label:'장소'},{type:'time',label:'시간'},{type:'bar'},{type:'multi',label:'한 것'}]},
+  {name:'식사',fields:[{type:'multi',label:'메뉴'}]},
+  {name:'공부·일',fields:[{type:'pick',label:'분류'},{type:'bar'},{type:'text',label:'내용'}]}
+];
+function tplLoadAll(){try{const v=JSON.parse(localStorage.getItem(TPL_KEY)||'{}');return v&&typeof v==='object'?v:{};}catch(e){return {};}}
+function tplGet(rid){const t=tplLoadAll()[rid];return t&&Array.isArray(t.fields)&&t.fields.some(f=>f.type!=='bar')?t:null;}
+function tplSet(rid,t){const all=tplLoadAll();if(t)all[rid]=t;else delete all[rid];try{localStorage.setItem(TPL_KEY,JSON.stringify(all));}catch(e){}}
+const TPL_TIME_RE=/\d{1,2}:\d{2}(?:\s*[-~–]\s*\d{1,2}:\d{2})?(?:\(\s*[\d.]+\s*h\s*\))?/g;
+/* 한 줄 글 → 칸 값 (예전 기록에서 칩을 만들고, 고칠 때 칸을 채우는 데 씀) */
+function tplParse(tpl,text){
+  const groups=[[]];tpl.fields.forEach((f,i)=>{if(f.type==='bar')groups.push([]);else groups[groups.length-1].push(i);});
+  const segs=String(text||'').split(/\s*\|\s*/);const vals={};
+  groups.forEach((g,gi)=>{
+    let s=(gi===groups.length-1?segs.slice(gi).join(' | '):segs[gi])||'';s=s.trim();
+    const tf=g.find(i=>tpl.fields[i].type==='time');
+    if(tf!==undefined){const ts=s.match(TPL_TIME_RE)||[];vals[tf]=ts.map(x=>x.replace(/\s+/g,''));s=s.replace(TPL_TIME_RE,' ').replace(/\s+/g,' ').trim();}
+    const rest=g.filter(i=>tpl.fields[i].type!=='time');
+    rest.forEach((i,k)=>{const f=tpl.fields[i];
+      if(k<rest.length-1){const m=s.match(/^(\S+)\s*/);vals[i]=m?m[1]:'';s=m?s.slice(m[0].length):'';}
+      else vals[i]=f.type==='multi'?s.split(/\s*·\s*/).filter(Boolean):s;});
+  });
+  return vals;
+}
+function tplCompose(tpl,vals){
+  const groups=[[]];
+  tpl.fields.forEach((f,i)=>{if(f.type==='bar'){groups.push([]);return;}
+    const v=vals[i];let t='';
+    if(f.type==='multi')t=(v||[]).filter(Boolean).join(' · ');
+    else if(f.type==='time')t=(v||[]).filter(Boolean).join(' ');
+    else t=String(v||'').trim();
+    if(t)groups[groups.length-1].push(t);});
+  return groups.map(g=>g.join(' ')).filter(Boolean).join(' | ');
+}
+let tplS=null;
+function tplHistory(rid,tpl){
+  let texts=[];try{const r=loadLifeRoutines().find(x=>x.id===rid);const items=isMealFreeRoutine(r)?getPreviousMealRecords(rid):getPreviousFreeRecords(rid);texts=items.map(x=>typeof x==='string'?x:x.text);}catch(e){}
+  const opts={};tpl.fields.forEach((f,i)=>{opts[i]=new Map();});
+  texts.forEach(t=>{const v=tplParse(tpl,t);tpl.fields.forEach((f,i)=>{if(f.type==='pick'||f.type==='multi'){const arr=f.type==='multi'?(v[i]||[]):[v[i]];arr.forEach(x=>{x=String(x||'').trim();if(x&&x.length<=24)opts[i].set(x,(opts[i].get(x)||0)+1);});}});});
+  const out={};Object.keys(opts).forEach(i=>{out[i]=[...opts[i].entries()].sort((a,b)=>b[1]-a[1]).map(x=>x[0]).slice(0,10);});
+  return out;
+}
+function tplMount(rid){
+  const ta=document.getElementById('routineInputValue');if(!ta)return;
+  ta.parentElement.querySelectorAll('.tplBox,.tplMake').forEach(e=>e.remove());
+  const tpl=tplGet(rid);
+  if(!tpl){ta.classList.remove('tplHid');ta.parentElement.querySelector('.rcBox')?.classList.remove('tplHid');
+    ta.insertAdjacentHTML('afterend',`<button type="button" class="tplMake" onclick="tplEdit('${rid}')">기록 틀 만들기 ›</button>`);return;}
+  tplS={rid,tpl,vals:tplParse(tpl,ta.value),free:false,hist:tplHistory(rid,tpl)};
+  const box=document.createElement('div');box.className='tplBox';ta.insertAdjacentElement('afterend',box);
+  tplRender();
+}
+function tplSync(){const ta=document.getElementById('routineInputValue');if(ta&&tplS&&!tplS.free)ta.value=tplCompose(tplS.tpl,tplS.vals);const p=document.getElementById('tplPrev');if(p&&tplS)p.textContent=tplCompose(tplS.tpl,tplS.vals)||'칸을 채우면 이렇게 저장돼요';}
+function tplRender(){
+  const box=document.querySelector('#routineInputWrap .tplBox');if(!box||!tplS)return;
+  const ta=document.getElementById('routineInputValue'),rc=ta?.parentElement.querySelector('.rcBox');
+  ta?.classList.toggle('tplHid',!tplS.free);rc?.classList.toggle('tplHid',!tplS.free);
+  if(tplS.free){box.innerHTML=`<div class="tplLinks"><button type="button" onclick="tplS.free=false;tplS.vals=tplParse(tplS.tpl,document.getElementById('routineInputValue').value);tplRender()">칸으로 쓰기</button><button type="button" onclick="tplEdit('${tplS.rid}')">틀 고치기</button></div>`;return;}
+  const {tpl,vals,hist}=tplS,E=escapeLife;
+  box.innerHTML=tpl.fields.map((f,i)=>{
+    if(f.type==='bar')return '<div class="tplBar"></div>';
+    const lab=`<div class="tplLab">${E(f.label||TPL_TYPES[f.type])}</div>`;
+    const chips=(arr,on,fn)=>arr.length?`<div class="tplChips">${arr.map(x=>`<button type="button" class="tplChip${on(x)?' on':''}" onclick="${fn}(${i},this.dataset.v)" data-v="${E(x)}">${E(x)}</button>`).join('')}</div>`:'';
+    if(f.type==='pick')return `<div class="tplF">${lab}<input class="tplIn" value="${E(vals[i]||'')}" placeholder="직접 입력" oninput="tplS.vals[${i}]=this.value.trim();tplSync();tplRefreshChips(${i})">${chips(hist[i]||[],x=>x===vals[i],'tplPick')}</div>`;
+    if(f.type==='text')return `<div class="tplF">${lab}<input class="tplIn" value="${E(vals[i]||'')}" placeholder="적어 주세요" oninput="tplS.vals[${i}]=this.value;tplSync()"></div>`;
+    if(f.type==='multi'){const cur=vals[i]||[];
+      return `<div class="tplF">${lab}<div class="tplChips tplSel">${cur.map((x,k)=>`<span class="tplTag">${E(x)}<button type="button" aria-label="빼기" onclick="tplMultiDel(${i},${k})">×</button></span>`).join('')}
+        <input class="tplIn tplAdd" placeholder="${cur.length?'더 추가':'입력 후 엔터'}" enterkeyhint="done" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();tplMultiAdd(${i},this.value)}" onblur="if(this.value.trim())tplMultiAdd(${i},this.value)"></div>
+        ${chips((hist[i]||[]).filter(x=>!cur.includes(x)).slice(0,8),()=>false,'tplMultiAdd')}</div>`;}
+    if(f.type==='time'){const cur=vals[i]||[];
+      return `<div class="tplF">${lab}${cur.map((x,k)=>{const m=String(x).match(/(\d{1,2}:\d{2})(?:-(\d{1,2}:\d{2}))?/)||[];const pad=t=>t?t.padStart(5,'0'):'';
+        return `<div class="tplTime"><input type="time" value="${pad(m[1])}" onchange="tplTimeSet(${i},${k},0,this.value)"><span>~</span><input type="time" value="${pad(m[2])}" onchange="tplTimeSet(${i},${k},1,this.value)"><button type="button" class="tplX" onclick="tplTimeDel(${i},${k})" aria-label="지우기">×</button></div>`;}).join('')}
+        <button type="button" class="tplChip tplPlus" onclick="tplTimeAdd(${i})">+ 시간${cur.length?' 더':''}</button></div>`;}
+    return '';
+  }).join('')+`<div class="tplPrevWrap"><span>저장될 모양</span><div id="tplPrev" class="tplPrev"></div></div>
+    <div class="tplLinks"><button type="button" onclick="tplS.free=true;tplSync();tplRender()">자유롭게 쓰기</button><button type="button" onclick="tplEdit('${tplS.rid}')">틀 고치기</button></div>`;
+  tplSync();
+}
+function tplRefreshChips(i){document.querySelectorAll('#routineInputWrap .tplF').forEach(()=>{});}
+function tplPick(i,v){tplS.vals[i]=tplS.vals[i]===v?'':v;tplRender();}
+function tplMultiAdd(i,v){v=String(v||'').replace(/,/g,' ').trim();if(!v)return;const a=tplS.vals[i]=tplS.vals[i]||[];if(!a.includes(v))a.push(v);tplRender();setTimeout(()=>document.querySelectorAll('#routineInputWrap .tplAdd')[0]&&[...document.querySelectorAll('#routineInputWrap .tplF')][tplS.tpl.fields.slice(0,i).filter(f=>f.type!=='bar').length]?.querySelector('.tplAdd')?.focus(),0);}
+function tplMultiDel(i,k){(tplS.vals[i]||[]).splice(k,1);tplRender();}
+function tplTimeAdd(i){const a=tplS.vals[i]=tplS.vals[i]||[];const d=new Date();const now=`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()<30?0:30).padStart(2,'0')}`;a.push(now);tplRender();}
+function tplTimeSet(i,k,part,v){const a=tplS.vals[i]=tplS.vals[i]||[];const m=String(a[k]||'').match(/(\d{1,2}:\d{2})?(?:-(\d{1,2}:\d{2}))?/)||[];let s=m[1]||'',e=m[2]||'';if(part===0)s=v;else e=v;a[k]=s&&e?`${s}-${e}`:(s||e);tplSync();}
+function tplTimeDel(i,k){(tplS.vals[i]||[]).splice(k,1);tplRender();}
+/* 틀 만들기·고치기 */
+let tplEd=null;
+function tplEdit(rid){
+  const cur=tplGet(rid);const r=loadLifeRoutines().find(x=>x.id===rid)||{};
+  tplEd={rid,name:r.name||'',fields:cur?JSON.parse(JSON.stringify(cur.fields)):[]};
+  let el=document.getElementById('tplEdRoot');
+  if(!el){el=document.createElement('div');el.id='tplEdRoot';el.className='routineActionOverlay';el.onclick=e=>{if(e.target===el)tplEdClose();};document.body.appendChild(el);}
+  el.classList.remove('hide');tplEdRender();
+}
+function tplEdClose(){document.getElementById('tplEdRoot')?.classList.add('hide');tplEd=null;}
+function tplEdRender(){
+  const el=document.getElementById('tplEdRoot');if(!el||!tplEd)return;const E=escapeLife,fs=tplEd.fields;
+  const prev=fs.length?fs.map(f=>f.type==='bar'?'|':`[${f.label||TPL_TYPES[f.type]}]`).join(' '):'칸을 추가해 주세요';
+  el.innerHTML=`<div class="routineInputCard tplEdCard" role="dialog" aria-modal="true">
+    <div class="routineActionTitle">${E(tplEd.name)} 기록 틀</div>
+    <div class="tplEdHint">기록할 때 채울 칸을 정해요. 구분선(|)과 점(·)은 자동으로 들어가요.</div>
+    <div class="tplLab">추천 틀</div><div class="tplChips">${TPL_PRESETS.map((p,i)=>`<button type="button" class="tplChip" onclick="tplEd.fields=JSON.parse(JSON.stringify(TPL_PRESETS[${i}].fields));tplEdRender()">${E(p.name)}</button>`).join('')}</div>
+    <div class="tplLab">칸</div>
+    <div class="tplEdList">${fs.map((f,i)=>f.type==='bar'
+      ?`<div class="tplEdRow tplEdBarRow"><span>── 구분선 | ──</span><button type="button" onclick="tplEdMove(${i},-1)" aria-label="위로">↑</button><button type="button" onclick="tplEd.fields.splice(${i},1);tplEdRender()" aria-label="빼기">×</button></div>`
+      :`<div class="tplEdRow"><input value="${E(f.label||'')}" placeholder="칸 이름" oninput="tplEd.fields[${i}].label=this.value;document.getElementById('tplEdPrev').textContent=tplEdPrevText()"><select onchange="tplEd.fields[${i}].type=this.value;tplEdRender()">${Object.entries(TPL_TYPES).map(([k,v])=>`<option value="${k}"${f.type===k?' selected':''}>${v}</option>`).join('')}</select><button type="button" onclick="tplEdMove(${i},-1)" aria-label="위로">↑</button><button type="button" onclick="tplEd.fields.splice(${i},1);tplEdRender()" aria-label="빼기">×</button></div>`).join('')}</div>
+    <div class="tplChips"><button type="button" class="tplChip tplPlus" onclick="tplEd.fields.push({type:'pick',label:''});tplEdRender()">+ 칸 추가</button><button type="button" class="tplChip tplPlus" onclick="tplEd.fields.push({type:'bar'});tplEdRender()">+ 구분선 |</button></div>
+    <div class="tplTypeHelp"><b>고르기</b> 전에 쓴 것 중 하나 (넷플릭스, PT) · <b>시간</b> 17:00-18:00 · <b>여러 개</b> 사과 · 요거트 · <b>글</b> 자유롭게</div>
+    <div class="tplPrevWrap"><span>모양</span><div class="tplPrev" id="tplEdPrev">${E(prev)}</div></div>
+    <div class="routineInputActions"><button type="button" onclick="tplEdClear()">${tplGet(tplEd.rid)?'틀 없이 쓰기':'취소'}</button><button type="button" class="primary" onclick="tplEdSave()">저장</button></div>
+  </div>`;
+}
+function tplEdPrevText(){return tplEd.fields.map(f=>f.type==='bar'?'|':`[${f.label||TPL_TYPES[f.type]}]`).join(' ');}
+function tplEdMove(i,d){const a=tplEd.fields,j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];tplEdRender();}
+function tplEdSave(){
+  const fs=tplEd.fields.filter((f,i,a)=>f.type!=='bar'||(i>0&&i<a.length-1&&a[i-1].type!=='bar'));
+  if(!fs.some(f=>f.type!=='bar')){appAlert('칸을 하나 이상 넣어 주세요.');return;}
+  fs.forEach(f=>{if(f.type!=='bar'&&!String(f.label||'').trim())f.label=TPL_TYPES[f.type];});
+  const rid=tplEd.rid;tplSet(rid,{fields:fs});tplEdClose();tplMount(rid);appToast('기록 틀을 저장했어요');
+}
+async function tplEdClear(){
+  const rid=tplEd.rid;if(tplGet(rid)){if(!await appConfirm('이 활동의 기록 틀을 없앨까요? 지난 기록은 그대로예요.',{ok:'틀 없애기'}))return;tplSet(rid,null);}
+  tplEdClose();tplMount(rid);
+}
+(function(){
+  const base=openRoutineInputSheet;
+  openRoutineInputSheet=function(ctx){
+    const r=base.apply(this,arguments);
+    try{tplS=null;if(ctx&&ctx.mode==='free'&&ctx.id)tplMount(ctx.id);}catch(e){console.warn(e);}
+    return r;
+  };
 })();
 </script>
 
