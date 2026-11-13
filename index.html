@@ -12553,7 +12553,8 @@ function rcAttach(o){ /* o:{input,items,textOf,counts,pick(i),more()} */
 }
 function rcRender(){
   const o=rcState;if(!o||!o.box.isConnected)return;
-  const q=String(o.input.value||'').trim().toLowerCase();
+  let q=String(o.input.value||'').trim().toLowerCase();
+  try{if(tplS&&!tplS.free)q='';}catch(e){}
   let ids=o.order;
   if(q)ids=o.items.map((x,i)=>i).filter(i=>{const t=o.textOf(o.items[i]).toLowerCase();return t.includes(q)&&t!==q;});
   const shown=ids.slice(0,4);
@@ -12888,6 +12889,23 @@ function pjTidyLine(t){
     pjCatRender();}catch(e){console.warn(e);}return r;};
   openProject=wrapOpen(openProject);
   try{if(typeof SW_ORIG==='object'&&SW_ORIG.pj)SW_ORIG.pj=wrapOpen(SW_ORIG.pj);}catch(e){}
+})();
+/* 기록 틀을 쓰는 중에도 '이전 기록 그대로 불러오기' 칩이 보이게 (식사 숫자·장소까지 채움) */
+(function(){
+  const cp=choosePreviousRecord;
+  choosePreviousRecord=function(){
+    const r=cp.apply(this,arguments);
+    try{if(tplS&&!tplS.free){const ta=document.getElementById('routineInputValue');if(ta){tplS.vals=tplParse(tplS.tpl,ta.value);tplRender();}}}catch(e){}
+    return r;
+  };
+  const tr=tplRender;
+  tplRender=function(){
+    const r=tr.apply(this,arguments);
+    try{const ta=document.getElementById('routineInputValue'),rc=ta?.parentElement.querySelector('.rcBox'),box=ta?.parentElement.querySelector('.tplBox');
+      if(rc&&box&&tplS&&!tplS.free){rc.classList.remove('tplHid');box.after(rc);const h=rc.querySelector('.rcHead');if(h&&!String(o_q()).trim())h.textContent='이전 기록 그대로 불러오기';}}catch(e){}
+    return r;
+  };
+  function o_q(){return '';}
 })();
 </script>
 
