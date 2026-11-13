@@ -2547,6 +2547,13 @@ body.scrolled .tdChip .tdToday{height:28px!important;padding:0 10px!important;fo
 #swRoot .rwInline input:not(.rwUnit){width:96px}
 #swRoot .swArea{height:auto;min-height:140px;padding:14px 16px;line-height:1.6;resize:none}
 .obPvIc{display:inline-flex;width:18px;height:18px;color:var(--rc-gd,#2f6b55)}.obPvIc svg{width:18px;height:18px}
+.rcBox{margin:8px 0 2px}
+.rcHead{font-size:12px;color:var(--rc-mu);margin:0 2px 6px}
+.rcChips{display:flex;flex-wrap:wrap;gap:6px}
+.rcChip{border:1px solid var(--rc-line);background:var(--rc-card);color:var(--rc-tx);border-radius:999px;padding:7px 12px;font:inherit;font-size:var(--fs-1);max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;min-height:0}
+.rcChip:active{background:var(--rc-gl)}
+.rcChip.rcMore{color:var(--rc-gd,#2f6b55);background:transparent;border-style:dashed}
+.rcHidden{display:none!important}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -12473,6 +12480,93 @@ function swRender(){
 openDailyCareItemEditor=function(id){if(!id)return swOpen('dc');return SW_ORIG.dc.apply(this,arguments);};
 openOneOffRecordEditor=function(id){if(!id)return swOpen('ql');return SW_ORIG.ql.apply(this,arguments);};
 openProject=function(id){if(!id)return swOpen('pj');return SW_ORIG.pj.apply(this,arguments);};
+/* ===== 이전 기록 칩: 입력칸 바로 아래에 자주·최근 기록 (식사·자유 메모·간식·QUICK LOG 메모) 2026-11-13 ===== */
+let rcState=null;
+function rcRank(items,textOf,counts){
+  const idx=items.map((x,i)=>i);if(idx.length<=4)return idx;
+  const recent=idx.slice(0,2);
+  const rest=idx.slice(2).sort((a,b)=>(counts.get(textOf(items[b]))||0)-(counts.get(textOf(items[a]))||0)||a-b);
+  return recent.concat(rest);
+}
+function rcAttach(o){ /* o:{input,items,textOf,counts,pick(i),more()} */
+  const inp=o.input;if(!inp||!o.items.length)return;
+  inp.parentElement.querySelector('.rcBox')?.remove();
+  const box=document.createElement('div');box.className='rcBox';inp.insertAdjacentElement('afterend',box);
+  rcState=o;o.box=box;o.order=rcRank(o.items,o.textOf,o.counts||new Map());
+  inp.addEventListener('input',rcRender);rcRender();
+}
+function rcRender(){
+  const o=rcState;if(!o||!o.box.isConnected)return;
+  const q=String(o.input.value||'').trim().toLowerCase();
+  let ids=o.order;
+  if(q)ids=o.items.map((x,i)=>i).filter(i=>{const t=o.textOf(o.items[i]).toLowerCase();return t.includes(q)&&t!==q;});
+  const shown=ids.slice(0,4);
+  if(!shown.length&&q){o.box.innerHTML='';return;}
+  o.box.innerHTML=`<div class="rcHead">${q?'이전 기록에서 찾기':'자주 쓰는 기록'}</div><div class="rcChips">`+
+    shown.map(i=>`<button type="button" class="rcChip" onclick="rcPick(${i})">${escapeLife(o.textOf(o.items[i]))}</button>`).join('')+
+    (o.more&&o.items.length>shown.length?`<button type="button" class="rcChip rcMore" onclick="rcState.more()">더 보기</button>`:'')+`</div>`;
+}
+function rcPick(i){const o=rcState;if(!o)return;o.pick(i);setTimeout(rcRender,0);}
+function rcCountTexts(list){const m=new Map();list.forEach(t=>{t=String(t||'').trim();if(t)m.set(t,(m.get(t)||0)+1);});return m;}
+/* 루틴 입력 시트: 식사·자유 메모·간식 */
+(function(){
+  const base=openRoutineInputSheet;
+  openRoutineInputSheet=function(ctx){
+    const r=base.apply(this,arguments);
+    try{
+      const input=document.getElementById('routineInputValue');if(!input||input.tagName!=='TEXTAREA')return r;
+      if(ctx&&ctx.mode==='free'&&ctx.id){
+        const rt=loadLifeRoutines(),me=rt.find(x=>x.id===ctx.id),meal=isMealFreeRoutine(me);
+        const items=meal?getPreviousMealRecords(ctx.id):getPreviousFreeRecords(ctx.id);if(!items.length)return r;
+        const ids=meal?new Set(rt.filter(x=>isMealFreeRoutine(x)).map(x=>x.id)):new Set([ctx.id]);
+        const texts=[];Object.values(loadLifeLogs()).forEach(arr=>(Array.isArray(arr)?arr:[]).forEach(l=>{if(ids.has(l.routineId))texts.push(l.memo);}));
+        const textOf=x=>typeof x==='string'?x:x.text;
+        rcAttach({input,items,textOf,counts:rcCountTexts(texts),
+          pick:i=>{historyPickerItems=items;choosePreviousRecord(i);},
+          more:()=>openHistoryPicker(items,'이전 기록')});
+        document.querySelector('#routineInputSheet .mealRecallField, #routineInputSheet .mealHistoryRecall, .mealRecallField, .mealHistoryRecall')&&document.querySelectorAll('.mealRecallField,.mealHistoryRecall').forEach(e=>e.classList.add('rcHidden'));
+      }else if(ctx&&ctx.mode==='snack'){
+        const all=loadSnackRecords(),texts=[],items=[],seen=new Set();
+        Object.keys(all).sort().reverse().forEach(k=>(Array.isArray(all[k])?all[k]:[]).slice().reverse().forEach(x=>{const t=String(x&&x.text||'').trim();if(!t)return;texts.push(t);if(!seen.has(t)){seen.add(t);items.push(t);}}));
+        if(!items.length)return r;
+        rcAttach({input,items,textOf:x=>x,counts:rcCountTexts(texts),
+          pick:i=>{historyPickerItems=items;choosePreviousRecord(i);},
+          more:()=>openHistoryPicker(items,'이전 간식')});
+      }
+    }catch(e){console.warn(e);}
+    return r;
+  };
+})();
+/* QUICK LOG 기록 창: 같은 항목의 이전 메모 */
+(function(){
+  const base=openOneOffLog;
+  openOneOffLog=function(defId,idx,dateKey){
+    const r=base.apply(this,arguments);
+    try{
+      const memo=document.getElementById('olMemo');if(!memo)return r;
+      memo.parentElement.querySelector('.rcBox')?.remove();
+      const all=loadOneOffLogs(),texts=[],items=[],seen=new Set();
+      Object.keys(all).sort().reverse().forEach(k=>(Array.isArray(all[k])?all[k]:[]).slice().reverse().forEach(x=>{if(!x||x.defId!==defId)return;const t=String(x.memo||'').trim();if(!t)return;texts.push(t);if(!seen.has(t)){seen.add(t);items.push(t);}}));
+      if(!items.length)return r;
+      rcAttach({input:memo,items,textOf:x=>x,counts:rcCountTexts(texts),
+        pick:i=>{memo.value=items[i];memo.focus();},
+        more:()=>{window._rcOl=true;openHistoryPicker(items,'이전 메모');}});
+    }catch(e){console.warn(e);}
+    return r;
+  };
+  const cp=choosePreviousRecord;
+  choosePreviousRecord=function(i){
+    if(window._rcOl&&!document.getElementById('oneOffLogModal')?.classList.contains('hide')){
+      window._rcOl=false;const x=historyPickerItems[i];const m=document.getElementById('olMemo');if(m&&typeof x==='string'){m.value=x;m.focus();}closeHistoryPicker();setTimeout(rcRender,0);return;}
+    window._rcOl=false;return cp.apply(this,arguments);
+  };
+})();
+/* TODAY 맨 위: 사용자가 정한 시간대(자동 펼침 시간)를 따름 */
+thBlockNow=function(){
+  const defs=lifeBlockDefs(),h=new Date().getHours();
+  if(h<dayStartHour()){const hs=lbHours();return defs.map(d=>d.id).sort((a,b)=>hs[b][1]-hs[a][1])[0]||'';}
+  return lbCurrentId(defs);
+};
 </script>
 
 
