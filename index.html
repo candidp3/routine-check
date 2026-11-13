@@ -2563,6 +2563,8 @@ body.thTimerOn.thHeroSeen #activityTimerFloat{display:none!important}
 .tdHero .thTimerBtns{display:flex;gap:8px;margin-top:10px}
 .tdHero .thTimerBtns button{flex:1;height:38px;min-height:38px;border-radius:12px;border:1px solid var(--rc-line);background:var(--rc-card);color:var(--rc-tx);font:inherit;font-size:var(--fs-2)}
 .tdHero .thTimerBtns button.pri{flex:2;border:0;background:var(--rc-gs);color:#fff;font-weight:var(--fw-3)}
+.lifeBlock.lbNow{box-shadow:inset 0 0 0 1.5px var(--rc-gs)}
+.lifeBlock.lbNow .lifeBlockTitle::after{content:'지금';display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--rc-gl);color:var(--rc-gd,var(--rc-gs));font-size:11px;font-weight:600;letter-spacing:0;vertical-align:middle}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -11779,8 +11781,9 @@ function lbToggle(id){
         const rows=sec.querySelectorAll('.lifeRoutine'),done=sec.querySelectorAll('.lifeRoutine .lifeCheck.done').length,total=rows.length;
         const all=total>0&&done===total;
         const man=lbManual[lifeLogKey()+'|'+def.id];
-        const open=man!==undefined?man:(isToday&&def.id===cur&&!all);
-        sec.classList.toggle('lbFold',!open);sec.classList.toggle('lbAllDone',all);
+        /* 지금 시간대는 맨 위 상자가 보여 주므로 아래 목록은 모두 접어 둠 (직접 펼친 건 유지) */
+        const open=man!==undefined?man:false;
+        sec.classList.toggle('lbFold',!open);sec.classList.toggle('lbAllDone',all);sec.classList.toggle('lbNow',isToday&&def.id===cur);
         const head=sec.querySelector('.lifeBlockHead');
         if(head&&!head.querySelector('.lbInfo')){head.insertAdjacentHTML('beforeend',`<span class="lbInfo">${total?(all?'✓ ':'')+done+'/'+total:'없음'}<span class="lbC" aria-hidden="true">›</span></span>`);}
         head.onclick=()=>lbToggle(def.id);
