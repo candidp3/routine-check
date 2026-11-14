@@ -2647,6 +2647,12 @@ body.qlFabOn .activityTimerFloat{right:auto!important;left:max(14px,calc((100vw 
 .lbPeek{flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;mask-image:linear-gradient(90deg,#000 90%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 90%,transparent);padding-right:14px}
 .lbPeek::-webkit-scrollbar{display:none}
 .lbPeek button{flex:none!important}
+/* TODAY 오른쪽 위 날짜 바꾸기: 더 잘 보이게 */
+.tdChip .tdPick{background:var(--rc-gl)!important;color:var(--rc-gs)!important;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--rc-gs) 35%,transparent)}
+.tdChip .tdPick .appIco,.tdChip .tdPick svg{width:19px!important;height:19px!important;stroke-width:2}
+.tdChip .tdPick{width:38px!important;height:38px!important;min-width:38px!important}
+body.scrolled .tdChip .tdPick{width:32px!important;height:32px!important;min-width:32px!important}
+body.scrolled .tdChip .tdPick svg{width:17px!important;height:17px!important}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -8348,7 +8354,7 @@ document.addEventListener("visibilitychange", () => {
 });
 window.addEventListener("focus", () => { render(); });
   
-setInterval(()=>{ if(document.hidden)return; renderFasting(); renderActivityTimerBanner(); const tv=document.getElementById('viewToday'); if(tv&&tv.offsetParent!==null&&loadActivityTimer())renderLifeGuide(); }, 1000);
+setInterval(()=>{ if(document.hidden)return; renderFasting(); renderActivityTimerBanner(); const tv=document.getElementById('viewToday'); if(tv&&tv.offsetParent!==null&&loadActivityTimer()){const m=Math.floor(Date.now()/60000);if(window.__lgMin!==m){window.__lgMin=m;renderLifeGuide();}} }, 1000);
 
 // PWA
 if("serviceWorker" in navigator){
@@ -12711,7 +12717,7 @@ function thTimerHTML(){
   };
   /* 맨 위 상자가 보일 때는 아래쪽 떠 있는 캡슐을 숨김 */
   try{const io=new IntersectionObserver(es=>{es.forEach(e=>document.body.classList.toggle('thHeroSeen',e.isIntersecting));});
-    const watch=()=>{const h=document.getElementById('tdHero');if(h&&!h._io){h._io=1;io.observe(h);}};watch();setInterval(watch,2000);}catch(e){}
+    const watch=()=>{const h=document.getElementById('tdHero');if(h&&!h._io){h._io=1;io.observe(h);}};watch();const g2=renderLifeGuide;renderLifeGuide=function(){const r=g2.apply(this,arguments);try{watch();}catch(e){}return r;};}catch(e){}
 })();
 /* ===== 기록 틀: 자유 기록 루틴을 칸으로 나눠 쉽게 입력 (2026-11-13) =====
    저장은 지금과 같은 한 줄 글 (예: PT 17:00-18:00 | 상체 · 바이시클크런치) → 달력·기록·검색 그대로 */
@@ -12730,13 +12736,7 @@ function tplHistTexts(rid){
 }
 const TPL_KEY='recordTemplates_v1';
 const TPL_TYPES={pick:'고르기',time:'시간',multi:'여러 개',text:'글'};
-const TPL_PRESETS=[
-  {name:'운동',fields:[{type:'pick',label:'종류'},{type:'time',label:'시간'},{type:'bar'},{type:'multi',label:'내용'}]},
-  {name:'영상·웹툰',fields:[{type:'pick',label:'어디서'},{type:'bar'},{type:'text',label:'제목'}]},
-  {name:'물놀이·여행',fields:[{type:'pick',label:'장소'},{type:'time',label:'시간'},{type:'bar'},{type:'multi',label:'한 것'}]},
-  {name:'식사',fields:[{type:'multi',label:'메뉴'}]},
-  {name:'공부·일',fields:[{type:'pick',label:'분류'},{type:'bar'},{type:'text',label:'내용'}]}
-];
+const TPL_PRESETS=[];
 function tplLoadAll(){try{const v=JSON.parse(localStorage.getItem(TPL_KEY)||'{}');return v&&typeof v==='object'?v:{};}catch(e){return {};}}
 function tplGet(rid){const t=tplLoadAll()[rid];return t&&Array.isArray(t.fields)&&t.fields.some(f=>f.type!=='bar')?t:null;}
 function tplSet(rid,t){const all=tplLoadAll();if(t)all[rid]=t;else delete all[rid];try{localStorage.setItem(TPL_KEY,JSON.stringify(all));}catch(e){}}
@@ -12810,7 +12810,6 @@ function tplRender(){
     <div class="tplLinks"><button type="button" onclick="tplS.free=true;tplSync();tplRender()">자유롭게 쓰기</button><button type="button" onclick="tplEdit('${tplS.rid}')">틀 고치기</button></div>`;
   tplSync();
 }
-function tplRefreshChips(i){document.querySelectorAll('#routineInputWrap .tplF').forEach(()=>{});}
 function tplPick(i,v){tplS.vals[i]=tplS.vals[i]===v?'':v;tplRender();}
 function tplMultiAdd(i,v){document.querySelectorAll('.tplAdd').forEach(x=>x.value='');v=String(v||'').replace(/,/g,' ').trim();if(!v)return;const a=tplS.vals[i]=tplS.vals[i]||[];if(!a.includes(v))a.push(v);tplRender();setTimeout(()=>document.querySelectorAll('.tplAdd')[0]&&[...document.querySelectorAll('#routineInputWrap .tplF')][tplS.tpl.fields.slice(0,i).filter(f=>f.type!=='bar').length]?.querySelector('.tplAdd')?.focus(),0);}
 function tplMultiDel(i,k){(tplS.vals[i]||[]).splice(k,1);tplRender();}
@@ -12819,39 +12818,9 @@ function tplTimeSet(i,k,part,v){const a=tplS.vals[i]=tplS.vals[i]||[];const m=St
 function tplTimeDel(i,k){(tplS.vals[i]||[]).splice(k,1);tplRender();}
 /* 틀 만들기·고치기 */
 let tplEd=null;
-function tplEdit(rid){
-  const cur=tplGet(rid);const r={name:tplItemName(rid)};
-  tplEd={rid,name:r.name||'',fields:cur?JSON.parse(JSON.stringify(cur.fields)):[]};
-  let el=document.getElementById('tplEdRoot');
-  if(!el){el=document.createElement('div');el.id='tplEdRoot';el.className='routineActionOverlay';el.onclick=e=>{if(e.target===el)tplEdClose();};document.body.appendChild(el);}
-  el.classList.remove('hide');tplEdRender();
-}
 function tplEdClose(){document.getElementById('tplEdRoot')?.classList.add('hide');tplEd=null;}
-function tplEdRender(){
-  const el=document.getElementById('tplEdRoot');if(!el||!tplEd)return;const E=escapeLife,fs=tplEd.fields;
-  const prev=fs.length?fs.map(f=>f.type==='bar'?'|':`[${f.label||TPL_TYPES[f.type]}]`).join(' '):'칸을 추가해 주세요';
-  el.innerHTML=`<div class="routineInputCard tplEdCard" role="dialog" aria-modal="true">
-    <div class="routineActionTitle">${E(tplEd.name)} 기록 틀</div>
-    <div class="tplEdHint">기록할 때 채울 칸을 정해요. 구분선(|)과 점(·)은 자동으로 들어가요.</div>
-    <div class="tplLab">추천 틀</div><div class="tplChips">${TPL_PRESETS.map((p,i)=>`<button type="button" class="tplChip" onclick="tplEd.fields=JSON.parse(JSON.stringify(TPL_PRESETS[${i}].fields));tplEdRender()">${E(p.name)}</button>`).join('')}</div>
-    <div class="tplLab">칸</div>
-    <div class="tplEdList">${fs.map((f,i)=>f.type==='bar'
-      ?`<div class="tplEdRow tplEdBarRow"><span>── 구분선 | ──</span><button type="button" onclick="tplEdMove(${i},-1)" aria-label="위로">↑</button><button type="button" onclick="tplEd.fields.splice(${i},1);tplEdRender()" aria-label="빼기">×</button></div>`
-      :`<div class="tplEdRow"><input value="${E(f.label||'')}" placeholder="칸 이름" oninput="tplEd.fields[${i}].label=this.value;document.getElementById('tplEdPrev').textContent=tplEdPrevText()"><select onchange="tplEd.fields[${i}].type=this.value;tplEdRender()">${Object.entries(TPL_TYPES).map(([k,v])=>`<option value="${k}"${f.type===k?' selected':''}>${v}</option>`).join('')}</select><button type="button" onclick="tplEdMove(${i},-1)" aria-label="위로">↑</button><button type="button" onclick="tplEd.fields.splice(${i},1);tplEdRender()" aria-label="빼기">×</button></div>`).join('')}</div>
-    <div class="tplChips"><button type="button" class="tplChip tplPlus" onclick="tplEd.fields.push({type:'pick',label:''});tplEdRender()">+ 칸 추가</button><button type="button" class="tplChip tplPlus" onclick="tplEd.fields.push({type:'bar'});tplEdRender()">+ 구분선 |</button></div>
-    <div class="tplTypeHelp"><b>고르기</b> 전에 쓴 것 중 하나 (넷플릭스, PT) · <b>시간</b> 17:00-18:00 · <b>여러 개</b> 사과 · 요거트 · <b>글</b> 자유롭게</div>
-    <div class="tplPrevWrap"><span>모양</span><div class="tplPrev" id="tplEdPrev">${E(prev)}</div></div>
-    <div class="routineInputActions"><button type="button" onclick="tplEdClear()">${tplGet(tplEd.rid)?'틀 없이 쓰기':'취소'}</button><button type="button" class="primary" onclick="tplEdSave()">저장</button></div>
-  </div>`;
-}
 function tplEdPrevText(){return tplEd.fields.map(f=>f.type==='bar'?'|':`[${f.label||TPL_TYPES[f.type]}]`).join(' ');}
 function tplEdMove(i,d){const a=tplEd.fields,j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];tplEdRender();}
-function tplEdSave(){
-  const fs=tplEd.fields.filter((f,i,a)=>f.type!=='bar'||(i>0&&i<a.length-1&&a[i-1].type!=='bar'));
-  if(!fs.some(f=>f.type!=='bar')){appAlert('칸을 하나 이상 넣어 주세요.');return;}
-  fs.forEach(f=>{if(f.type!=='bar'&&!String(f.label||'').trim())f.label=TPL_TYPES[f.type];});
-  const rid=tplEd.rid;tplSet(rid,{fields:fs});tplEdClose();tplMount(rid);appToast('기록 틀을 저장했어요');
-}
 async function tplEdClear(){
   const rid=tplEd.rid;if(tplGet(rid)){if(!await appConfirm('이 활동의 기록 틀을 없앨까요? 지난 기록은 그대로예요.',{ok:'틀 없애기'}))return;tplSet(rid,null);}
   tplEdClose();tplMount(rid);
@@ -12865,7 +12834,6 @@ async function tplEdClear(){
   };
 })();
 /* ===== 기록 틀 v2: 추천은 예시로 간단히 · 내 틀 복사 · 같은 틀 여러 활동에 (2026-11-13) ===== */
-TPL_PRESETS.length=0;
 TPL_PRESETS.push(
   {name:'운동·활동',ex:'PT 17:00-18:00 | 상체 · 스쿼트',fields:[{type:'pick',label:'종류'},{type:'time',label:'시간'},{type:'bar'},{type:'multi',label:'내용'}]},
   {name:'보기·읽기',ex:'넷플릭스 | 흑백요리사',fields:[{type:'pick',label:'어디서'},{type:'bar'},{type:'text',label:'제목'}]},
@@ -12876,7 +12844,7 @@ function tplSame(a,b){const n=x=>JSON.stringify((x||[]).map(f=>f.type==='bar'?'b
 function tplLastText(rid){return tplHistTexts(rid)[0]||'';}
 function tplFreeRoutines(){return loadLifeRoutines().filter(r=>r&&r.type==='free'&&r.enabled!==false);}
 function tplOthers(rid){return String(rid).startsWith('ol:')?[{id:'ol:snack',name:'간식'}].concat(loadOneOffDefinitions().filter(d=>d.type==='meal').map(d=>({id:'ol:'+d.id,name:d.name}))):tplFreeRoutines().map(r=>({id:r.id,name:r.name}));}
-tplEdit=function(rid){
+function tplEdit(rid){
   const cur=tplGet(rid);const r={name:tplItemName(rid)};
   const fields=cur?JSON.parse(JSON.stringify(cur.fields)):[];
   tplEd={rid,name:r.name||'',fields,also:new Set(),open:!!cur&&!TPL_PRESETS.some(p=>tplSame(p.fields,fields))};
@@ -12884,7 +12852,7 @@ tplEdit=function(rid){
   if(!el){el=document.createElement('div');el.id='tplEdRoot';el.className='routineActionOverlay';el.onclick=e=>{if(e.target===el)tplEdClose();};document.body.appendChild(el);}
   el.classList.remove('hide');tplEdRender();
 };
-tplEdRender=function(){
+function tplEdRender(){
   const el=document.getElementById('tplEdRoot');if(!el||!tplEd)return;const E=escapeLife,fs=tplEd.fields;
   const mine=Object.keys(tplLoadAll()).filter(id=>id!==tplEd.rid&&tplGet(id)).map(id=>({id,r:{name:tplItemName(id)}})).filter(x=>x.r.name);
   const card=(on,name,ex,click)=>`<button type="button" class="tplCard${on?' on':''}" onclick="${click}"><b>${E(name)}</b><span>${E(ex)}</span></button>`;
@@ -12907,7 +12875,7 @@ tplEdRender=function(){
   </div>`;
 };
 function tplEdUse(f){tplEd.fields=JSON.parse(JSON.stringify(f));tplEdRender();}
-tplEdSave=function(){
+function tplEdSave(){
   const fs=tplEd.fields.filter((f,i,a)=>f.type!=='bar'||(i>0&&i<a.length-1&&a[i-1].type!=='bar'));
   if(!fs.some(f=>f.type!=='bar')){appAlert('모양을 하나 골라 주세요.');return;}
   fs.forEach(f=>{if(f.type!=='bar'&&!String(f.label||'').trim())f.label=TPL_TYPES[f.type];});
