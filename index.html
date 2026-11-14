@@ -2659,6 +2659,7 @@ body.scrolled .tdChip .tdPick svg{width:17px!important;height:17px!important}
 .tplRadio{width:18px;height:18px;border-radius:50%;border:2px solid var(--rc-line2,var(--rc-line));flex:none;box-sizing:border-box}
 .tplOpt.on .tplRadio{border:5px solid var(--rc-gs)}
 .tplOptTx{display:flex;flex-direction:column;gap:2px;min-width:0}.tplOptTx b{font-size:var(--fs-2)}.tplOptTx small{font-size:12px;color:var(--rc-mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tplUsed{font-style:normal;font-size:11px;color:var(--rc-gd,var(--rc-gs))}
 .tplPpl{display:flex;align-items:center;gap:10px;border:0;background:none;color:var(--rc-tx);font:inherit;font-size:var(--fs-2);padding:4px 2px;min-height:0;cursor:pointer}
 .tplSw{width:42px;height:26px;border-radius:13px;background:var(--rc-line2,#cfd8d3);position:relative;flex:none;transition:background .15s}
 .tplSw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .15s}
@@ -12878,7 +12879,7 @@ function tplEdRender(){
     <button type="button" class="tplOpen" onclick="tplEd.open=!tplEd.open;tplEdRender()">${tplEd.open?'칸 직접 고치기 접기 ▴':'칸 직접 고치기 ▾'}</button>
     ${tplEd.open?`<div class="tplEdList">${fs.map((f,i)=>f.type==='bar'
       ?`<div class="tplEdRow tplEdBarRow"><span>── 구분선 | ──</span><button type="button" onclick="tplEdMove(${i},-1)" aria-label="위로">↑</button><button type="button" onclick="tplEd.fields.splice(${i},1);tplEdRender()" aria-label="빼기">×</button></div>`
-      :`<div class="tplEdRow"><input value="${E(f.label||'')}" placeholder="칸 이름" oninput="tplEd.fields[${i}].label=this.value;document.getElementById('tplEdPrev').textContent=tplEdPrevText()"><select onchange="tplEd.fields[${i}].type=this.value;tplEdRender()">${Object.entries(TPL_TYPES).map(([k,v])=>`<option value="${k}"${f.type===k?' selected':''}>${v}</option>`).join('')}</select><button type="button" onclick="tplEdMove(${i},-1)" aria-label="위로">↑</button><button type="button" onclick="tplEd.fields.splice(${i},1);tplEdRender()" aria-label="빼기">×</button></div>`).join('')}</div>
+      :`<div class="tplEdRow"><input value="${E(f.label||'')}" placeholder="칸 이름" oninput="tplEd.fields[${i}].label=this.value;document.getElementById('tplEdPrev').textContent=tplEdPrevText()"><select onchange="tplEd.fields[${i}].type=this.value;tplEd.sel=undefined;tplEdRender()">${Object.entries(TPL_TYPES).map(([k,v])=>`<option value="${k}"${f.type===k?' selected':''}>${v}</option>`).join('')}</select><button type="button" onclick="tplEdMove(${i},-1)" aria-label="위로">↑</button><button type="button" onclick="tplEd.fields.splice(${i},1);tplEdRender()" aria-label="빼기">×</button></div>`).join('')}</div>
       <div class="tplChips"><button type="button" class="tplChip tplPlus" onclick="tplEd.fields.push({type:'pick',label:''});tplEdRender()">+ 칸 추가</button><button type="button" class="tplChip tplPlus" onclick="tplEd.fields.push({type:'bar'});tplEdRender()">+ 구분선 |</button></div>
       <div class="tplTypeHelp"><b>고르기</b> 전에 쓴 것 중 하나 · <b>시간</b> 17:00-18:00 · <b>여러 개</b> 사과 · 요거트 · <b>글</b> 자유롭게</div>
       <div class="tplPrevWrap"><span>모양</span><div class="tplPrev" id="tplEdPrev">${E(prev)}</div></div>`:''}
@@ -13079,10 +13080,18 @@ function tplEdTogglePeople(){
 function tplEdUse(f){const keep=tplHasPeople(tplEd.fields);tplEd.fields=JSON.parse(JSON.stringify(tplNoPeople(f)));if(keep)tplEd.fields.push({type:'people',label:'누구랑'});tplEdRender();}
 function tplEdRender(){
   const el=document.getElementById('tplEdRoot');if(!el||!tplEd)return;const E=escapeLife,fs=tplEd.fields,base=tplNoPeople(fs);
-  const mine=Object.keys(tplLoadAll()).filter(id=>id!==tplEd.rid&&tplGet(id)).map(id=>({id,name:tplItemName(id),t:tplGet(id)})).filter(x=>x.name);
-  const row=(on,name,ex,click)=>`<button type="button" class="tplOpt${on?' on':''}" onclick="${click}"><span class="tplRadio"></span><span class="tplOptTx"><b>${E(name)}</b><small>${E(ex)}</small></span></button>`;
-  const opts=TPL_PRESETS.map((p,i)=>row(tplSame(p.fields,base),p.name,p.ex,`tplEdUse(TPL_PRESETS[${i}].fields)`)).join('')+
-    mine.map(m=>row(tplSame(tplNoPeople(m.t.fields),base),`${m.name}처럼`,tplLastText(m.id)||tplNoPeople(m.t.fields).map(f=>f.type==='bar'?'|':`[${f.label}]`).join(' '),`tplEdUse(tplGet('${m.id}').fields)`)).join('');
+  /* 선택지: 추천 틀 + 내가 만든 틀 중 모양이 다른 것만 (같은 모양은 한 번만) */
+  const sig=f=>JSON.stringify(tplNoPeople(f).map(x=>x.type==='bar'?'bar':x.type+':'+(x.label||'')));
+  const list=TPL_PRESETS.map((p,i)=>({key:'p'+i,name:p.name,ex:p.ex,fields:p.fields,sig:sig(p.fields)}));
+  const seen=new Set(list.map(x=>x.sig)),groups={};
+  Object.keys(tplLoadAll()).filter(id=>id!==tplEd.rid&&tplGet(id)&&tplItemName(id)).forEach(id=>{const t=tplGet(id),g=sig(t.fields);if(seen.has(g))return;(groups[g]=groups[g]||{ids:[],fields:t.fields}).ids.push(id);});
+  Object.entries(groups).forEach(([g,v],k)=>{const names=v.ids.map(tplItemName);list.push({key:'m'+k,name:(names.length>2?names.slice(0,2).join('·')+` 외 ${names.length-2}`:names.join('·'))+' 모양',ex:tplLastText(v.ids[0])||tplNoPeople(v.fields).map(f=>f.type==='bar'?'|':`[${f.label}]`).join(' '),fields:v.fields,sig:g});});
+  const users={};Object.keys(tplLoadAll()).filter(id=>id!==tplEd.rid&&tplGet(id)&&tplItemName(id)).forEach(id=>{const g=sig(tplGet(id).fields);(users[g]=users[g]||[]).push(tplItemName(id));});
+  list.forEach(o=>{const u=users[o.sig]||[];o.used=u.length?(u.length>3?u.slice(0,3).join('·')+` 외 ${u.length-3}`:u.join('·'))+'에서 쓰는 중':'';});
+  window.__tplOpts=list;
+  if(tplEd.sel===undefined){const cur=sig(base);const hit=list.find(x=>x.sig===cur);tplEd.sel=hit?hit.key:null;}
+  const row=(o)=>`<button type="button" class="tplOpt${tplEd.sel===o.key?' on':''}" onclick="tplEd.sel='${o.key}';tplEdUse(window.__tplOpts.find(x=>x.key==='${o.key}').fields)"><span class="tplRadio"></span><span class="tplOptTx"><b>${E(o.name)}</b><small>${E(o.ex)}</small>${o.used?`<em class="tplUsed">${E(o.used)}</em>`:''}</span></button>`;
+  const opts=list.map(row).join('')+(tplEd.sel===null&&base.length?`<div class="tplOpt on"><span class="tplRadio"></span><span class="tplOptTx"><b>직접 만든 모양</b><small>${E(base.map(f=>f.type==='bar'?'|':`[${f.label}]`).join(' '))}</small></span></div>`:'');
   const others=tplOthers(tplEd.rid).filter(r=>r.id!==tplEd.rid);
   const ppl=tplHasPeople(fs);
   el.innerHTML=`<div class="routineInputCard tplEdCard" role="dialog" aria-modal="true">
