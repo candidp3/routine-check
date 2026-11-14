@@ -12848,9 +12848,9 @@ async function tplEdClear(){
 })();
 /* ===== 기록 틀 v2: 추천은 예시로 간단히 · 내 틀 복사 · 같은 틀 여러 활동에 (2026-11-13) ===== */
 TPL_PRESETS.push(
-  {name:'시간형',ex:'활동 시간 | 상세 나열\n예) 헬스 19:00-20:00 | 하체 · 스쿼트',fields:[{type:'pick',label:'활동'},{type:'time',label:'시간'},{type:'bar'},{type:'multi',label:'상세'}]},
-  {name:'내용형',ex:'활동 | 상세 나열\n예) 공부 | 영어 단어 · 문법',fields:[{type:'pick',label:'활동'},{type:'bar'},{type:'multi',label:'상세'}]},
-  {name:'상세형',ex:'상세 나열\n예) 사과 · 요거트 · 고구마',fields:[{type:'multi',label:'상세'}]}
+  {name:'시간형',ex:'종류 + 시간 | 세부 내용\n예) 헬스 19:00-20:00 | 하체 · 스쿼트',fields:[{type:'pick',label:'종류'},{type:'time',label:'시간'},{type:'bar'},{type:'multi',label:'세부 내용'}]},
+  {name:'내용형',ex:'종류 | 세부 내용\n예) 공부 | 영어 단어 · 문법',fields:[{type:'pick',label:'종류'},{type:'bar'},{type:'multi',label:'세부 내용'}]},
+  {name:'상세형',ex:'세부 내용만\n예) 사과 · 요거트 · 고구마',fields:[{type:'multi',label:'세부 내용'}]}
 );
 function tplShape(x){return JSON.stringify((x||[]).filter(f=>f.type!=='people').map(f=>f.type==='bar'?'bar':(f.type==='text'?'multi':f.type)));}
 function tplSame(a,b){return tplShape(a)===tplShape(b);}
