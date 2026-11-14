@@ -2653,6 +2653,18 @@ body.qlFabOn .activityTimerFloat{right:auto!important;left:max(14px,calc((100vw 
 .tdChip .tdPick{width:38px!important;height:38px!important;min-width:38px!important}
 body.scrolled .tdChip .tdPick{width:32px!important;height:32px!important;min-width:32px!important}
 body.scrolled .tdChip .tdPick svg{width:17px!important;height:17px!important}
+.tplOpts{display:flex;flex-direction:column;gap:6px}
+.tplOpt{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1.5px solid var(--rc-line);background:var(--rc-card);color:var(--rc-tx);border-radius:14px;padding:10px 12px;font:inherit;min-height:0;cursor:pointer}
+.tplOpt.on{border-color:var(--rc-gs);background:var(--rc-gl)}
+.tplRadio{width:18px;height:18px;border-radius:50%;border:2px solid var(--rc-line2,var(--rc-line));flex:none;box-sizing:border-box}
+.tplOpt.on .tplRadio{border:5px solid var(--rc-gs)}
+.tplOptTx{display:flex;flex-direction:column;gap:2px;min-width:0}.tplOptTx b{font-size:var(--fs-2)}.tplOptTx small{font-size:12px;color:var(--rc-mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tplPpl{display:flex;align-items:center;gap:10px;border:0;background:none;color:var(--rc-tx);font:inherit;font-size:var(--fs-2);padding:4px 2px;min-height:0;cursor:pointer}
+.tplSw{width:42px;height:26px;border-radius:13px;background:var(--rc-line2,#cfd8d3);position:relative;flex:none;transition:background .15s}
+.tplSw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .15s}
+.tplPpl.on .tplSw{background:var(--rc-gs)}.tplPpl.on .tplSw::after{transform:translateX(16px)}
+.tplMore{display:flex;gap:14px;flex-wrap:wrap}
+.tplMore button{border:0;background:none;color:var(--rc-mu);font:inherit;font-size:12px;padding:2px;min-height:0}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -12752,7 +12764,7 @@ function tplParse(tpl,text){
     const rest=g.filter(i=>tpl.fields[i].type!=='time');
     rest.forEach((i,k)=>{const f=tpl.fields[i];
       if(k<rest.length-1){const m=s.match(/^(\S+)\s*/);vals[i]=m?m[1]:'';s=m?s.slice(m[0].length):'';}
-      else vals[i]=f.type==='multi'?s.split(/\s*·\s*/).filter(Boolean):s;});
+      else vals[i]=(f.type==='multi'||f.type==='people')?s.split(/\s*·\s*/).filter(Boolean):s;});
   });
   return vals;
 }
@@ -12760,7 +12772,7 @@ function tplCompose(tpl,vals){
   const groups=[[]];
   tpl.fields.forEach((f,i)=>{if(f.type==='bar'){groups.push([]);return;}
     const v=vals[i];let t='';
-    if(f.type==='multi')t=(v||[]).filter(Boolean).join(' · ');
+    if((f.type==='multi'||f.type==='people'))t=(v||[]).filter(Boolean).join(' · ');
     else if(f.type==='time')t=(v||[]).filter(Boolean).join(' ');
     else t=String(v||'').trim();
     if(t)groups[groups.length-1].push(t);});
@@ -12770,7 +12782,7 @@ let tplS=null;
 function tplHistory(rid,tpl){
   let texts=tplHistTexts(rid);
   const opts={};tpl.fields.forEach((f,i)=>{opts[i]=new Map();});
-  texts.forEach(t=>{const v=tplParse(tpl,t);tpl.fields.forEach((f,i)=>{if(f.type==='pick'||f.type==='multi'){const arr=f.type==='multi'?(v[i]||[]):[v[i]];arr.forEach(x=>{x=String(x||'').trim();if(x&&x.length<=24)opts[i].set(x,(opts[i].get(x)||0)+1);});}});});
+  texts.forEach(t=>{const v=tplParse(tpl,t);tpl.fields.forEach((f,i)=>{if(f.type==='pick'||(f.type==='multi'||f.type==='people')){const arr=(f.type==='multi'||f.type==='people')?(v[i]||[]):[v[i]];arr.forEach(x=>{x=String(x||'').trim();if(x&&x.length<=24)opts[i].set(x,(opts[i].get(x)||0)+1);});}});});
   const out={};Object.keys(opts).forEach(i=>{out[i]=[...opts[i].entries()].sort((a,b)=>b[1]-a[1]).map(x=>x[0]).slice(0,40);});
   return out;
 }
@@ -12797,9 +12809,9 @@ function tplRender(){
     const chips=(arr,on,fn)=>`<div class="tplChips" id="tplCh${i}">${arr.map(x=>`<button type="button" class="tplChip${on(x)?' on':''}" onpointerdown="event.preventDefault()" onclick="${fn}(${i},this.dataset.v)" data-v="${E(x)}">${E(x)}</button>`).join('')}</div>`;
     if(f.type==='pick')return `<div class="tplF">${lab}<input class="tplIn" value="${E(vals[i]||'')}" placeholder="직접 입력" oninput="tplS.vals[${i}]=this.value.trim();tplSync();tplFilterChips(${i},this.value)">${chips((hist[i]||[]).slice(0,TPL_SHOW),x=>x===vals[i],'tplPick')}</div>`;
     if(f.type==='text')return `<div class="tplF">${lab}<input class="tplIn" value="${E(vals[i]||'')}" placeholder="적어 주세요" oninput="tplS.vals[${i}]=this.value;tplSync()"></div>`;
-    if(f.type==='multi'){const cur=vals[i]||[];
+    if((f.type==='multi'||f.type==='people')){const cur=vals[i]||[];
       return `<div class="tplF">${lab}<div class="tplChips tplSel">${cur.map((x,k)=>`<span class="tplTag">${E(x)}<button type="button" aria-label="빼기" onclick="tplMultiDel(${i},${k})">×</button></span>`).join('')}
-        <input class="tplIn tplAdd" placeholder="${cur.length?'더 추가':'입력하면 이전 메뉴를 찾아요'}" enterkeyhint="done" oninput="tplFilterChips(${i},this.value)" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();tplMultiAdd(${i},this.value)}" onblur="if(this.value.trim())tplMultiAdd(${i},this.value)"></div>
+        <input class="tplIn tplAdd" placeholder="${f.type==='people'?(cur.length?'더 추가':'이름 입력'):(cur.length?'더 추가':'입력하면 이전 기록을 찾아요')}" enterkeyhint="done" oninput="tplFilterChips(${i},this.value)" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();tplMultiAdd(${i},this.value)}" onblur="if(this.value.trim())tplMultiAdd(${i},this.value)"></div>
         ${chips((hist[i]||[]).filter(x=>!cur.includes(x)).slice(0,TPL_SHOW),()=>false,'tplMultiAdd')}</div>`;}
     if(f.type==='time'){const cur=vals[i]||[];
       return `<div class="tplF">${lab}${cur.map((x,k)=>{const m=String(x).match(/(\d{1,2}:\d{2})(?:-(\d{1,2}:\d{2}))?/)||[];const pad=t=>t?t.padStart(5,'0'):'';
@@ -12946,10 +12958,10 @@ function pjTidyLine(t){
 const TPL_SHOW=5;
 function tplFilterChips(i,q){
   const box=document.getElementById('tplCh'+i);if(!box||!tplS)return;const f=tplS.tpl.fields[i];
-  const cur=f.type==='multi'?(tplS.vals[i]||[]):[];q=String(q||'').trim().toLowerCase();
+  const cur=(f.type==='multi'||f.type==='people')?(tplS.vals[i]||[]):[];q=String(q||'').trim().toLowerCase();
   let arr=(tplS.hist[i]||[]).filter(x=>!cur.includes(x));
   arr=q?arr.filter(x=>x.toLowerCase().includes(q)&&x.toLowerCase()!==q).slice(0,8):arr.slice(0,TPL_SHOW);
-  const fn=f.type==='multi'?'tplMultiAdd':'tplPick',E=escapeLife;
+  const fn=(f.type==='multi'||f.type==='people')?'tplMultiAdd':'tplPick',E=escapeLife;
   box.innerHTML=arr.map(x=>`<button type="button" class="tplChip${f.type==='pick'&&x===tplS.vals[i]?' on':''}" onpointerdown="event.preventDefault()" onclick="${fn}(${i},this.dataset.v)" data-v="${E(x)}">${E(x)}</button>`).join('');
 }
 /* 식사 틀: 메뉴 칩을 고를 때도 이전 기록의 단백질·장소를 같이 채움
@@ -13031,6 +13043,60 @@ function qlFabOpen(){
   try{const sa=secVisApply;secVisApply=function(){const r=sa.apply(this,arguments);try{renderTdJump();qlFabSync();}catch(e){}return r;};}catch(e){}
   setTimeout(()=>{try{renderTdJump();qlFabSync();}catch(e){}},300);
 })();
+/* ===== 기록 틀 v3: '누구랑' 칸 · 틀 고르는 화면 단순하게 (2026-11-14) =====
+   '누구랑' 칸은 항상 맨 뒤에 "| 함께 지수 · 민지" 모양으로 저장 */
+TPL_TYPES.people='누구랑';
+const TPL_WITH='함께';
+(function(){
+  const P=tplParse,C=tplCompose;
+  const split=tpl=>{const pi=tpl.fields.findIndex(f=>f.type==='people');if(pi<0)return null;const rest={...tpl,fields:tpl.fields.filter((f,i)=>i!==pi)};
+    while(rest.fields.length&&rest.fields[rest.fields.length-1].type==='bar')rest.fields.pop();
+    const map=[];tpl.fields.forEach((f,i)=>{if(i!==pi)map.push(i);});return {pi,rest,map};};
+  tplParse=function(tpl,text){
+    const sp=split(tpl);if(!sp)return P(tpl,text);
+    let segs=String(text||'').split(/\s*\|\s*/),people=[];
+    const k=segs.findIndex(x=>new RegExp('^'+TPL_WITH+'\\s+').test(x.trim()));
+    if(k>=0){people=segs[k].trim().replace(new RegExp('^'+TPL_WITH+'\\s+'),'').split(/\s*·\s*/).filter(Boolean);segs.splice(k,1);}
+    const v=P(sp.rest,segs.join(' | ')),out={};
+    sp.map.forEach((orig,j)=>{if(v[j]!==undefined)out[orig]=v[j];});
+    out[sp.pi]=people;return out;
+  };
+  tplCompose=function(tpl,vals){
+    const sp=split(tpl);if(!sp)return C(tpl,vals);
+    const v={};sp.map.forEach((orig,j)=>{v[j]=vals[orig];});
+    const main=C(sp.rest,v),ppl=(vals[sp.pi]||[]).filter(Boolean);
+    return [main,ppl.length?`${TPL_WITH} ${ppl.join(' · ')}`:''].filter(Boolean).join(' | ');
+  };
+})();
+function tplHasPeople(fs){return (fs||[]).some(f=>f.type==='people');}
+function tplNoPeople(fs){const a=(fs||[]).filter(f=>f.type!=='people');while(a.length&&a[a.length-1].type==='bar')a.pop();return a;}
+function tplEdTogglePeople(){
+  const has=tplHasPeople(tplEd.fields);
+  tplEd.fields=has?tplNoPeople(tplEd.fields):tplEd.fields.concat([{type:'people',label:'누구랑'}]);
+  tplEdRender();
+}
+function tplEdUse(f){const keep=tplHasPeople(tplEd.fields);tplEd.fields=JSON.parse(JSON.stringify(tplNoPeople(f)));if(keep)tplEd.fields.push({type:'people',label:'누구랑'});tplEdRender();}
+function tplEdRender(){
+  const el=document.getElementById('tplEdRoot');if(!el||!tplEd)return;const E=escapeLife,fs=tplEd.fields,base=tplNoPeople(fs);
+  const mine=Object.keys(tplLoadAll()).filter(id=>id!==tplEd.rid&&tplGet(id)).map(id=>({id,name:tplItemName(id),t:tplGet(id)})).filter(x=>x.name);
+  const row=(on,name,ex,click)=>`<button type="button" class="tplOpt${on?' on':''}" onclick="${click}"><span class="tplRadio"></span><span class="tplOptTx"><b>${E(name)}</b><small>${E(ex)}</small></span></button>`;
+  const opts=TPL_PRESETS.map((p,i)=>row(tplSame(p.fields,base),p.name,p.ex,`tplEdUse(TPL_PRESETS[${i}].fields)`)).join('')+
+    mine.map(m=>row(tplSame(tplNoPeople(m.t.fields),base),`${m.name}처럼`,tplLastText(m.id)||tplNoPeople(m.t.fields).map(f=>f.type==='bar'?'|':`[${f.label}]`).join(' '),`tplEdUse(tplGet('${m.id}').fields)`)).join('');
+  const others=tplOthers(tplEd.rid).filter(r=>r.id!==tplEd.rid);
+  const ppl=tplHasPeople(fs);
+  el.innerHTML=`<div class="routineInputCard tplEdCard" role="dialog" aria-modal="true">
+    <div class="routineActionTitle">${E(tplEd.name)} 기록 모양</div>
+    <div class="tplOpts">${opts}</div>
+    <button type="button" class="tplPpl${ppl?' on':''}" onclick="tplEdTogglePeople()"><span class="tplSw"></span><span>누구랑 했는지도 적기</span></button>
+    <div class="tplMore"><button type="button" onclick="tplEd.open=!tplEd.open;tplEd.share=false;tplEdRender()">칸 직접 고치기 ${tplEd.open?'▴':'▾'}</button>${others.length&&fs.length?`<button type="button" onclick="tplEd.share=!tplEd.share;tplEd.open=false;tplEdRender()">다른 활동에도 쓰기${tplEd.also.size?` (${tplEd.also.size})`:''} ${tplEd.share?'▴':'▾'}</button>`:''}</div>
+    ${tplEd.open?`<div class="tplEdList">${fs.map((f,i)=>f.type==='bar'
+      ?`<div class="tplEdRow tplEdBarRow"><span>── 구분선 | ──</span><button type="button" onclick="tplEdMove(${i},-1)" aria-label="위로">↑</button><button type="button" onclick="tplEd.fields.splice(${i},1);tplEdRender()" aria-label="빼기">×</button></div>`
+      :`<div class="tplEdRow"><input value="${E(f.label||'')}" placeholder="칸 이름" oninput="tplEd.fields[${i}].label=this.value"><select onchange="tplEd.fields[${i}].type=this.value;tplEdRender()">${Object.entries(TPL_TYPES).map(([k,v])=>`<option value="${k}"${f.type===k?' selected':''}>${v}</option>`).join('')}</select><button type="button" onclick="tplEdMove(${i},-1)" aria-label="위로">↑</button><button type="button" onclick="tplEd.fields.splice(${i},1);tplEdRender()" aria-label="빼기">×</button></div>`).join('')}</div>
+      <div class="tplChips"><button type="button" class="tplChip tplPlus" onclick="tplEd.fields.push({type:'pick',label:''});tplEdRender()">+ 칸</button><button type="button" class="tplChip tplPlus" onclick="tplEd.fields.push({type:'bar'});tplEdRender()">+ 구분선 |</button></div>`:''}
+    ${tplEd.share?`<div class="tplChips">${others.map(r=>`<button type="button" class="tplChip${tplEd.also.has(r.id)?' on':''}" onclick="tplEd.also.has('${r.id}')?tplEd.also.delete('${r.id}'):tplEd.also.add('${r.id}');tplEdRender()">${E(r.name)}</button>`).join('')}</div>`:''}
+    <div class="routineInputActions"><button type="button" onclick="tplEdClear()">${tplGet(tplEd.rid)?'틀 없이 쓰기':'취소'}</button><button type="button" class="primary" onclick="tplEdSave()">저장</button></div>
+  </div>`;
+}
 </script>
 
 
