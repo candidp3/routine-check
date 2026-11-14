@@ -12848,10 +12848,10 @@ async function tplEdClear(){
 })();
 /* ===== 기록 틀 v2: 추천은 예시로 간단히 · 내 틀 복사 · 같은 틀 여러 활동에 (2026-11-13) ===== */
 TPL_PRESETS.push(
-  {name:'운동·활동',ex:'PT 17:00-18:00 | 상체 · 스쿼트',fields:[{type:'pick',label:'종류'},{type:'time',label:'시간'},{type:'bar'},{type:'multi',label:'내용'}]},
-  {name:'보기·읽기',ex:'넷플릭스 | 흑백요리사',fields:[{type:'pick',label:'어디서'},{type:'bar'},{type:'text',label:'제목'}]},
-  {name:'여러 개 적기',ex:'사과 · 요거트 · 고구마',fields:[{type:'multi',label:'내용'}]},
-  {name:'분류 + 내용',ex:'연구 | 보고서 초안',fields:[{type:'pick',label:'분류'},{type:'bar'},{type:'text',label:'내용'}]}
+  {name:'운동 · 수업',ex:'헬스 19:00-20:00 | 하체 · 스쿼트',fields:[{type:'pick',label:'종류'},{type:'time',label:'시간'},{type:'bar'},{type:'multi',label:'내용'}]},
+  {name:'영화 · 드라마 · 책',ex:'도서관 | 어린 왕자',fields:[{type:'pick',label:'어디서'},{type:'bar'},{type:'text',label:'제목'}]},
+  {name:'여러 가지 나열',ex:'사과 · 요거트 · 고구마',fields:[{type:'multi',label:'내용'}]},
+  {name:'주제 + 한 줄 메모',ex:'공부 | 영어 단어 30개',fields:[{type:'pick',label:'분류'},{type:'bar'},{type:'text',label:'내용'}]}
 );
 function tplSame(a,b){const n=x=>JSON.stringify((x||[]).map(f=>f.type==='bar'?'bar':f.type+':'+(f.label||'')));return n(a)===n(b);}
 function tplLastText(rid){return tplHistTexts(rid)[0]||'';}
