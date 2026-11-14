@@ -2601,6 +2601,8 @@ body.thTimerOn.thHeroSeen #activityTimerFloat{display:none!important}
 .tplTypeHelp{font-size:11px;color:var(--rc-mu);line-height:1.6}
 /* 기록 창·선택 창: 화면 가운데에 */
 .routineActionOverlay{align-items:center!important}
+/* 키보드가 올라와 화면이 줄어도 팝업이 화면 안에서 스크롤되게 (100dvh 대신 실제 보이는 높이 기준) */
+.routineActionOverlay>.routineInputCard,.routineActionOverlay>.routineActionCard{max-height:calc(100% - 16px)!important}
 .routineActionOverlay .routineInputCard,.routineActionOverlay .routineActionCard{max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px)}
 .tplCards{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .tplCard{display:flex;flex-direction:column;gap:4px;text-align:left;border:1.5px solid var(--rc-line);background:var(--rc-card);color:var(--rc-tx);border-radius:14px;padding:10px 12px;font:inherit;min-height:0;cursor:pointer}
