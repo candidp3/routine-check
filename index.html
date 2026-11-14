@@ -2668,6 +2668,10 @@ body.scrolled .tdChip .tdPick svg{width:17px!important;height:17px!important}
 .tplPpl.on .tplSw{background:var(--rc-gs)}.tplPpl.on .tplSw::after{transform:translateX(16px)}
 .tplMore{display:flex;gap:14px;flex-wrap:wrap}
 .tplMore button{border:0;background:none;color:var(--rc-mu);font:inherit;font-size:12px;padding:2px;min-height:0}
+
+.lifeBlock.lbNow .lifeBlockTitle[data-now]::after{content:attr(data-now)!important}
+#lbRuleHint{margin-top:10px;line-height:1.6}
+#tplEdRoot .tplMineTg{display:block;width:100%;border:0;background:transparent;color:var(--rc-mu);font-family:inherit;font-size:var(--fs-1);text-align:left;padding:8px 4px 4px;cursor:pointer}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -11961,7 +11965,7 @@ lbCurrentId=function(defs){
     const r=o.apply(this,arguments);const hs=lbHours();
     document.querySelectorAll('#lifeBlockList .lbRow').forEach(row=>{
       const id=row.querySelector('[data-lb]')?.dataset.lb;if(!id||!hs[id]||row.querySelector('.lbHours'))return;
-      row.insertAdjacentHTML('beforeend',`<div class="lbHours"><span>자동 펼침</span><select data-lbs="${id}">${hrOpt(0,23,hs[id][0])}</select><span>~</span><select data-lbe="${id}">${hrOpt(1,24,hs[id][1])}</select></div>`);
+      row.insertAdjacentHTML('beforeend',`<div class="lbHours"><span>시간</span><select data-lbs="${id}">${hrOpt(0,23,hs[id][0])}</select><span>~</span><select data-lbe="${id}">${hrOpt(1,24,hs[id][1])}</select></div>`);
     });
     return r;
   };
@@ -11972,7 +11976,7 @@ lbCurrentId=function(defs){
       const id=sel.dataset.lbs,e=document.querySelector(`#lifeBlockList select[data-lbe="${id}"]`);
       const a=+sel.value,b=+e.value;if(a>=b)bad=true;out[id]=[a,b];
     });
-    if(bad){appAlert('자동 펼침 시간은 시작이 끝보다 앞서야 해요.');return;}
+    if(bad){appAlert('시간대 시간은 시작이 끝보다 앞서야 해요.');return;}
     try{localStorage.setItem(LB_HOURS_KEY,JSON.stringify(out));}catch(e){}
     return sv.apply(this,arguments);
   };
@@ -13093,7 +13097,9 @@ function tplEdRender(){
   window.__tplOpts=list;
   if(tplEd.sel===undefined){const cur=sig(base);const hit=list.find(x=>x.sig===cur);tplEd.sel=hit?hit.key:null;}
   const row=(o)=>`<button type="button" class="tplOpt${tplEd.sel===o.key?' on':''}" onclick="tplEd.sel='${o.key}';tplEdUse(window.__tplOpts.find(x=>x.key==='${o.key}').fields)"><span class="tplRadio"></span><span class="tplOptTx"><b>${E(o.name)}</b><small>${E(o.ex)}</small>${o.used?`<em class="tplUsed">${E(o.used)}</em>`:''}</span></button>`;
-  const opts=list.map(row).join('')+(tplEd.sel===null&&base.length?`<div class="tplOpt on"><span class="tplRadio"></span><span class="tplOptTx"><b>직접 만든 모양</b><small>${E(base.map(f=>f.type==='bar'?'|':`[${f.label}]`).join(' '))}</small></span></div>`:'');
+  const pre=list.filter(o=>o.key[0]==='p'),mine=list.filter(o=>o.key[0]!=='p');
+  if(tplEd.mineOpen===undefined)tplEd.mineOpen=mine.some(o=>o.key===tplEd.sel);
+  const opts=pre.map(row).join('')+(mine.length?`<button type="button" class="tplMineTg" onclick="tplEd.mineOpen=!tplEd.mineOpen;tplEdRender()">내가 만든 모양 ${mine.length}개 ${tplEd.mineOpen?'▴':'▾'}</button>`+(tplEd.mineOpen?mine.map(row).join(''):''):'')+(tplEd.sel===null&&base.length?`<div class="tplOpt on"><span class="tplRadio"></span><span class="tplOptTx"><b>직접 만든 모양</b><small>${E(base.map(f=>f.type==='bar'?'|':`[${f.label}]`).join(' '))}</small></span></div>`:'');
   const others=tplOthers(tplEd.rid).filter(r=>r.id!==tplEd.rid);
   const ppl=tplHasPeople(fs);
   el.innerHTML=`<div class="routineInputCard tplEdCard" role="dialog" aria-modal="true">
@@ -13109,6 +13115,57 @@ function tplEdRender(){
     <div class="routineInputActions"><button type="button" onclick="tplEdClear()">${tplGet(tplEd.rid)?'틀 없이 쓰기':'취소'}</button><button type="button" class="primary" onclick="tplEdSave()">저장</button></div>
   </div>`;
 }
+
+/* ===== 지금 시간대: TODAY 맨 위와 '지금' 표시를 한 규칙으로 (2026-11-15) =====
+   1) 정한 시간 안 → 그 시간대 (지금)
+   2) 시간대 사이 빈 시간 → 다음 시간대 (다음)
+   3) 마지막 시간대가 끝난 뒤 ~ 하루가 바뀌기 전 → 그날 마지막 시간대 (마무리) */
+function lbNowState(defs){
+  defs=defs||lifeBlockDefs();const ids=defs.map(d=>d.id);if(!ids.length)return {id:'',mode:'now'};
+  const h=new Date().getHours(),hs=lbHours(),ds=dayStartHour();
+  const hit=ids.find(id=>hs[id]&&h>=hs[id][0]&&h<hs[id][1]);if(hit)return {id:hit,mode:'now'};
+  const last=ids.slice().sort((a,b)=>(hs[b]||[0,0])[1]-(hs[a]||[0,0])[1])[0];
+  if(h<ds)return {id:last,mode:'late'};
+  const next=ids.filter(id=>hs[id]&&hs[id][0]>h).sort((a,b)=>hs[a][0]-hs[b][0])[0];
+  return next?{id:next,mode:'next'}:{id:last,mode:'late'};
+}
+lbCurrentId=function(defs){return lbNowState(defs).id;};
+thBlockNow=function(){return lbNowState().id;};
+(function(){
+  const TAG={now:'지금',next:'다음',late:'마무리'};
+  const g=renderLifeGuide;
+  renderLifeGuide=function(){
+    const r=g.apply(this,arguments);
+    try{const st=lbNowState();document.querySelectorAll('#lifeGuide>.lifeBlock.lbNow .lifeBlockTitle').forEach(t=>t.setAttribute('data-now',TAG[st.mode]||'지금'));}catch(e){}
+    return r;
+  };
+  const th=renderTodayHero;
+  renderTodayHero=function(){
+    const r=th.apply(this,arguments);
+    try{
+      const st=lbNowState();if(st.mode==='now')return r;
+      const head=document.querySelector('#tdHero .thNowHead');if(!head)return r;
+      const LB_SUB={dawn:'새벽',breakfast:'기상 후',morning:'오전',lunch:'점심',afternoon:'오후',evening:'저녁',night:'잠들기 전'};
+      const b=lifeBlockDefs().find(x=>x.id===st.id)||{name:''},hs=lbHours()[st.id]||[0,0];
+      const bb=head.querySelector('b'),sp=head.querySelector('span');
+      if(st.mode==='next'){if(bb)bb.textContent=`곧 ${LB_SUB[st.id]||b.name}`;if(sp)sp.textContent=`${b.name} · ${hs[0]}시부터`;}
+      else{if(bb)bb.textContent='하루 마무리';if(sp)sp.textContent=b.name;
+        const ad=document.querySelector('#tdHero .thAllDone');if(ad)ad.lastChild.textContent='오늘 할 일은 다 했어요';}
+    }catch(e){}
+    return r;
+  };
+  const ob=openLifeBlockSettings;
+  openLifeBlockSettings=function(){
+    const r=ob.apply(this,arguments);
+    try{
+      const ds=dayStartHour(),list=document.getElementById('lifeBlockList');
+      let hint=document.getElementById('lbRuleHint');
+      if(!hint&&list){hint=document.createElement('div');hint.id='lbRuleHint';hint.className='lifeBlockHint';list.after(hint);}
+      if(hint)hint.innerHTML=`정한 시간에 맞춰 TODAY 맨 위에 <b>지금</b> 시간대가 나와요.<br>· 시간대 사이 빈 시간 → <b>다음</b> 시간대를 미리 보여줘요<br>· 마지막 시간대가 끝난 뒤 ~ 하루가 바뀌는 시간(${ds?`새벽 ${ds}시`:'자정'}) → 그날 마지막 시간대를 <b>마무리</b>로 보여줘요<br><span style="opacity:.75">하루가 바뀌는 시간은 SETTING에서 바꿀 수 있어요.</span>`;
+    }catch(e){}
+    return r;
+  };
+})();
 </script>
 
 
