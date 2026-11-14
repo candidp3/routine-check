@@ -2643,6 +2643,10 @@ body.qlFabOn .activityTimerFloat{right:auto!important;left:max(14px,calc((100vw 
 .qlFabHint{font-size:12px;color:var(--rc-mu);margin:-4px 0 10px;text-align:center}
 .qlFabList{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:10px}
 .qlFabAdd{display:block;margin:0 auto 6px;border:0;background:none;color:var(--rc-gd,var(--rc-gs));font:inherit;font-size:13px;min-height:0}
+/* 접힌 시간대 캡슐: 한 줄 + 좌우 스크롤 */
+.lbPeek{flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;mask-image:linear-gradient(90deg,#000 90%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 90%,transparent);padding-right:14px}
+.lbPeek::-webkit-scrollbar{display:none}
+.lbPeek button{flex:none!important}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -12068,7 +12072,7 @@ function dcSlideSync(){
       secs.forEach(sec=>{
         sec.querySelector('.lbPeek')?.remove();window.__lbRtStamp||0;
         const rows=[...sec.querySelectorAll('.lifeRoutine[data-routine-id]')];if(!rows.length)return;
-        const show=rows.slice(0,4),more=rows.length-show.length;
+        const show=rows,more=0; /* 모든 항목을 한 줄로, 옆으로 밀어서 보기 */
         const html=show.map(row=>{const id=row.dataset.routineId,dn=!!row.querySelector('.lifeCheck.done');
           const rt=(window.__lbRt||(window.__lbRt=loadLifeRoutines())).find(x=>x.id===id)||{};const ico=escapeLife(rt.icon||'');const nm=String(rt.name||'').trim();
           return `<button type="button" class="${dn?'done':''}" onclick="event.stopPropagation();handleRoutineRowTap(null,'${id}')"><i>${dn?'✓':''}</i><span class="lbPkIco">${ico}</span>${escapeLife(nm)}</button>`;}).join('')+(more>0?`<span class="lbMore">외 ${more}개</span>`:'');
