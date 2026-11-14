@@ -13044,7 +13044,7 @@ function qlFabOpen(){
   setTimeout(()=>{try{renderTdJump();qlFabSync();}catch(e){}},300);
 })();
 /* ===== 기록 틀 v3: '누구랑' 칸 · 틀 고르는 화면 단순하게 (2026-11-14) =====
-   '누구랑' 칸은 항상 맨 뒤에 "| 함께 지수 · 민지" 모양으로 저장 */
+   '누구랑' 칸은 항상 맨 뒤에 "with 지수 · 민지" 모양으로 저장 (예전 '| 함께 …'도 읽음) */
 TPL_TYPES.people='누구랑';
 const TPL_WITH='함께';
 (function(){
@@ -13054,10 +13054,11 @@ const TPL_WITH='함께';
     const map=[];tpl.fields.forEach((f,i)=>{if(i!==pi)map.push(i);});return {pi,rest,map};};
   tplParse=function(tpl,text){
     const sp=split(tpl);if(!sp)return P(tpl,text);
-    let segs=String(text||'').split(/\s*\|\s*/),people=[];
-    const k=segs.findIndex(x=>new RegExp('^'+TPL_WITH+'\\s+').test(x.trim()));
-    if(k>=0){people=segs[k].trim().replace(new RegExp('^'+TPL_WITH+'\\s+'),'').split(/\s*·\s*/).filter(Boolean);segs.splice(k,1);}
-    const v=P(sp.rest,segs.join(' | ')),out={};
+    let t=String(text||''),people=[];
+    const m=t.match(/(?:^|\s+)with\s+([^|]+)$/i);
+    if(m){people=m[1].split(/\s*·\s*/).map(x=>x.trim()).filter(Boolean);t=t.slice(0,m.index);}
+    else{const segs=t.split(/\s*\|\s*/);const k=segs.findIndex(x=>/^함께\s+/.test(x.trim()));if(k>=0){people=segs[k].trim().replace(/^함께\s+/,'').split(/\s*·\s*/).filter(Boolean);segs.splice(k,1);t=segs.join(' | ');}}
+    const v=P(sp.rest,t),out={};
     sp.map.forEach((orig,j)=>{if(v[j]!==undefined)out[orig]=v[j];});
     out[sp.pi]=people;return out;
   };
@@ -13065,7 +13066,7 @@ const TPL_WITH='함께';
     const sp=split(tpl);if(!sp)return C(tpl,vals);
     const v={};sp.map.forEach((orig,j)=>{v[j]=vals[orig];});
     const main=C(sp.rest,v),ppl=(vals[sp.pi]||[]).filter(Boolean);
-    return [main,ppl.length?`${TPL_WITH} ${ppl.join(' · ')}`:''].filter(Boolean).join(' | ');
+    return ppl.length?(main?`${main} with ${ppl.join(' · ')}`:`with ${ppl.join(' · ')}`):main;
   };
 })();
 function tplHasPeople(fs){return (fs||[]).some(f=>f.type==='people');}
