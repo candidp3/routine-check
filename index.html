@@ -2672,6 +2672,11 @@ body.scrolled .tdChip .tdPick svg{width:17px!important;height:17px!important}
 .lifeBlock.lbNow .lifeBlockTitle[data-now]::after{content:attr(data-now)!important}
 #lbRuleHint{margin-top:10px;line-height:1.6}
 #tplEdRoot .tplMineTg{display:block;width:100%;border:0;background:transparent;color:var(--rc-mu);font-family:inherit;font-size:var(--fs-1);text-align:left;padding:8px 4px 4px;cursor:pointer}
+
+/* 백업 버튼 글자 세로 가운데: 고정 높이 + 위아래 여백 대신 가운데 정렬 (폰 글꼴 줄 높이가 달라도 가운데) */
+#backupDataModal :is(.backupPrimary,.backupSecondary,.backupDanger){display:flex!important;align-items:center;justify-content:center;padding-top:0!important;padding-bottom:0!important;line-height:1.2!important;text-align:center}
+#backupDataModal .backupFilePicker{position:absolute!important;width:1px!important;height:1px!important;min-height:0!important;opacity:0;pointer-events:none;margin:0!important;padding:0!important;border:0!important}
+#backupDataModal .backupFileBtn{margin-top:10px;cursor:pointer;font-family:var(--font-ui)}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -3043,7 +3048,7 @@ document.documentElement.style.colorScheme=m;}catch(e){}})();</script>
     <div id="backupSaveStatus" class="backupStatusBox"><span id="backupLastInfo">아직 이번 접속에서 저장한 백업 파일이 없어요.</span></div></div>
     <div class="backupPart"><div class="backupSubTitle">불러오기</div>
     <div class="backupCardText">저장해 둔 백업 파일을 골라 복원해요. 현재 데이터는 백업 내용으로 바뀌어요.</div>
-    <input id="backupFile" class="backupFilePicker" type="file" accept="application/json,.json" onchange="loadBackupFile()">
+    <input id="backupFile" class="backupFilePicker" type="file" accept="application/json,.json" onchange="loadBackupFile()"><label for="backupFile" class="backupSecondary backupFileBtn">백업 파일 고르기</label>
     <div id="backupLoadStatus" class="backupStatusBox">선택된 파일이 없어요.</div>
     <textarea id="backupInput" aria-hidden="true"></textarea>
     <button class="backupSecondary" onclick="importBackup()">선택한 백업으로 복원</button></div>
