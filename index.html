@@ -2682,6 +2682,8 @@ body.scrolled .tdChip .tdPick svg{width:17px!important;height:17px!important}
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
 [...document.styleSheets].forEach(sh=>{let rs;try{rs=sh.cssRules;}catch(e){return;}[...rs].forEach(r=>{if(!(r instanceof CSSMediaRule))return;const t=r.media.mediaText;if(!/prefers-color-scheme/.test(t))return;r.__orig=t;r.media.mediaText=((m==='dark')===/dark/.test(t))?'all':'not all';});});
 document.documentElement.style.colorScheme=m;}catch(e){}})();</script>
+<style>html.booting body>*{visibility:hidden!important}</style>
+<script>/* 새로고침 때 그리기 전 화면(아이콘 자리표시·기본 칸)이 잠깐 보이지 않게: 첫 그리기 뒤 보여줌 */document.documentElement.classList.add('booting');setTimeout(function(){document.documentElement.classList.remove('booting')},3000);</script>
 </head>
 
 <body>
@@ -13171,6 +13173,9 @@ thBlockNow=function(){return lbNowState().id;};
     return r;
   };
 })();
+
+/* 첫 그리기가 끝나면 화면 보여주기 */
+(function(){const done=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>document.documentElement.classList.remove('booting')));if(document.readyState==='complete')done();else window.addEventListener('load',done,{once:true});})();
 </script>
 
 
