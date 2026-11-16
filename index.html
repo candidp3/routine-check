@@ -2732,6 +2732,16 @@ body.tdsOn #qlFab,body.tdsOn .bottomNav,body.tdsOn #tdJump{visibility:hidden}
 .tdPdHead{display:none!important}
 body.ptDotOn #lifeDateShort{cursor:pointer;padding-right:2px}
 body.ptDotOn #lifeDateShort::after{content:'';display:inline-block;width:7px;height:7px;margin-left:9px;border-radius:50%;background:var(--rc-pk);vertical-align:.18em}
+
+.tdJumpBtn.tdJ3{height:auto;min-height:54px;padding:8px 3px;border-radius:16px;justify-content:center;align-items:center;gap:5px}
+.tdJIc{position:relative;flex:none;width:28px;height:28px;border-radius:50%;background:var(--rc-gl);color:var(--rc-gs);display:flex;align-items:center;justify-content:center}
+.tdJIc svg{width:16px;height:16px}
+.tdJIc b{position:absolute;top:-5px;left:-7px;min-width:16px;height:16px;padding:0 4px;box-sizing:border-box;border-radius:8px;background:var(--rc-gs);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--rc-card)}
+.tdJ3 .tdJT{display:flex;flex-direction:column;align-items:flex-start;gap:1px;min-width:0;text-align:left}
+.tdJ3 .tdJName{font-size:11.5px;font-weight:700;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.tdJ3 .tdJT small{font-size:10.5px;font-weight:400;color:var(--rc-mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.pjRow.pjTint .pjBar{background:var(--gc-gl,var(--rc-gl))}
+.pjRow.pjTint .pjBar i{background:var(--gc-gs,var(--rc-g))}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -13543,6 +13553,25 @@ document.addEventListener('click',e=>{
   ['renderProjects','renderOneOffQuick','renderOneOffTodayLogs'].forEach(n=>{try{const f=window[n];if(typeof f!=='function')return;window[n]=function(){const r=f.apply(this,arguments);try{renderTdJump();if(tdsOpenId&&n!=='renderProjects')tdsExtra(tdsOpenId);}catch(e){}return r;};}catch(e){}});
   try{const ln=lifeNavigate;lifeNavigate=function(){if(tdsOpenId)tdsClose(true);return ln.apply(this,arguments);};}catch(e){}
   setTimeout(()=>{try{renderTdJump();renderTodayHero();}catch(e){}},400);
+})();
+
+/* ===== 바로가기 버튼: 동그라미 아이콘 + 이름·설명, 세로 가운데 (2026-11-16) ===== */
+renderTdJump=function(){
+  const hero=document.getElementById('tdHero');if(!hero)return;
+  let row=document.getElementById('tdJump');const t=tdJumpTargets();
+  if(!t.length){row?.remove();return;}
+  if(!row){row=document.createElement('div');row.id='tdJump';row.className='tdJump';}
+  if(row.previousElementSibling!==hero)hero.after(row);
+  row.innerHTML=t.map(([id,ic,name,n])=>`<button type="button" class="tdJumpBtn tdJ3" onclick="tdsOpen('${id}')"><span class="tdJIc">${ic}${n?`<b>${n}</b>`:''}</span><span class="tdJT"><span class="tdJName">${name}</span><small>${tdJumpSub(id)}</small></span></button>`).join('');
+};
+/* ===== 프로젝트 색: 데일리케어처럼 테마 색 순서로 순환 (지금 테마 색부터, 만든 순서 기준) ===== */
+const PJ_CYC=['red','orange','yellow','green','blue','purple','pink'];
+function pjColorName(p){let st=PJ_CYC.indexOf(getThemeColor());if(st<0)st=3;return PJ_CYC[(st+pjIdx(p))%PJ_CYC.length];}
+pjIdx=function(p){const all=pjLoad().slice().sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));return Math.max(0,all.findIndex(x=>x.id===p.id));};
+pjColors=function(){const n=Math.max(7,pjLoad().length);const a=[];for(let i=0;i<n;i++)a.push(calRtColor(i));return a;};
+(function(){
+  const pr=pjRowHTML;
+  pjRowHTML=function(p){const h=pr.apply(this,arguments);try{return h.replace('<div class="pjRow"',`<div class="pjRow pjTint rcc-${pjColorName(p)}"`);}catch(e){return h;}};
 })();
 </script>
 
