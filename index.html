@@ -2702,7 +2702,7 @@ body.scrolled .tdChip .tdPick svg{width:17px!important;height:17px!important}
 .tdJT small{font-size:11px;font-weight:400;color:var(--rc-mu);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tdJLive{font-style:normal;color:var(--rc-solid);font-weight:600}
 /* 새 화면 (숨참기 화면처럼 전체) */
-.tdsScreen{position:fixed;inset:0;z-index:250;background:var(--rc-bg);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;box-sizing:border-box;padding:0 14px 120px}
+.tdsScreen{position:fixed;inset:0;z-index:120;background:var(--rc-bg);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;box-sizing:border-box;padding:0 14px 120px}
 .tdsScreen.hide{display:none}
 .tdsTop{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:6px;margin:0 -14px 10px;padding:12px 10px 10px;background:var(--rc-bg)}
 .tdsTT{display:flex;flex-direction:column;min-width:0}
@@ -2733,7 +2733,7 @@ body.tdsOn #qlFab,body.tdsOn .bottomNav,body.tdsOn #tdJump{visibility:hidden}
 body.ptDotOn #lifeDateShort{cursor:pointer;padding-right:2px}
 body.ptDotOn #lifeDateShort::after{content:'';display:inline-block;width:7px;height:7px;margin-left:9px;border-radius:50%;background:var(--rc-pk);vertical-align:.18em}
 
-.tdJumpBtn.tdJ3{height:auto;min-height:54px;padding:8px 3px;border-radius:16px;justify-content:center;align-items:center;gap:5px}
+.tdJumpBtn.tdJ3{height:auto;min-height:54px;padding:8px 2px;border-radius:16px;justify-content:center;align-items:center;gap:8px}
 .tdJIc{position:relative;flex:none;width:28px;height:28px;border-radius:50%;background:var(--rc-gl);color:var(--rc-gs);display:flex;align-items:center;justify-content:center}
 .tdJIc svg{width:16px;height:16px}
 .tdJIc b{position:absolute;top:-5px;left:-7px;min-width:16px;height:16px;padding:0 4px;box-sizing:border-box;border-radius:8px;background:var(--rc-gs);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--rc-card)}
@@ -2742,6 +2742,9 @@ body.ptDotOn #lifeDateShort::after{content:'';display:inline-block;width:7px;hei
 .tdJ3 .tdJT small{font-size:10.5px;font-weight:400;color:var(--rc-mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .pjRow.pjTint .pjBar{background:var(--gc-gl,var(--rc-gl))}
 .pjRow.pjTint .pjBar i{background:var(--gc-gs,var(--rc-g))}
+
+.freeChipWrap.ftTint .freeChip .ico{background:var(--gc-g)!important;color:var(--gc-gd)!important}
+.freeChipWrap.ftTint .freeChip .ico .appIco{color:var(--gc-gd)!important}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -12861,8 +12864,8 @@ let tplS=null;
 function tplHistory(rid,tpl){
   let texts=tplHistTexts(rid);
   const opts={};tpl.fields.forEach((f,i)=>{opts[i]=new Map();});
-  texts.forEach(t=>{const v=tplParse(tpl,t);tpl.fields.forEach((f,i)=>{if(f.type==='pick'||(f.type==='multi'||f.type==='people')){const arr=(f.type==='multi'||f.type==='people')?(v[i]||[]):[v[i]];arr.forEach(x=>{x=String(x||'').trim();if(x&&x.length<=24)opts[i].set(x,(opts[i].get(x)||0)+1);});}});});
-  const out={};Object.keys(opts).forEach(i=>{out[i]=[...opts[i].entries()].sort((a,b)=>b[1]-a[1]).map(x=>x[0]).slice(0,40);});
+  texts.forEach(t=>{const v=tplParse(tpl,t);tpl.fields.forEach((f,i)=>{if(f.type==='pick'||(f.type==='multi'||f.type==='people')){const arr=(f.type==='multi'||f.type==='people')?(v[i]||[]):[v[i]];arr.flatMap(x=>(f.type==='multi'||f.type==='people')?String(x||'').split(/\s*[,，+\/\n]\s*/):[x]).forEach(x=>{x=String(x||'').trim();if(x&&x.length<=40)opts[i].set(x,(opts[i].get(x)||0)+1);});}});});
+  const out={};Object.keys(opts).forEach(i=>{out[i]=[...opts[i].entries()].sort((a,b)=>b[1]-a[1]).map(x=>x[0]); /* 자주 쓴 순(같으면 최근 순) · 개수 제한 없음 → 검색하면 한 번 먹은 메뉴도 나옴 */});
   return out;
 }
 function tplMount(rid){
@@ -13572,6 +13575,40 @@ pjColors=function(){const n=Math.max(7,pjLoad().length);const a=[];for(let i=0;i
 (function(){
   const pr=pjRowHTML;
   pjRowHTML=function(p){const h=pr.apply(this,arguments);try{return h.replace('<div class="pjRow"',`<div class="pjRow pjTint rcc-${pjColorName(p)}"`);}catch(e){return h;}};
+})();
+
+/* ===== FREE TIME 색: 활동 순서대로 테마 색 순환(파스텔) — TODAY는 한 날만 색, RECORD 그래프도 같은 색 (2026-11-16) ===== */
+const FT_CYC=['red','orange','yellow','green','blue','purple','pink'];
+function ftOrderIds(){
+  let ids=[...document.querySelectorAll('.freeChipWrap[data-routine-id]')].map(w=>w.dataset.routineId);
+  if(!ids.length)try{ids=loadLifeRoutines().filter(r=>r.block==='free').map(r=>r.id);}catch(e){}
+  return [...new Set(ids)];
+}
+function ftColorOfIndex(i){let st=FT_CYC.indexOf(getThemeColor());if(st<0)st=3;return FT_CYC[(st+i)%FT_CYC.length];}
+function ftColorById(id){const i=ftOrderIds().indexOf(id);return i<0?'':ftColorOfIndex(i);}
+function ftHex(c,k){let dark=false;try{const m=themeMode();dark=m==='dark'||(m==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);}catch(e){}try{return THEME_PALETTES[c][dark?'dark':'light'].base[k||'g'];}catch(e){return '';}}
+function ftTintToday(){
+  const ids=ftOrderIds();
+  document.querySelectorAll('.freeChipWrap[data-routine-id]').forEach(w=>{
+    const c=w.querySelector('.freeChip');const on=c&&(c.classList.contains('done')||c.classList.contains('timing'));
+    [...w.classList].filter(x=>x.startsWith('rcc-')).forEach(x=>w.classList.remove(x));
+    w.classList.toggle('ftTint',!!on);
+    if(on){const i=ids.indexOf(w.dataset.routineId);if(i>=0)w.classList.add('rcc-'+ftColorOfIndex(i));}
+  });
+}
+function ftTintRecord(root){
+  try{
+    const rs=loadLifeRoutines(),ids=ftOrderIds();
+    const byName={};ids.forEach((id,i)=>{const r=rs.find(x=>x.id===id);if(r&&r.name&&!(r.name in byName))byName[r.name]=ftHex(ftColorOfIndex(i),'g');});
+    (root||document).querySelectorAll('rect').forEach(rc=>{const t=rc.querySelector('title');if(!t)return;const nm=t.textContent.split(' · ')[0];if(byName[nm])rc.setAttribute('fill',byName[nm]);});
+    (root||document).querySelectorAll('.rr-leisure-item').forEach(it=>{const nm=it.querySelector('span')?.textContent;const sw=it.querySelector('.rr-leisure-swatch');if(sw&&byName[nm])sw.style.background=byName[nm];});
+  }catch(e){}
+}
+(function(){
+  const g=renderLifeGuide;renderLifeGuide=function(){const r=g.apply(this,arguments);try{ftTintToday();}catch(e){}return r;};
+  const rd=renderRecordDashboard;renderRecordDashboard=function(){const r=rd.apply(this,arguments);try{ftTintRecord(document.getElementById('viewAll_v2')||document);}catch(e){}return r;};
+  try{const rc=renderLifeCalendar;renderLifeCalendar=function(){const r=rc.apply(this,arguments);try{ftTintRecord(document.getElementById('viewCalendar')||document);}catch(e){}return r;};}catch(e){}
+  setTimeout(()=>{try{ftTintToday();}catch(e){}},400);
 })();
 </script>
 
