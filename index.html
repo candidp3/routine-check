@@ -2712,6 +2712,10 @@ body.scrolled .tdChip .tdPick svg{width:17px!important;height:17px!important}
 .tdsTopAct{margin-left:auto;display:flex;align-items:center;gap:6px}
 .tdsTopAct .pjAll{border:0;background:transparent;color:var(--rc-mu);font:inherit;font-size:13px;cursor:pointer}
 body.tdsOn #qlFab,body.tdsOn .bottomNav,body.tdsOn #tdJump{visibility:hidden}
+
+.tdPdHead{display:none!important}
+body.ptDotOn #lifeDateShort{cursor:pointer;padding-right:2px}
+body.ptDotOn #lifeDateShort::after{content:'';display:inline-block;width:7px;height:7px;margin-left:9px;border-radius:50%;background:var(--rc-pk);vertical-align:.18em}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -13322,6 +13326,10 @@ function renderTdPeriod(){
     const k=(typeof activeDateKey!=='undefined'&&activeDateKey)||lifeLogKey();
     const v=document.getElementById('viewToday'),onToday=v&&!v.classList.contains('hide');
     const st=ptMode()==='dot'&&!ptReveal&&onToday?tdPeriodState(k):null;
+    /* 점은 날짜 글자 바로 뒤(::after)에 붙여서 위로 스크롤해 제목이 작아져도 늘 줄이 맞음 */
+    document.body.classList.toggle('ptDotOn',!!st);
+    const ds=document.getElementById('lifeDateShort');
+    if(ds&&!ds.dataset.pt){ds.dataset.pt='1';ds.addEventListener('click',()=>{if(!document.body.classList.contains('ptDotOn'))return;ptReveal=true;renderTdPeriod();document.getElementById('tdPeriod')?.scrollIntoView({block:'nearest',behavior:'smooth'});});}
     let dot=document.getElementById('tdPdHead');
     if(st){
       if(!dot){dot=document.createElement('button');dot.type='button';dot.id='tdPdHead';dot.className='tdPdHead';dot.setAttribute('aria-label','생리주기 보기');dot.innerHTML='<i></i>';
