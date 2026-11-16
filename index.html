@@ -2677,6 +2677,17 @@ body.scrolled .tdChip .tdPick svg{width:17px!important;height:17px!important}
 #backupDataModal :is(.backupPrimary,.backupSecondary,.backupDanger){display:flex!important;align-items:center;justify-content:center;padding-top:0!important;padding-bottom:0!important;line-height:1.2!important;text-align:center}
 #backupDataModal .backupFilePicker{position:absolute!important;width:1px!important;height:1px!important;min-height:0!important;opacity:0;pointer-events:none;margin:0!important;padding:0!important;border:0!important}
 #backupDataModal .backupFileBtn{margin-top:10px;cursor:pointer;font-family:var(--font-ui)}
+
+.tdPeriod{display:flex;align-items:center;gap:8px;margin:-6px 2px 14px;padding:5px 5px 5px 12px;min-height:38px;box-sizing:border-box;border:1px solid var(--rc-line);border-radius:999px;background:var(--rc-card);font-size:13px;color:var(--rc-tx)}
+.tdPeriod .tdPdTx{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tdPdMark{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--rc-pk);flex:none}
+.tdPdBtn{height:28px;padding:0 12px;border:0;border-radius:999px;background:var(--rc-pl);color:var(--rc-tx);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;flex:none}
+.tdPdHide{width:28px;height:28px;border:0;background:transparent;color:var(--rc-mu);font-size:16px;cursor:pointer;flex:none}
+.tdPeriod.tdPeriodDot{border:0;background:transparent;padding:0;min-height:0;margin:-8px 2px 10px}
+.tdPdDot{width:28px;height:20px;border:0;background:transparent;padding:0;display:flex;align-items:center;justify-content:flex-start;cursor:pointer}
+.tdPdDot i{display:block;width:8px;height:8px;border-radius:50%;background:var(--rc-pk)}
+.qlPeriodBtn{display:inline-flex;align-items:center;gap:6px}
+
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -13176,6 +13187,91 @@ thBlockNow=function(){return lbNowState().id;};
 
 /* 첫 그리기가 끝나면 화면 보여주기 */
 (function(){const done=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>document.documentElement.classList.remove('booting')));if(document.readyState==='complete')done();else window.addEventListener('load',done,{once:true});})();
+
+/* ===== 생리주기: TODAY에 필요할 때만 작게 표시 (2026-11-16) =====
+   기록은 TODAY, 확인·수정은 캘린더. 평소엔 안 보이고, 예정일 즈음·생리 중에만 작은 줄이 나타남.
+   표시 방식(periodToday_v1): text 글자 / dot 점만(누르면 펼침) / off 안 함 */
+const PT_KEY='periodToday_v1';
+function ptMode(){try{const v=localStorage.getItem(PT_KEY);return v==='dot'||v==='off'?v:'text';}catch(e){return 'text';}}
+let ptReveal=false;
+function tdPeriodState(k){
+  if(typeof periodEnabled==='function'&&!periodEnabled())return null;
+  const logs=loadPeriodLogs();
+  if(logs[k]==='end')return {type:'end'};
+  const starts=Object.keys(logs).filter(x=>logs[x]==='start'&&x<=k).sort();
+  const s=starts[starts.length-1];
+  if(s){
+    const hasEnd=Object.keys(logs).some(x=>logs[x]==='end'&&x>=s&&x<k);
+    const day=periodDiffDays(s,k)+1;
+    if(!hasEnd&&day>=1&&day<=10)return {type:'during',day,isStart:s===k};
+  }
+  const p=periodPrediction();
+  if(p&&p.ready){const d=periodDiffDays(k,p.next);if(d<=3&&d>=-5)return {type:'soon',d};}
+  return null;
+}
+function tdPeriodText(st){
+  if(st.type==='end')return ['생리 끝 기록됨','취소',"end"];
+  if(st.type==='during')return st.isStart?['오늘 생리 시작','취소',"start"]:[`생리 ${st.day}일째`,'끝 기록',"end"];
+  const d=st.d;return [d>0?`생리 예정 D-${d}`:d===0?'오늘 생리 예정일':`예정일 +${-d}일`,'시작 기록',"start"];
+}
+function tdPeriodAct(type){
+  const k=(typeof activeDateKey!=='undefined'&&activeDateKey)||lifeLogKey();
+  setPeriodMark(k,type);
+}
+function renderTdPeriod(){
+  const hero=document.getElementById('tdHero');let row=document.getElementById('tdPeriod');
+  const v=document.getElementById('viewToday');
+  const k=(typeof activeDateKey!=='undefined'&&activeDateKey)||lifeLogKey();
+  const st=hero&&ptMode()!=='off'?tdPeriodState(k):null;
+  if(!st){row?.remove();return;}
+  if(!row){row=document.createElement('div');row.id='tdPeriod';}
+  const after=document.getElementById('tdJump')||hero;
+  if(row.previousElementSibling!==after)after.after(row);
+  const [txt,btn,type]=tdPeriodText(st);
+  if(ptMode()==='dot'&&!ptReveal){
+    row.className='tdPeriod tdPeriodDot';
+    row.innerHTML=`<button type="button" class="tdPdDot" aria-label="생리주기 보기" onclick="ptReveal=true;renderTdPeriod()"><i></i></button>`;
+    return;
+  }
+  row.className='tdPeriod';
+  row.innerHTML=`<i class="tdPdMark"></i><span class="tdPdTx">${txt}</span><button type="button" class="tdPdBtn" onclick="tdPeriodAct('${type}')">${btn}</button>${ptMode()==='dot'?`<button type="button" class="tdPdHide" aria-label="접기" onclick="ptReveal=false;renderTdPeriod()">×</button>`:''}`;
+}
+(function(){
+  const g=renderLifeGuide;renderLifeGuide=function(){const r=g.apply(this,arguments);try{renderTdPeriod();}catch(e){}return r;};
+  const sm=setPeriodMark;setPeriodMark=function(){const r=sm.apply(this,arguments);try{renderTdPeriod();}catch(e){}return r;};
+  try{const tp=togglePeriodFeature;togglePeriodFeature=function(){const r=tp.apply(this,arguments);try{renderTdPeriod();}catch(e){}return r;};}catch(e){}
+  /* QUICK LOG + 메뉴에도: 예정일과 달라도 바로 기록 */
+  const qo=qlFabOpen;qlFabOpen=function(){
+    const r=qo.apply(this,arguments);
+    try{
+      if(typeof periodEnabled==='function'&&!periodEnabled())return r;
+      const list=document.querySelector('#qlFabSheet .qlFabList');if(!list)return r;
+      const k=(typeof activeDateKey!=='undefined'&&activeDateKey)||lifeLogKey();
+      const st=tdPeriodState(k),cur=loadPeriodLogs()[k];const during=st&&st.type==='during'&&!st.isStart;
+      const type=cur==='start'?'start':cur==='end'?'end':during?'end':'start';
+      const label=cur==='start'?'생리 시작 취소':cur==='end'?'생리 끝 취소':during?'생리 끝':'생리 시작';
+      const b=document.createElement('button');b.type='button';b.className='snackQuickBtn qlPeriodBtn';
+      b.innerHTML=`<i class="tdPdMark"></i>${label}`;
+      b.onclick=()=>{tdPeriodAct(type);};
+      list.appendChild(b);
+    }catch(e){}
+    return r;
+  };
+  /* 생리주기 설정에 'TODAY 표시' 고르기 */
+  const op=openPeriodSettings;openPeriodSettings=function(){
+    const r=op.apply(this,arguments);
+    try{
+      const m=document.getElementById('periodSettingsModal');const act=m&&m.querySelector('.lifeActions');if(!act)return r;
+      let f=document.getElementById('ptField');
+      if(!f){f=document.createElement('div');f.className='lifeField';f.id='ptField';act.before(f);}
+      const cur=ptMode(),opt=[['text','글자로'],['dot','점만'],['off','안 함']];
+      f.innerHTML=`<label>TODAY 표시</label><div class="periodChoices">${opt.map(([v,n])=>`<button type="button" class="periodChoice${cur===v?' on':''}" onclick="try{localStorage.setItem('${PT_KEY}','${v}')}catch(e){};ptReveal=false;openPeriodSettings.__pt();renderTdPeriod()">${n}</button>`).join('')}</div><div class="periodSetHint">예정일 3일 전부터, 그리고 생리 중에만 TODAY에 작게 보여요. '점만'은 글자 없이 작은 점으로 보이고 누르면 펼쳐져요.</div>`;
+    }catch(e){}
+    return r;
+  };
+  openPeriodSettings.__pt=function(){const f=document.getElementById('ptField');if(!f)return;const cur=ptMode();f.querySelectorAll('.periodChoice').forEach((b,i)=>b.classList.toggle('on',['text','dot','off'][i]===cur));};
+  setTimeout(()=>{try{renderTdPeriod();}catch(e){}},350);
+})();
 </script>
 
 
