@@ -2803,6 +2803,28 @@ body.ptDotOn #lifeDateShort::after{content:'';display:inline-block;width:7px;hei
 .calRtMore[open] .calRtOpen{opacity:.6}
 .calRtMore>.rc-block{margin-top:8px}
 .calNone{padding:22px 0!important;text-align:center;color:var(--rc-mu);font-size:.875rem;line-height:1.8;border-top:0!important}
+
+/* 바로가기 아이콘: 동그라미 정가운데 */
+.tdJ3 .tdJIc{display:flex!important;align-items:center!important;justify-content:center!important;line-height:0!important;padding:0!important}
+.tdJ3 .tdJIc>:not(b){display:flex!important;align-items:center;justify-content:center;width:1.1rem;height:1.1rem;margin:0!important;line-height:0}
+.tdJ3 .tdJIc svg{display:block;width:100%;height:100%}
+.tdJ3 .tdJName{font-weight:600!important}
+/* ===== 글자 크기 기준 (rem → 설정의 글자 크기를 따라감) =====
+   제목 1rem/600 · 목록 항목 .875rem · 카드·칩 이름 .8125rem · 보조 .75rem */
+.tdHero .thRest button{font-size:.8125rem!important;font-weight:400!important}
+#tdsMain .freeName{font-size:.8125rem!important}
+.tdsLogIt{font-size:.8125rem!important;padding:.35rem .8rem!important}
+.tdsLogIt b{font-weight:600}
+.tdsDayK{font-size:.75rem!important}
+.tdsSecT{font-size:.75rem!important}
+#tdsMain .pjName{font-size:1rem!important;font-weight:600!important}
+#tdsMain .pjNextText{font-size:.875rem!important}
+#tdsMain .pjDue,#tdsMain .pjCount,#tdsMain .pjMore,#tdsMain .pjNextDue{font-size:.75rem!important}
+#tdsMain .pjChk{width:1.35rem!important;height:1.35rem!important}
+#tdsMain .pjNext{gap:.6rem!important;padding:.25rem 0!important}
+.pjDueGo{cursor:pointer;text-decoration:underline;text-underline-offset:2px;text-decoration-color:var(--rc-line2,#c9d3ce)}
+/* 캘린더: 프로젝트는 달력 마름모로만 */
+.calSheet>.pjDay{display:none!important}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -11894,7 +11916,7 @@ function secVisToggle(id){const v=secVisLoad();v[id]=!secVisOn(id);try{localStor
       else if(inF){sum=`<b>가임기 예상</b> · ${periodShort(f.start)} ~ ${periodShort(f.end)}`;open=true;}
       else if(p.ready){const d=periodDiffDays(today,p.next);sum=`다음 시작 <b>${periodShort(p.next)}</b> · ${d>0?d+'일 남음':d===0?'오늘':(-d)+'일 지남'}`;}
       const inner=h.replace(/^<div class="calInfoCard periodCard">/,'').replace(/<h4 class="rc-section-title">PERIOD<\/h4>/,'').replace(/<\/div>$/,'');
-      return `<div class="calInfoCard periodCard periodSlim"><details class="periodFold"${open?' open':''}><summary><span>생리주기 · ${sum}</span><span class="pfC" aria-hidden="true">›</span></summary>${inner}</details></div>`;
+      return `<div class="calInfoCard periodCard periodSlim"><details class="periodFold"><summary><span>생리주기 · ${sum}</span><span class="pfC" aria-hidden="true">›</span></summary>${inner}</details></div>`;
     }catch(e){return h;}
   };
 })();
@@ -13771,18 +13793,7 @@ function calCompact(k){
     if(c.dataset.sec)return c.dataset.sec;if(/READING/.test(t))return 'reading';if(/FREE/.test(t))return 'freetime';if(/MEAL/.test(t))return 'meals';if(/NOTE/.test(t))return 'note';if(/QUICK/.test(t))return 'quicklog';if(/PROJECT/.test(t))return 'project';return '';};
   cards.forEach(c=>{
     const sec=secOf(c);c.dataset.calsec=sec;
-    if(sec==='dailycare'){
-      const chips=[];
-      c.querySelectorAll('.rc-row').forEach(r=>{
-        const nm=r.querySelector('.rc-small-title')?.textContent.trim()||'';
-        const v=r.querySelector('.rc-value')?.textContent.trim()||'';const meta=r.querySelector('.rc-meta')?.textContent.trim()||'';
-        if(/기록 없음/.test(meta)&&!v)return;if(v&&/^0(\.0+)?$/.test(v.replace(/,/g,'')))return;
-        const unit=meta.split('/')[0].trim();
-        chips.push(`<span class="calChip"><b>${escapeLife(nm)}</b> ${escapeLife(v)}${escapeLife(unit)}</span>`);
-      });
-      [...c.children].forEach(x=>{if(!x.matches('h4'))x.remove();});
-      if(chips.length)c.insertAdjacentHTML('beforeend',`<div class="calChips">${chips.join('')}</div>`);else c.classList.add('calEmpty');
-    }
+    /* 데일리케어는 원래 막대 그대로 */
     if(sec==='routine'){
       let d=0,t=0;c.querySelectorAll('.rc-block-head').forEach(h=>{const v=+(h.querySelector('.rc-value')?.textContent||0);const m=(h.querySelectorAll('.rc-meta')[1]?.textContent||'').match(/\d+/);d+=v;t+=m?+m[0]:0;});
       if(!t||(!d&&k!==getLocalDateKey(new Date())))c.classList.add('calEmpty');
@@ -13800,6 +13811,19 @@ function calCompact(k){
 (function(){
   const d=renderCalendarDetail;
   renderCalendarDetail=function(k){const r=d.apply(this,arguments);try{calCompact(k||(typeof calSelectedKey!=='undefined'?calSelectedKey:''));}catch(e){console.warn(e);}return r;};
+})();
+
+/* ===== 프로젝트 마감 → 캘린더로 (2026-11-16) ===== */
+function pjOpenCal(k){
+  if(!k)return;
+  try{if(tdsOpenId)tdsClose(true);}catch(e){}
+  const [y,m]=k.split('-').map(Number);calendarCursor=new Date(y,m-1,1);calendarSelectedKey=k;
+  lifeNavigate('calendar');try{renderLifeCalendar();}catch(e){}
+  setTimeout(()=>{document.querySelector('.calSelHead')?.scrollIntoView({block:'start',behavior:'smooth'});},120);
+}
+(function(){
+  const pr=pjRowHTML;
+  pjRowHTML=function(p){const h=pr.apply(this,arguments);try{if(p&&p.due)return h.replace('<span class="pjDue">',`<span class="pjDue pjDueGo" role="button" title="캘린더에서 보기" onclick="event.stopPropagation();pjOpenCal('${p.due}')">`);}catch(e){}return h;};
 })();
 </script>
 
