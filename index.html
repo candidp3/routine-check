@@ -2781,6 +2781,28 @@ body.ptDotOn #lifeDateShort::after{content:'';display:inline-block;width:7px;hei
 #tdsMain .lbPeek{display:none!important}
 #tdsMain .lifeBlock.lbFold>.lbPeek{display:flex!important}
 #tdsMain .lifeBlock[data-sec="routine"]>.lifeBlockHead{cursor:pointer}
+
+/* 캘린더 하루: 한 장짜리 */
+.calSheet{background:var(--rc-card);border-radius:22px;padding:2px 18px;margin:0 0 14px;box-shadow:0 1px 0 var(--rc-line)}
+.calSheet>*{background:transparent!important;box-shadow:none!important;border-radius:0!important;margin:0!important;padding:14px 0!important;border:0!important;border-top:1px solid var(--rc-line)!important}
+.calSheet>*:first-child,.calSheet>.calEmpty+*:not(.calEmpty){border-top:0!important}
+.calSheet>*:not(.calEmpty)~*:not(.calEmpty){border-top:1px solid var(--rc-line)!important}
+.calSheet>.calEmpty{display:none!important}
+.calSheet h4.rc-section-title,.calSheet .pjDayCap{display:flex;align-items:center;gap:6px;margin:0 0 8px!important;font-size:.75rem!important;letter-spacing:.06em;color:var(--rc-mu)!important;font-weight:700}
+.calSheet h4 .noteAllMini{margin-left:auto}
+.calEditGo{margin-left:auto;border:0;background:transparent;padding:2px 0;color:var(--rc-mu);font:inherit;font-size:.75rem;font-weight:400;letter-spacing:0;cursor:pointer}
+.calChips{display:flex;flex-wrap:wrap;gap:6px}
+.calChip{display:inline-block;padding:.3rem .75rem;border-radius:999px;background:var(--rc-soft2);font-size:.8125rem;color:var(--rc-tx2)}
+.calChip b{font-weight:600;color:var(--rc-tx)}
+.calRtMore>summary{list-style:none;display:flex;align-items:center;gap:10px;cursor:pointer}
+.calRtMore>summary::-webkit-details-marker{display:none}
+.calRtSum{flex:none;font-size:.875rem;color:var(--rc-mu)}
+.calRtSum b{color:var(--rc-tx);font-size:1rem}
+.calRtMore>summary .rc-bar{flex:1;margin:0!important}
+.calRtOpen{flex:none;font-size:.75rem;color:var(--rc-mu)}
+.calRtMore[open] .calRtOpen{opacity:.6}
+.calRtMore>.rc-block{margin-top:8px}
+.calNone{padding:22px 0!important;text-align:center;color:var(--rc-mu);font-size:.875rem;line-height:1.8;border-top:0!important}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -13726,6 +13748,58 @@ lbToggle=function(id){
       const m=lbManual[lifeLogKey()+'|'+sec.dataset.lbid];sec.classList.toggle('lbFold',m===false);});}catch(e){}
     return r;
   };
+})();
+
+/* ===== 캘린더: 그날의 일기장 한 장 (2026-11-16) =====
+   한 상자 안에 그날 한 것만 짧게. 기록 없는 항목·빈 상자는 숨김. 줄마다 '고치기 ›' → TODAY 그날로 가서 바로 고치기 */
+function calGoEdit(k,sec){
+  openTodayForDate(k);
+  const map={routine:'routine',freetime:'freetime',reading:'freetime',quicklog:'quicklog',meals:'routine'};
+  if(map[sec])setTimeout(()=>{try{tdsOpen(map[sec]);}catch(e){}},120);
+}
+function calCompact(k){
+  const root=document.getElementById('calendarDetail');if(!root||!k)return;
+  if(root.querySelector('.calSheet'))return;
+  const head=root.querySelector('.calSelHead');
+  const cards=[...root.querySelectorAll('#calendarDayOverview>.rc-card, #calendarDetail>.calInfoCard, #calendarDetail>.pjDay, #calendarDetail>.qlWrap, #calendarDetail>[data-sec]')].filter((c,i,a)=>a.indexOf(c)===i&&!c.closest('.calSheet'));
+  if(!cards.length)return;
+  const sheet=document.createElement('div');sheet.className='calSheet';
+  (head||root.firstChild)?(head?head.after(sheet):root.prepend(sheet)):root.appendChild(sheet);
+  cards.forEach(c=>sheet.appendChild(c));
+  document.getElementById('calendarDayOverview')?.classList.add('hide');
+  const secOf=c=>{const t=(c.querySelector('h4,.rc-section-title,.pjDayCap')?.textContent||'').trim().toUpperCase();
+    if(c.dataset.sec)return c.dataset.sec;if(/READING/.test(t))return 'reading';if(/FREE/.test(t))return 'freetime';if(/MEAL/.test(t))return 'meals';if(/NOTE/.test(t))return 'note';if(/QUICK/.test(t))return 'quicklog';if(/PROJECT/.test(t))return 'project';return '';};
+  cards.forEach(c=>{
+    const sec=secOf(c);c.dataset.calsec=sec;
+    if(sec==='dailycare'){
+      const chips=[];
+      c.querySelectorAll('.rc-row').forEach(r=>{
+        const nm=r.querySelector('.rc-small-title')?.textContent.trim()||'';
+        const v=r.querySelector('.rc-value')?.textContent.trim()||'';const meta=r.querySelector('.rc-meta')?.textContent.trim()||'';
+        if(/기록 없음/.test(meta)&&!v)return;if(v&&/^0(\.0+)?$/.test(v.replace(/,/g,'')))return;
+        const unit=meta.split('/')[0].trim();
+        chips.push(`<span class="calChip"><b>${escapeLife(nm)}</b> ${escapeLife(v)}${escapeLife(unit)}</span>`);
+      });
+      [...c.children].forEach(x=>{if(!x.matches('h4'))x.remove();});
+      if(chips.length)c.insertAdjacentHTML('beforeend',`<div class="calChips">${chips.join('')}</div>`);else c.classList.add('calEmpty');
+    }
+    if(sec==='routine'){
+      let d=0,t=0;c.querySelectorAll('.rc-block-head').forEach(h=>{const v=+(h.querySelector('.rc-value')?.textContent||0);const m=(h.querySelectorAll('.rc-meta')[1]?.textContent||'').match(/\d+/);d+=v;t+=m?+m[0]:0;});
+      if(!t||(!d&&k!==getLocalDateKey(new Date())))c.classList.add('calEmpty');
+      else{const blocks=[...c.querySelectorAll(':scope>details.rc-block')];const more=document.createElement('details');more.className='calRtMore';
+        more.innerHTML=`<summary><span class="calRtSum"><b>${d}</b> / ${t}</span><span class="rc-bar"><i style="width:${Math.round(d/t*100)}%"></i></span><span class="calRtOpen">시간대별 ▾</span></summary>`;
+        blocks.forEach(b=>more.appendChild(b));c.appendChild(more);}
+    }
+    if(sec==='note'){const txt=c.textContent;if(/기록 없음/.test(txt)&&!c.querySelector('img'))c.classList.add('calEmpty');}
+    const h=c.querySelector(':scope>h4');
+    if(h&&sec&&sec!=='note'&&sec!=='project'&&!h.querySelector('.calEditGo'))h.insertAdjacentHTML('beforeend',`<button type="button" class="calEditGo" onclick="event.stopPropagation();calGoEdit('${k}','${sec}')">고치기 ›</button>`);
+  });
+  const shown=[...sheet.children].filter(c=>!c.classList.contains('calEmpty')&&!c.classList.contains('periodCard'));
+  if(!shown.length)sheet.insertAdjacentHTML('afterbegin',`<div class="calNone">이 날은 남긴 기록이 없어요.<br><button type="button" class="tdsLink" onclick="openTodayForDate('${k}')">기록하러 가기</button></div>`);
+}
+(function(){
+  const d=renderCalendarDetail;
+  renderCalendarDetail=function(k){const r=d.apply(this,arguments);try{calCompact(k||(typeof calSelectedKey!=='undefined'?calSelectedKey:''));}catch(e){console.warn(e);}return r;};
 })();
 </script>
 
