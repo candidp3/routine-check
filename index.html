@@ -2745,6 +2745,16 @@ body.ptDotOn #lifeDateShort::after{content:'';display:inline-block;width:7px;hei
 
 .freeChipWrap.ftTint .freeChip .ico{background:var(--gc-g)!important;color:var(--gc-gd)!important}
 .freeChipWrap.ftTint .freeChip .ico .appIco{color:var(--gc-gd)!important}
+
+/* 지금 루틴 아래 칩: 조금 크게, 좌우로 넘겨 보기 */
+.tdHero .thRest{gap:8px;margin-top:2px}
+.tdHero .thRest button{flex:0 0 auto;height:38px;padding:0 15px 0 11px;font-size:13.5px;gap:8px}
+.tdHero .thRest button i{width:16px;height:16px;font-size:9px}
+/* PROJECTS 새 화면: 프로젝트마다 상자 따로 */
+#tdsMain>#projectBlock{background:transparent!important;box-shadow:none!important;border:0!important;padding:0!important}
+#tdsMain>#projectBlock .pjRow{background:var(--rc-card);border:0!important;border-radius:20px;padding:16px 18px;margin:0 0 12px;box-shadow:0 1px 0 var(--rc-line)}
+.tdsEditing{color:var(--rc-solid);font-weight:600}
+.tdsTT small .tdsLink{font-size:12px}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -13610,6 +13620,63 @@ function ftTintRecord(root){
   try{const rc=renderLifeCalendar;renderLifeCalendar=function(){const r=rc.apply(this,arguments);try{ftTintRecord(document.getElementById('viewCalendar')||document);}catch(e){}return r;};}catch(e){}
   setTimeout(()=>{try{ftTintToday();}catch(e){}},400);
 })();
+
+/* ===== 새 화면 보강 (2026-11-16 v3) =====
+   · 최근 7일 캡슐 누르면 그날 기록 바로 고치기 (그날로 잠깐 이동 → 창 닫으면 원래 날짜로)
+   · FREE TIME 은 TODAY에서는 테마색 하나로 (RECORD·캘린더 그래프만 활동별 색) */
+let tdsBase=null;
+(function(){
+  const op=tdsOpen;
+  tdsOpen=function(id){if(!tdsOpenId)tdsBase=lifeLogKey();return op.apply(this,arguments);};
+  const cl=tdsClose;
+  tdsClose=function(fromHistory){
+    const o=document.getElementById('tdsScreen');const wasOpen=o&&!o.classList.contains('hide');
+    const r=cl.apply(this,arguments);
+    try{if(wasOpen&&o.classList.contains('hide')&&tdsBase&&lifeLogKey()!==tdsBase){tdsGoDate(tdsBase);}if(o.classList.contains('hide'))tdsBase=null;}catch(e){}
+    return r;
+  };
+  /* 7일 목록은 창을 연 날 기준으로 고정 */
+  const ex=tdsExtra;
+  tdsExtra=function(id){
+    const keep=activeDateKey;let r;
+    try{if(tdsBase&&tdsBase!==lifeLogKey()){const real=getLocalDateKey(new Date());activeDateKey=tdsBase===real?'':tdsBase;}r=ex.apply(this,arguments);}finally{activeDateKey=keep;}
+    try{tdsMarkEditable(id);tdsSubSync();}catch(e){}
+    return r;
+  };
+  ftTintToday=function(){document.querySelectorAll('.freeChipWrap.ftTint').forEach(w=>{w.classList.remove('ftTint');[...w.classList].filter(x=>x.startsWith('rcc-')).forEach(x=>w.classList.remove(x));});};
+})();
+function tdsGoDate(k){
+  const real=getLocalDateKey(new Date());
+  if(k===real||!k){if(typeof backToToday==='function')backToToday();}
+  else{const dp=document.getElementById('datePicker');if(dp){dp.value=k;loadDate();}}
+}
+function tdsSubSync(){
+  const sub=document.getElementById('tdsSub');if(!sub||!tdsOpenId)return;
+  const k=lifeLogKey();
+  if(tdsBase&&k!==tdsBase)sub.innerHTML=`<b class="tdsEditing">${tdsDayLabel(k)} 기록 고치는 중</b> · <button type="button" class="tdsLink" onclick="tdsGoDate(tdsBase);setTimeout(()=>{try{tdsExtra(tdsOpenId)}catch(e){}},50)">돌아가기</button>`;
+  else sub.textContent=TDS_SUB[tdsOpenId]||'';
+}
+/* FREE TIME 캡슐: data 붙여서 누르면 그날 기록 열기 */
+function tdsMarkEditable(id){
+  if(id!=='freetime')return;
+  const box=document.getElementById('tdsExtra');if(!box)return;
+  const base=tdsBase||lifeLogKey(),days=[];for(let i=0;i<7;i++)days.push(periodAddDays(base,-i));
+  const ids=new Set([...document.querySelectorAll('#tdsMain .freeChipWrap')].map(w=>w.dataset.routineId));
+  const all=loadLifeLogs(),rs=loadLifeRoutines();
+  const dayEls=[...box.querySelectorAll('.tdsDay')];let di=0;
+  days.forEach(k=>{
+    const ls=(Array.isArray(all[k])?all[k]:[]).filter(l=>ids.has(l.routineId)&&rs.find(x=>x.id===l.routineId));
+    if(!ls.length)return;const el=dayEls[di++];if(!el)return;
+    const items=[...el.querySelectorAll('.tdsLogIt')];
+    ls.forEach((l,j)=>{const it=items[j];if(!it)return;const r=rs.find(x=>x.id===l.routineId);if(!r||r.type==='check')return;
+      const b=document.createElement('button');b.type='button';b.className='tdsLogIt';b.innerHTML=it.innerHTML;
+      b.onclick=()=>tdsEditFree(k,l.routineId);it.replaceWith(b);});
+  });
+}
+function tdsEditFree(k,id){
+  if(k!==lifeLogKey())tdsGoDate(k);
+  setTimeout(()=>{try{tdsSubSync();handleRoutineRowTap(null,id);}catch(e){}},60);
+}
 </script>
 
 
