@@ -2689,7 +2689,7 @@ body.scrolled .tdChip .tdPick svg{width:17px!important;height:17px!important}
 .qlPeriodBtn{display:inline-flex;align-items:center;gap:6px}
 
 
-.tdPdHead{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;margin-left:2px;padding:0;border:0;background:transparent;cursor:pointer;align-self:center}
+.tdPdHead{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;margin-left:-6px;padding:0;border:0;background:transparent;cursor:pointer;align-self:center}
 .tdPdHead i{display:block;width:7px;height:7px;border-radius:50%;background:var(--rc-pk)}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
@@ -13283,13 +13283,7 @@ function renderTdPeriod(){
     const r=rq.apply(this,arguments);
     try{
       const root=document.getElementById('oneOffQuickRow');if(!root)return r;
-      root.querySelector('.qlPeriodBtn')?.remove();
-      if(typeof periodEnabled==='function'&&!periodEnabled())return r;
-      const k=(typeof activeDateKey!=='undefined'&&activeDateKey)||lifeLogKey();
-      const st=tdPeriodState(k),cur=loadPeriodLogs()[k];const during=st&&st.type==='during'&&!st.isStart;
-      const type=cur==='start'?'start':cur==='end'?'end':during?'end':'start';
-      const label=cur==='start'?'생리 시작 취소':cur==='end'?'생리 끝 취소':during?'생리 끝':'생리 시작';
-      root.insertAdjacentHTML('beforeend',`<button type="button" class="snackQuickBtn qlPeriodBtn" onclick="tdPeriodAct('${type}')"><span class="qIc"><i class="tdPdMark"></i></span><span class="qTx">${label}</span></button>`);
+      root.querySelector('.qlPeriodBtn')?.remove(); /* 생리는 QUICK LOG에 넣지 않음 (TODAY 줄·캘린더에서 기록) */
       const box=document.getElementById('quickLogBlock');if(box)box.classList.toggle('hide',!root.children.length);
     }catch(e){}
     return r;
@@ -13298,7 +13292,7 @@ function renderTdPeriod(){
   const qo=qlFabOpen;qlFabOpen=function(){
     try{renderOneOffQuick();}catch(e){}
     const r=qo.apply(this,arguments);
-    try{const l=document.querySelectorAll('#qlFabSheet .qlFabList .qlPeriodBtn');l.forEach(b=>{if(!b.querySelector('.qTx'))b.remove();});}catch(e){}
+    try{const l=document.querySelectorAll('#qlFabSheet .qlFabList .qlPeriodBtn');l.forEach(b=>b.remove());}catch(e){}
     return r;
   };
   /* 점만 표시: TODAY 날짜 옆 작은 점 → 누르면 줄이 펼쳐짐 */
@@ -13311,7 +13305,9 @@ function renderTdPeriod(){
     if(st){
       if(!dot){dot=document.createElement('button');dot.type='button';dot.id='tdPdHead';dot.className='tdPdHead';dot.setAttribute('aria-label','생리주기 보기');dot.innerHTML='<i></i>';
         dot.onclick=()=>{ptReveal=true;renderTdPeriod();document.getElementById('tdPeriod')?.scrollIntoView({block:'nearest',behavior:'smooth'});};}
-      const line=document.getElementById('lifeDateLine');if(line&&dot.previousElementSibling!==line)line.after(dot);
+      const line=document.getElementById('lifeDateShort')||document.getElementById('lifeDateLine');if(line&&dot.previousElementSibling!==line)line.after(dot);
+      /* 점을 날짜·요일 줄 높이 가운데에 맞춤 */
+      if(line)requestAnimationFrame(()=>{try{dot.style.transform='';const a=line.getBoundingClientRect(),b=dot.getBoundingClientRect();dot.style.transform=`translateY(${Math.round((a.top+a.height/2)-(b.top+b.height/2))}px)`;}catch(e){}});
       document.getElementById('tdPeriod')?.remove();
     }else{
       dot?.remove();
