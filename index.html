@@ -2832,6 +2832,28 @@ body.ptDotOn #lifeDateShort::after{content:'';display:inline-block;width:7px;hei
 .rc-routine-name,.rc-small-title{font-size:.8125rem!important}
 .bookPeriodTab{font-size:.875rem!important}
 #viewAll_v2 .rr-h{font-size:.625rem!important}
+
+/* ===== 글자를 키워도 못나지지 않게 =====
+   읽는 글씨(이름·목록·설명)는 설정만큼 커지고, 큰 제목과 작은 버튼 글씨는 조금만 커짐 */
+.lifeTitle{font-size:min(1.25rem,22px)!important}
+.lifeBlockTitle,.rc-section-title,.tdsTT b,#viewAll_v2 .rr-card>h2,.backupCardTitle{font-size:min(1rem,17.5px)!important}
+.tdHero .thHi{font-size:min(1.125rem,19px)!important}
+.thNextTx b{font-size:min(1rem,18px)!important}
+.lifeMiniBtn,.settingsBtn,.uiActionSm,.periodBtn,.photoMini,.noteAllMini,.dateBtn,.bookAddBtn,.routineEditDots,.freeEditBtn,.calendarRoutineChip,#viewAll_v2 .rr-metric-chip,#viewAll_v2 .rr-nav button,.calEditGo,.thAllBtn,.pjAll{font-size:min(.75rem,13px)!important}
+.routineEditDots,.freeEditBtn{line-height:1!important;overflow:visible!important}
+.dailyCareItemCard .dailyCareMeta{white-space:normal!important;text-wrap:balance;font-size:min(.75rem,13px)!important}
+.dcBtns button,.dailyCareItemCard button{font-size:min(.8125rem,14px)!important}
+.tdJ3 .tdJName{font-size:min(.8125rem,14.5px)!important}
+.tdJ3 .tdJT small{font-size:min(.6875rem,12px)!important}
+/* QUICK LOG 새 화면: 버튼을 카드처럼 (아이콘 동그라미 + 이름) */
+#tdsMain #quickLogBlock .oneOffQuickRow{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
+#tdsMain #quickLogBlock .snackQuickBtn{height:auto!important;min-height:5.2rem!important;flex-direction:column!important;gap:.45rem!important;padding:.85rem .4rem!important;border:1px solid var(--rc-line)!important;border-radius:18px!important;background:var(--rc-card)!important;color:var(--rc-tx)!important;font-size:.8125rem!important}
+#tdsMain #quickLogBlock .snackQuickBtn .qIc{width:2.3rem;height:2.3rem;border-radius:50%;background:var(--rc-gl);color:var(--rc-gs);display:flex!important;align-items:center;justify-content:center;flex:none}
+#tdsMain #quickLogBlock .snackQuickBtn .qIc svg{width:1.2rem;height:1.2rem}
+#tdsMain #quickLogBlock .snackQuickBtn:not(:has(.qIc)) .qPlus{display:flex!important;width:2.3rem;height:2.3rem;border-radius:50%;background:var(--rc-gl);color:var(--rc-gs);align-items:center;justify-content:center;font-size:1.1rem;line-height:1}
+#tdsMain #quickLogBlock .snackQuickBtn:has(.qIc) .qPlus{display:none!important}
+#tdsMain #quickLogBlock .snackQuickBtn .qTx{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+#tdsMain #quickLogBlock .oneOffTodayLogs:empty{display:none}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -13860,6 +13882,23 @@ function tdJFit(){
   window.addEventListener('resize',()=>{try{tdJFit();}catch(e){}});
   try{const a=applyFontSizeSetting;applyFontSizeSetting=function(){const x=a.apply(this,arguments);try{requestAnimationFrame(tdJFit);}catch(e){}return x;};}catch(e){}
   setTimeout(()=>{try{tdJFit();}catch(e){}},500);
+})();
+
+/* ===== 글자 크기 단계 v4 (2026-11-16): 작게 16 · 기본 18 · 크게 20 =====
+   예전 값은 보이는 크기 그대로 옮김: (v3) 기본16→작게 · 크게18→기본 · 작게15→작게 */
+(function(){
+  try{
+    FONT_SIZE_ROOT_PX.small=16;FONT_SIZE_ROOT_PX.normal=18;FONT_SIZE_ROOT_PX.large=20;
+    if(localStorage.getItem('fontScaleMigrated_v4')!=='done'){
+      const v=localStorage.getItem(FONT_SIZE_KEY);
+      if(localStorage.getItem('fontScaleMigrated_v3')==='done'&&v){
+        if(v==='normal')localStorage.setItem(FONT_SIZE_KEY,'small');
+        else if(v==='large')localStorage.setItem(FONT_SIZE_KEY,'normal');
+      }
+      localStorage.setItem('fontScaleMigrated_v4','done');
+    }
+    applyFontSizeSetting();
+  }catch(e){}
 })();
 </script>
 
