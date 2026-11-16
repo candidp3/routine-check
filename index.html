@@ -2764,7 +2764,7 @@ body.ptDotOn #lifeDateShort::after{content:'';display:inline-block;width:7px;hei
 .tdJ3 .tdJName{font-size:.8125rem!important}
 .tdJ3 .tdJT small{font-size:.6875rem!important}
 .tdJ3 .tdJIc b{font-size:.625rem;min-width:1rem;height:1rem}
-@container (max-width:100px){.tdJIn{flex-direction:column;gap:.3rem}.tdJ3 .tdJT{align-items:center!important;text-align:center!important}}
+.tdJump.tdJStack .tdJIn{flex-direction:column;gap:.3rem}.tdJump.tdJStack .tdJ3 .tdJT{align-items:center!important;text-align:center!important}
 /* 지금 루틴 칩: 데일리케어 항목 이름만큼 */
 .tdHero .thRest button{height:2.4rem!important;font-size:.8125rem!important;font-weight:var(--fw-3)!important;padding:0 .95rem 0 .7rem!important}
 .tdHero .thRest button i{width:1rem!important;height:1rem!important}
@@ -2825,6 +2825,13 @@ body.ptDotOn #lifeDateShort::after{content:'';display:inline-block;width:7px;hei
 .pjDueGo{cursor:pointer;text-decoration:underline;text-underline-offset:2px;text-decoration-color:var(--rc-line2,#c9d3ce)}
 /* 캘린더: 프로젝트는 달력 마름모로만 */
 .calSheet>.pjDay{display:none!important}
+
+/* ===== 글자 크기 기준 맞추기 (남은 화면) =====
+   보조 .75rem · 칩·카드 이름 .8125rem · 목록 .875rem · 제목 1rem — 11px처럼 너무 작은 글씨를 한 단계 올림 */
+.rc-meta,.rc-blk-ko,.calWeek>div,.calendarRoutineChip,.periodBtn,.booksSub,.bookSortBtn,.backupHint,.mealExtraField>span,#viewAll_v2 .rr-bn,#viewAll_v2 .rr-card-note,.calSearchLabel,.periodFold>summary,.routineInputHint{font-size:.75rem!important}
+.rc-routine-name,.rc-small-title{font-size:.8125rem!important}
+.bookPeriodTab{font-size:.875rem!important}
+#viewAll_v2 .rr-h{font-size:.625rem!important}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -13824,6 +13831,35 @@ function pjOpenCal(k){
 (function(){
   const pr=pjRowHTML;
   pjRowHTML=function(p){const h=pr.apply(this,arguments);try{if(p&&p.due)return h.replace('<span class="pjDue">',`<span class="pjDue pjDueGo" role="button" title="캘린더에서 보기" onclick="event.stopPropagation();pjOpenCal('${p.due}')">`);}catch(e){}return h;};
+})();
+
+/* ===== 글자 크기 단계 v3 (2026-11-16): 기본 = 예전 '작게'(가장 예쁜 크기), 크게는 한 단계만 살짝 =====
+   작게 15 · 기본 16 · 크게 18 (예전 16·19·22). 한 번만 옮김: 작게→기본(보이는 크기 그대로), 기본·크게→크게 */
+(function(){
+  try{
+    FONT_SIZE_ROOT_PX.small=15;FONT_SIZE_ROOT_PX.normal=16;FONT_SIZE_ROOT_PX.large=18;
+    if(localStorage.getItem('fontScaleMigrated_v3')!=='done'){
+      const v=localStorage.getItem(FONT_SIZE_KEY);
+      if(v==='small')localStorage.setItem(FONT_SIZE_KEY,'normal');
+      else if(v==='normal'||v==='large')localStorage.setItem(FONT_SIZE_KEY,'large');
+      localStorage.setItem('fontScaleMigrated_v3','done');
+    }
+    applyFontSizeSetting();
+  }catch(e){}
+})();
+
+/* 바로가기 버튼: 글자가 한 줄에 안 들어가면 아이콘 위·글자 아래로 (글자 크기 설정·폰 폭에 맞춰 자동) */
+function tdJFit(){
+  const row=document.getElementById('tdJump');if(!row)return;
+  row.classList.remove('tdJStack');
+  const over=[...row.querySelectorAll('.tdJName,.tdJT small')].some(e=>e.scrollWidth>e.clientWidth+1);
+  if(over)row.classList.add('tdJStack');
+}
+(function(){
+  const r=renderTdJump;renderTdJump=function(){const x=r.apply(this,arguments);try{requestAnimationFrame(tdJFit);}catch(e){}return x;};
+  window.addEventListener('resize',()=>{try{tdJFit();}catch(e){}});
+  try{const a=applyFontSizeSetting;applyFontSizeSetting=function(){const x=a.apply(this,arguments);try{requestAnimationFrame(tdJFit);}catch(e){}return x;};}catch(e){}
+  setTimeout(()=>{try{tdJFit();}catch(e){}},500);
 })();
 </script>
 
