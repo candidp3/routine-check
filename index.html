@@ -2755,6 +2755,32 @@ body.ptDotOn #lifeDateShort::after{content:'';display:inline-block;width:7px;hei
 #tdsMain>#projectBlock .pjRow{background:var(--rc-card);border:0!important;border-radius:20px;padding:16px 18px;margin:0 0 12px;box-shadow:0 1px 0 var(--rc-line)}
 .tdsEditing{color:var(--rc-solid);font-weight:600}
 .tdsTT small .tdsLink{font-size:12px}
+
+/* 바로가기 버튼: 글자 크기 설정 따라 커짐, 칸이 좁으면 아이콘 위·글자 아래로 */
+.tdJumpBtn.tdJ3{container-type:inline-size;padding:.55rem 2px;min-height:3.6rem}
+.tdJIn{display:flex;align-items:center;justify-content:center;gap:.45rem;width:100%;min-width:0}
+.tdJ3 .tdJIc{width:1.75rem;height:1.75rem}
+.tdJ3 .tdJIc svg{width:1.1rem;height:1.1rem}
+.tdJ3 .tdJName{font-size:.8125rem!important}
+.tdJ3 .tdJT small{font-size:.6875rem!important}
+.tdJ3 .tdJIc b{font-size:.625rem;min-width:1rem;height:1rem}
+@container (max-width:100px){.tdJIn{flex-direction:column;gap:.3rem}.tdJ3 .tdJT{align-items:center!important;text-align:center!important}}
+/* 지금 루틴 칩: 데일리케어 항목 이름만큼 */
+.tdHero .thRest button{height:2.4rem!important;font-size:.8125rem!important;font-weight:var(--fw-3)!important;padding:0 .95rem 0 .7rem!important}
+.tdHero .thRest button i{width:1rem!important;height:1rem!important}
+/* 새 화면 글자·캡슐 */
+.tdsTT b{font-size:1.3rem!important}
+.tdsTT small{font-size:.8125rem!important}
+.tdsSecT{font-size:.8125rem!important}
+.tdsDay{padding:.75rem 4px!important}
+.tdsDayK{width:3.6rem!important;font-size:.8125rem!important;padding-top:.3rem!important}
+.tdsDayV{gap:.45rem!important}
+.tdsLogIt{font-size:.875rem!important;padding:.4rem .85rem!important}
+.tdsEmpty{font-size:.875rem!important}
+.tdsEmpty span{font-size:.8125rem!important}
+#tdsMain .lbPeek{display:none!important}
+#tdsMain .lifeBlock.lbFold>.lbPeek{display:flex!important}
+#tdsMain .lifeBlock[data-sec="routine"]>.lifeBlockHead{cursor:pointer}
 </style>
 <script>/* 화면 모드를 그리기 전에 먼저 적용 (깜빡임 방지) */
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
@@ -13677,6 +13703,30 @@ function tdsEditFree(k,id){
   if(k!==lifeLogKey())tdsGoDate(k);
   setTimeout(()=>{try{tdsSubSync();handleRoutineRowTap(null,id);}catch(e){}},60);
 }
+
+/* ===== 크기·접기 보강 (2026-11-16 v4): 글자 크기 설정(rem)에 맞춰 커지게 ===== */
+renderTdJump=function(){
+  const hero=document.getElementById('tdHero');if(!hero)return;
+  let row=document.getElementById('tdJump');const t=tdJumpTargets();
+  if(!t.length){row?.remove();return;}
+  if(!row){row=document.createElement('div');row.id='tdJump';row.className='tdJump';}
+  if(row.previousElementSibling!==hero)hero.after(row);
+  row.innerHTML=t.map(([id,ic,name,n])=>`<button type="button" class="tdJumpBtn tdJ3" onclick="tdsOpen('${id}')"><span class="tdJIn"><span class="tdJIc">${ic}${n?`<b>${n}</b>`:''}</span><span class="tdJT"><span class="tdJName">${name}</span><small>${tdJumpSub(id)}</small></span></span></button>`).join('');
+};
+/* 새 화면 ROUTINE: 시간대 상자 접기·펼치기 (기본은 펼침, 직접 접은 건 유지) */
+lbToggle=function(id){
+  const k=lifeLogKey()+'|'+id,sec=document.querySelector(`#lifeGuide>[data-lbid="${id}"],#tdsMain>[data-lbid="${id}"]`);
+  const wasFold=sec?sec.classList.contains('lbFold'):true;lbManual[k]=wasFold;renderLifeGuide();
+};
+(function(){
+  const mv=tdsMoveIn;
+  tdsMoveIn=function(id){
+    const r=mv.apply(this,arguments);
+    try{if(id==='routine')document.querySelectorAll('#tdsMain>.lifeBlock[data-sec="routine"]').forEach(sec=>{
+      const m=lbManual[lifeLogKey()+'|'+sec.dataset.lbid];sec.classList.toggle('lbFold',m===false);});}catch(e){}
+    return r;
+  };
+})();
 </script>
 
 
