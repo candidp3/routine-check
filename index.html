@@ -2878,6 +2878,10 @@ button.tdsLn:active{background:var(--rc-soft)}
 .pjGo{flex:none;color:var(--rc-mu);font-size:1.15em;line-height:1;margin-left:-4px}
 .pjTop{gap:8px}
 .pjTop .pjName{flex:1 1 auto}
+
+/* 누를 때 큰 상자 전체가 테마색으로 깜빡이는 기본 터치 강조 끄기 (2026-11-18) */
+html,body,*{-webkit-tap-highlight-color:transparent!important}
+.tdHero .thAllBtn:active,.tdJ3 button:active{opacity:.55}
 </style>
 <script>/* 새로고침 때 그리기 전 화면(아이콘 자리표시·기본 칸)이 잠깐 보이지 않게: 첫 그리기 뒤 보여줌 */document.documentElement.classList.add('booting');setTimeout(function(){document.documentElement.classList.remove('booting')},3000);</script>
 </head>
