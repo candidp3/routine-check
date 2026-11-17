@@ -2859,7 +2859,26 @@ body.ptDotOn #lifeDateShort::after{content:'';display:inline-block;width:7px;hei
 (function(){try{const m=localStorage.getItem('themeMode_v1');if(m!=='light'&&m!=='dark')return;
 [...document.styleSheets].forEach(sh=>{let rs;try{rs=sh.cssRules;}catch(e){return;}[...rs].forEach(r=>{if(!(r instanceof CSSMediaRule))return;const t=r.media.mediaText;if(!/prefers-color-scheme/.test(t))return;r.__orig=t;r.media.mediaText=((m==='dark')===/dark/.test(t))?'all':'not all';});});
 document.documentElement.style.colorScheme=m;}catch(e){}})();</script>
-<style>html.booting body>*{visibility:hidden!important}</style>
+<style>html.booting body>*{visibility:hidden!important}
+/* 새 창 최근 7일 줄 목록 · 프로젝트 할 일 줄 체크 (2026-11-17) */
+.tdsDayL{align-items:flex-start}
+.tdsDayLs{flex:1;min-width:0;display:flex;flex-direction:column}
+.tdsLn{display:flex;align-items:center;gap:.5rem;width:100%;min-height:1.8rem;padding:.2rem 0;border:0;background:transparent;font:inherit;font-size:var(--fs-2);color:var(--rc-tx);text-align:left;cursor:default}
+button.tdsLn{cursor:pointer;border-radius:8px}
+button.tdsLn:active{background:var(--rc-soft)}
+.tdsLnDot{flex:none;width:.5rem;height:.5rem;border-radius:50%;background:var(--rc-g)}
+.tdsLnN{flex:none;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--rc-tx)}
+.tdsLnS{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--rc-mu);font-size:var(--fs-1)}
+.tdsLnV{flex:none;color:var(--rc-tx2);font-variant-numeric:tabular-nums;font-size:var(--fs-1)}
+.tdsDayL .tdsDayK{padding-top:.45rem}
+.pjNext.pjTap{cursor:pointer;border-radius:10px;margin-left:-6px!important;margin-right:-6px;padding:4px 6px;-webkit-tap-highlight-color:transparent}
+.pjNext.pjTap:active{background:var(--rc-soft)}
+.pjNext.pjWait .pjNextText{color:var(--rc-mu);text-decoration:line-through}
+.pjNext .pjChk{display:inline-block;box-sizing:border-box}
+.pjGo{flex:none;color:var(--rc-mu);font-size:1.15em;line-height:1;margin-left:-4px}
+.pjTop{gap:8px}
+.pjTop .pjName{flex:1 1 auto}
+</style>
 <script>/* 새로고침 때 그리기 전 화면(아이콘 자리표시·기본 칸)이 잠깐 보이지 않게: 첫 그리기 뒤 보여줌 */document.documentElement.classList.add('booting');setTimeout(function(){document.documentElement.classList.remove('booting')},3000);</script>
 </head>
 
@@ -13900,6 +13919,76 @@ function tdJFit(){
     applyFontSizeSetting();
   }catch(e){}
 })();
+
+/* ===== 새 창 최근 7일: 캡슐 대신 줄 목록 (한 기록 = 한 줄, 독서는 책 제목) · 프로젝트 할 일 줄 전체 눌러 체크 (2026-11-17) ===== */
+(function(){
+  const esc=v=>escapeLife(v);
+  function ftLines(k,ids){
+    const all=loadLifeLogs(),rs=loadLifeRoutines(),out=[];
+    const ls=(Array.isArray(all[k])?all[k]:[]).filter(l=>ids.has(l.routineId));
+    let rd={};try{rd=loadReadingLogs()||{};}catch(e){}
+    ls.forEach(l=>{
+      const r=rs.find(x=>x.id===l.routineId);if(!r)return;
+      let col='';try{col=ftHex(ftColorById(r.id),'g')||'';}catch(e){}
+      const tap=r.type==='check'?'':`tdsEditFree('${k}','${r.id}')`;
+      let v='';try{if(r.type==='time'&&Number(l.duration)>0)v=formatDurationMin(l.duration);else if(r.type==='count')v=countMetaText(r,l)||'';}catch(e){}
+      const ents=freeLogEntries(l);
+      const isRead=r.id==='free_read'||r.name==='독서';
+      const books=isRead&&Array.isArray(rd[k])?rd[k].filter(x=>x&&Number(x.minutes)>0):[];
+      if(books.length){
+        let sum=0;
+        books.forEach(b=>{sum+=Number(b.minutes)||0;out.push({col,n:r.name,s:readingTitleOf(b.bookId),v:formatDurationMin(Number(b.minutes)||0),tap});});
+        const rest=(Number(l.duration)||0)-sum;
+        if(r.type==='time'&&rest>0)out.push({col,n:r.name,s:'',v:formatDurationMin(rest),tap});
+        ents.forEach(e=>out.push({col,n:r.name,s:e,v:'',tap}));
+        return;
+      }
+      if(ents.length>1){ents.forEach((e,i)=>out.push({col,n:r.name,s:e,v:i===0?v:'',tap}));return;}
+      out.push({col,n:r.name,s:ents[0]||'',v:v||(r.type==='check'?'✓':''),tap});
+    });
+    return out;
+  }
+  function lineHTML(x){
+    const inner=`${x.col!==undefined?`<i class="tdsLnDot"${x.col?` style="background:${x.col}"`:''}></i>`:''}<span class="tdsLnN">${esc(x.n)}</span>${x.s?`<span class="tdsLnS">${esc(x.s)}</span>`:'<span class="tdsLnS"></span>'}${x.v?`<span class="tdsLnV">${esc(x.v)}</span>`:''}`;
+    return x.tap?`<button type="button" class="tdsLn" onclick="${x.tap}">${inner}</button>`:`<div class="tdsLn">${inner}</div>`;
+  }
+  const prev=tdsExtra;
+  tdsExtra=function(id){
+    const r=prev.apply(this,arguments);
+    try{
+      if(id!=='freetime'&&id!=='quicklog')return r;
+      const box=document.getElementById('tdsExtra');if(!box)return r;
+      const base=tdsBase||lifeLogKey(),days=[];for(let i=0;i<7;i++)days.push(periodAddDays(base,-i));
+      const ids=new Set([...document.querySelectorAll('#tdsMain .freeChipWrap')].map(w=>w.dataset.routineId));
+      const rows=days.map(k=>{
+        const ln=id==='freetime'?ftLines(k,ids):quickLogItems(k,false).map(x=>({n:x.n,s:'',v:x.t||'',tap:x.c||''}));
+        return ln.length?`<div class="tdsDay tdsDayL"><div class="tdsDayK">${tdsDayLabel(k)}</div><div class="tdsDayLs">${ln.map(lineHTML).join('')}</div></div>`:'';
+      }).join('');
+      if(rows){const head=box.querySelector('.tdsSecT');box.innerHTML=(head?head.outerHTML:'<div class="tdsSecT">최근 7일</div>')+rows;}
+    }catch(e){}
+    return r;
+  };
+
+  /* 프로젝트: 할 일 줄 전체를 눌러 체크 (일상 루틴과 같게), 프로젝트 이름 쪽을 누르면 편집 */
+  const pr=pjRowHTML;
+  pjRowHTML=function(p){
+    let h=pr.apply(this,arguments);
+    try{
+      h=h.replace(/<div class="pjNext"><button type="button" class="pjChk" aria-label="완료" onclick="event\.stopPropagation\(\);pjToggle\('([^']+)','([^']+)'\)"><\/button>/g,
+        (m,pid,tid)=>`<div class="pjNext pjTap${pjPend[tid]?' pjWait':''}" role="button" tabindex="0" aria-label="완료로 표시" data-tid="${tid}" onclick="pjTapTask(event,'${pid}','${tid}')"><span class="pjChk${pjPend[tid]?' on':''}"></span>`);
+      h=h.replace(/(<div class="pjTop">[\s\S]*?)(<\/div>)/,'$1<span class="pjGo" aria-hidden="true">›</span>$2');
+    }catch(e){}
+    return h;
+  };
+})();
+const pjPend={};
+function pjTapTask(e,pid,tid){
+  if(e){e.stopPropagation();e.preventDefault&&e.preventDefault();}
+  const rowsOf=()=>[...document.querySelectorAll(`.pjNext[data-tid="${tid}"]`)];
+  if(pjPend[tid]){clearTimeout(pjPend[tid]);delete pjPend[tid];rowsOf().forEach(r=>{r.classList.remove('pjWait');r.querySelector('.pjChk')?.classList.remove('on');});return;}
+  rowsOf().forEach(r=>{r.classList.add('pjWait');r.querySelector('.pjChk')?.classList.add('on');});
+  pjPend[tid]=setTimeout(()=>{delete pjPend[tid];try{pjToggle(pid,tid);}catch(err){}},900);
+}
 </script>
 
 
