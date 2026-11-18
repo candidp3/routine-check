@@ -2882,6 +2882,17 @@ button.tdsLn:active{background:var(--rc-soft)}
 /* 누를 때 큰 상자 전체가 테마색으로 깜빡이는 기본 터치 강조 끄기 (2026-11-18) */
 html,body,*{-webkit-tap-highlight-color:transparent!important}
 .tdHero .thAllBtn:active,.tdJ3 button:active{opacity:.55}
+
+/* 새 창 날짜 칩 (2026-11-18) */
+.tdsTRow{display:flex;align-items:center;gap:8px;min-width:0;flex-wrap:wrap}
+.tdsDate{display:inline-flex;align-items:center;border:1px solid var(--rc-line);border-radius:999px;background:var(--rc-card);height:1.75rem;font-size:var(--fs-1,12px);color:var(--rc-tx2);font-weight:500;letter-spacing:.02em;white-space:nowrap}
+.tdsDate.off{border-color:var(--rc-pk);background:var(--rc-pl);color:var(--rc-tx)}
+.tdsDArr{border:0;background:transparent;color:var(--rc-mu);font:inherit;font-size:1.15em;line-height:1;width:1.6rem;height:100%;padding:0;cursor:pointer}
+.tdsDArr:disabled{opacity:.25}
+.tdsDLab{position:relative;padding:0 2px;cursor:pointer;font-variant-numeric:tabular-nums}
+.tdsPast{color:var(--rc-tx2)}
+.tdsDIn{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;margin:0;cursor:pointer}
+.tdsDIn::-webkit-calendar-picker-indicator{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
 </style>
 <script>/* 새로고침 때 그리기 전 화면(아이콘 자리표시·기본 칸)이 잠깐 보이지 않게: 첫 그리기 뒤 보여줌 */document.documentElement.classList.add('booting');setTimeout(function(){document.documentElement.classList.remove('booting')},3000);</script>
 </head>
@@ -14075,6 +14086,42 @@ tplHistory=function(rid,tpl){
   const out={};Object.keys(opts).forEach(i=>{out[i]=rcFreqOrder(opts[i],x=>x);});
   return out;
 };
+
+/* ===== 새 창(일상 루틴·FREE TIME·QUICK LOG) 제목 옆 날짜 칩: ‹ 11.17 TUE › 눌러서 다른 날 기록 (2026-11-18) ===== */
+function tdsDateHas(id){return id==='routine'||id==='freetime'||id==='quicklog';}
+function tdsDateLabel(k){try{const d=new Date(k+'T12:00');return `${d.getMonth()+1}.${String(d.getDate()).padStart(2,'0')} ${['SUN','MON','TUE','WED','THU','FRI','SAT'][d.getDay()]}`;}catch(e){return k;}}
+function tdsDatePick(k){
+  const today=getLocalDateKey(new Date());
+  if(!k)return;if(k>today)k=today;
+  if(k===lifeLogKey())return;
+  tdsGoDate(k);
+  setTimeout(()=>{try{tdsExtra(tdsOpenId);}catch(e){}try{tdsDateRender();}catch(e){}},60);
+}
+function tdsDateStep(n){tdsDatePick(periodAddDays(lifeLogKey(),n));}
+function tdsDateRender(){
+  const t=document.getElementById('tdsTitle');if(!t)return;
+  let row=t.parentElement;
+  if(!row.classList.contains('tdsTRow')){const r=document.createElement('div');r.className='tdsTRow';t.before(r);r.appendChild(t);row=r;}
+  let c=document.getElementById('tdsDate');
+  if(!tdsOpenId||!tdsDateHas(tdsOpenId)){if(c)c.remove();return;}
+  if(!c){c=document.createElement('span');c.id='tdsDate';c.className='tdsDate';row.appendChild(c);}
+  const k=lifeLogKey(),today=getLocalDateKey(new Date());
+  c.classList.toggle('off',k!==today);
+  c.innerHTML=`<button type="button" class="tdsDArr" aria-label="전날" onclick="tdsDateStep(-1)">‹</button><label class="tdsDLab">${tdsDateLabel(k)}<input type="date" class="tdsDIn" value="${k}" max="${today}" onchange="tdsDatePick(this.value)" aria-label="날짜 고르기"></label><button type="button" class="tdsDArr" aria-label="다음 날" onclick="tdsDateStep(1)"${k>=today?' disabled':''}>›</button>`;
+}
+(function(){
+  const ss=tdsSubSync;
+  tdsSubSync=function(){
+    const r=ss.apply(this,arguments);
+    try{tdsDateRender();
+      const sub=document.getElementById('tdsSub'),k=lifeLogKey(),today=getLocalDateKey(new Date());
+      if(sub&&tdsOpenId&&tdsDateHas(tdsOpenId)&&k!==today&&(!tdsBase||tdsBase===today||k===tdsBase))sub.innerHTML=`<span class="tdsPast">지난 날 기록을 고치는 중</span> · <button type="button" class="tdsLink" onclick="tdsDatePick(getLocalDateKey(new Date()))">오늘로</button>`;
+    }catch(e){}
+    return r;
+  };
+  const op=tdsOpen;
+  tdsOpen=function(){const r=op.apply(this,arguments);try{tdsDateRender();}catch(e){}return r;};
+})();
 </script>
 
 
