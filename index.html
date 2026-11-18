@@ -13993,6 +13993,88 @@ function pjTapTask(e,pid,tid){
   rowsOf().forEach(r=>{r.classList.add('pjWait');r.querySelector('.pjChk')?.classList.add('on');});
   pjPend[tid]=setTimeout(()=>{delete pjPend[tid];try{pjToggle(pid,tid);}catch(err){}},900);
 }
+
+/* ===== 이전 기록 순서 통일 (2026-11-18): 어디서나 '자주 쓴 순, 같으면 최근에 쓴 순'
+   - 칩·더 보기·검색·기록 틀 선택지 모두 같은 기준
+   - 횟수는 실제로 기록한 횟수(같은 내용을 여러 번 쓰면 그만큼) ===== */
+function rcFreqOrder(occ,keyOf){ /* occ: 최근 것부터 나열된 전체 기록(중복 포함) → 중복 없이 자주 순·최근 순 */
+  const m=new Map();
+  occ.forEach((x,i)=>{const k=keyOf(x);if(!k)return;const e=m.get(k);if(e)e.n++;else m.set(k,{x,n:1,i});});
+  return [...m.values()].sort((a,b)=>b.n-a.n||a.i-b.i).map(e=>e.x);
+}
+function rcDaysDesc(obj){return Object.keys(obj||{}).sort().reverse();}
+getPreviousMealRecords=function(routineId,limit=1000){
+  const routines=loadLifeRoutines(),target=routines.find(r=>r.id===routineId);
+  if(!isMealFreeRoutine(target))return [];
+  const mealIds=new Set(routines.filter(r=>isMealFreeRoutine(r)).map(r=>r.id));
+  const all=loadLifeLogs(),occ=[];
+  rcDaysDesc(all).forEach(k=>{(Array.isArray(all[k])?all[k]:[]).slice().reverse().forEach(log=>{
+    if(!log||!mealIds.has(log.routineId))return;
+    const text=String(log.memo||'').trim();if(!text)return;
+    const place=String(log.place||'').trim(),vals={};
+    mealLogIds(log).forEach(id=>{vals[id]=mealItemValue(log,id);});
+    occ.push({text,place,vals});
+  });});
+  return rcFreqOrder(occ,x=>x.text+'\u0001'+x.place).slice(0,limit);
+};
+function rcFreeOcc(routineId){
+  const all=loadLifeLogs(),occ=[];
+  rcDaysDesc(all).forEach(k=>{(Array.isArray(all[k])?all[k]:[]).slice().reverse().forEach(log=>{
+    if(!log||log.routineId!==routineId)return;
+    [String(log.memo||'')].concat(Array.isArray(log.extra)?log.extra.map(x=>String(x||'')):[]).forEach(raw=>{const t=raw.trim();if(t)occ.push(t);});
+  });});
+  return occ;
+}
+getPreviousFreeRecords=function(routineId,limit=1000){return rcFreqOrder(rcFreeOcc(routineId),x=>x).slice(0,limit);};
+/* 칩: 넘겨받은 목록을 자주 순·최근 순으로 제자리 정렬 (더 보기·고르기와 순서가 같아짐) */
+rcRank=function(items,textOf,counts){
+  const idx=items.map((x,i)=>i);
+  const sorted=idx.slice().sort((a,b)=>(counts.get(textOf(items[b]))||0)-(counts.get(textOf(items[a]))||0)||a-b).map(i=>items[i]);
+  items.splice(0,items.length,...sorted);
+  return items.map((x,i)=>i);
+};
+(function(){
+  const ra=rcAttach;
+  rcAttach=function(o){
+    try{ /* 식사·자유 메모 목록은 이미 자주 순·최근 순으로 정렬돼 있으니 그 순서 그대로 */
+      if(o&&o.input&&o.input.id==='routineInputValue'&&typeof routineInputContext!=='undefined'&&routineInputContext&&routineInputContext.mode==='free')o.counts=null;
+    }catch(e){}
+    return ra.apply(this,arguments);
+  };
+})();
+/* 기록 틀 선택지: 실제 기록 전체(중복 포함)로 횟수 세기 */
+function tplHistTextsAll(rid){
+  rid=String(rid);
+  try{
+    if(rid.startsWith('ol:')){
+      const id=rid.slice(3),name=id==='snack'?'':tplItemName(rid),all=loadOneOffLogs(),sn=loadSnackRecords(),out=[];
+      [...new Set(Object.keys(all).concat(Object.keys(sn)))].sort().reverse().forEach(k=>{
+        (Array.isArray(sn[k])?sn[k]:[]).slice().reverse().forEach(x=>{if(!x||String(x.label||'')!==name)return;const t=String(x.text||'').trim();if(t)out.push(t);});
+        (Array.isArray(all[k])?all[k]:[]).slice().reverse().forEach(x=>{if(!x||x.defId!==id)return;const t=String(x.memo||'').trim();if(t)out.push(t);});
+      });
+      return out;
+    }
+    const r=loadLifeRoutines().find(x=>x.id===rid);
+    if(isMealFreeRoutine(r)){
+      const ids=new Set(loadLifeRoutines().filter(x=>isMealFreeRoutine(x)).map(x=>x.id)),all=loadLifeLogs(),out=[];
+      rcDaysDesc(all).forEach(k=>{(Array.isArray(all[k])?all[k]:[]).slice().reverse().forEach(l=>{if(l&&ids.has(l.routineId)){const t=String(l.memo||'').trim();if(t)out.push(t);}});});
+      return out;
+    }
+    return rcFreeOcc(rid);
+  }catch(e){return tplHistTexts(rid);}
+}
+tplHistory=function(rid,tpl){
+  const texts=tplHistTextsAll(rid),opts={};
+  tpl.fields.forEach((f,i)=>{opts[i]=[];});
+  texts.forEach(t=>{const v=tplParse(tpl,t);tpl.fields.forEach((f,i)=>{
+    const many=f.type==='multi'||f.type==='people';
+    if(f.type!=='pick'&&!many)return;
+    const arr=many?(v[i]||[]):[v[i]];
+    arr.flatMap(x=>many?String(x||'').split(/\s*[,，+\/\n]\s*/):[x]).forEach(x=>{x=String(x||'').trim();if(x&&x.length<=40)opts[i].push(x);});
+  });});
+  const out={};Object.keys(opts).forEach(i=>{out[i]=rcFreqOrder(opts[i],x=>x);});
+  return out;
+};
 </script>
 
 
