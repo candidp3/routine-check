@@ -2940,7 +2940,11 @@ html,body,*{-webkit-tap-highlight-color:transparent!important}
 #viewToday .dailyCareItemCard .dcTxt,#viewToday .dailyCareItemCard .dailyCareName,.dailyCareItemCard .dcTxt{font-weight:600!important;color:var(--rc-tx)!important}
 .dailyCareItemCard .dailyCareMeta{font-size:.8125rem!important;font-weight:400!important;color:var(--rc-tx)!important}
 .tdHero .thAllBtn{margin-top:5px!important}
-.pjMk i.h{background:color-mix(in srgb,var(--c,var(--rc-g)) 35%,transparent)!important;border-color:transparent!important}
+.pjMk i.h{background:transparent!important;border-color:color-mix(in srgb,var(--c,var(--rc-g)) 45%,transparent)!important}
+.pjMk i.t{background:color-mix(in srgb,var(--c,var(--rc-g)) 40%,transparent)!important;border-color:transparent!important}
+
+/* 11/19-3: 데일리케어 기록값 = 이름과 같은 크기 (개인용·로그온리 똑같이) */
+#viewToday .dailyCareItemCard .dailyCareMeta,#viewToday .dailyCareNumericCard .dailyCareMeta,.dailyCareItemCard .dailyCareMeta{font-size:.8125rem!important;font-weight:400!important;color:var(--rc-tx)!important;letter-spacing:0!important}
 </style>
 <script>/* 새로고침 때 그리기 전 화면(아이콘 자리표시·기본 칸)이 잠깐 보이지 않게: 첫 그리기 뒤 보여줌 */document.documentElement.classList.add('booting');setTimeout(function(){document.documentElement.classList.remove('booting')},3000);</script>
 </head>
@@ -4414,7 +4418,7 @@ function renderCustomDailyCare(){
     const meta=target
       ?(v>=target
         ?`${formatDailyCareNumber(v)}${escapeLife(d.unit||'')} · 달성`
-        :`${formatDailyCareNumber(v)}${escapeLife(d.unit||'')} · ${formatDailyCareNumber(left)}${escapeLife(d.unit||'')} 남음`)
+        :`${formatDailyCareNumber(v)} / ${formatDailyCareNumber(target)}${escapeLife(d.unit||'')}`)
       :`${formatDailyCareNumber(v)}${escapeLife(d.unit||'')}`;
     const quick=Array.isArray(d.quickValues)?d.quickValues:[];
     const count=Math.max(1,Math.min(4,quick.length));
@@ -4800,7 +4804,7 @@ function renderProtein(){
   const target=dailyCareTarget("protein",getProteinTarget(state.mode||"base"));
   const left=Math.max(0,target-g);
   const el=document.getElementById("proteinTrackText");
-  if(el) el.textContent=g>=target?`${g}g · 달성`:`${g}g · ${left}g 남음`;
+  if(el) el.textContent=g>=target?`${g}g · 달성`:`${g} / ${target}g`;
   const hintEl=document.getElementById("proteinHint");
   if(hintEl) hintEl.textContent="";
 }
@@ -4822,7 +4826,7 @@ function renderWater(){
   const target=dailyCareTarget("water",WATER_TARGET);
   const left=Math.max(0,target-ml);
   const el=document.getElementById("waterText");
-  if(el) el.textContent=ml>=target?`${ml.toLocaleString()}ml · 달성`:`${ml.toLocaleString()}ml · ${left.toLocaleString()}ml 남음`;
+  if(el) el.textContent=ml>=target?`${ml.toLocaleString()}ml · 달성`:`${ml.toLocaleString()} / ${target.toLocaleString()}ml`;
 }
 
 function nOrNull(v){
@@ -12094,8 +12098,9 @@ function pjMarkMap(){
   list.forEach(p=>{
     const days=new Set();
     if(p.due&&PJ_RE.test(p.due))days.add(p.due);
-    (p.tasks||[]).forEach(t=>{if(t&&!t.done&&t.due&&PJ_RE.test(t.due))days.add(t.due);}); /* 할 일 마감일도 진한 마름모 */
     const ci=pjIdx(p);days.forEach(k=>{(m[k]=m[k]||[]).push({c:ci,f:1});});
+    /* 할 일 마감일: 색 있는 파스텔 마름모 (최종 마감일은 진한 마름모) */
+    (p.tasks||[]).forEach(t=>{if(t&&!t.done&&t.due&&PJ_RE.test(t.due)&&!days.has(t.due)){days.add(t.due);(m[t.due]=m[t.due]||[]).push({c:ci,f:0,t:1});}});
     if(p.start&&p.due&&PJ_RE.test(p.start)&&PJ_RE.test(p.due)&&p.start<=p.due){
       let k=p.start,n=0;while(k<=p.due&&n++<800){if(!days.has(k))(m[k]=m[k]||[]).push({c:ci,f:0});k=pjAddDays(k,1);}
     }
@@ -12107,8 +12112,8 @@ function pjPaintMarks(){
   document.querySelectorAll('#calendarGrid .calDay:not(.blank)').forEach(b=>{
     b.querySelectorAll('.pjMk').forEach(e=>e.remove());
     const mm=(b.getAttribute('onclick')||'').match(/'(\d{4}-\d{2}-\d{2})'/);const x=mm&&m[mm[1]];if(!x)return;
-    const items=x.slice().sort((a,c)=>(a.c-c.c)||(c.f-a.f)).slice(0,3);
-    b.insertAdjacentHTML('beforeend',`<span class="pjMk" aria-hidden="true">${items.map(i=>`<i class="${i.f?'f':'h'}" style="--c:${cols[i.c]}"></i>`).join('')}</span>`);
+    const items=x.slice().sort((a,c)=>(a.c-c.c)||(c.f-a.f)||((c.t||0)-(a.t||0))).slice(0,3);
+    b.insertAdjacentHTML('beforeend',`<span class="pjMk" aria-hidden="true">${items.map(i=>`<i class="${i.f?'f':i.t?'t':'h'}" style="--c:${cols[i.c]}"></i>`).join('')}</span>`);
   });
 }
 function pjDayRows(k){
@@ -12583,9 +12588,9 @@ function renderTodayHero(){
   let el=document.getElementById('tdHero');if(!el){el=document.createElement('div');el.id='tdHero';el.className='tdHero';const first=front.querySelector(':scope>.section');if(first)first.after(el);else front.prepend(el);}
   const h=new Date().getHours();
   /* 인사는 시계가 아니라 지금 시간대(설정한 시간대 기준)를 따름 (2026-11-19) */
-  const HI_BY_BLOCK={dawn:['moon','고요한 새벽이에요'],breakfast:['sun','좋은 아침이에요'],morning:['sun','기분 좋은 오전 보내요'],lunch:['bowl','점심 맛있게 드세요'],afternoon:['coffee','오후도 천천히 가요'],evening:['moon','편안한 저녁 보내요'],night:['moon','오늘도 고생 많았어요']};
+  const HI_BY_BLOCK={dawn:['star','고요한 새벽이에요'],breakfast:['sun','반가운 아침이에요'],morning:['leaf','산뜻한 오전이에요'],lunch:['bowl','맛있는 점심시간이에요'],afternoon:['coffee','오후도 천천히 가요'],evening:['home','편안한 저녁이에요'],night:['moon','밤이 깊었네요']};
   let hi=null;try{hi=HI_BY_BLOCK[thBlockNow()];}catch(e){}
-  if(!hi)hi=h<6?['moon','조용한 새벽이에요']:h<11?['sun','좋은 아침이에요']:h<14?['bowl','점심 맛있게 드세요']:h<18?['coffee','오후도 천천히 가요']:['moon','좋은 저녁이에요'];
+  if(!hi)hi=h<6?HI_BY_BLOCK.dawn:h<11?HI_BY_BLOCK.breakfast:h<14?HI_BY_BLOCK.lunch:h<18?HI_BY_BLOCK.afternoon:h<22?HI_BY_BLOCK.evening:HI_BY_BLOCK.night;
   const logs=(loadLifeLogs()[lifeLogKey()]||[]).filter(l=>l.completed||Number(l.duration)>0||Number(l.count)>0);
   const parts=[];try{const w=Number(state.waterMl||0);if(w)parts.push(`물 ${w.toLocaleString()}ml`);}catch(e){}
   const n=logs.length+parts.length;
@@ -14189,6 +14194,44 @@ try{qlFabSync();}catch(e){}
   ensureBookSelectOptions=function(){const r=en.apply(this,arguments);try{const sel=document.getElementById('bookSource');[...(sel?sel.options:[])].forEach(o=>{if((o.value||o.text)==='기타'&&sel.value!=='기타')o.remove();});}catch(e){}return r;};
   const ob=openBookModal;
   openBookModal=async function(id){const r=await ob.apply(this,arguments);try{const sel=document.getElementById('bookSource');const b=id&&loadBooks().find(x=>x.id===id);[...sel.options].forEach(o=>{if((o.value||o.text)==='기타'&&!(b&&b.source==='기타'))o.remove();});if(b&&b.source==='기타'&&sel.value!=='기타'){const o=document.createElement('option');o.textContent='기타';sel.insertBefore(o,sel.querySelector('option[value="__custom__"]'));sel.value='기타';}}catch(e){}return r;};
+})();
+
+/* 로그온리와 같게: 판매용: 시간형 데일리케어 — 기록 전 '목표 7시간', 기록 후 '기록 7시간 30분' (세부 시각은 카드를 누르면) */
+(function(){
+  if(typeof renderSleep!=='function')return;
+  const prev=renderSleep;
+  renderSleep=function(){
+    const r=prev.apply(this,arguments);
+    try{
+      const el=document.getElementById('sleepText');if(!el)return r;
+      if(loadSleepSession()?.startAt)return r;
+      const def=dailyCareDef('sleep')||{},t=Number(def.target)||0;
+      const x=calendarDaySleepRecord(activeDateKey);
+      if(Number.isFinite(x.dur))el.textContent=`기록 ${formatDailyCareDuration(x.dur)}`;
+      else el.textContent=t?`목표 ${formatDailyCareDuration(Math.round(t*60))}`:'기록 없음';
+    }catch(e){}
+    return r;
+  };
+  try{renderSleep();}catch(e){}
+})();
+(function(){
+  if(typeof renderCustomDailyCare!=='function')return;
+  const prev=renderCustomDailyCare;
+  renderCustomDailyCare=function(){
+    const r=prev.apply(this,arguments);
+    try{
+      loadDailyCareDefinitions().map(normalizeDailyCareDefinition).filter(d=>!d.builtin&&!d.oneOff&&d.type==='duration').forEach(d=>{
+        const meta=document.querySelector(`.dailyCareItemCard[data-daily-care-id="${d.id}"] .dailyCareMeta`);if(!meta)return;
+        if(getDailyCareDurationSession(d.id)?.startAt)return;
+        const raw=readDailyCareMetricValue(activeDateKey,d.id),val=raw&&typeof raw==='object'?raw:null;
+        const g=Number(d.durationGoalMinutes)||0;
+        if(val&&Number.isFinite(Number(val.minutes)))meta.textContent=`기록 ${formatDailyCareDuration(Number(val.minutes))}`;
+        else if(!val||(!val.start&&!val.end))meta.textContent=g?`목표 ${formatDailyCareDuration(g)}`:'기록 없음';
+      });
+    }catch(e){}
+    return r;
+  };
+  try{renderCustomDailyCare();}catch(e){}
 })();
 </script>
 
