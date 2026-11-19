@@ -2945,6 +2945,18 @@ html,body,*{-webkit-tap-highlight-color:transparent!important}
 
 /* 11/19-3: 데일리케어 기록값 = 이름과 같은 크기 (개인용·로그온리 똑같이) */
 #viewToday .dailyCareItemCard .dailyCareMeta,#viewToday .dailyCareNumericCard .dailyCareMeta,.dailyCareItemCard .dailyCareMeta{font-size:.8125rem!important;font-weight:400!important;color:var(--rc-tx)!important;letter-spacing:0!important}
+
+/* 11/19-4 디자인 정리: 데일리케어 기록값은 캡슐과 같은 회색 · 캘린더 검정 글씨 → 기본 진한 색 · 책 제목 굵게
+   · 책 수정 화면: 독서상태·형태 한 줄씩, 형태 버튼을 입력칸처럼, 아래 삭제·복사 버튼 모양 통일 */
+#viewToday .dailyCareItemCard .dailyCareMeta,#viewToday .dailyCareNumericCard .dailyCareMeta,.dailyCareItemCard .dailyCareMeta{color:var(--rc-tx2)!important}
+#viewCalendar .calDay,#viewCalendar button{color:var(--rc-tx)}
+#viewCalendar .calDay.today,#viewCalendar .calDay.sel{color:inherit}
+.bookName{font-weight:600!important}
+#bookModal .bookField:has(#bookFormatChoices),#bookModal .bookField:has(#bookStatus){grid-column:1/-1}
+#bookModal .bookFormGrid .bookFormatMulti{min-height:0;gap:8px!important}
+#bookModal .bookFormGrid .bookFormatMulti .bookFormatChoice{height:44px!important;font-size:var(--fs-2)!important;background:var(--rc-soft)!important;border:1.5px solid transparent!important;border-radius:12px!important;color:var(--rc-tx)!important}
+#bookModal .bookFormGrid .bookFormatMulti .bookFormatChoice.on{background:var(--rc-gl)!important;border-color:var(--rc-g)!important;font-weight:600!important}
+#bookModal .bookFooterLeft button{border:0!important;background:var(--rc-soft)!important;color:var(--rc-tx2)!important}
 </style>
 <script>/* 새로고침 때 그리기 전 화면(아이콘 자리표시·기본 칸)이 잠깐 보이지 않게: 첫 그리기 뒤 보여줌 */document.documentElement.classList.add('booting');setTimeout(function(){document.documentElement.classList.remove('booting')},3000);</script>
 </head>
@@ -14233,6 +14245,9 @@ try{qlFabSync();}catch(e){}
   };
   try{renderCustomDailyCare();}catch(e){}
 })();
+
+/* 책 별점: 비어 있을 때 빈 상자 대신 안내 */
+try{const o=document.querySelector('#bookRating option[value=""]');if(o&&!o.textContent)o.textContent='선택 안 함';}catch(e){}
 </script>
 
 
