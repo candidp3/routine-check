@@ -2929,6 +2929,11 @@ html,body,*{-webkit-tap-highlight-color:transparent!important}
 .settingLinkRow>div:first-child{flex:1 1 auto;min-width:0}
 .settingLinkRow>button{flex:none}
 .settingLinkRow .backupHint{word-break:keep-all;text-wrap:pretty}
+
+/* 11/19: 데일리케어 기록값 크게 · 초기화는 작게 / 시간대 캡슐과 '전체 루틴 보기' 사이 줄임 */
+.dailyCareItemCard .dailyCareMeta{font-size:min(.8125rem,15px)!important;font-weight:500!important;color:var(--rc-tx2)!important;font-variant-numeric:tabular-nums}
+.dailyCareItemCard .dailyCareReset{font-size:min(.6875rem,12.5px)!important}
+.tdHero .thAllBtn{margin-top:2px!important}
 </style>
 <script>/* 새로고침 때 그리기 전 화면(아이콘 자리표시·기본 칸)이 잠깐 보이지 않게: 첫 그리기 뒤 보여줌 */document.documentElement.classList.add('booting');setTimeout(function(){document.documentElement.classList.remove('booting')},3000);</script>
 </head>
@@ -12569,7 +12574,10 @@ function renderTodayHero(){
   const front=document.getElementById('todayHealthFront');if(!front)return;
   let el=document.getElementById('tdHero');if(!el){el=document.createElement('div');el.id='tdHero';el.className='tdHero';const first=front.querySelector(':scope>.section');if(first)first.after(el);else front.prepend(el);}
   const h=new Date().getHours();
-  const hi=h<6?['moon','조용한 새벽이에요']:h<11?['sun','좋은 아침이에요']:h<14?['bowl','점심 맛있게 드세요']:h<18?['coffee','오후도 천천히 가요']:['moon','좋은 저녁이에요'];
+  /* 인사는 시계가 아니라 지금 시간대(설정한 시간대 기준)를 따름 (2026-11-19) */
+  const HI_BY_BLOCK={dawn:['moon','조용한 새벽이에요'],breakfast:['sun','좋은 아침이에요'],morning:['sun','활기찬 오전 보내요'],lunch:['bowl','점심 맛있게 드세요'],afternoon:['coffee','오후도 천천히 가요'],evening:['moon','좋은 저녁이에요'],night:['moon','오늘도 수고 많았어요']};
+  let hi=null;try{hi=HI_BY_BLOCK[thBlockNow()];}catch(e){}
+  if(!hi)hi=h<6?['moon','조용한 새벽이에요']:h<11?['sun','좋은 아침이에요']:h<14?['bowl','점심 맛있게 드세요']:h<18?['coffee','오후도 천천히 가요']:['moon','좋은 저녁이에요'];
   const logs=(loadLifeLogs()[lifeLogKey()]||[]).filter(l=>l.completed||Number(l.duration)>0||Number(l.count)>0);
   const parts=[];try{const w=Number(state.waterMl||0);if(w)parts.push(`물 ${w.toLocaleString()}ml`);}catch(e){}
   const n=logs.length+parts.length;
@@ -13904,7 +13912,11 @@ function calCompact(k){
     const h=c.querySelector(':scope>h4');
     if(h&&sec&&sec!=='note'&&sec!=='project'&&!h.querySelector('.calEditGo'))h.insertAdjacentHTML('beforeend',`<button type="button" class="calEditGo" onclick="event.stopPropagation();calGoEdit('${k}','${sec}')">고치기 ›</button>`);
   });
-  const shown=[...sheet.children].filter(c=>!c.classList.contains('calEmpty')&&!c.classList.contains('periodCard'));
+  const shown=[...sheet.children].filter(c=>!c.classList.contains('calEmpty')&&!c.classList.contains('periodCard')&&c.dataset.calsec!=='project');
+  if(!shown.length&&k>getLocalDateKey(new Date())){ /* 미래 날짜: 빈 상자 대신 안내 (프로젝트는 달력 마름모로만) */
+    if(!sheet.querySelector('.periodCard')){sheet.style.display='none';root.insertAdjacentHTML('beforeend','<div class="calFuture"><div class="calFutureMain">아직 오지 않은 하루예요</div><div class="calFutureSub">그날이 오면 천천히 채워 가요</div></div>');}
+    return;
+  }
   if(!shown.length)sheet.insertAdjacentHTML('afterbegin',`<div class="calNone">이 날은 남긴 기록이 없어요.<br><button type="button" class="tdsLink" onclick="openTodayForDate('${k}')">기록하러 가기</button></div>`);
 }
 (function(){
@@ -14162,6 +14174,14 @@ function tdsDateRender(){
 /* QUICK LOG 떠 있는 + 버튼 없앰 (위쪽 QUICK LOG 버튼과 겹침) (2026-11-18) */
 qlFabSync=function(){const f=document.getElementById('qlFab');if(f)f.remove();document.body.classList.remove('qlFabOn');};
 try{qlFabSync();}catch(e){}
+
+/* 11/19: 책 '읽은 곳' 선택지에 예전 기록의 '기타'는 띄우지 않음 (그 책을 열 때만 보임) */
+(function(){
+  const en=ensureBookSelectOptions;
+  ensureBookSelectOptions=function(){const r=en.apply(this,arguments);try{const sel=document.getElementById('bookSource');[...(sel?sel.options:[])].forEach(o=>{if((o.value||o.text)==='기타'&&sel.value!=='기타')o.remove();});}catch(e){}return r;};
+  const ob=openBookModal;
+  openBookModal=async function(id){const r=await ob.apply(this,arguments);try{const sel=document.getElementById('bookSource');const b=id&&loadBooks().find(x=>x.id===id);[...sel.options].forEach(o=>{if((o.value||o.text)==='기타'&&!(b&&b.source==='기타'))o.remove();});if(b&&b.source==='기타'&&sel.value!=='기타'){const o=document.createElement('option');o.textContent='기타';sel.insertBefore(o,sel.querySelector('option[value="__custom__"]'));sel.value='기타';}}catch(e){}return r;};
+})();
 </script>
 
 
