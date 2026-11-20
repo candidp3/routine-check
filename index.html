@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
 <title>🍎루틴 체크 · 6.34</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#f5f7f5" media="(prefers-color-scheme: light)">
@@ -3013,6 +3013,19 @@ html,body,*{-webkit-tap-highlight-color:transparent!important}
 .rwBlock{margin:8px 0 1px;font-size:.6875rem;font-weight:600;letter-spacing:.06em;color:var(--rc-mu);display:flex;align-items:center;gap:6px}
 .rwBlock::before{content:'';width:6px;height:6px;border-radius:2px;background:var(--c)}
 .rwGrid .rwBlock:first-of-type{margin-top:2px}
+
+/* RECORD 시간대 → 루틴별 한 주 (2026-11-20) */
+.rwSheet{margin:4px 0 6px}
+.rwSheet .rwGrid{gap:2px}
+.rwRow.rwTap{width:100%;border:0;background:transparent;padding:6px 0;font:inherit;text-align:left;border-radius:10px;cursor:pointer}
+.rwRow.rwTap:active{background:var(--rc-soft)}
+.rwLegend .r::before{border:0!important;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2366b08f' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 19c0-8 5-13 14-14-1 9-6 14-14 14z'/%3E%3Cpath d='M5 19l7-7'/%3E%3C/svg%3E") center/10px no-repeat!important;width:10px!important;height:10px!important}
+.rwLegend .n::before{width:4px!important;height:4px!important;border-radius:50%!important;background:var(--rc-line2)!important;margin:0 7px 1px 3px;vertical-align:1px!important}
+.rwLegend .d::before{background:var(--rc-gs)!important}
+#viewAll_v2 .rr-card>h2.rrEn{letter-spacing:.04em}
+/* 키보드 */
+html .lifeModal{bottom:var(--kb,0px)!important;top:0!important;height:auto!important}
+.lifeModal>.lifeSheet{max-height:min(90vh,calc(100% - 16px))}
 
 </style>
 <script>/* 새로고침 때 그리기 전 화면(아이콘 자리표시·기본 칸)이 잠깐 보이지 않게: 첫 그리기 뒤 보여줌 */document.documentElement.classList.add('booting');setTimeout(function(){document.documentElement.classList.remove('booting')},3000);</script>
@@ -14607,19 +14620,128 @@ function rwCardHTML(days){
   }).join('');
   return `<div class="rr-card rw-card"><h2>루틴별 한 주 <span class="rr-card-note">한 날만 색칠돼요</span></h2><div class="rwGrid">${head}${body}</div></div>`;
 }
+/* (루틴별 한 주 카드는 2026-11-20에 시간대 누르기 화면으로 옮김) */
+
+
+/* ===== 이전 기록 칩 중복 없애기 (2026-11-20)
+   같은 글자(띄어쓰기·대소문자만 다른 것 포함)는 한 번만. 식사는 장소가 달라도 메뉴가 같으면 한 번(가장 최근 기록의 값으로 채움) ===== */
+function rcNorm(s){return String(s||'').replace(/\s+/g,' ').trim().toLowerCase();}
+rcMealKey=function(x){return rcNorm(x&&x.text);};
+getPreviousFreeRecords=function(routineId,limit=1000){return rcRecentOrder(rcFreeOcc(routineId),rcNorm).slice(0,limit);};
 (function(){
+  const ra=rcAttach;
+  rcAttach=function(o){
+    try{if(o&&Array.isArray(o.items)){const tf=o.textOf||(x=>x),seen=new Set();
+      for(let i=0;i<o.items.length;){const k=rcNorm(tf(o.items[i]));if(!k||seen.has(k))o.items.splice(i,1);else{seen.add(k);i++;}}}}catch(e){}
+    return ra.apply(this,arguments);
+  };
+  const th=tplHistory;
+  tplHistory=function(){
+    const out=th.apply(this,arguments);
+    try{Object.keys(out).forEach(i=>{const seen=new Set();out[i]=(out[i]||[]).filter(x=>{const k=rcNorm(x);if(!k||seen.has(k))return false;seen.add(k);return true;});});}catch(e){}
+    return out;
+  };
+  const oh=openHistoryPicker;
+  openHistoryPicker=function(items,label){
+    try{if(Array.isArray(items)){const seen=new Set();for(let i=0;i<items.length;){const x=items[i],k=rcNorm(typeof x==='string'?x:x&&x.text);if(!k||seen.has(k))items.splice(i,1);else{seen.add(k);i++;}}}}catch(e){}
+    return oh.apply(this,arguments);
+  };
+})();
+
+/* ===== RECORD (2026-11-20)
+   - '루틴별 한 주'는 따로 두지 않고, ROUTINE 카드에서 시간대를 누르면 그 시간대 루틴들이 한 주 칸으로 보임
+   - 카드 이름을 앱의 다른 화면처럼 짧은 영어 제목으로 ===== */
+function rwGridHTML(days,onlyBlock){
+  const keys=days.map(d=>rrIso(d)),today=getLocalDateKey(new Date());
+  const defs=lifeBlockDefs(),bIdx={};defs.forEach((b,i)=>{bIdx[b.id]=i;});
+  const want=onlyBlock?defs.find(b=>b.id===onlyBlock||String(b.name).toUpperCase()===String(onlyBlock).toUpperCase()||String(b.id).toUpperCase()===String(onlyBlock).toUpperCase()):null;
+  const rows=loadLifeRoutines().filter(r=>r.block!=='free'&&bIdx[r.block]!==undefined&&(!want||r.block===want.id))
+    .sort((a,b)=>(bIdx[a.block]-bIdx[b.block])||((a.order||0)-(b.order||0)))
+    .map(r=>{
+      const cells=keys.map(k=>{
+        if(k>today)return 'fut';
+        const done=rwDone(r,k);
+        if(restOn(k))return done?'done':'rest';
+        let sch=false;try{sch=r.enabled!==false&&(!r.recordFrom||k>=r.recordFrom)&&scheduleApplies(r,k,{allowFree:true});}catch(e){}
+        return done?'done':sch?'todo':'off';
+      });
+      return {r,cells,n:cells.filter(c=>c==='done').length};
+    })
+    .filter(x=>x.n>0||(x.r.enabled!==false&&x.cells.includes('todo')));
+  if(!rows.length)return '';
+  const WD=['일','월','화','수','목','금','토'];
+  const head=`<div class="rwRow rwHead"><span class="rwName"></span>${days.map((d,i)=>`<span class="rwC${keys[i]===today?' tdy':''}">${WD[d.getDay()]}</span>`).join('')}<span class="rwN"></span></div>`;
+  const check='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12.5l4 4 8-9"/></svg>';
+  const body=rows.map(({r,cells,n})=>{
+    const c=rwColor(bIdx[r.block]),nm=String(r.name||'');
+    return `<button type="button" class="rwRow rwTap" style="--c:${c}" data-name="${escapeLife(nm)}" onclick="rwOpen(this.dataset.name)"><span class="rwName">${escapeLife(nm)}</span>${cells.map(x=>`<span class="rwC"><i class="rw-${x}">${x==='rest'?restLeafSvg():x==='done'?check:''}</i></span>`).join('')}<span class="rwN">${n?n:''}</span></button>`;
+  }).join('');
+  return `<div class="rwGrid">${head}${body}</div>`;
+}
+function rwOpen(name){try{if(!rhCtx||!rhCtx.list)return;const i=rhCtx.list.findIndex(e=>e.name===name);if(i>=0)rhOpenRoutine(i);}catch(e){}}
+(function(){
+  const rr=rhRender;
+  rhRender=function(){
+    const r=rr.apply(this,arguments);
+    try{
+      if(!rhCtx||rhCtx.name)return r;
+      const {P}=rhCollect(rhCtx.block);if(!P||P.kind!=='week')return r;
+      const g=rwGridHTML(P.days,rhCtx.block);if(!g)return r;
+      document.getElementById('rhBody').innerHTML=`<div class="rwSheet">${g}</div><div class="rhNote">루틴을 누르면 하나씩 자세히 보여요.</div><div class="rhLegend rwLegend"><span class="d">한 날</span><span class="m">안 한 날</span><span class="n">할 날 아님</span>${restLoad().length?'<span class="r">쉬어간 날</span>':''}</div>`;
+    }catch(e){console.warn(e);}
+    return r;
+  };
+  const RN=[[/^(요일별|일별|월별) 추이$/,'DAILY CARE'],[/^(루틴 수행 · 시간대별|시간대별 달성률|시간대 × 월)$/,'ROUTINE','시간대를 누르면 루틴별로 보여요'],[/^취미생활$/,'FREE TIME'],[/^건강 기록$/,'BODY'],[/^(\d+)월 돌아보기$/,'LOOK BACK',m=>`${m[1]}월`]];
   const rd=renderRecordDashboard;
   renderRecordDashboard=function(){
     const r=rd.apply(this,arguments);
     try{
-      if(typeof recordPeriod!=='undefined'&&recordPeriod!=='week')return r;
-      const out=document.getElementById('rrOut');if(!out||out.querySelector('.rw-card'))return r;
-      const h=rwCardHTML(rrWeekDays(rrCursor));if(!h)return r;
-      const ref=[...out.querySelectorAll('.rr-card')].find(c=>/루틴 수행/.test(c.querySelector('h2')?.textContent||''));
-      if(ref)ref.insertAdjacentHTML('beforebegin',h);else out.insertAdjacentHTML('afterbegin',h);
+      const out=document.getElementById('rrOut');if(!out)return r;
+      out.querySelectorAll('.rw-card').forEach(x=>x.remove());
+      out.querySelectorAll('.rr-card>h2').forEach(h=>{
+        const t=h.firstChild;if(!t||t.nodeType!==3)return;const s=t.nodeValue.trim();
+        for(const [re,name,note] of RN){const m=re.exec(s);if(!m)continue;
+          t.nodeValue=name+' ';
+          if(note&&!h.querySelector('.rr-card-note')){const n=document.createElement('span');n.className='rr-card-note';n.textContent=typeof note==='function'?note(m):note;h.appendChild(n);}
+          h.classList.add('rrEn');break;}
+      });
     }catch(e){console.warn(e);}
     return r;
   };
+  try{if(document.getElementById('rrOut')?.children.length)renderRecordDashboard();}catch(e){}
+})();
+
+/* ===== 키보드에 입력칸이 가리지 않게 (2026-11-20)
+   - 앱: 키보드가 화면을 얼마나 가리는지 알려 줌(__lgKb) → 아래에서 뜨는 창을 키보드 위로 올림
+   - 공통: 입력칸에 커서가 가면 그 칸이 보이도록 알맞게 스크롤 ===== */
+(function(){
+  let nat=0;const root=document.documentElement;
+  const vvGap=()=>{const v=window.visualViewport;if(!v)return 0;return Math.max(0,Math.round(window.innerHeight-v.height-v.offsetTop));};
+  const SKIP=/^(checkbox|radio|button|submit|reset|range|color|file|hidden)$/;
+  function field(){const el=document.activeElement;if(!el)return null;if(el.isContentEditable)return el;if(el.tagName==='TEXTAREA')return el;if(el.tagName==='INPUT'&&!SKIP.test(el.type||''))return el;return null;}
+  function scroller(el){let p=el.parentElement;while(p&&p!==document.body&&p!==root){const cs=getComputedStyle(p);if(/(auto|scroll)/.test(cs.overflowY)&&p.scrollHeight>p.clientHeight+2)return p;p=p.parentElement;}return document.scrollingElement||root;}
+  function clearSpacers(){document.querySelectorAll('.kbSpacer').forEach(x=>x.remove());}
+  function ensure(){
+    const el=field();if(!el)return;
+    const v=window.visualViewport,top=(v?v.offsetTop:0)+56,bottom=(v?v.offsetTop+v.height:window.innerHeight)-nat-14;
+    const r=el.getBoundingClientRect();if(!r.height)return;
+    let d=0;
+    if(r.height>bottom-top)d=r.top-top;else if(r.bottom>bottom)d=r.bottom-bottom;else if(r.top<top)d=r.top-top;
+    if(Math.abs(d)<4)return;
+    const sc=scroller(el);
+    if(d>0){const room=sc.scrollHeight-sc.clientHeight-sc.scrollTop;if(room<d){const sp=document.createElement('div');sp.className='kbSpacer';sp.style.height=Math.ceil(d-room+8)+'px';(sc===document.scrollingElement||sc===root?document.body:sc).appendChild(sp);}}
+    sc.scrollBy({top:d,behavior:'smooth'});
+  }
+  function apply(){
+    const kb=Math.max(nat,vvGap());root.style.setProperty('--kb',nat+'px');
+    root.classList.toggle('kbOpen',kb>40);if(kb<=40)clearSpacers();
+    setTimeout(ensure,60);
+  }
+  window.__lgKb=function(px){nat=Math.max(0,Number(px)||0);apply();};
+  document.addEventListener('focusin',()=>{setTimeout(ensure,320);setTimeout(ensure,700);});
+  document.addEventListener('focusout',()=>{setTimeout(()=>{if(!field()&&!root.classList.contains('kbOpen'))clearSpacers();},400);});
+  if(window.visualViewport)window.visualViewport.addEventListener('resize',apply);
+  window.addEventListener('resize',()=>setTimeout(apply,60));
 })();
 
 </script>
