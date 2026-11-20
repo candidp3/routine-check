@@ -2957,6 +2957,63 @@ html,body,*{-webkit-tap-highlight-color:transparent!important}
 #bookModal .bookFormGrid .bookFormatMulti .bookFormatChoice{height:44px!important;font-size:var(--fs-2)!important;background:var(--rc-soft)!important;border:1.5px solid transparent!important;border-radius:12px!important;color:var(--rc-tx)!important}
 #bookModal .bookFormGrid .bookFormatMulti .bookFormatChoice.on{background:var(--rc-gl)!important;border-color:var(--rc-g)!important;font-weight:600!important}
 #bookModal .bookFooterLeft button{border:0!important;background:var(--rc-soft)!important;color:var(--rc-tx2)!important}
+/* 이전 기록 더 보기: 자주 쓴 순 | 최신순 (2026-11-20) */
+.hpSeg{display:flex;gap:4px;padding:3px;margin:2px 0 10px;border-radius:12px;background:var(--rc-soft)}
+.hpSeg button{flex:1;border:0;background:transparent;padding:8px 0;border-radius:9px;font:inherit;font-size:.8125rem;font-weight:500;color:var(--rc-mu)}
+.hpSeg button.on{background:var(--rc-card);color:var(--rc-tx);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+/* 쉬어가기 (2026-11-20) */
+.tdHero .thRestTag{display:inline-flex;align-items:center;margin:3px 0 2px;padding:3px 9px;border-radius:999px;background:var(--rc-gl);color:var(--rc-gd);font-size:.75rem;font-weight:500;letter-spacing:.01em}
+.calDay .rsMk{position:absolute;top:3px;left:4px;width:9px;height:9px;color:var(--rc-gs);opacity:.75;pointer-events:none;line-height:0}
+.calDay .rsMk svg{width:9px;height:9px;stroke-width:2.4}
+.calDay{position:relative}
+.rsDetail{display:flex;align-items:center;gap:7px;margin:0 0 10px;padding:9px 12px;border-radius:12px;background:var(--rc-soft);font-size:.8125rem;color:var(--rc-tx2)}
+.rsDetail b{font-weight:600;color:var(--rc-tx)}
+.rsDetail .rsIc,.rsRow .rsIc{width:16px;height:16px;color:var(--rc-gs);flex:none;line-height:0}
+.rsDetail .rsIc svg,.rsRow .rsIc svg{width:16px;height:16px}
+.rsForm{display:flex;flex-direction:column;gap:10px;margin:4px 0 14px;padding:14px;border-radius:14px;background:var(--rc-soft)}
+.rsQuick{display:flex;gap:6px}
+.rsQuick button{flex:1;height:34px;border:1px solid var(--rc-line2);border-radius:10px;background:var(--rc-card);color:var(--rc-tx2);font:inherit;font-size:.8125rem}
+.rsDates{display:flex;align-items:flex-end;gap:8px}
+.rsDates label{flex:1;display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:4px;font-size:.75rem;color:var(--rc-mu);min-width:0;margin:0}
+.rsGroup{margin:4px 0 2px;font-size:.75rem;font-weight:600;letter-spacing:.04em;color:var(--rc-mu)}
+.rsDates input{width:100%;height:42px;box-sizing:border-box;border:1px solid var(--rc-line2);border-radius:10px;background:var(--rc-card);color:var(--rc-tx);font:inherit;font-size:.875rem;padding:0 10px}
+.rsDash{padding-bottom:11px;color:var(--rc-mu)}
+.rsName{height:42px;box-sizing:border-box;border:1px solid var(--rc-line2);border-radius:10px;background:var(--rc-card);color:var(--rc-tx);font:inherit;font-size:.875rem;padding:0 12px}
+.rsAdd{height:44px;border:0;border-radius:12px;background:var(--rc-solid);color:#fff;font:inherit;font-size:.875rem;font-weight:600}
+.rsRow{display:flex;align-items:center;gap:10px;padding:11px 2px;border-bottom:1px solid var(--rc-line)}
+.rsRow .rsTx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.rsRow .rsTx b{font-size:.875rem;font-weight:600;color:var(--rc-tx)}
+.rsRow .rsTx small{font-size:.75rem;color:var(--rc-mu)}
+.rsRow.now .rsTx small{color:var(--rc-gs)}
+.rsDel{border:0;background:transparent;color:var(--rc-mu);font:inherit;font-size:.8125rem;padding:6px 4px}
+.rsPast{margin-top:12px}
+.rsPast summary{font-size:.8125rem;color:var(--rc-mu);padding:6px 0;cursor:pointer}
+.rPauseRow{display:flex;align-items:center;gap:8px}
+.rPauseRow input{flex:1;min-width:0}
+.rPauseRow span{font-size:.8125rem;color:var(--rc-mu);flex:none}
+.rPauseClr{flex:none;border:0;background:transparent;color:var(--rc-mu);font:inherit;font-size:.8125rem;padding:6px}
+/* RECORD 루틴별 한 주 */
+.rw-card .rwGrid{display:flex;flex-direction:column;gap:5px;margin-top:6px}
+.rwRow{display:grid;grid-template-columns:minmax(0,1fr) repeat(7,26px) 18px;align-items:center;column-gap:4px}
+.rwHead .rwC{font-size:.6875rem;color:var(--rc-mu);text-align:center}
+.rwHead .rwC.tdy{color:var(--rc-gs);font-weight:600}
+.rwName{font-size:.8125rem;color:var(--rc-tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:4px}
+.rwN{font-size:.6875rem;color:var(--rc-mu);text-align:right;font-variant-numeric:tabular-nums}
+.rwC{display:flex;justify-content:center}
+.rwC i{display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:7px;box-sizing:border-box;line-height:0}
+.rwC i svg{width:12px;height:12px}
+.rwC i.rw-done{background:var(--c);color:#fff}
+.rwC i.rw-todo{border:1.5px solid var(--rc-line2)}
+.rwC i.rw-off{width:22px;height:22px;position:relative}
+.rwC i.rw-off::after{content:'';width:4px;height:4px;border-radius:50%;background:var(--rc-line2)}
+.rwC i.rw-rest{color:var(--rc-gs);opacity:.7}
+.rwC i.rw-rest svg{width:13px;height:13px}
+.rwC i.rw-fut{border:1.5px dashed var(--rc-line);opacity:.6}
+.rwBlock{margin:8px 0 1px;font-size:.6875rem;font-weight:600;letter-spacing:.06em;color:var(--rc-mu);display:flex;align-items:center;gap:6px}
+.rwBlock::before{content:'';width:6px;height:6px;border-radius:2px;background:var(--c)}
+.rwGrid .rwBlock:first-of-type{margin-top:2px}
+
 </style>
 <script>/* 새로고침 때 그리기 전 화면(아이콘 자리표시·기본 칸)이 잠깐 보이지 않게: 첫 그리기 뒤 보여줌 */document.documentElement.classList.add('booting');setTimeout(function(){document.documentElement.classList.remove('booting')},3000);</script>
 </head>
@@ -12601,7 +12658,7 @@ function renderTodayHero(){
   const h=new Date().getHours();
   /* 인사는 시계가 아니라 지금 시간대(설정한 시간대 기준)를 따름 (2026-11-19) */
   const HI_BY_BLOCK={dawn:['star','고요한 새벽이에요'],breakfast:['sun','반가운 아침이에요'],morning:['leaf','산뜻한 오전이에요'],lunch:['bowl','맛있는 점심시간이에요'],afternoon:['coffee','오후도 천천히 가요'],evening:['home','편안한 저녁이에요'],night:['moon','밤이 깊었네요']};
-  let hi=null;try{hi=HI_BY_BLOCK[thBlockNow()];}catch(e){}
+  let hi=null;try{hi=(typeof thHelloNow==='function'&&thHelloNow())||HI_BY_BLOCK[thBlockNow()];}catch(e){}
   if(!hi)hi=h<6?HI_BY_BLOCK.dawn:h<11?HI_BY_BLOCK.breakfast:h<14?HI_BY_BLOCK.lunch:h<18?HI_BY_BLOCK.afternoon:h<22?HI_BY_BLOCK.evening:HI_BY_BLOCK.night;
   const logs=(loadLifeLogs()[lifeLogKey()]||[]).filter(l=>l.completed||Number(l.duration)>0||Number(l.count)>0);
   const parts=[];try{const w=Number(state.waterMl||0);if(w)parts.push(`물 ${w.toLocaleString()}ml`);}catch(e){}
@@ -14248,6 +14305,323 @@ try{qlFabSync();}catch(e){}
 
 /* 책 별점: 비어 있을 때 빈 상자 대신 안내 */
 try{const o=document.querySelector('#bookRating option[value=""]');if(o&&!o.textContent)o.textContent='선택 안 함';}catch(e){}
+
+/* ===== 맨 위 인사 (2026-11-20): 정한 시간대 안에서만 시간대 인사, 그 밖(시간대 사이·마지막 시간대 뒤)에는 안부 인사가 돌아가며 나옴 ===== */
+const LG_HELLO=[
+  ['leaf','오늘은 어떤 하루를 보내고 있나요?'],['cloud','오늘 하루도 평온하게 흘러가길 바라요'],['sparkle','오늘은 마음이 조금 가벼웠으면 좋겠어요'],['rose','소소한 즐거움이 하나쯤 있었나요?'],
+  ['moon','토닥토닥'],['bed','아무것도 하지 않는 시간도 소중해요'],['sparkle','특별하지 않아도 충분히 소중한 하루예요'],
+  ['leaf','어깨에 힘을 살짝 풀어볼까요?'],['cloud','잠깐 하늘을 바라보는 것도 좋겠어요'],['drop','깊게 숨 한 번, 마음에도 여유 한 스푼'],
+  ['rose','똑똑! 오늘의 안부를 물으러 왔어요'],['sparkle','반짝이는 순간 하나쯤 만나길 바라요'],['sun','마음에 작은 햇살 하나 놓고 갈게요'],['star','어쩐지 좋은 일이 생길 것 같은 날이에요'],['leaf','살랑살랑, 마음에도 바람이 불었으면']];
+function thHelloNow(){
+  try{
+    const st=lbNowState();if(st&&st.mode==='now')return null; /* 정한 시간대 안 → 시간대 인사 */
+    const now=new Date(),slot=Math.floor(now.getTime()/36e5); /* 한 시간마다 바뀜 */
+    const x=LG_HELLO[(slot*7)%LG_HELLO.length];
+    return [appIconSvg(x[0])?x[0]:'leaf',x[1]];
+  }catch(e){return null;}
+}
+
+/* ===== 이전 기록 순서 (2026-11-20)
+   - 식사(아침·점심·저녁): 이 식사에서 자주 쓴 것 먼저 → 다른 식사에서 자주 쓴 것. 더 보기에서 '최신순'은 모든 식사 기준
+   - 식사 말고는(자유 메모·간식·QUICK LOG·기록 틀 칸): 최근에 쓴 순 ===== */
+function rcRecentOrder(occ,keyOf){const seen=new Set(),out=[];occ.forEach(x=>{const k=keyOf(x);if(!k||seen.has(k))return;seen.add(k);out.push(x);});return out;}
+function rcMealOcc(routineId){
+  const routines=loadLifeRoutines();
+  const mealIds=new Set(routines.filter(r=>isMealFreeRoutine(r)).map(r=>r.id));
+  const all=loadLifeLogs(),occ=[];
+  rcDaysDesc(all).forEach(k=>{(Array.isArray(all[k])?all[k]:[]).slice().reverse().forEach(log=>{
+    if(!log||!mealIds.has(log.routineId))return;
+    const text=String(log.memo||'').trim();if(!text)return;
+    const place=String(log.place||'').trim(),vals={};
+    try{mealLogIds(log).forEach(id=>{vals[id]=mealItemValue(log,id);});}catch(e){}
+    occ.push({text,place,vals,rid:log.routineId,day:k});
+  });});
+  return occ;
+}
+function rcMealKey(x){return x.text+'\u0001'+x.place;}
+getPreviousMealRecords=function(routineId,limit=1000){
+  const target=loadLifeRoutines().find(r=>r.id===routineId);
+  if(!isMealFreeRoutine(target))return [];
+  const occ=rcMealOcc(routineId);
+  const mine=rcFreqOrder(occ.filter(x=>x.rid===routineId),rcMealKey);
+  const seen=new Set(mine.map(rcMealKey));
+  const rest=rcFreqOrder(occ,rcMealKey).filter(x=>!seen.has(rcMealKey(x)));
+  return mine.concat(rest).slice(0,limit);
+};
+function getPreviousMealRecent(routineId,limit=1000){return rcRecentOrder(rcMealOcc(routineId),rcMealKey).slice(0,limit);}
+getPreviousFreeRecords=function(routineId,limit=1000){return rcRecentOrder(rcFreeOcc(routineId),x=>x).slice(0,limit);};
+/* 칩: 넘겨받은 목록 순서를 그대로 씀(목록을 만들 때 이미 정렬함) */
+(function(){
+  const ra=rcAttach;
+  rcAttach=function(o){if(o)o.counts=null;return ra.apply(this,arguments);};
+})();
+/* 기록 틀 칸 선택지 */
+tplHistory=function(rid,tpl){
+  rid=String(rid);
+  let meal=false;try{meal=!rid.startsWith('ol:')&&isMealFreeRoutine(loadLifeRoutines().find(x=>x.id===rid));}catch(e){}
+  const collect=texts=>{const opts={};tpl.fields.forEach((f,i)=>{opts[i]=[];});
+    texts.forEach(t=>{const v=tplParse(tpl,t);tpl.fields.forEach((f,i)=>{
+      const many=f.type==='multi'||f.type==='people';
+      if(f.type!=='pick'&&!many)return;
+      const arr=many?(v[i]||[]):[v[i]];
+      arr.flatMap(x=>many?String(x||'').split(/\s*[,，+\/\n]\s*/):[x]).forEach(x=>{x=String(x||'').trim();if(x&&x.length<=40)opts[i].push(x);});
+    });});return opts;};
+  const out={};
+  if(meal){
+    const occ=rcMealOcc(rid),A=collect(occ.filter(x=>x.rid===rid).map(x=>x.text)),B=collect(occ.map(x=>x.text));
+    Object.keys(A).forEach(i=>{const a=rcFreqOrder(A[i],x=>x),s=new Set(a);out[i]=a.concat(rcFreqOrder(B[i],x=>x).filter(x=>!s.has(x)));});
+  }else{
+    const O=collect(tplHistTextsAll(rid));Object.keys(O).forEach(i=>{out[i]=rcRecentOrder(O[i],x=>x);});
+  }
+  return out;
+};
+/* 더 보기(식사): [자주 쓴 순 | 최신순] */
+let hpTabs=null;
+(function(){
+  const op=openHistoryPicker;
+  openHistoryPicker=function(items,label){
+    hpTabs=null;
+    try{
+      const ctx=typeof routineInputContext!=='undefined'?routineInputContext:null;
+      const open=!document.getElementById('routineInputSheet')?.classList.contains('hide');
+      if(!window._rcOl&&open&&ctx&&ctx.mode==='free'&&ctx.id&&isMealFreeRoutine(loadLifeRoutines().find(x=>x.id===ctx.id))){
+        hpTabs={on:'freq',freq:items,recent:getPreviousMealRecent(ctx.id)};
+      }
+    }catch(e){hpTabs=null;}
+    return op.apply(this,arguments);
+  };
+  const rh=renderHistoryPicker;
+  renderHistoryPicker=function(){
+    const r=rh.apply(this,arguments);
+    const list=document.getElementById('historyPickerList');if(!list)return r;
+    let seg=document.getElementById('hpSeg');
+    if(!hpTabs){if(seg)seg.remove();return r;}
+    if(!seg){seg=document.createElement('div');seg.id='hpSeg';seg.className='hpSeg';list.before(seg);}
+    seg.innerHTML=`<button type="button" class="${hpTabs.on==='freq'?'on':''}" onclick="hpTab('freq')">자주 쓴 순</button><button type="button" class="${hpTabs.on==='recent'?'on':''}" onclick="hpTab('recent')">최신순</button>`;
+    return r;
+  };
+})();
+function hpTab(k){if(!hpTabs)return;hpTabs.on=k;historyPickerItems=hpTabs[k]||[];historyPickerExpanded=false;renderHistoryPicker();}
+
+
+/* ===== 쉬어가기 (2026-11-20): 여행·휴식 기간에는 루틴을 잠시 쉬어요 =====
+   - 설정 → 쉬어가기에서 기간(시작일·끝일·이름) 등록. 여러 개 가능
+   - 쉬는 날: TODAY 맨 위에 '쉬어가는 중', 루틴은 그대로 체크 가능, RECORD 달성률에서 빠짐, 캘린더에 잎 표시
+   - 앱: 시간대·데일리케어·프로젝트 알림 멈춤 (안부 인사·취침 알림은 그대로)
+   - 루틴 하나만: 루틴 편집 → '잠시 쉬기 ~날짜' (그 기간엔 TODAY에서 숨기고 통계에서도 뺌) */
+const REST_KEY='restPeriods_v1';
+function restLoad(){let a=[];try{a=JSON.parse(localStorage.getItem(REST_KEY)||'[]');}catch(e){}return Array.isArray(a)?a.filter(x=>x&&/^\d{4}-\d{2}-\d{2}$/.test(x.from)&&/^\d{4}-\d{2}-\d{2}$/.test(x.to)):[];}
+function restSave(a){try{localStorage.setItem(REST_KEY,JSON.stringify(a));}catch(e){}}
+function restOn(k){if(!k)return null;return restLoad().find(x=>x.from<=k&&k<=x.to)||null;}
+function restMD(k){const p=String(k||'').split('-');return p.length===3?`${+p[1]}.${+p[2]}`:k;}
+function restRange(x){return x.from===x.to?restMD(x.from):`${restMD(x.from)} – ${restMD(x.to)}`;}
+function restLeafSvg(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19c0-8 5-13 14-14-1 9-6 14-14 14z"/><path d="M5 19l7-7"/></svg>';}
+function routinePausedOn(r,k){return !!(r&&r.pauseUntil&&k&&k<=r.pauseUntil&&k>=(r.pauseFrom||'0000-00-00'));}
+/* 루틴 하나 쉬기: 그 기간엔 그날 할 루틴이 아님 */
+(function(){
+  const sa=scheduleApplies;
+  scheduleApplies=function(definition,dateKey){if(routinePausedOn(definition,dateKey))return false;return sa.apply(this,arguments);};
+  /* 쉬는 날은 달성률 계산에서 뺌 (한 기록은 그대로 보임) */
+  const rs=routineScheduledForRecord;
+  routineScheduledForRecord=function(r,dateKey){if(restOn(dateKey))return false;return rs.apply(this,arguments);};
+})();
+/* TODAY 맨 위 */
+(function(){
+  const hn=thHelloNow;
+  thHelloNow=function(){try{if(restOn(getLocalDateKey(new Date())))return ['leaf','쉬어가는 중이에요'];}catch(e){}return hn.apply(this,arguments);};
+  const g=renderTodayHero;
+  renderTodayHero=function(){
+    const r=g.apply(this,arguments);
+    try{
+      const el=document.getElementById('tdHero');if(!el)return r;
+      el.querySelector('.thRestTag')?.remove();
+      const x=restOn(getLocalDateKey(new Date()));el.classList.toggle('isRest',!!x);
+      if(x){const sum=el.querySelector('.thSum');const tag=`<div class="thRestTag">${x.name?escapeLife(x.name)+' · ':''}${x.from===x.to?'오늘 하루':restMD(x.to)+'까지'}</div>`;
+        if(sum){sum.insertAdjacentHTML('beforebegin',tag);if(/아직 기록이 없어요/.test(sum.textContent))sum.textContent='하고 싶은 것만 가볍게 해요';}}
+    }catch(e){}
+    return r;
+  };
+  try{renderTodayHero();}catch(e){}
+})();
+/* 캘린더: 쉬는 날에 작은 잎, 아래 상세에 한 줄 */
+(function(){
+  const cal=renderLifeCalendar;
+  renderLifeCalendar=function(){
+    const r=cal.apply(this,arguments);
+    try{
+      const list=restLoad();
+      document.querySelectorAll('#calendarGrid .calDay:not(.blank)').forEach(b=>{
+        b.querySelector('.rsMk')?.remove();b.classList.remove('isRest');if(!list.length)return;
+        const m=/'(\d{4}-\d{2}-\d{2})'/.exec(b.getAttribute('onclick')||'');if(!m||!restOn(m[1]))return;
+        b.classList.add('isRest');b.insertAdjacentHTML('beforeend',`<span class="rsMk" aria-hidden="true">${restLeafSvg()}</span>`);
+      });
+    }catch(e){}
+    return r;
+  };
+  const det=renderCalendarDetail;
+  renderCalendarDetail=function(k){
+    const r=det.apply(this,arguments);
+    try{
+      const root=document.getElementById('calendarDetail');if(!root)return r;
+      root.querySelector('.rsDetail')?.remove();
+      const key=k||calendarSelectedKey,x=restOn(key);
+      if(x)root.insertAdjacentHTML('afterbegin',`<div class="rsDetail"><span class="rsIc">${restLeafSvg()}</span><b>쉬어간 날</b><span>${x.name?escapeLife(x.name)+' · ':''}${restRange(x)}</span></div>`);
+    }catch(e){}
+    return r;
+  };
+})();
+/* 설정 화면 */
+function openRest(){restRender();document.getElementById('restModal')?.classList.remove('hide');}
+function closeRest(){document.getElementById('restModal')?.classList.add('hide');}
+function restAfter(){
+  try{renderLifeGuide();}catch(e){}try{renderTodayHero();}catch(e){}try{renderLifeCalendar();}catch(e){}
+  try{renderRecordDashboard();}catch(e){}try{window.notiResched&&notiResched();}catch(e){}restSummary();
+}
+function restSummary(){
+  const el=document.getElementById('restSummary');if(!el)return;
+  const today=getLocalDateKey(new Date()),now=restOn(today),next=restLoad().filter(x=>x.from>today).sort((a,b)=>a.from<b.from?-1:1)[0];
+  el.textContent=now?`쉬는 중 · ${restMD(now.to)}까지`:next?`다음 쉬는 날 ${restRange(next)}`:'여행·휴식 기간에 루틴 잠시 쉬기';
+}
+function restRender(){
+  const el=document.getElementById('restList');if(!el)return;
+  const today=getLocalDateKey(new Date());
+  const list=restLoad().sort((a,b)=>a.from<b.from?1:-1);
+  const live=list.filter(x=>x.to>=today),past=list.filter(x=>x.to<today);
+  const row=x=>`<div class="rsRow${x.from<=today&&today<=x.to?' now':''}"><span class="rsIc">${restLeafSvg()}</span><div class="rsTx"><b>${escapeLife(x.name||'쉬어가기')}</b><small>${restRange(x)}${x.from<=today&&today<=x.to?' · 쉬는 중':''}</small></div><button type="button" class="rsDel" onclick="restDel('${x.id}')">삭제</button></div>`;
+  let h=`<div class="rsForm">
+    <div class="rsQuick"><button type="button" onclick="restQuick(0)">오늘 하루</button><button type="button" onclick="restQuick(2)">3일</button><button type="button" onclick="restQuick(6)">일주일</button></div>
+    <div class="rsDates"><label><span>시작</span><input id="rsFrom" type="date" value="${today}"></label><span class="rsDash">–</span><label><span>끝</span><input id="rsTo" type="date" value="${today}"></label></div>
+    <input id="rsName" class="rsName" maxlength="12" placeholder="이름 (예: 여행, 휴식) · 선택">
+    <button type="button" class="rsAdd" onclick="restAdd()">쉬어가기 추가</button>
+  </div>`;
+  h+=live.length?`<div class="rsGroup">예정 · 지금</div>${live.map(row).join('')}`:'';
+  h+=past.length?`<details class="rsPast"><summary>지난 쉬어가기 ${past.length}개</summary>${past.map(row).join('')}</details>`:'';
+  el.innerHTML=h;
+}
+function restQuick(n){const f=document.getElementById('rsFrom'),t=document.getElementById('rsTo');if(!f||!t)return;const a=f.value||getLocalDateKey(new Date());f.value=a;t.value=periodAddDays(a,n);}
+function restAdd(){
+  let f=document.getElementById('rsFrom')?.value,t=document.getElementById('rsTo')?.value;const name=String(document.getElementById('rsName')?.value||'').trim().slice(0,12);
+  if(!f||!t){appAlert('시작일과 끝일을 골라 주세요.');return;}
+  if(t<f)[f,t]=[t,f];
+  const list=restLoad();
+  if(list.some(x=>!(t<x.from||f>x.to))){appAlert('이미 쉬어가기로 정한 날과 겹쳐요.\n겹치는 기간을 먼저 지워 주세요.');return;}
+  list.push({id:'rest_'+Date.now().toString(36),from:f,to:t,name});restSave(list);
+  restRender();restAfter();appToast(`${restRange({from:f,to:t})} 쉬어가기를 추가했어요`);
+}
+async function restDel(id){
+  const x=restLoad().find(y=>y.id===id);if(!x)return;
+  if(!await appConfirm(`${x.name?x.name+' · ':''}${restRange(x)} 쉬어가기를 지울까요?\n그동안 남긴 기록은 그대로예요.`))return;
+  restSave(restLoad().filter(y=>y.id!==id));restRender();restAfter();
+}
+(function(){
+  try{
+    if(!document.getElementById('restModal')){
+      const m=document.createElement('div');m.id='restModal';m.className='lifeModal hide';m.setAttribute('onclick','if(event.target===this)closeRest()');
+      m.innerHTML=`<div class="lifeSheet"><div class="lifeSheetHead"><b>쉬어가기</b><button class="lifeClose" type="button" onclick="closeRest()">×</button></div><div class="calendarChipSelectHint">여행이나 휴식으로 쉬는 날을 정해 두면, 그동안은 RECORD 달성률에서 빠지고 알림도 쉬어요. 하고 싶은 루틴은 그대로 체크할 수 있어요.</div><div id="restList"></div></div>`;
+      document.body.appendChild(m);
+    }
+    const sec=[...document.querySelectorAll('.backupCardTitle')].find(t=>t.textContent.trim()==='FEATURES');
+    if(sec&&!document.getElementById('restRow')){
+      const r=document.createElement('div');r.id='restRow';r.className='backupPart settingLinkRow tapRow';r.setAttribute('role','button');r.tabIndex=0;r.setAttribute('onclick','openRest()');
+      r.innerHTML=`<div><div class="backupSubTitle">쉬어가기</div><div class="backupHint" id="restSummary">여행·휴식 기간에 루틴 잠시 쉬기</div></div><span class="manageChev" aria-hidden="true">›</span>`;
+      const first=sec.parentElement.querySelector('.settingLinkRow');if(first)first.after(r);else sec.parentElement.appendChild(r);
+    }
+    restSummary();
+  }catch(e){console.warn(e);}
+})();
+/* 루틴 편집: 잠시 쉬기 ~날짜 */
+(function(){
+  const host=document.getElementById('rEnabled')?.closest('.lifeField');
+  if(host&&!document.getElementById('rPauseWrap')){
+    host.insertAdjacentHTML('beforebegin',`<div class="lifeField" id="rPauseWrap"><label>잠시 쉬기 <span class="fieldHint">선택</span></label><div class="rPauseRow"><input id="rPauseUntil" type="date"><span>까지</span><button type="button" class="rPauseClr" onclick="document.getElementById('rPauseUntil').value=''">없음</button></div><div class="fieldHint" style="margin-top:5px">다쳤거나 잠시 못 하는 루틴만 따로 쉬어요. 이 날까지 TODAY에서 숨기고 통계에서도 빼요.</div></div>`);
+  }
+  const open=openRoutineModal,save=saveRoutineFromModal;
+  openRoutineModal=function(id,block){
+    const r=open.apply(this,arguments);
+    try{
+      const rt=id?loadLifeRoutines().find(x=>x.id===id):null,inp=document.getElementById('rPauseUntil'),wrap=document.getElementById('rPauseWrap');
+      const today=getLocalDateKey(new Date());
+      if(inp){inp.value=rt&&rt.pauseUntil&&rt.pauseUntil>=today?rt.pauseUntil:'';inp.min=today;}
+      if(wrap)wrap.classList.toggle('hide',(rt?rt.block:block)==='free');
+    }catch(e){}
+    return r;
+  };
+  saveRoutineFromModal=function(){
+    const before=new Set(loadLifeRoutines().map(x=>x.id));
+    const editId=document.getElementById('rId')?.value||'';
+    const until=document.getElementById('rPauseUntil')?.value||'';
+    const r=save.apply(this,arguments);
+    try{
+      const list=loadLifeRoutines(),today=getLocalDateKey(new Date());
+      const t=editId?list.find(x=>x.id===editId):list.find(x=>!before.has(x.id));
+      if(t){
+        if(until&&until>=today){if(!(t.pauseUntil&&t.pauseUntil>=today&&t.pauseFrom))t.pauseFrom=today;t.pauseUntil=until;}
+        else if(t.pauseUntil&&t.pauseUntil>=today){ /* 쉬기를 지움: 지난 기간 기록은 남기고 오늘부터 다시 */
+          if(t.pauseFrom&&t.pauseFrom<today)t.pauseUntil=periodAddDays(today,-1);else{delete t.pauseUntil;delete t.pauseFrom;}
+        }
+        saveLifeRoutines(list);try{renderLifeGuide();}catch(e){}
+      }
+    }catch(e){}
+    return r;
+  };
+  if(typeof routineManagerRecurrenceText==='function'){
+    const rt=routineManagerRecurrenceText;
+    routineManagerRecurrenceText=function(r){const s=rt.apply(this,arguments);try{const today=getLocalDateKey(new Date());if(r&&r.pauseUntil&&r.pauseUntil>=today&&(r.pauseFrom||'')<=today)return `${s} · ${restMD(r.pauseUntil)}까지 쉬는 중`;}catch(e){}return s;};
+  }
+})();
+
+/* ===== RECORD 주: 루틴별 한 주 (2026-11-20)
+   한 칸이 하루. 한 날은 시간대 색으로 채움, 할 날인데 안 한 날은 빈 칸, 할 날이 아니면 작은 점, 쉬는 날은 잎. 빨간색·실패 표시는 없음 ===== */
+function rwDone(r,k){
+  try{
+    if(r.legacyKey)return !!(getStateForKey(k).checks||{})[r.legacyKey];
+    const log=(loadLifeLogs()[k]||[]).find(x=>x&&x.routineId===r.id);
+    return !!log&&calendarRoutineLogIsRecorded(log);
+  }catch(e){return false;}
+}
+function rwColor(blockIdx){try{return ftHex(ftColorOfIndex(blockIdx),'g')||'var(--rc-g)';}catch(e){return 'var(--rc-g)';}}
+function rwCardHTML(days){
+  const keys=days.map(d=>rrIso(d)),today=getLocalDateKey(new Date());
+  const defs=lifeBlockDefs(),bIdx={};defs.forEach((b,i)=>{bIdx[b.id]=i;});
+  const rows=loadLifeRoutines().filter(r=>r.block!=='free'&&bIdx[r.block]!==undefined)
+    .sort((a,b)=>(bIdx[a.block]-bIdx[b.block])||((a.order||0)-(b.order||0)))
+    .map(r=>{
+      const cells=keys.map(k=>{
+        if(k>today)return {s:'fut'};
+        const done=rwDone(r,k);
+        if(restOn(k))return {s:done?'done':'rest'};
+        const sch=(()=>{try{return r.enabled!==false&&(!r.recordFrom||k>=r.recordFrom)&&scheduleApplies(r,k,{allowFree:true});}catch(e){return false;}})();
+        return {s:done?'done':sch?'todo':'off'};
+      });
+      return {r,cells,n:cells.filter(c=>c.s==='done').length};
+    })
+    .filter(x=>x.n>0||(x.r.enabled!==false&&x.cells.some(c=>c.s==='todo')));
+  if(!rows.length)return '';
+  const WD=['일','월','화','수','목','금','토'];
+  const head=`<div class="rwRow rwHead"><span class="rwName"></span>${days.map((d,i)=>`<span class="rwC${keys[i]===today?' tdy':''}">${WD[d.getDay()]}</span>`).join('')}<span class="rwN"></span></div>`;
+  let lastB='';
+  const body=rows.map(({r,cells,n})=>{
+    const c=rwColor(bIdx[r.block]);let sep='';
+    if(r.block!==lastB){lastB=r.block;const b=defs.find(x=>x.id===r.block);sep=`<div class="rwBlock" style="--c:${c}">${escapeLife(b?b.name:'')}</div>`;}
+    return sep+`<div class="rwRow" style="--c:${c}"><span class="rwName">${escapeLife(String(r.name||''))}</span>${cells.map(x=>`<span class="rwC"><i class="rw-${x.s}">${x.s==='rest'?restLeafSvg():x.s==='done'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12.5l4 4 8-9"/></svg>':''}</i></span>`).join('')}<span class="rwN">${n?n:''}</span></div>`;
+  }).join('');
+  return `<div class="rr-card rw-card"><h2>루틴별 한 주 <span class="rr-card-note">한 날만 색칠돼요</span></h2><div class="rwGrid">${head}${body}</div></div>`;
+}
+(function(){
+  const rd=renderRecordDashboard;
+  renderRecordDashboard=function(){
+    const r=rd.apply(this,arguments);
+    try{
+      if(typeof recordPeriod!=='undefined'&&recordPeriod!=='week')return r;
+      const out=document.getElementById('rrOut');if(!out||out.querySelector('.rw-card'))return r;
+      const h=rwCardHTML(rrWeekDays(rrCursor));if(!h)return r;
+      const ref=[...out.querySelectorAll('.rr-card')].find(c=>/루틴 수행/.test(c.querySelector('h2')?.textContent||''));
+      if(ref)ref.insertAdjacentHTML('beforebegin',h);else out.insertAdjacentHTML('afterbegin',h);
+    }catch(e){console.warn(e);}
+    return r;
+  };
+})();
+
 </script>
 
 
