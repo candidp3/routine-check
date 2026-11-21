@@ -3027,6 +3027,8 @@ html,body,*{-webkit-tap-highlight-color:transparent!important}
 html .lifeModal{bottom:var(--kb,0px)!important;top:0!important;height:auto!important}
 .lifeModal>.lifeSheet{max-height:min(90vh,calc(100% - 16px))}
 
+#sleepManualDateNote b,#dailyCareDurationDateNote b{font-weight:600;color:var(--rc-tx)}
+
 </style>
 <script>/* 새로고침 때 그리기 전 화면(아이콘 자리표시·기본 칸)이 잠깐 보이지 않게: 첫 그리기 뒤 보여줌 */document.documentElement.classList.add('booting');setTimeout(function(){document.documentElement.classList.remove('booting')},3000);</script>
 </head>
@@ -14742,6 +14744,127 @@ function rwOpen(name){try{if(!rhCtx||!rhCtx.list)return;const i=rhCtx.list.findI
   document.addEventListener('focusout',()=>{setTimeout(()=>{if(!field()&&!root.classList.contains('kbOpen'))clearSpacers();},400);});
   if(window.visualViewport)window.visualViewport.addEventListener('resize',apply);
   window.addEventListener('resize',()=>setTimeout(apply,60));
+})();
+
+
+/* ===== 데일리케어 시간 기록 (2026-11-21): 날짜를 고르면 그날 이미 있는 기록을 채워서 보여줌
+   - 수면 직접 기록: 기록이 있는 날을 고르면 그날 취침·기상 시각이 채워짐
+   - 다른 시간 기록 항목: 기록 날짜를 고를 수 있게 하고, 같은 방식으로 채움
+   - 직접 입력하던 시각은 지우지 않음(다른 날 기록에서 채워 넣은 값만 비움) ===== */
+function dcDayLabel(k){try{const d=new Date(k+'T12:00:00');return `${d.getMonth()+1}월 ${d.getDate()}일 (${'일월화수목금토'[d.getDay()]})`;}catch(e){return k;}}
+function dcNoteHTML(k,has,what){
+  if(!k)return '기록 날짜를 골라 주세요.';
+  return has?`<b>${dcDayLabel(k)}</b> ${what} 기록이 있어요 · 고쳐서 저장하면 바뀌어요`:`<b>${dcDayLabel(k)}</b> ${what} 기록으로 저장돼요`;
+}
+let dcSleepAuto=null;
+function dcSleepRecordOf(k){
+  try{const s=getStateForKey(k);if(s&&s.sleepStartAt&&s.sleepEndAt)return {start:fmtHM(new Date(s.sleepStartAt)),end:fmtHM(new Date(s.sleepEndAt))};}catch(e){}
+  return null;
+}
+(function(){
+  const op=openSleepManualModal;
+  openSleepManualModal=function(){
+    const r=op.apply(this,arguments);
+    try{
+      const k=document.getElementById('sleepManualRecordDate')?.value||'';
+      const s=document.getElementById('sleepManualStartTime'),e=document.getElementById('sleepManualEndTime');
+      document.getElementById('sleepManualRecordDate').max=getLocalDateKey(new Date());
+      dcSleepAuto=null;
+      const rec=dcSleepRecordOf(k);
+      if(rec&&s&&e&&!s.value&&!e.value){s.value=rec.start;e.value=rec.end;dcSleepAuto={start:rec.start,end:rec.end};}
+      renderSleepManualDateNote();
+    }catch(e){}
+    return r;
+  };
+  const rn=renderSleepManualDateNote;
+  renderSleepManualDateNote=function(){
+    rn.apply(this,arguments);
+    try{const k=document.getElementById('sleepManualRecordDate')?.value||'',el=document.getElementById('sleepManualDateNote');
+      if(el)el.innerHTML=dcNoteHTML(k,!!dcSleepRecordOf(k),'수면');}catch(e){}
+  };
+  const inp=document.getElementById('sleepManualRecordDate');
+  if(inp)inp.setAttribute('onchange','dcSleepDateChanged()');
+})();
+function dcSleepDateChanged(){
+  const k=document.getElementById('sleepManualRecordDate')?.value||'';
+  const s=document.getElementById('sleepManualStartTime'),e=document.getElementById('sleepManualEndTime');
+  if(s&&e){
+    const rec=dcSleepRecordOf(k);
+    const wasAuto=dcSleepAuto&&s.value===dcSleepAuto.start&&e.value===dcSleepAuto.end;
+    if(rec){s.value=rec.start;e.value=rec.end;dcSleepAuto={start:rec.start,end:rec.end};}
+    else if(wasAuto){s.value='';e.value='';dcSleepAuto=null;}
+  }
+  renderSleepManualDateNote();
+}
+
+/* 다른 시간 기록 항목 */
+let dcDurDate='',dcDurAuto=null;
+function dcDurRecordOf(k,id){
+  try{const v=readDailyCareMetricValue(k,id);if(v&&typeof v==='object'&&(v.start||v.end||Number.isFinite(v.minutes)))return {start:v.start||'',end:v.end||''};}catch(e){}
+  return null;
+}
+(function(){
+  const grid=document.querySelector('#dailyCareDurationModal .sleepManualGrid');
+  if(grid&&!document.getElementById('dailyCareDurationRecordDate')){
+    grid.insertAdjacentHTML('beforebegin',`<div class="lifeField"><label>기록 날짜 <span class="fieldHint">어느 날 기록할지 선택</span></label><input id="dailyCareDurationRecordDate" type="date" onchange="dcDurDateChanged()"></div>`);
+  }
+  const op=openCustomDailyCareDurationModal;
+  openCustomDailyCareDurationModal=function(id){
+    const r=op.apply(this,arguments);
+    try{
+      dcDurDate=activeDateKey;dcDurAuto=null;
+      const inp=document.getElementById('dailyCareDurationRecordDate');
+      if(inp){inp.value=dcDurDate;inp.max=getLocalDateKey(new Date());}
+      const rec=dcDurRecordOf(dcDurDate,id);
+      if(rec)dcDurAuto=rec;
+      dcDurNote();
+    }catch(e){}
+    return r;
+  };
+})();
+function dcDurName(){try{const d=normalizeDailyCareDefinition(dailyCareDef(dailyCareDurationPopupId));return d.name||'';}catch(e){return '';}}
+function dcDurNote(){
+  const el=document.getElementById('dailyCareDurationDateNote');if(!el)return;
+  el.innerHTML=dcNoteHTML(dcDurDate,!!dcDurRecordOf(dcDurDate,dailyCareDurationPopupId),dcDurName());
+}
+function dcDurDateChanged(){
+  const id=dailyCareDurationPopupId;if(!id)return;
+  dcDurDate=document.getElementById('dailyCareDurationRecordDate')?.value||activeDateKey;
+  const s=document.getElementById('dailyCareDurationStartTime'),e=document.getElementById('dailyCareDurationEndTime');
+  const rec=dcDurRecordOf(dcDurDate,id);
+  const wasAuto=dcDurAuto&&s&&e&&s.value===dcDurAuto.start&&e.value===dcDurAuto.end;
+  if(rec){if(s)s.value=rec.start;if(e)e.value=rec.end;dcDurAuto=rec;}
+  else if(wasAuto){s.value='';e.value='';dcDurAuto=null;}
+  dcDurNote();
+}
+saveCustomDailyCareDurationManual=function(){
+  const id=dailyCareDurationPopupId;if(!id)return;
+  const d=normalizeDailyCareDefinition(dailyCareDef(id));if(!d)return;
+  const k=document.getElementById('dailyCareDurationRecordDate')?.value||dcDurDate||activeDateKey;
+  const start=document.getElementById('dailyCareDurationStartTime')?.value||'';
+  const end=document.getElementById('dailyCareDurationEndTime')?.value||'';
+  if(durationRecordNeedsStart(d)&&!start)return appAlert(`${d.durationStartLabel} 시각을 입력해 주세요.`);
+  if(durationRecordNeedsEnd(d)&&!end)return appAlert(`${d.durationEndLabel} 시각을 입력해 주세요.`);
+  let minutes=null;
+  if(start&&end){minutes=dailyCareDurationMinutes(start,end);if(minutes===null)return appAlert('시간을 확인해 주세요.');}
+  writeDailyCareMetricValue(k,id,{start:start||'',end:end||'',minutes:Number.isFinite(minutes)?minutes:null});
+  /* 진행 중이던 기록은 오늘(보던 날) 것을 저장할 때만 정리 */
+  if(k===activeDateKey)clearDailyCareDurationSession(id);
+  closeCustomDailyCareDurationModal();
+  renderCustomDailyCare();renderDailyCareDashboard();
+  if(k!==activeDateKey)appToast(`${dcDayLabel(k)} 기록을 저장했어요`);
+};
+/* 지난 날 수면을 고쳐 저장할 때 지금 진행 중인 취침 기록은 그대로 둠 */
+(function(){
+  const sv=saveManualSleepFromModal;
+  saveManualSleepFromModal=function(){
+    const sess=loadSleepSession(),k=document.getElementById('sleepManualRecordDate')?.value||'';
+    const keep=sess&&sess.startAt&&(sess.recordDateKey||sleepRecordDateKeyFromStart(new Date(sess.startAt)))!==k;
+    const r=sv.apply(this,arguments);
+    try{if(keep&&!loadSleepSession()){saveSleepSession(sess);try{renderSleep();}catch(e){}try{window.lgCareNotiSync&&lgCareNotiSync(true);}catch(e){}}}catch(e){}
+    try{if(document.getElementById('sleepManualModal')?.classList.contains('hide')&&k&&k!==activeDateKey)appToast(`${dcDayLabel(k)} 수면을 저장했어요`);}catch(e){}
+    return r;
+  };
 })();
 
 </script>
