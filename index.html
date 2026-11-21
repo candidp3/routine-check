@@ -2994,7 +2994,7 @@ html,body,*{-webkit-tap-highlight-color:transparent!important}
 .rPauseRow span{font-size:.8125rem;color:var(--rc-mu);flex:none}
 .rPauseClr{flex:none;border:0;background:transparent;color:var(--rc-mu);font:inherit;font-size:.8125rem;padding:6px}
 /* RECORD 루틴별 한 주 */
-.rw-card .rwGrid{display:flex;flex-direction:column;gap:5px;margin-top:6px}
+.rwGrid{display:flex;flex-direction:column;gap:5px;margin-top:6px}
 .rwRow{display:grid;grid-template-columns:minmax(0,1fr) repeat(7,26px) 18px;align-items:center;column-gap:4px}
 .rwHead .rwC{font-size:.6875rem;color:var(--rc-mu);text-align:center}
 .rwHead .rwC.tdy{color:var(--rc-gs);font-weight:600}
@@ -5342,11 +5342,6 @@ async function restoreAutoBackup(key){
   appAlert('복원했어요. 앱을 새로고침해 주세요.');
 }
 
-function formatAutoBackupKey(key){
-  const raw=String(key||'').replace(AUTO_BACKUP_PREFIX,'');
-  const m=raw.match(/^(\d{4})-(\d{2})-(\d{2})_(\d{2})$/);
-  return m?`${m[1]}.${m[2]}.${m[3]} ${m[4]}시`:raw;
-}
 
 function renderBackupStatus(){
   const root=document.getElementById('autoBackupStatus');
@@ -5356,20 +5351,6 @@ function renderBackupStatus(){
   const latest=keys[keys.length-1];
   const best=autoBackupBestKey(keys);
   root.innerHTML=`<span class="backupStatusStrong">자동 백업 ${keys.length}개</span>`+keys.slice().reverse().map(k=>{const i=autoBackupInfo(k);return `<div class="abRow"><span>${escapeLife(autoBackupLocalLabel(k))} · 기록 ${i.days}일${k===best&&i.days>0?' · 가장 많음':''}</span><button type="button" onclick="restoreAutoBackup('${k}')">복원</button></div>`;}).join('');
-}
-
-async function restoreLatestAutoBackup(){
-  const keys=getAutoBackupKeys();
-  if(!keys.length)return appAlert('자동 백업이 아직 없어요.');
-  const latestKey=keys[keys.length-1];
-  const dataStr=localStorage.getItem(latestKey);
-  let data;
-  try{data=JSON.parse(dataStr);}catch(e){return appAlert('최근 자동 백업 데이터가 손상됐어요.');}
-  if(validateBackupPayload(data)!=='legacy')return appAlert('이 자동 백업은 사용할 수 없어요.');
-  if(!await appConfirm(`최근 자동 백업(${formatAutoBackupKey(latestKey)})으로 기록을 되돌릴까요?`))return;
-  if(!await appConfirm('현재 앱 데이터가 자동 백업 시점의 기록으로 교체됩니다. 계속할까요?'))return;
-  applyLocalStorageSnapshot(data);
-  appAlert('복원했어요. 앱을 새로고침해 주세요.');
 }
 
 function recordResetKeys(){
@@ -8264,34 +8245,6 @@ function setMealValues(log,vals){
   log.proteinG=vals.protein||0;
   const ex={};Object.keys(vals).forEach(id=>{if(id!=='protein'&&vals[id]>0)ex[id]=vals[id];});
   if(Object.keys(ex).length)log.extras=ex;else delete log.extras;
-}
-function getPreviousMealRecords(routineId,limit=1000){
-  const routines=loadLifeRoutines(),target=routines.find(r=>r.id===routineId);
-  if(!isMealFreeRoutine(target))return [];
-  const mealIds=new Set(routines.filter(r=>isMealFreeRoutine(r)).map(r=>r.id));
-  const all=loadLifeLogs(),seen=new Set(),rows=[];
-  Object.keys(all).sort().reverse().forEach(k=>{
-    (Array.isArray(all[k])?all[k]:[]).forEach(log=>{
-      if(!mealIds.has(log.routineId))return;
-      const text=String(log.memo||'').trim();if(!text)return;
-      const place=String(log.place||'').trim(),key=text+'\u0001'+place;
-      if(seen.has(key))return;seen.add(key);
-      const vals={};mealLogIds(log).forEach(id=>{vals[id]=mealItemValue(log,id);});
-      rows.push({text,place,vals});
-    });
-  });
-  return rows.slice(0,limit);
-}
-function getPreviousFreeRecords(routineId,limit=1000){
-  const all=loadLifeLogs(),seen=new Set(),rows=[];
-  Object.keys(all).sort().reverse().forEach(k=>{
-    (Array.isArray(all[k])?all[k]:[]).forEach(log=>{
-      if(log.routineId!==routineId)return;
-      const ents=[String(log.memo||'')].concat(Array.isArray(log.extra)?log.extra.map(x=>String(x||'')):[]);
-      ents.forEach(raw=>{const text=raw.trim();if(!text||seen.has(text))return;seen.add(text);rows.push(text);});
-    });
-  });
-  return rows.slice(0,limit);
 }
 let historyPickerItems=[],historyPickerExpanded=false,historyPickerQuery='';
 function openHistoryPicker(items,label){
@@ -12975,12 +12928,6 @@ openOneOffRecordEditor=function(id){if(!id)return swOpen('ql');return SW_ORIG.ql
 openProject=function(id){if(!id)return swOpen('pj');return SW_ORIG.pj.apply(this,arguments);};
 /* ===== 이전 기록 칩: 입력칸 바로 아래에 자주·최근 기록 (식사·자유 메모·간식·QUICK LOG 메모) 2026-11-13 ===== */
 let rcState=null;
-function rcRank(items,textOf,counts){
-  const idx=items.map((x,i)=>i);if(idx.length<=4)return idx;
-  const recent=idx.slice(0,2);
-  const rest=idx.slice(2).sort((a,b)=>(counts.get(textOf(items[b]))||0)-(counts.get(textOf(items[a]))||0)||a-b);
-  return recent.concat(rest);
-}
 function rcAttach(o){ /* o:{input,items,textOf,counts,pick(i),more()} */
   const inp=o.input;if(!inp||!o.items.length)return;
   inp.parentElement.querySelector('.rcBox')?.remove();
@@ -13145,13 +13092,6 @@ function tplCompose(tpl,vals){
   return groups.map(g=>g.join(' ')).filter(Boolean).join(' | ');
 }
 let tplS=null;
-function tplHistory(rid,tpl){
-  let texts=tplHistTexts(rid);
-  const opts={};tpl.fields.forEach((f,i)=>{opts[i]=new Map();});
-  texts.forEach(t=>{const v=tplParse(tpl,t);tpl.fields.forEach((f,i)=>{if(f.type==='pick'||(f.type==='multi'||f.type==='people')){const arr=(f.type==='multi'||f.type==='people')?(v[i]||[]):[v[i]];arr.flatMap(x=>(f.type==='multi'||f.type==='people')?String(x||'').split(/\s*[,，+\/\n]\s*/):[x]).forEach(x=>{x=String(x||'').trim();if(x&&x.length<=40)opts[i].set(x,(opts[i].get(x)||0)+1);});}});});
-  const out={};Object.keys(opts).forEach(i=>{out[i]=[...opts[i].entries()].sort((a,b)=>b[1]-a[1]).map(x=>x[0]); /* 자주 쓴 순(같으면 최근 순) · 개수 제한 없음 → 검색하면 한 번 먹은 메뉴도 나옴 */});
-  return out;
-}
 function tplMount(rid){
   const ta=document.getElementById(TPL_TA);if(!ta)return;
   ta.parentElement.querySelectorAll('.tplBox,.tplMake').forEach(e=>e.remove());
@@ -13318,8 +13258,7 @@ function pjTidyLine(t){
       if(rc&&box&&tplS&&!tplS.free){rc.classList.remove('tplHid');box.after(rc);const h=rc.querySelector('.rcHead');if(h)h.textContent='이전 기록';}}catch(e){}
     return r;
   };
-  function o_q(){return '';}
-})();
+  })();
 /* 칸 칩은 자주 쓴 5개만, 입력하면 전체에서 찾아 줌 */
 const TPL_SHOW=5;
 function tplFilterChips(i,q){
@@ -13690,15 +13629,7 @@ function tdsFreeToday(){
   });
   return out;
 }
-function tdsSummary(id){
-  try{
-    if(id==='freetime'){const a=tdsFreeToday();return a.length?a.map(x=>x.timing?`<b>${tdsEsc(x.nm)} ${tdsEsc(x.meta)}</b>`:`${tdsEsc(x.nm)}${x.meta?' '+tdsEsc(x.meta):''}`).join(' · '):'오늘은 아직 없어요';}
-    if(id==='project'){const a=pjLoad().filter(p=>p.status==='active');return a.length?`진행 중 ${a.length}개`:'진행 중인 일이 없어요';}
-    if(id==='quicklog'){const n=quickLogItems(lifeLogKey(),false).length;return n?`오늘 ${n}개`:'오늘 남긴 기록이 없어요';}
-  }catch(e){}
-  return '';
-}
-function tdsFoldAll(){} /* 예전 접기 방식: 이제 TODAY에서 상자를 숨기므로 쓰지 않음 */
+ /* 예전 접기 방식: 이제 TODAY에서 상자를 숨기므로 쓰지 않음 */
 /* 바로가기 버튼: 이름 + 짧은 설명(기록이 있으면 오늘 요약) */
 tdJumpTargets=function(){
   const t=[];const on=id=>!document.body.classList.contains('secOff-'+id);
@@ -14159,20 +14090,6 @@ function rcFreqOrder(occ,keyOf){ /* occ: 최근 것부터 나열된 전체 기�
   return [...m.values()].sort((a,b)=>b.n-a.n||a.i-b.i).map(e=>e.x);
 }
 function rcDaysDesc(obj){return Object.keys(obj||{}).sort().reverse();}
-getPreviousMealRecords=function(routineId,limit=1000){
-  const routines=loadLifeRoutines(),target=routines.find(r=>r.id===routineId);
-  if(!isMealFreeRoutine(target))return [];
-  const mealIds=new Set(routines.filter(r=>isMealFreeRoutine(r)).map(r=>r.id));
-  const all=loadLifeLogs(),occ=[];
-  rcDaysDesc(all).forEach(k=>{(Array.isArray(all[k])?all[k]:[]).slice().reverse().forEach(log=>{
-    if(!log||!mealIds.has(log.routineId))return;
-    const text=String(log.memo||'').trim();if(!text)return;
-    const place=String(log.place||'').trim(),vals={};
-    mealLogIds(log).forEach(id=>{vals[id]=mealItemValue(log,id);});
-    occ.push({text,place,vals});
-  });});
-  return rcFreqOrder(occ,x=>x.text+'\u0001'+x.place).slice(0,limit);
-};
 function rcFreeOcc(routineId){
   const all=loadLifeLogs(),occ=[];
   rcDaysDesc(all).forEach(k=>{(Array.isArray(all[k])?all[k]:[]).slice().reverse().forEach(log=>{
@@ -14181,7 +14098,6 @@ function rcFreeOcc(routineId){
   });});
   return occ;
 }
-getPreviousFreeRecords=function(routineId,limit=1000){return rcFreqOrder(rcFreeOcc(routineId),x=>x).slice(0,limit);};
 /* 칩: 넘겨받은 목록을 자주 순·최근 순으로 제자리 정렬 (더 보기·고르기와 순서가 같아짐) */
 rcRank=function(items,textOf,counts){
   const idx=items.map((x,i)=>i);
@@ -14219,18 +14135,6 @@ function tplHistTextsAll(rid){
     return rcFreeOcc(rid);
   }catch(e){return tplHistTexts(rid);}
 }
-tplHistory=function(rid,tpl){
-  const texts=tplHistTextsAll(rid),opts={};
-  tpl.fields.forEach((f,i)=>{opts[i]=[];});
-  texts.forEach(t=>{const v=tplParse(tpl,t);tpl.fields.forEach((f,i)=>{
-    const many=f.type==='multi'||f.type==='people';
-    if(f.type!=='pick'&&!many)return;
-    const arr=many?(v[i]||[]):[v[i]];
-    arr.flatMap(x=>many?String(x||'').split(/\s*[,，+\/\n]\s*/):[x]).forEach(x=>{x=String(x||'').trim();if(x&&x.length<=40)opts[i].push(x);});
-  });});
-  const out={};Object.keys(opts).forEach(i=>{out[i]=rcFreqOrder(opts[i],x=>x);});
-  return out;
-};
 
 /* ===== 새 창(일상 루틴·FREE TIME·QUICK LOG) 제목 옆 날짜 칩: ‹ 11.17 TUE › 눌러서 다른 날 기록 (2026-11-18) ===== */
 function tdsDateHas(id){return id==='routine'||id==='freetime'||id==='quicklog';}
@@ -14353,7 +14257,6 @@ function rcMealOcc(routineId){
   });});
   return occ;
 }
-function rcMealKey(x){return x.text+'\u0001'+x.place;}
 getPreviousMealRecords=function(routineId,limit=1000){
   const target=loadLifeRoutines().find(r=>r.id===routineId);
   if(!isMealFreeRoutine(target))return [];
@@ -14364,7 +14267,6 @@ getPreviousMealRecords=function(routineId,limit=1000){
   return mine.concat(rest).slice(0,limit);
 };
 function getPreviousMealRecent(routineId,limit=1000){return rcRecentOrder(rcMealOcc(routineId),rcMealKey).slice(0,limit);}
-getPreviousFreeRecords=function(routineId,limit=1000){return rcRecentOrder(rcFreeOcc(routineId),x=>x).slice(0,limit);};
 /* 칩: 넘겨받은 목록 순서를 그대로 씀(목록을 만들 때 이미 정렬함) */
 (function(){
   const ra=rcAttach;
@@ -14532,7 +14434,7 @@ async function restDel(id){
   try{
     if(!document.getElementById('restModal')){
       const m=document.createElement('div');m.id='restModal';m.className='lifeModal hide';m.setAttribute('onclick','if(event.target===this)closeRest()');
-      m.innerHTML=`<div class="lifeSheet"><div class="lifeSheetHead"><b>쉬어가기</b><button class="lifeClose" type="button" onclick="closeRest()">×</button></div><div class="calendarChipSelectHint">여행이나 휴식으로 쉬는 날을 정해 두면, 그동안은 RECORD 달성률에서 빠지고 알림도 쉬어요. 하고 싶은 루틴은 그대로 체크할 수 있어요.</div><div id="restList"></div></div>`;
+      m.innerHTML=`<div class="lifeSheet"><div class="lifeSheetHead"><b>쉬어가기</b><button class="lifeClose" type="button" onclick="closeRest()">×</button></div><div class="calendarChipSelectHint">쉬는 날은 달성률에서 빠지고 알림도 쉬어요. 루틴은 그대로 체크할 수 있어요.</div><div id="restList"></div></div>`;
       document.body.appendChild(m);
     }
     const sec=[...document.querySelectorAll('.backupCardTitle')].find(t=>t.textContent.trim()==='FEATURES');
@@ -14548,7 +14450,7 @@ async function restDel(id){
 (function(){
   const host=document.getElementById('rEnabled')?.closest('.lifeField');
   if(host&&!document.getElementById('rPauseWrap')){
-    host.insertAdjacentHTML('beforebegin',`<div class="lifeField" id="rPauseWrap"><label>잠시 쉬기 <span class="fieldHint">선택</span></label><div class="rPauseRow"><input id="rPauseUntil" type="date"><span>까지</span><button type="button" class="rPauseClr" onclick="document.getElementById('rPauseUntil').value=''">없음</button></div><div class="fieldHint" style="margin-top:5px">다쳤거나 잠시 못 하는 루틴만 따로 쉬어요. 이 날까지 TODAY에서 숨기고 통계에서도 빼요.</div></div>`);
+    host.insertAdjacentHTML('beforebegin',`<div class="lifeField" id="rPauseWrap"><label>잠시 쉬기 <span class="fieldHint">선택</span></label><div class="rPauseRow"><input id="rPauseUntil" type="date" oninput="this.parentElement.querySelector('.rPauseClr').hidden=!this.value"><span>까지</span><button type="button" class="rPauseClr" onclick="document.getElementById('rPauseUntil').value='';this.hidden=true">지우기</button></div><div class="fieldHint" style="margin-top:5px">이 날까지 TODAY와 통계에서 빠져요.</div></div>`);
   }
   const open=openRoutineModal,save=saveRoutineFromModal;
   openRoutineModal=function(id,block){
@@ -14557,6 +14459,7 @@ async function restDel(id){
       const rt=id?loadLifeRoutines().find(x=>x.id===id):null,inp=document.getElementById('rPauseUntil'),wrap=document.getElementById('rPauseWrap');
       const today=getLocalDateKey(new Date());
       if(inp){inp.value=rt&&rt.pauseUntil&&rt.pauseUntil>=today?rt.pauseUntil:'';inp.min=today;}
+      const clr=wrap&&wrap.querySelector('.rPauseClr');if(clr&&inp)clr.hidden=!inp.value;
       if(wrap)wrap.classList.toggle('hide',(rt?rt.block:block)==='free');
     }catch(e){}
     return r;
@@ -14595,33 +14498,6 @@ function rwDone(r,k){
   }catch(e){return false;}
 }
 function rwColor(blockIdx){try{return ftHex(ftColorOfIndex(blockIdx),'g')||'var(--rc-g)';}catch(e){return 'var(--rc-g)';}}
-function rwCardHTML(days){
-  const keys=days.map(d=>rrIso(d)),today=getLocalDateKey(new Date());
-  const defs=lifeBlockDefs(),bIdx={};defs.forEach((b,i)=>{bIdx[b.id]=i;});
-  const rows=loadLifeRoutines().filter(r=>r.block!=='free'&&bIdx[r.block]!==undefined)
-    .sort((a,b)=>(bIdx[a.block]-bIdx[b.block])||((a.order||0)-(b.order||0)))
-    .map(r=>{
-      const cells=keys.map(k=>{
-        if(k>today)return {s:'fut'};
-        const done=rwDone(r,k);
-        if(restOn(k))return {s:done?'done':'rest'};
-        const sch=(()=>{try{return r.enabled!==false&&(!r.recordFrom||k>=r.recordFrom)&&scheduleApplies(r,k,{allowFree:true});}catch(e){return false;}})();
-        return {s:done?'done':sch?'todo':'off'};
-      });
-      return {r,cells,n:cells.filter(c=>c.s==='done').length};
-    })
-    .filter(x=>x.n>0||(x.r.enabled!==false&&x.cells.some(c=>c.s==='todo')));
-  if(!rows.length)return '';
-  const WD=['일','월','화','수','목','금','토'];
-  const head=`<div class="rwRow rwHead"><span class="rwName"></span>${days.map((d,i)=>`<span class="rwC${keys[i]===today?' tdy':''}">${WD[d.getDay()]}</span>`).join('')}<span class="rwN"></span></div>`;
-  let lastB='';
-  const body=rows.map(({r,cells,n})=>{
-    const c=rwColor(bIdx[r.block]);let sep='';
-    if(r.block!==lastB){lastB=r.block;const b=defs.find(x=>x.id===r.block);sep=`<div class="rwBlock" style="--c:${c}">${escapeLife(b?b.name:'')}</div>`;}
-    return sep+`<div class="rwRow" style="--c:${c}"><span class="rwName">${escapeLife(String(r.name||''))}</span>${cells.map(x=>`<span class="rwC"><i class="rw-${x.s}">${x.s==='rest'?restLeafSvg():x.s==='done'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12.5l4 4 8-9"/></svg>':''}</i></span>`).join('')}<span class="rwN">${n?n:''}</span></div>`;
-  }).join('');
-  return `<div class="rr-card rw-card"><h2>루틴별 한 주 <span class="rr-card-note">한 날만 색칠돼요</span></h2><div class="rwGrid">${head}${body}</div></div>`;
-}
 /* (루틴별 한 주 카드는 2026-11-20에 시간대 누르기 화면으로 옮김) */
 
 
@@ -14699,7 +14575,6 @@ function rwOpen(name){try{if(!rhCtx||!rhCtx.list)return;const i=rhCtx.list.findI
     const r=rd.apply(this,arguments);
     try{
       const out=document.getElementById('rrOut');if(!out)return r;
-      out.querySelectorAll('.rw-card').forEach(x=>x.remove());
       out.querySelectorAll('.rr-card>h2').forEach(h=>{
         const t=h.firstChild;if(!t||t.nodeType!==3)return;const s=t.nodeValue.trim();
         for(const [re,name,note] of RN){const m=re.exec(s);if(!m)continue;
