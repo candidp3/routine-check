@@ -3029,6 +3029,22 @@ html .lifeModal{bottom:var(--kb,0px)!important;top:0!important;height:auto!impor
 
 #sleepManualDateNote b,#dailyCareDurationDateNote b{font-weight:600;color:var(--rc-tx)}
 
+/* 프리다이빙 기록 (2026-11-21) */
+#stManualModal .dvGrp{display:flex;align-items:center;gap:10px;margin:0 0 8px}
+#stManualModal .dvGrp>span{flex:none;width:34px;font-size:var(--fs-1);color:var(--rc-mu)}
+#stManualModal .dvChips{display:flex;flex-wrap:wrap;gap:6px}
+#stManualModal .dvChips button{height:34px;padding:0 12px;border:1px solid var(--rc-line2);border-radius:999px;background:var(--rc-card);color:var(--rc-tx2);font:inherit;font-size:var(--fs-1);font-weight:500}
+#stManualModal .dvChips button.on{border-color:var(--rc-g);background:var(--rc-gl);color:var(--rc-gd);font-weight:600}
+#stManualModal .dvName{font-size:var(--fs-1);color:var(--rc-mu);margin-top:2px}
+#stManualModal .dvVal{display:flex;align-items:center;gap:8px}
+#stManualModal .dvVal input{width:84px;height:44px;box-sizing:border-box;border:1px solid var(--rc-line2);border-radius:12px;background:var(--rc-soft);color:var(--rc-tx);font:inherit;font-size:var(--fs-3);text-align:center}
+#stManualModal .dvVal span{font-size:var(--fs-2);color:var(--rc-tx2)}
+#stManualModal .stManualKinds button{white-space:nowrap}
+#staticSessionBody .dvBig{font-size:var(--fs-4,20px);color:var(--rc-tx)}
+#staticSessionBody .dvBig b{font-weight:700;margin-right:4px}
+#staticSessionBody .dvPB{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:999px;background:var(--rc-gl);color:var(--rc-gd);font-size:var(--fs-1);font-weight:600;vertical-align:3px}
+#staticSessionBody .dvMemo{color:var(--rc-mu);font-size:var(--fs-1)}
+
 </style>
 <script>/* 저장 공간 지킴이 (2026-11-21): 기록을 저장하다 공간이 모자라면 자동 백업 사본(오래된 것부터)을 지우고 다시 저장 → 실제 기록은 꼭 저장되게 */
 (function(){try{var P=Storage.prototype,orig=P.setItem,PFX='__auto_backup__';
@@ -11127,8 +11143,7 @@ renderOneOffQuick=function(){
         const card=[...document.querySelectorAll('#calendarDetail .rc-card')].find(c=>c.querySelector('.rc-section-title')?.textContent.trim()==='FREE TIME');
         if(card&&!card.querySelector('.stCalRow')){
           card.querySelector('.rc-empty')?.remove();
-          const NM={co2:'CO2',o2:'O2',custom:'Mine'};
-          const kinds=['co2','o2','custom'].filter(t=>ss.some(x=>x.type===t)).map(t=>NM[t]).join(' · ');
+          const kinds=[stKindsText(ss),stDiveText(ss)].filter(Boolean).join(' · '); /* 내 훈련은 붙인 이름으로, 다이빙 기록도 함께 */
           const sec=Math.max(0,...ss.filter(x=>x.type==='hold').map(x=>Number(x.holdSec)||0));
           const f=sec>0?`${String(Math.floor(sec/60)).padStart(2,'0')}분 ${String(sec%60).padStart(2,'0')}초`:'';
           card.querySelectorAll('.rc-empty').forEach(e=>e.remove());
@@ -11555,13 +11570,13 @@ function stSetManualKind(k){
   stManual.kind=k;stRenderManual();
 }
 function stRenderManual(){
-  const kinds=[['co2','CO2'],['o2','O2'],['custom','Mine'],['hold','숨참기']];
+  const kinds=[['co2','CO2'],['o2','O2'],['custom','내 테이블'],['hold','숨참기']];
   document.getElementById('stManualKinds').innerHTML=kinds.map(x=>`<button type="button" class="${stManual.kind===x[0]?'on':''}" onclick="stSetManualKind('${x[0]}')">${x[1]}</button>`).join('');
   const b=document.getElementById('stManualBody');
   if(stManual.kind==='hold'){
     b.innerHTML=`<div class="lifeField"><label>숨참기 시간 (준비호흡 후 실제로 참은 시간)</label><div style="display:flex;gap:8px;align-items:center"><input id="stManualMin" type="number" inputmode="numeric" min="0" max="30" placeholder="0" value="${escapeLife(String(stManual.min||''))}"><span>분</span><input id="stManualSec" type="number" inputmode="numeric" min="0" max="59" placeholder="0" value="${escapeLife(String(stManual.sec||''))}"><span>초</span></div></div>`;
   }else{
-    b.innerHTML=`<div class="lifeHint" style="color:var(--rc-mu);font-size:var(--fs-2);margin:12px 0 2px">${stManual.kind==='custom'?'내 테이블·다른 앱에서 한 훈련을':'다른 앱에서 한 훈련을'} 했다는 기록으로 남겨요. 숨참기 시간은 따로 추가할 수 있어요.</div>`;
+    b.innerHTML=`<div class="lifeHint" style="color:var(--rc-mu);font-size:var(--fs-2);margin:12px 0 2px">${stManual.kind==='custom'?'내가 만든 훈련을':'다른 앱에서 한 훈련을'} 했다는 기록으로 남겨요. 숨참기 시간은 따로 추가할 수 있어요.</div>`;
   }
 }
 function saveStManual(){
@@ -11804,7 +11819,7 @@ function restoreSnackButton(){try{localStorage.removeItem('snackButtonDeleted_v1
 /* ===== QUICK LOG: 모든 단발성 기록을 짧게 요약 ===== */
 function qlName(d){return [d.icon,d.name].filter(Boolean).join(' ');}
 function stDayText(ss){
-  const NM={co2:'CO2',o2:'O2',custom:'Mine'};
+  const NM={co2:'CO2',o2:'O2',custom:'내 테이블'};
   const kinds=['co2','o2','custom'].filter(t=>ss.some(x=>x.type===t)).map(t=>NM[t]).join(' · ');
   const sec=Math.max(0,...ss.filter(x=>x.type==='hold').map(x=>Number(x.holdSec)||0));
   const f=sec>0?`${String(Math.floor(sec/60)).padStart(2,'0')}분 ${String(sec%60).padStart(2,'0')}초`:'';
@@ -14774,6 +14789,145 @@ saveCustomDailyCareDurationManual=function(){
     try{if(document.getElementById('sleepManualModal')?.classList.contains('hide')&&k&&k!==activeDateKey)appToast(`${dcDayLabel(k)} 수면을 저장했어요`);}catch(e){}
     return r;
   };
+})();
+
+
+/* ===== 숨참기 (2026-11-21)
+   1) 내가 만든 훈련은 'Mine' 대신 내가 붙인 이름으로 보여줌
+   2) 프리다이빙 기록: 스태틱(시간) · 다이나믹(거리) · 수심(깊이). 숨참기 기록과 같은 곳에 저장(백업·캘린더 그대로) ===== */
+const DIVE_DISC=[
+  ['STA','스태틱','time'],
+  ['DYN','다이나믹','m'],['DYNB','다이나믹 바이핀','m'],['DNF','다이나믹 노핀','m'],
+  ['CWT','CWT','depth'],['CWTB','CWTB','depth'],['FIM','FIM','depth'],['CNF','CNF','depth']];
+function diveDisc(c){return DIVE_DISC.find(d=>d[0]===c)||DIVE_DISC[1];}
+function diveVal(s){const d=diveDisc(s.disc);return d[2]==='time'?stFmt(s.val):`${Math.round(Number(s.val)*10)/10}m`;}
+function diveLine(s){return `${s.disc} ${diveVal(s)}`;}
+function diveBest(disc,exceptId){
+  let best=null;const all=stAllLogs();
+  Object.keys(all).forEach(k=>(Array.isArray(all[k])?all[k]:[]).forEach(s=>{if(s&&s.type==='dive'&&s.disc===disc&&s.id!==exceptId&&Number(s.val)>0&&(!best||Number(s.val)>Number(best.val)))best=Object.assign({k},s);}));
+  return best;
+}
+function stCustomName(s){return String(s&&s.name||'').trim()||'내 테이블';}
+/* 하루 요약: CO2 · O2 · (내 훈련 이름) | 숨참기 최고 | 다이빙 */
+function stKindsText(ss){
+  const out=[];
+  if(ss.some(x=>x.type==='co2'))out.push('CO2');
+  if(ss.some(x=>x.type==='o2'))out.push('O2');
+  [...new Set(ss.filter(x=>x.type==='custom').map(stCustomName))].forEach(n=>out.push(n));
+  return out.join(' · ');
+}
+function stDiveText(ss){const best={};ss.filter(x=>x.type==='dive').forEach(x=>{if(!best[x.disc]||Number(x.val)>Number(best[x.disc].val))best[x.disc]=x;});return DIVE_DISC.filter(d=>best[d[0]]).map(d=>diveLine(best[d[0]])).join(' · ');}
+(function(){
+  const mn=stModeName;
+  stModeName=function(mode,name){if(mode==='custom')return String(name||'').trim()||'내 테이블';if(mode==='dive')return '프리다이빙';return mn.apply(this,arguments);};
+  const sl=stSessionLine;
+  stSessionLine=function(s){if(s&&s.type==='dive')return `${diveDisc(s.disc)[1]} ${diveVal(s)}${s.place?' · '+s.place:''}`;return sl.apply(this,arguments);};
+  const sh=stShortLine;
+  stShortLine=function(s){if(s&&s.type==='dive')return `${diveLine(s)}${s.place?' · '+s.place:''}`;return sh.apply(this,arguments);};
+  stDayText=function(ss){
+    const sec=Math.max(0,...ss.filter(x=>x.type==='hold').map(x=>Number(x.holdSec)||0));
+    const f=sec>0?`${String(Math.floor(sec/60)).padStart(2,'0')}분 ${String(sec%60).padStart(2,'0')}초`:'';
+    return [stKindsText(ss),f,stDiveText(ss)].filter(Boolean).join(' | ');
+  };
+  /* 기록 상세: 다이빙 */
+  const os=openStaticSession;
+  openStaticSession=function(k,i){
+    const r=os.apply(this,arguments);
+    try{
+      const s=stSessions(k)[i];if(!s||s.type!=='dive')return r;
+      const d=parseDateKeyLocal(k),dd=diveDisc(s.disc),b=diveBest(s.disc);
+      document.getElementById('staticSessionHead').textContent=`프리다이빙 · ${d.getMonth()+1}.${d.getDate()}`;
+      let body=`<div class="stSumLine dvBig"><b>${s.disc}</b> ${diveVal(s)}${b&&b.id===s.id?'<span class="dvPB">PB</span>':''}</div><div class="stSumLine">${escapeLife(dd[1])}${s.place?' · '+escapeLife(s.place):''}</div>`;
+      if(s.memo)body+=`<div class="stSumLine dvMemo">${escapeLife(s.memo)}</div>`;
+      if(b&&b.id!==s.id)body+=`<div class="stSumLine dvMemo">개인 최고 ${diveVal(b)} · ${b.k.slice(2).replace(/-/g,'.')}</div>`;
+      document.getElementById('staticSessionBody').innerHTML=body;
+    }catch(e){}
+    return r;
+  };
+  /* 메뉴에 '다이빙 기록 추가' */
+  const om=openStaticMenu;
+  openStaticMenu=function(){
+    const k=lifeLogKey(),ss=stSessions(k);
+    const acts=[{label:'훈련 시작',kind:'primary',run:()=>openStatic()},
+      {label:'숨참기 기록 추가',run:()=>openStManual('hold')},
+      {label:'다이빙 기록 추가',run:()=>openStManual('dive')}];
+    if(ss.length)acts.push({label:`기록 보기 · ${ss.length}`,run:()=>openStLog()});
+    showRoutineActionSheet('숨참기 · 프리다이빙',acts);
+  };
+  /* 직접 기록: CO2 · O2 · 내 테이블 · 숨참기 · 다이빙 */
+  const rm=stRenderManual;
+  stRenderManual=function(){
+    try{inner();}finally{
+      const kinds=[['co2','CO2'],['o2','O2'],['custom','내 테이블'],['hold','숨참기'],['dive','다이빙']];
+      document.getElementById('stManualKinds').innerHTML=kinds.map(x=>`<button type="button" class="${stManual.kind===x[0]?'on':''}" onclick="stSetManualKind('${x[0]}')">${x[1]}</button>`).join('');
+      const head=document.querySelector('#stManualModal .lifeSheetHead b');if(head)head.textContent=stManual.kind==='dive'?'다이빙 기록 추가':'숨참기 기록 추가';
+    }
+  };
+  function inner(){
+    if(stManual.kind!=='dive'){
+      if(stManual.kind!=='custom'){rm.apply(this,arguments);return;}
+      /* 내 테이블: 만든 훈련 중에서 고르기 */
+      const tabs=stTables(),b=document.getElementById('stManualBody');
+      rm.apply(this,arguments);
+      if(tabs.length&&b){
+        if(!stManual.tableId||!tabs.some(t=>t.id===stManual.tableId))stManual.tableId=tabs[0].id;
+        b.insertAdjacentHTML('afterbegin',`<div class="lifeField"><label>훈련</label><div class="dvChips">${tabs.map(t=>`<button type="button" class="${t.id===stManual.tableId?'on':''}" onclick="stManual.tableId='${t.id}';stRenderManual()">${escapeLife(t.name||'내 테이블')}</button>`).join('')}</div></div>`);
+      }
+      return;
+    }
+    if(!stManual.disc)stManual.disc='DYN';
+    const dd=diveDisc(stManual.disc),best=diveBest(stManual.disc);
+    const grp=(title,type)=>`<div class="dvGrp"><span>${title}</span><div class="dvChips">${DIVE_DISC.filter(d=>d[2]===type).map(d=>`<button type="button" class="${d[0]===stManual.disc?'on':''}" onclick="dvPick('${d[0]}')">${d[0]==='STA'?'STA':d[0]}</button>`).join('')}</div></div>`;
+    const val=dd[2]==='time'
+      ?`<div class="dvVal"><input id="dvMin" type="number" inputmode="numeric" min="0" max="20" placeholder="0" value="${stManual.min||''}"><span>분</span><input id="dvSec" type="number" inputmode="numeric" min="0" max="59" placeholder="0" value="${stManual.sec||''}"><span>초</span></div>`
+      :`<div class="dvVal"><input id="dvM" type="number" inputmode="decimal" min="0" max="${dd[2]==='depth'?200:400}" step="0.5" placeholder="0" value="${stManual.m||''}"><span>m</span></div>`;
+    document.getElementById('stManualBody').innerHTML=`
+      <div class="lifeField"><label>종목</label>${grp('시간','time')}${grp('거리','m')}${grp('수심','depth')}<div class="dvName">${escapeLife(dd[1])}${best?` · 최고 ${diveVal(best)}`:''}</div></div>
+      <div class="lifeField"><label>${dd[2]==='time'?'시간':dd[2]==='depth'?'깊이':'거리'}</label>${val}</div>
+      <div class="lifeField"><label>장소 <span class="fieldHint">선택</span></label><input id="dvPlace" class="lifeInput" maxlength="30" placeholder="예: 잠실 수영장, 문섬" value="${escapeLife(stManual.place||'')}"></div>
+      <div class="lifeField"><label>메모 <span class="fieldHint">선택</span></label><input id="dvMemo" class="lifeInput" maxlength="80" placeholder="컨디션, 이퀄라이징 등" value="${escapeLife(stManual.memo||'')}"></div>`;
+  }
+  const ss=saveStManual;
+  saveStManual=function(){
+    if(stManual.kind==='custom'){
+      const t=stTables().find(x=>x.id===stManual.tableId);
+      if(t){
+        const k=lifeLogKey(),all=stAllLogs();
+        const session={type:'custom',name:t.name||'',rows:[],done:1,total:1,maxHold:0,totalSec:0,manual:true,id:'st_'+Date.now(),at:new Date().toISOString()};
+        (all[k]=Array.isArray(all[k])?all[k]:[]).push(session);
+        try{localStorage.setItem(ST_LOG_KEY,JSON.stringify(all));}catch(e){}
+        closeStManual();try{renderLifeCalendar();renderCalendarDetail(calendarSelectedKey);renderRecordDashboard();}catch(e){}
+        appToast('기록했어요');return;
+      }
+    }
+    if(stManual.kind!=='dive')return ss.apply(this,arguments);
+    const dd=diveDisc(stManual.disc);let val=0;
+    if(dd[2]==='time'){
+      const m=Math.floor(Number(document.getElementById('dvMin')?.value)||0),sc=Math.floor(Number(document.getElementById('dvSec')?.value)||0);
+      if(sc<0||sc>59||m<0){appAlert('분과 초를 확인해 주세요. (초는 0~59)');return;}
+      val=m*60+sc;
+    }else val=Math.round((Number(document.getElementById('dvM')?.value)||0)*10)/10;
+    if(!(val>0)){appAlert(dd[2]==='time'?'시간을 입력해 주세요.':'몇 m인지 입력해 주세요.');return;}
+    const k=lifeLogKey(),all=stAllLogs(),prev=diveBest(dd[0]);
+    const session={type:'dive',disc:dd[0],val,place:String(document.getElementById('dvPlace')?.value||'').trim().slice(0,30),memo:String(document.getElementById('dvMemo')?.value||'').trim().slice(0,80),manual:true,id:'st_'+Date.now(),at:new Date().toISOString()};
+    (all[k]=Array.isArray(all[k])?all[k]:[]).push(session);
+    try{localStorage.setItem(ST_LOG_KEY,JSON.stringify(all));}catch(e){appAlert('저장하지 못했어요.');return;}
+    stManual.last=dd[0];
+    closeStManual();
+    try{renderLifeCalendar();renderCalendarDetail(calendarSelectedKey);renderRecordDashboard();renderOneOffQuick();}catch(e){}
+    appToast(!prev||val>Number(prev.val)?`${dd[0]} ${diveVal(session)} · 개인 최고 기록이에요!`:'기록했어요');
+  };
+  const om2=openStManual;
+  openStManual=function(kind){
+    if(kind==='dive'){stManual={kind:'dive',disc:(stManual&&stManual.last)||'DYN',last:stManual&&stManual.last};stRenderManual();document.getElementById('stManualModal').classList.remove('hide');return;}
+    return om2.apply(this,arguments);
+  };
+})();
+function dvKeep(){const g=id=>document.getElementById(id)?.value;stManual.place=g('dvPlace')||'';stManual.memo=g('dvMemo')||'';}
+function dvPick(c){dvKeep();const was=diveDisc(stManual.disc)[2],now=diveDisc(c)[2];if(was!==now){stManual.m='';stManual.min='';stManual.sec='';}else{stManual.m=document.getElementById('dvM')?.value||'';stManual.min=document.getElementById('dvMin')?.value||'';stManual.sec=document.getElementById('dvSec')?.value||'';}stManual.disc=c;stRenderManual();}
+(function(){
+  const sk=stSetManualKind;
+  stSetManualKind=function(k){if(stManual.kind==='dive')dvKeep();return sk.apply(this,arguments);};
 })();
 
 </script>
