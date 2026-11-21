@@ -3030,6 +3030,14 @@ html .lifeModal{bottom:var(--kb,0px)!important;top:0!important;height:auto!impor
 #sleepManualDateNote b,#dailyCareDurationDateNote b{font-weight:600;color:var(--rc-tx)}
 
 </style>
+<script>/* 저장 공간 지킴이 (2026-11-21): 기록을 저장하다 공간이 모자라면 자동 백업 사본(오래된 것부터)을 지우고 다시 저장 → 실제 기록은 꼭 저장되게 */
+(function(){try{var P=Storage.prototype,orig=P.setItem,PFX='__auto_backup__';
+P.setItem=function(k,v){try{return orig.call(this,k,v);}catch(e){
+  if(this!==window.localStorage||String(k).indexOf(PFX)===0)throw e;
+  var ks=[];for(var i=0;i<this.length;i++){var x=this.key(i);if(x&&x.indexOf(PFX)===0)ks.push(x);}ks.sort();
+  while(ks.length){this.removeItem(ks.shift());try{return orig.call(this,k,v);}catch(e2){}}
+  try{setTimeout(function(){window.appAlert&&appAlert('폰 안 저장 공간이 꽉 차서 방금 내용을 저장하지 못했어요.\n설정 → 백업에서 백업 파일을 받아 두고, 사진이나 오래된 기록을 정리해 주세요.');},0);}catch(x){}
+  throw e;}};}catch(e){}})();</script>
 <script>/* 시작 중 오류가 나면 화면에 알려 줌 (2026-11-21): 아이콘 자리표시가 그대로 남는 등 화면이 멈췄을 때 원인을 바로 알 수 있게 */
 (function(){var E=[];window.__lgErrs=E;
 window.addEventListener('error',function(e){try{E.push((e.message||'오류')+(e.lineno?' ['+e.lineno+':'+(e.colno||0)+']':'')+(e.error&&e.error.stack?'\n'+String(e.error.stack).split('\n').slice(1,4).join('\n'):''));}catch(x){}});
@@ -5313,15 +5321,29 @@ function getAutoBackupKeys(){
   return keys.sort();
 }
 
+/* 자동 백업 (2026-11-21 고침): 폰 안 저장 공간(약 5MB)을 넘지 않게.
+   - 기록이 커지면 사본 수를 알아서 줄임(오래된 것부터 지움). 공간이 모자라면 이번 사본은 건너뜀
+   - 어떤 경우에도 오류로 앱 화면이 멈추지 않게 함 */
+const AUTO_BACKUP_BUDGET=3500000; /* 자동 백업 사본 + 실제 기록이 함께 쓰는 글자 수 한도(여유 남김) */
+function lsUsedChars(){let n=0;try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);n+=k.length+(localStorage.getItem(k)||'').length;}}catch(e){}return n;}
 function makeAutoBackup(){
-  const now=new Date();
-  const key=AUTO_BACKUP_PREFIX+now.toISOString().slice(0,13).replace('T','_');
-  if(localStorage.getItem(key)){renderBackupStatus();return;}
-  const snapshot=snapshotLocalStorage();
-  Object.keys(snapshot).filter(k=>k.startsWith(AUTO_BACKUP_PREFIX)).forEach(k=>delete snapshot[k]);
-  localStorage.setItem(key,JSON.stringify(snapshot));
-  cleanupOldAutoBackups();
-  renderBackupStatus();
+  try{
+    const now=new Date();
+    const key=AUTO_BACKUP_PREFIX+now.toISOString().slice(0,13).replace('T','_');
+    if(localStorage.getItem(key)){renderBackupStatus();return;}
+    const snapshot=snapshotLocalStorage();
+    Object.keys(snapshot).filter(k=>k.startsWith(AUTO_BACKUP_PREFIX)).forEach(k=>delete snapshot[k]);
+    const data=JSON.stringify(snapshot);
+    /* 새 사본이 들어갈 자리를 만들 때까지 오래된 사본부터 지움 */
+    const keys=getAutoBackupKeys();
+    while(keys.length&&lsUsedChars()+data.length>AUTO_BACKUP_BUDGET)localStorage.removeItem(keys.shift());
+    if(lsUsedChars()+data.length>AUTO_BACKUP_BUDGET){renderBackupStatus();return;}
+    try{localStorage.setItem(key,data);}catch(e){
+      while(keys.length){localStorage.removeItem(keys.shift());try{localStorage.setItem(key,data);break;}catch(e2){}}
+    }
+    cleanupOldAutoBackups();
+  }catch(e){console.warn('auto backup skipped',e);}
+  try{renderBackupStatus();}catch(e){}
 }
 
 function autoBackupInfo(key){
