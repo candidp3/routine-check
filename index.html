@@ -3045,6 +3045,25 @@ html .lifeModal{bottom:var(--kb,0px)!important;top:0!important;height:auto!impor
 #staticSessionBody .dvPB{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:999px;background:var(--rc-gl);color:var(--rc-gd);font-size:var(--fs-1);font-weight:600;vertical-align:3px}
 #staticSessionBody .dvMemo{color:var(--rc-mu);font-size:var(--fs-1)}
 
+/* 지난 날 고치기 (2026-11-22) */
+:root{--rc-past:#D0647A;--rc-pastl:#FBE9EC}
+@media (prefers-color-scheme:dark){:root{--rc-past:#F29AAA;--rc-pastl:rgba(242,154,170,.14)}}
+body.tdPastMode #lifeDateShort,body.tdPastMode #lifeBarDate{color:var(--rc-past);font-weight:600}
+body.tdPastMode #tdHero .thIco{background:var(--rc-pastl)!important;color:var(--rc-past)!important}
+body.tdPastMode #tdHero .thIco svg{color:var(--rc-past)}
+body.tdPastMode #tdHero .thNow{display:none}
+body.tdPastMode #tdHero{box-shadow:inset 0 0 0 1.5px var(--rc-pastl)}
+#tdHero .thPastTag{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:4px 0 3px}
+#tdHero .thPastTag span{padding:3px 9px;border-radius:999px;background:var(--rc-pastl);color:var(--rc-past);font-size:.75rem;font-weight:600}
+#tdHero .thPastTag button{border:0;background:transparent;padding:3px 2px;font:inherit;font-size:.75rem;color:var(--rc-tx2);text-decoration:underline;text-underline-offset:3px}
+.tdsPast{color:var(--rc-past)!important;font-weight:600}
+/* 달력 요약 연필 버튼 */
+#calendarDetail .calEdIc{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0!important;border:0;border-radius:50%;background:var(--rc-soft);color:var(--rc-mu);flex:none}
+#calendarDetail .calEdIc svg{width:15px;height:15px}
+#calendarDetail .calEdIc .appIco,#calendarDetail .calEdIc>span{display:flex}
+#calendarDetail .calEdRow{cursor:pointer}
+#calendarDetail .calEdRow:active .calEdIc{background:var(--rc-gl);color:var(--rc-gd)}
+
 </style>
 <script>/* 저장 공간 지킴이 (2026-11-21): 기록을 저장하다 공간이 모자라면 자동 백업 사본(오래된 것부터)을 지우고 다시 저장 → 실제 기록은 꼭 저장되게 */
 (function(){try{var P=Storage.prototype,orig=P.setItem,PFX='__auto_backup__';
@@ -14928,6 +14947,65 @@ function dvPick(c){dvKeep();const was=diveDisc(stManual.disc)[2],now=diveDisc(c)
 (function(){
   const sk=stSetManualKind;
   stSetManualKind=function(k){if(stManual.kind==='dive')dvKeep();return sk.apply(this,arguments);};
+})();
+
+/* ===== 지난 날을 고칠 때 확실히 보이게 (2026-11-22)
+   - 맨 위 날짜가 다른 색(코랄)으로 바뀌고, 맨 위 상자가 '11월 20일 금요일 · 지난 날 기록 고치는 중 · 오늘로'로 바뀜
+   - '지금은 오전 · 다음 할 일'은 지난 날엔 맞지 않아서 숨김 ===== */
+function tdIsPast(){try{return activeDateKey&&activeDateKey!==getLocalDateKey(new Date());}catch(e){return false;}}
+function tdPastLabel(k){const d=parseDateKeyLocal(k);return `${d.getMonth()+1}월 ${d.getDate()}일 ${'일월화수목금토'[d.getDay()]}요일`;}
+(function(){
+  const g=renderTodayHero;
+  renderTodayHero=function(){
+    const r=g.apply(this,arguments);
+    try{
+      const past=tdIsPast();
+      document.body.classList.toggle('tdPastMode',!!past);
+      const el=document.getElementById('tdHero');if(!el||!past)return r;
+      el.querySelector('.thRestTag')?.remove();
+      const ic=el.querySelector('.thIco');if(ic)ic.innerHTML=appIconSvg('pencil');
+      const hi=el.querySelector('.thHi');if(hi)hi.textContent=tdPastLabel(activeDateKey);
+      const sum=el.querySelector('.thSum');
+      if(sum){
+        if(/아직 기록이 없어요/.test(sum.textContent))sum.textContent='이 날은 아직 기록이 없어요';
+        else sum.textContent=sum.textContent.replace(/^오늘 /,'이 날 ');
+        sum.insertAdjacentHTML('beforebegin',`<div class="thPastTag"><span>지난 날 기록을 고치는 중</span><button type="button" onclick="backToToday();lifeNavigate('today')">오늘로 ›</button></div>`);
+      }
+      const all=el.querySelector('.thAllBtn');if(all)all.textContent='이 날 루틴 모두 보기 ›';
+    }catch(e){console.warn(e);}
+    return r;
+  };
+  /* NOTE 아래 작은 설명 */
+  const lg=renderLifeGuide;
+  renderLifeGuide=function(){
+    const r=lg.apply(this,arguments);
+    try{const past=tdIsPast();document.body.classList.toggle('tdPastMode',!!past);
+      document.querySelectorAll('#viewToday .secSub').forEach(s=>{if(s.textContent==='오늘 한 줄'||s.textContent==='이 날 한 줄')s.textContent=past?'이 날 한 줄':'오늘 한 줄';});document.querySelectorAll('#viewToday textarea').forEach(t=>{if(t.placeholder==='오늘의 한 줄'||t.placeholder==='이 날의 한 줄')t.placeholder=past?'이 날의 한 줄':'오늘의 한 줄';});}catch(e){}
+    return r;
+  };
+})();
+
+/* ===== 달력 아래 요약: '기록하기'와 '고치기'가 겹치지 않게 (2026-11-22)
+   - 칸마다 연필 버튼(그 칸을 바로 고치는 화면으로). 칸 제목 줄을 눌러도 같음
+   - 고칠 칸이 하나도 없는 날만 위에 '기록하기' ===== */
+(function(){
+  const det=renderCalendarDetail;
+  renderCalendarDetail=function(){
+    const r=det.apply(this,arguments);
+    try{
+      const root=document.getElementById('calendarDetail');if(!root)return r;
+      const eds=[...root.querySelectorAll('[onclick*="calGoEdit("]')];
+      eds.forEach(b=>{
+        if(b.classList.contains('calEdIc'))return;
+        b.classList.add('calEdIc');b.setAttribute('aria-label','고치기');b.innerHTML=appIconSvg('pencil');
+        const row=b.parentElement;
+        if(row&&!row.dataset.edRow){row.dataset.edRow='1';row.classList.add('calEdRow');row.addEventListener('click',e=>{if(e.target.closest('button,a,input'))return;b.click();});}
+      });
+      const top=[...document.querySelectorAll('#viewCalendar button')].find(b=>/openTodayForDate\(/.test(b.getAttribute('onclick')||''));
+      if(top)top.hidden=eds.length>0;
+    }catch(e){console.warn(e);}
+    return r;
+  };
 })();
 
 </script>
