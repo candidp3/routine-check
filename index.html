@@ -3179,6 +3179,39 @@ body.tdPastMode #tdHero{box-shadow:inset 0 0 0 1.5px var(--rc-pastl)}
 .oneOffQuickRow .snackQuickBtn .qMeta{display:block;font-size:var(--fs-1);color:var(--rc-tx2);line-height:1.2;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ftTodayLogs{margin-top:10px}
 
+/* 독서 책 고르기 아래 작은 글자 (2026-11-23) */
+#readingBookModal .rbLinks{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:2px 6px;margin-top:6px}
+#readingBookModal .rbLinks button{border:0;background:transparent;padding:8px 6px;font:inherit;font-size:var(--fs-2);color:var(--rc-tx2)}
+#readingBookModal .rbLinks .rbSkip{color:var(--rc-mu)}
+#readingBookModal .rbLinks i{font-style:normal;color:var(--rc-line2)}
+#readingBookModal .rbEmpty{padding:14px 0 4px;text-align:center;font-size:var(--fs-2);color:var(--rc-mu)}
+/* 캡슐: 이름 아래 아주 작은 글씨 */
+.oneOffTodayLogs .olChip{display:inline-flex!important;flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;line-height:1.25;padding-top:7px!important;padding-bottom:7px!important;height:auto!important;min-height:0!important}
+.oneOffTodayLogs .olChip>span{display:block;font-size:.6875rem!important;color:var(--rc-mu)!important;margin:0!important;max-width:11rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* 목록 시트(기록 여러 개 중 고르기): 한 상자 안에 줄로만 */
+.routineActionCard .routineActionButtons.rasNew .rasList{border:1px solid var(--rc-line)!important;border-radius:14px!important;background:var(--rc-card)!important;overflow:hidden;gap:0!important}
+.routineActionCard .routineActionButtons.rasNew .rasList .rasItem{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;min-height:50px!important;height:auto!important;padding:0 14px!important;margin:0!important;color:var(--rc-tx)!important;font-weight:400!important}
+.routineActionCard .routineActionButtons.rasNew .rasList .rasItem+.rasItem{border-top:1px solid var(--rc-line)!important}
+.routineActionCard .routineActionButtons.rasNew .rasList .rasItem:active{background:var(--rc-soft)!important}
+/* 칸 오른쪽 아래 색 점 (요약 점과 같은 색) */
+.freeChip,.oneOffQuickRow .snackQuickBtn{position:relative}
+.freeChip .ftDot,.oneOffQuickRow .snackQuickBtn .ftDot{position:absolute;right:9px;bottom:9px;width:6px;height:6px;border-radius:50%;opacity:.9;pointer-events:none}
+/* 책 정보 창: 버튼이 맨 아래에 붙게 */
+#bookModal .modalBox.bookModalBox{padding-bottom:0!important}
+#bookModal #bookModalFooter{position:sticky!important;bottom:0!important;background:var(--rc-card)!important;padding-bottom:calc(14px + env(safe-area-inset-bottom))!important;margin-bottom:0!important;z-index:2}
+
+/* 프리다이빙 기록 목록(오늘 기록 보기)도 한 상자 + 줄 */
+#stLogList{border:1px solid var(--rc-line);border-radius:14px;background:var(--rc-card);overflow:hidden}
+#stLogList .oneOffSettingRow.pjManageRow{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;margin:0!important;min-height:52px;padding:8px 8px 8px 14px!important}
+#stLogList .oneOffSettingRow.pjManageRow+.oneOffSettingRow.pjManageRow{border-top:1px solid var(--rc-line)!important}
+#stLogList .pjName{font-weight:400!important;color:var(--rc-tx)!important}
+#stLogList .pjEmpty{border:0}
+
+#stLogList .oneOffSettingRow.pjManageRow{min-height:0!important;height:auto!important;padding:13px 6px 13px 14px!important;align-items:center!important}
+#stLogList .pjManageMain{gap:1px!important}
+#stLogList .pjManageMeta{font-size:.6875rem!important;color:var(--rc-mu)!important}
+#stLogList button{width:30px!important;height:30px!important;min-height:0!important;background:transparent!important;border:0!important;color:var(--rc-mu)!important;font-size:.875rem!important;padding:0!important}
+
 </style>
 <script>/* 저장 공간 지킴이 (2026-11-21): 기록을 저장하다 공간이 모자라면 자동 백업 사본(오래된 것부터)을 지우고 다시 저장 → 실제 기록은 꼭 저장되게 */
 (function(){try{var P=Storage.prototype,orig=P.setItem,PFX='__auto_backup__';
@@ -14235,7 +14268,7 @@ function tdJFit(){
       const base=tdsBase||lifeLogKey(),days=[];for(let i=0;i<7;i++)days.push(periodAddDays(base,-i));
       const ids=new Set([...document.querySelectorAll('#tdsMain .freeChipWrap')].map(w=>w.dataset.routineId));
       const rows=days.map(k=>{
-        const ln=id==='freetime'?ftLines(k,ids):quickLogItems(k,false).map(x=>({n:String(x.n||'').replace(/⟪[a-z0-9_]+⟫\s*/g,''),s:'',v:x.t||'',tap:x.c||'',col:''})) /* FREE TIME처럼 색 점 + 이름 */;
+        const ln=id==='freetime'?ftLines(k,ids):quickLogItems(k,false).map(x=>({n:String(x.n||'').replace(/⟪[a-z0-9_]+⟫\s*/g,''),s:'',v:x.t||'',tap:x.c||'',col:(()=>{try{return qlColorByName(String(x.n||'').replace(/⟪[a-z0-9_]+⟫\s*/g,''))||'';}catch(e){return '';}})()})) /* FREE TIME처럼 항목마다 색 점 + 이름 */;
         return ln.length?`<div class="tdsDay tdsDayL"><div class="tdsDayK">${tdsDayLabel(k)}</div><div class="tdsDayLs">${ln.map(lineHTML).join('')}</div></div>`:'';
       }).join('');
       if(rows){const head=box.querySelector('.tdsSecT');box.innerHTML=(head?head.outerHTML:'<div class="tdsSecT">최근 7일</div>')+rows;}
@@ -15626,6 +15659,79 @@ function ftTodayChips(){
   renderOneOffTodayLogs=function(){const r=tl.apply(this,arguments);try{qlMarkDone();}catch(e){}return r;};
   try{ftTodayChips();qlMarkDone();}catch(e){}
 })();
+
+/* ===== 독서 타이머 후 책 고르기 (2026-11-23 v2)
+   '읽고있어' 책만 먼저 보여주고, 아래 작은 글자로: 다른 책 · 새 책 추가 · 책 연결 없이 기록 ===== */
+let rbShowAll=false,rbNewFlow=false;
+chooseBookForReadingTimer=function(dateKey,minutes){
+  pendingReadingTimer={dateKey,minutes};readingPickCtx=null;
+  const all=readingBooksSorted(),reading=all.filter(b=>b.status==='읽고있어'),list=rbShowAll?all:reading;
+  document.getElementById('readingBookDuration').textContent=`독서 ${formatDurationMin(minutes)}`;
+  const item=b=>`<button class="readingPickBtn" onclick="linkPendingReading('${b.id}')">⟪book⟫ ${escapeLife(b.title)}<div class="bookAuthor">${escapeLife(b.author||'')}${rbShowAll&&b.status?`${b.author?' · ':''}${escapeLife(b.status)}`:''}</div></button>`;
+  const links=[];
+  if(!rbShowAll&&all.length>reading.length)links.push(`<button type="button" onclick="rbShowAll=true;chooseBookForReadingTimer(pendingReadingTimer.dateKey,pendingReadingTimer.minutes)">다른 책</button>`);
+  links.push(`<button type="button" onclick="rbAddNew()">새 책 추가</button>`);
+  links.push(`<button type="button" class="rbSkip" onclick="closeReadingBookModal()">책 연결 없이 기록</button>`);
+  document.getElementById('readingPickList').innerHTML=(list.length?list.map(item).join(''):`<div class="rbEmpty">읽고 있는 책이 없어요</div>`)
+    +`<div class="rbLinks">${links.join('<i>·</i>')}</div>`;
+  document.getElementById('readingBookModal').classList.remove('hide');
+};
+(function(){
+  const cl=closeReadingBookModal;
+  closeReadingBookModal=function(){rbShowAll=false;return cl.apply(this,arguments);};
+})();
+function rbAddNew(){
+  if(!pendingReadingTimer)return;
+  rbNewFlow=true;document.getElementById('readingBookModal').classList.add('hide');
+  const before=new Set(loadBooks().map(b=>b.id));window.__rbBefore=before;
+  openBookModal();
+}
+(function(){
+  const sv=saveBook;
+  saveBook=function(){
+    const r=sv.apply(this,arguments);
+    const after=()=>{
+      try{
+        if(!rbNewFlow||!pendingReadingTimer)return;
+        if(!document.getElementById('bookModal').classList.contains('hide'))return; /* 저장이 안 됨(필수 칸 등) */
+        rbNewFlow=false;
+        const nb=loadBooks().find(b=>!window.__rbBefore.has(b.id));
+        if(nb){linkPendingReading(nb.id);appToast(`${nb.title}에 연결했어요`);}
+        else chooseBookForReadingTimer(pendingReadingTimer.dateKey,pendingReadingTimer.minutes);
+      }catch(e){}
+    };
+    if(r&&typeof r.then==='function')r.then(after);else setTimeout(after,0);
+    return r;
+  };
+  const cb=closeBookModal;
+  closeBookModal=function(){
+    const r=cb.apply(this,arguments);
+    setTimeout(()=>{try{if(rbNewFlow&&pendingReadingTimer){rbNewFlow=false;chooseBookForReadingTimer(pendingReadingTimer.dateKey,pendingReadingTimer.minutes);}}catch(e){}},0);
+    return r;
+  };
+})();
+
+/* ===== QUICK LOG 색도 FREE TIME처럼 항목마다 돌아가며, 칸 오른쪽 아래에 같은 색 점 (2026-11-23) ===== */
+function qlOrderNames(){return [...document.querySelectorAll('#oneOffQuickRow .snackQuickBtn .qTx')].map(x=>x.textContent.trim());}
+function qlColorByName(n){const i=qlOrderNames().indexOf(String(n||'').trim());return i<0?'':ftHex(ftColorOfIndex(i),'g');}
+function ftDots(){
+  document.querySelectorAll('.freeChipWrap[data-routine-id]').forEach(w=>{
+    const c=w.querySelector('.freeChip');if(!c)return;c.querySelector('.ftDot')?.remove();
+    const col=ftHex(ftColorById(w.dataset.routineId),'g');if(col)c.insertAdjacentHTML('beforeend',`<i class="ftDot" style="background:${col}"></i>`);
+  });
+  document.querySelectorAll('#oneOffQuickRow .snackQuickBtn').forEach((b,i)=>{
+    b.querySelector('.ftDot')?.remove();const col=ftHex(ftColorOfIndex(i),'g');if(col)b.insertAdjacentHTML('beforeend',`<i class="ftDot" style="background:${col}"></i>`);
+  });
+}
+(function(){
+  const lg=renderLifeGuide;renderLifeGuide=function(){const r=lg.apply(this,arguments);try{ftDots();}catch(e){}return r;};
+  const q=renderOneOffQuick;renderOneOffQuick=function(){const r=q.apply(this,arguments);try{ftDots();}catch(e){}return r;};
+  setTimeout(()=>{try{ftDots();}catch(e){}},500);
+})();
+
+(function(){const r=renderStLog;renderStLog=function(){const x=r.apply(this,arguments);try{const h=document.getElementById('stLogHead');h.textContent=h.textContent.replace('숨참기 기록','프리다이빙 · 기록');}catch(e){}return x;};})();
+
+(function(){const r=renderStLog;renderStLog=function(){const x=r.apply(this,arguments);try{const h=document.getElementById('stLogHead');h.textContent=h.textContent.replace('프리다이빙 · 기록 ·','프리다이빙 기록 ·');}catch(e){}return x;};})();
 
 </script>
 
