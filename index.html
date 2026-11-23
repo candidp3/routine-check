@@ -15921,6 +15921,105 @@ qlMarkDone=function(){
 };
 try{qlMarkDone();}catch(e){}
 
+/* ===== DAILY CARE 누적형도 같은 서식: 기록(단위 포함) + 작은 '목표' (2026-11-23 v2) ===== */
+(function(){
+  const base=dcDecorate;
+  dcDecorate=function(){
+    base.apply(this,arguments);
+    document.querySelectorAll('#viewToday .dailyCareGrid .dailyCareItemCard[data-daily-care-id]').forEach(card=>{
+      try{
+        const id=card.dataset.dailyCareId,d=dcDefOf(id),meta=card.querySelector('.dailyCareMeta');if(!meta||meta.querySelector('.dcVal'))return;
+        if(card.classList.contains('dailyCareNumericCard')||id==='sleep'||d.type==='duration'||(typeof lgIsMood==='function'&&lgIsMood(d)))return;
+        const tx=(meta.textContent||'').trim();let v=null,u='',t=null,done=false,m;
+        if(m=/^([\d,.]+)\s*([^\d\s/·]*)\s*\/\s*([\d,.]+)\s*(\S*)$/.exec(tx)){v=m[1];t=m[3];u=m[4]||m[2];}
+        else if(m=/^([\d,.]+)\s*([^\d\s·]*)\s*·\s*달성/.exec(tx)){v=m[1];u=m[2];done=true;const n=Number(d.target)||0;t=n?(id==='water'?Math.round(n).toLocaleString():dcFmt(n)):null;}
+        else if(m=/^([\d,.]+)\s*([^\d\s·/]*)$/.exec(tx)){v=m[1];u=m[2];}
+        else return;
+        const html=`<span class="dcVal">${escapeLife(v+u)}</span>${t?`<small class="dcGoal">목표 ${escapeLife(t+u)}${done?' · 달성':''}</small>`:''}`;
+        meta.innerHTML=html;meta.classList.add('dcTwo');
+      }catch(e){}
+    });
+  };
+  try{dcDecorate();}catch(e){}
+})();
+
+/* ===== FREE TIME · QUICK LOG 기준을 화면 문구로 분명히 (2026-11-23) =====
+   DAILY CARE: 매일 챙기는 것(목표) / FREE TIME: 시간을 들여 한 활동 / QUICK LOG: 가끔 생기는 일·가끔 재는 수치 */
+try{SEC_SUB['FREE TIME']='시간을 들여 한 활동';SEC_SUB['QUICK LOG']='가끔 생기는 일';}catch(e){}
+try{TDS_SUB.freetime='시간을 들여 한 활동';TDS_SUB.quicklog='가끔 생기는 일 · 가끔 재는 수치';}catch(e){}
+document.querySelectorAll('.lifeBlockHead').forEach(h=>{try{const t=h.querySelector('.lifeBlockTitle,h2,b')?.textContent.trim();const s=h.querySelector('.secSub');if(s&&SEC_SUB[t])s.textContent=SEC_SUB[t];}catch(e){}});
+(function(){
+  const u=updateOneOffEditorFields;
+  updateOneOffEditorFields=function(){
+    const r=u.apply(this,arguments);
+    const t=document.getElementById('oneOffEditType')?.value,h=document.getElementById('oneOffTypeHint');
+    if(h&&t==='numeric')h.textContent='몇 달에 한 번처럼 가끔 재는 수치를 남겨요. 매일 잰다면 DAILY CARE에 두세요. DAILY CARE에 같은 이름이 있으면 RECORD에서 한 그래프로 합쳐 보여요.';
+    return r;
+  };
+})();
+
+/* ===== RECORD 수치 그래프: QUICK LOG와 DAILY CARE에 같은 이름이 있으면 하나로 ===== */
+(function(){
+  const baseDefs=rrNumericDefs;
+  rrNumericDefs=function(){
+    const list=baseDefs.apply(this,arguments),by=new Map();
+    list.forEach(d=>{const k=String(d.name||'').trim();if(!by.has(k))by.set(k,[]);by.get(k).push(d);});
+    return [...by.values()].map(g=>{
+      g.sort((a,b)=>(a.oneOff?1:0)-(b.oneOff?1:0)); /* DAILY CARE 쪽을 대표로 */
+      const rep={...g[0]};if(g.length>1)rep._group=g.map(x=>x.id);
+      if(!rep.unit)rep.unit=(g.find(x=>x.unit)||{}).unit||'';
+      return rep;
+    });
+  };
+  const baseEnsure=rrEnsureNumericMetric;
+  rrEnsureNumericMetric=function(){
+    const defs=rrNumericDefs();if(!defs.length){rrNumericMetric='';return null;}
+    const d=defs.find(x=>x.id===rrNumericMetric||(x._group||[]).includes(rrNumericMetric))||defs[0];
+    rrNumericMetric=d.id;return d;
+  };
+  const basePoint=dailyCareStoredPoint;
+  dailyCareStoredPoint=function(def,dateKey){
+    if(def&&Array.isArray(def._group)){
+      for(const id of def._group){const p=basePoint.call(this,{...def,id,_group:undefined},dateKey);if(p&&p.recorded)return p;}
+      return basePoint.call(this,{...def,_group:undefined},dateKey);
+    }
+    return basePoint.apply(this,arguments);
+  };
+})();
+
+/* ===== RECORD FREE TIME 그래프: 활동마다 TODAY와 같은 색, 활동이 많아도 모두 색으로 ===== */
+function rrFreeColor(name,j){
+  try{
+    const n=String(name||'').trim(),rs=loadLifeRoutines().filter(r=>r.block==='free');
+    const r=rs.find(x=>String(x.name||'').trim()===n)||(n==='독서'?rs.find(x=>x.id==='free_read'):null);
+    if(r)return ftHex(ftColorById(r.id),'g');
+    return ftHex(ftColorOfIndex(rs.length+j),'g');
+  }catch(e){return RR_FREE_COLORS[j%RR_FREE_COLORS.length];}
+}
+(function(){
+  const fix=html=>String(html);
+  const bs=rrLeisureStackedSvg;
+  rrLeisureStackedSvg=function(buckets,labels,top){
+    const all=rrLeisureRows(buckets); /* 위 3개만이 아니라 모든 활동 */
+    let html=bs.call(this,buckets,labels,all);
+    /* 이름 순서대로 색을 다시 칠함 */
+    return html.replace(/<rect([^>]*?)fill="[^"]*"([^>]*)><title>([^<]*?) · /g,(m,a,b,t)=>{const nm=t.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'");const j=all.findIndex(x=>x.name===nm);return `<rect${a}fill="${rrFreeColor(nm,j<0?0:j)}"${b}><title>${t} · `;});
+  };
+  const su=rrLeisureSummary;
+  rrLeisureSummary=function(buckets){
+    const html=su.apply(this,arguments),rows=rrLeisureRows(buckets);
+    const box=document.createElement('div');box.innerHTML=html;
+    box.querySelectorAll('.rr-leisure-item').forEach(it=>{
+      const nm=it.querySelector('span')?.textContent.trim(),j=rows.findIndex(x=>x.name===nm),sw=it.querySelector('.rr-leisure-swatch');
+      if(sw)sw.style.background=rrFreeColor(nm,j<0?0:j);
+    });
+    return box.innerHTML;
+  };
+})();
+try{renderRecordDashboard();}catch(e){}
+
+document.querySelectorAll('.secSub').forEach(s=>{const m={'여유 있을 때':'시간을 들여 한 활동','필요할 때 한 줄':'가끔 생기는 일'};if(m[s.textContent])s.textContent=m[s.textContent];});
+
 </script>
 
 
