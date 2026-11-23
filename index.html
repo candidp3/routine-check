@@ -3239,6 +3239,12 @@ body.tdPastMode #tdHero{box-shadow:inset 0 0 0 1.5px var(--rc-pastl)}
 
 :is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal) .lifeActions{margin-bottom:0!important}
 
+/* 시간대 루틴 캡슐: 제목 · 시간 한 줄 (2026-11-23 v2) */
+.lbPeek button.pkHasTm{height:revert!important;padding-top:revert!important;padding-bottom:revert!important}
+.lbPeek .pkCol{flex-direction:row!important;align-items:baseline!important;gap:0!important;white-space:nowrap}
+.lbPeek .pkTm{font-size:.6875rem!important;margin:0!important}
+.lbPeek .pkTm::before{content:'·';margin:0 4px;color:var(--rc-line2)}
+
 </style>
 <script>/* 저장 공간 지킴이 (2026-11-21): 기록을 저장하다 공간이 모자라면 자동 백업 사본(오래된 것부터)을 지우고 다시 저장 → 실제 기록은 꼭 저장되게 */
 (function(){try{var P=Storage.prototype,orig=P.setItem,PFX='__auto_backup__';
@@ -15790,6 +15796,10 @@ function lbPeekTimes(){
   });
 }
 (function(){const lg=renderLifeGuide;renderLifeGuide=function(){const r=lg.apply(this,arguments);try{lbPeekTimes();}catch(e){}return r;};try{lbPeekTimes();}catch(e){}})();
+
+/* 추가 색: 옅은 테마색과 섞이지 않게 진한 색으로 (2026-11-23 v2) */
+FT_EXTRA.splice(0,FT_EXTRA.length,['#3e5c9e','#7f9be0'],['#a0704b','#c99a72'],['#2b9196','#56c0c4'],['#8a9a2c','#b5c454'],['#b3418f','#d978b8'],['#6f7a85','#a3adb8']);
+try{renderLifeGuide();renderOneOffQuick();}catch(e){}
 
 </script>
 
