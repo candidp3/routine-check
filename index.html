@@ -3058,11 +3058,12 @@ body.tdPastMode #tdHero{box-shadow:inset 0 0 0 1.5px var(--rc-pastl)}
 #tdHero .thPastTag button{border:0;background:transparent;padding:3px 2px;font:inherit;font-size:.75rem;color:var(--rc-tx2);text-decoration:underline;text-underline-offset:3px}
 .tdsPast{color:var(--rc-past)!important;font-weight:600}
 /* 달력 요약 연필 버튼 */
-#calendarDetail .calEdIc{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0!important;border:0;border-radius:50%;background:var(--rc-soft);color:var(--rc-mu);flex:none}
-#calendarDetail .calEdIc svg{width:15px;height:15px}
-#calendarDetail .calEdIc .appIco,#calendarDetail .calEdIc>span{display:flex}
 #calendarDetail .calEdRow{cursor:pointer}
-#calendarDetail .calEdRow:active .calEdIc{background:var(--rc-gl);color:var(--rc-gd)}
+
+/* 달력 연필 버튼 통일 (2026-11-23): 동그라미 없이 작은 연필만 */
+#calendarDetail .calEdIc,#calendarChipEditBtn.calPenBtn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;padding:0!important;margin:-6px -7px -6px auto;border:0;border-radius:8px;background:transparent!important;color:var(--rc-mu);flex:none}
+#calendarDetail .calEdIc svg,#calendarChipEditBtn.calPenBtn svg{width:16px;height:16px}
+#calendarDetail .calEdRow:active .calEdIc,#calendarChipEditBtn.calPenBtn:active{background:var(--rc-soft)!important;color:var(--rc-tx2)}
 
 </style>
 <script>/* 저장 공간 지킴이 (2026-11-21): 기록을 저장하다 공간이 모자라면 자동 백업 사본(오래된 것부터)을 지우고 다시 저장 → 실제 기록은 꼭 저장되게 */
@@ -3963,7 +3964,7 @@ function getLocalDateKey(d=new Date()){
   // sv-SE는 YYYY-MM-DD 포맷을 안정적으로 반환
   return d.toLocaleDateString('sv-SE');
 }
-const todayKey = getLocalDateKey(new Date());
+let todayKey = getLocalDateKey(new Date()); /* 자정이 지나면 lgRefreshToday()가 바꿈 */
 document.getElementById("today").innerText = todayKey;
 let activeDateKey = todayKey;
 
@@ -15007,6 +15008,30 @@ function tdPastLabel(k){const d=parseDateKeyLocal(k);return `${d.getMonth()+1}�
     return r;
   };
 })();
+
+/* ===== 자정이 지나도 '오늘'이 맞게 (2026-11-23)
+   앱을 켜 둔 채 날짜가 바뀌면 '오늘'이 어제로 남아 '오늘로'를 눌러도 어제로 가던 문제.
+   앱으로 돌아올 때·1분마다 날짜를 확인해서, 오늘을 보고 있었다면 새 오늘로 넘어감 ===== */
+function lgRefreshToday(){
+  const t=getLocalDateKey(new Date());
+  if(t===todayKey)return false;
+  const wasToday=activeDateKey===todayKey;
+  todayKey=t;
+  try{const dp=document.getElementById('datePicker');if(dp){dp.max=t;if(wasToday)dp.value=t;}}catch(e){}
+  try{const ti=document.getElementById('tdInput');if(ti)ti.max=t;}catch(e){}
+  if(wasToday){try{backToToday();}catch(e){}}
+  try{renderLifeGuide();}catch(e){}try{tdSync();}catch(e){}try{renderLifeCalendar();}catch(e){}
+  return true;
+}
+(function(){
+  const b=backToToday;backToToday=function(){lgRefreshToday();return b.apply(this,arguments);};
+  const o=openTodayForDate;openTodayForDate=function(){lgRefreshToday();return o.apply(this,arguments);};
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')lgRefreshToday();});
+  window.addEventListener('focus',lgRefreshToday);
+  setInterval(lgRefreshToday,60000);
+})();
+/* 달력 '루틴으로 보기' 편집 버튼도 같은 연필 아이콘으로 */
+(function(){try{const b=document.getElementById('calendarChipEditBtn');if(b){b.innerHTML=appIconSvg('pencil');b.setAttribute('aria-label','표시할 루틴 고르기');b.classList.add('calPenBtn');}}catch(e){}})();
 
 </script>
 
