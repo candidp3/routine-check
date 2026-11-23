@@ -15801,6 +15801,17 @@ function lbPeekTimes(){
 FT_EXTRA.splice(0,FT_EXTRA.length,['#3e5c9e','#7f9be0'],['#a0704b','#c99a72'],['#2b9196','#56c0c4'],['#8a9a2c','#b5c454'],['#b3418f','#d978b8'],['#6f7a85','#a3adb8']);
 try{renderLifeGuide();renderOneOffQuick();}catch(e){}
 
+/* 시간대 루틴 캡슐의 시간 표시: 어떤 경로로 다시 그려져도 항상 붙도록 (2026-11-23) */
+(function(){
+  let busy=false,q=0;
+  const run=()=>{q=0;busy=true;try{lbPeekTimes();}catch(e){}busy=false;};
+  new MutationObserver(ms=>{
+    if(busy||q)return;
+    if(ms.some(m=>m.target.closest&&m.target.closest('.lbPeek')||[...m.addedNodes].some(n=>n.nodeType===1&&(n.matches('.lbPeek')||n.querySelector('.lbPeek')))))q=requestAnimationFrame(run);
+  }).observe(document.body,{childList:true,subtree:true});
+  setTimeout(run,0);
+})();
+
 </script>
 
 
