@@ -3151,6 +3151,34 @@ body.tdPastMode #tdHero{box-shadow:inset 0 0 0 1.5px var(--rc-pastl)}
 #projectModal .lifeActions .lifeSave{flex:0 0 52%}
 #projectModal #pjDupBtn.pjDupTop{display:none!important}
 
+/* 독서 책 고르기 창 머리 (2026-11-23) */
+#readingBookModal .modalHead{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#readingBookModal .modalHead .lifeClose{flex:none}
+#readingBookModal .readingPickSkip{color:var(--rc-mu)}
+/* 프리다이빙 기록 추가 [훈련 | 다이빙]: 다른 화면(상태 고르기)과 같은 따로 떨어진 버튼 */
+#stManualKinds .stTop2{display:flex;gap:8px;padding:0;background:none;border-radius:0}
+#stManualKinds .stTop2 button{flex:1;height:42px;border:1px solid var(--rc-line2);border-radius:12px;background:var(--rc-card);color:var(--rc-mu);box-shadow:none;font:inherit;font-size:var(--fs-2)}
+#stManualKinds .stTop2 button.on{border-color:var(--rc-g);background:var(--rc-gl);color:var(--rc-gd);font-weight:600;box-shadow:none}
+/* 프로젝트 할 일 글씨 = FREE TIME·QUICK LOG 항목 글씨, 두 항목 글씨 색도 같게 */
+.pjNextText,.pjvTx{font-size:.8125rem!important;font-weight:400!important;color:var(--rc-tx)!important}
+.pjvRow.done .pjvTx{color:var(--rc-mu)!important}
+.freeName{color:var(--rc-tx)!important}
+/* 저장·취소 버튼: 설정 화면 버튼과 같은 크기, 지우기·취소는 작은 글자 */
+#routineInputSheet .routineInputActions{display:flex!important;grid-template-columns:none!important;align-items:center;gap:4px}
+.routineInputActions>button:not(.primary){flex:none!important;width:auto!important;min-height:0!important;height:auto!important;background:transparent!important;border:0!important;box-shadow:none!important;padding:9px 8px!important;font-size:13.5px!important;font-weight:500!important;color:var(--rc-mu)!important}
+.routineInputActions>button.primary{margin-left:auto;flex:0 0 52%!important;height:39px!important;min-height:0!important;padding:0 12px!important;border-radius:11px!important;font-size:13.5px!important;font-weight:600!important}
+#bookModal .bookFooterLeft button,#bookModal .bookModalFooterRight .bookCancelBtn{background:transparent!important;border:0!important;box-shadow:none!important;padding:9px 8px!important;min-height:0!important;height:auto!important;font-size:13.5px!important;font-weight:500!important;color:var(--rc-mu)!important}
+#bookModal .bookModalFooterRight .bookSaveBtn{height:39px!important;min-height:0!important;min-width:120px;padding:0 16px!important;border-radius:11px!important;font-size:13.5px!important;font-weight:600!important;background:var(--rc-solid)!important;color:#fff!important;border:0!important}
+#oneOffLogModal .lifeActions{display:flex;align-items:center;gap:4px}
+#oneOffLogModal .lifeActions .lifeDelete{flex:none!important;width:auto!important;background:transparent!important;border:0!important;box-shadow:none!important;padding:9px 8px!important;color:var(--rc-mu)!important}
+#oneOffLogModal .lifeActions .lifeSave{margin-left:auto;flex:0 0 52%!important}
+
+/* QUICK LOG 오늘 한 항목: FREE TIME과 같은 색 (2026-11-23) */
+#tdsMain #quickLogBlock .snackQuickBtn.qlDone,.oneOffQuickRow .snackQuickBtn.qlDone{background:var(--rc-gl)!important;border-color:var(--rc-gs)!important;box-shadow:inset 0 0 0 .5px var(--rc-gs)!important;color:var(--rc-tx)!important}
+#tdsMain #quickLogBlock .snackQuickBtn.qlDone .qIc,#tdsMain #quickLogBlock .snackQuickBtn.qlDone:not(:has(.qIc)) .qPlus{background:var(--rc-card)!important}
+.oneOffQuickRow .snackQuickBtn .qMeta{display:block;font-size:var(--fs-1);color:var(--rc-tx2);line-height:1.2;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ftTodayLogs{margin-top:10px}
+
 </style>
 <script>/* 저장 공간 지킴이 (2026-11-21): 기록을 저장하다 공간이 모자라면 자동 백업 사본(오래된 것부터)을 지우고 다시 저장 → 실제 기록은 꼭 저장되게 */
 (function(){try{var P=Storage.prototype,orig=P.setItem,PFX='__auto_backup__';
@@ -8741,7 +8769,7 @@ function renderLifeGuide(){
     html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">${title}</div><div class="lifeBlockHint">${hint}</div></div></div><div>${body}</div><button class="lifeAddBtn lifeAddRoutineBtn" onclick="openRoutineModal(null,'${key}')">+ 루틴 추가</button></section>`;
   }
   const free=routines.filter(r=>r.block==='free'&&r.enabled).sort((a,b)=>(a.order||0)-(b.order||0));
-  html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">FREE TIME</div><div class="lifeBlockHint">해야 할 일이 아니라, 오늘 여유가 있을 때 고르는 활동</div></div></div><div class="freeGrid">${free.map(r=>`<div class="freeChipWrap" data-routine-id="${escapeLife(r.id)}"><button class="freeChip ${lifeDone(r.id)?'done':''}${timerElapsedForRoutine(r.id)?' timing':''}" onclick="handleRoutineRowTap(null,'${r.id}')"><span class="freeMainCentered"><span class="ico freeEmoji">${escapeLife(r.icon||'')}</span><span class="freeTypeIcon freeTypeIcon--${freeTypeIconClass(r)}" aria-hidden="true">${freeTypeIcon(r)}</span><span class="freeName">${escapeLife(r.name)}</span></span>${freeDisplayMeta(r)?`<span class="freeMeta">${escapeLife(freeDisplayMeta(r))}</span>`:''}</button><button class="freeEditBtn routineEditDots" aria-label="${escapeLife(r.name)} 편집" onclick="event.stopPropagation();openRoutineModal('${r.id}')">···</button><button type="button" class="freeOrderBtn" aria-label="${escapeLife(r.name)} 순서 변경" title="누른 채 드래그" onpointerdown="startFreeTimeDrag(event)" onpointermove="moveFreeTimeDrag(event)" onpointerup="endFreeTimeDrag(event)" onpointercancel="endFreeTimeDrag(event)" onclick="event.preventDefault();event.stopPropagation()">☰</button></div>`).join('')}${free.length?'':'<div class="lifeBlockHint">SETTING에서 프리타임 항목을 추가할 수 있어요.</div>'}</div><div class="lifeBlockHint" style="margin-top:9px">하지 않은 활동은 아무 표시도 남기지 않아요.<br>카드를 길게 누르면 순서를 바꿀 수 있어요.</div></section>`;
+  html+=`<section class="lifeBlock"><div class="lifeBlockHead"><div><div class="lifeBlockTitle">FREE TIME</div><div class="lifeBlockHint">해야 할 일이 아니라, 오늘 여유가 있을 때 고르는 활동</div></div></div><div class="freeGrid">${free.map(r=>`<div class="freeChipWrap" data-routine-id="${escapeLife(r.id)}"><button class="freeChip ${lifeDone(r.id)?'done':''}${timerElapsedForRoutine(r.id)?' timing':''}" onclick="handleRoutineRowTap(null,'${r.id}')"><span class="freeMainCentered"><span class="ico freeEmoji">${escapeLife(r.icon||'')}</span><span class="freeTypeIcon freeTypeIcon--${freeTypeIconClass(r)}" aria-hidden="true">${freeTypeIcon(r)}</span><span class="freeName">${escapeLife(r.name)}</span></span>${freeDisplayMeta(r)?`<span class="freeMeta">${escapeLife(freeDisplayMeta(r))}</span>`:''}</button><button class="freeEditBtn routineEditDots" aria-label="${escapeLife(r.name)} 편집" onclick="event.stopPropagation();openRoutineModal('${r.id}')">···</button><button type="button" class="freeOrderBtn" aria-label="${escapeLife(r.name)} 순서 변경" title="누른 채 드래그" onpointerdown="startFreeTimeDrag(event)" onpointermove="moveFreeTimeDrag(event)" onpointerup="endFreeTimeDrag(event)" onpointercancel="endFreeTimeDrag(event)" onclick="event.preventDefault();event.stopPropagation()">☰</button></div>`).join('')}${free.length?'':'<div class="lifeBlockHint">SETTING에서 프리타임 항목을 추가할 수 있어요.</div>'}</div></section>`;
   root.innerHTML=html;
   renderTodayNote();
   renderActivityTimerBanner();
@@ -13896,7 +13924,7 @@ function tdsClose(fromHistory){
   tdsPutBack();o.classList.add('hide');document.body.classList.remove('tdsOn');tdsHistTok='';
   try{renderTdJump();}catch(e){}
 }
-window.addEventListener('popstate',()=>{const o=document.getElementById('tdsScreen');if(o&&!o.classList.contains('hide'))tdsClose(true);});
+window.addEventListener('popstate',()=>{const o=document.getElementById('tdsScreen');if(history.state&&tdsHistTok&&history.state.__tds===tdsHistTok)return; /* 위에 열린 새창(프로젝트 등)만 닫힌 경우 */if(o&&!o.classList.contains('hide'))tdsClose(true);});
 /* 위쪽 카드 누르면 ROUTINE 전체 (안의 버튼·체크는 그대로 동작) */
 document.addEventListener('click',e=>{
   const hero=e.target.closest('#tdHero');if(!hero)return;
@@ -14207,7 +14235,7 @@ function tdJFit(){
       const base=tdsBase||lifeLogKey(),days=[];for(let i=0;i<7;i++)days.push(periodAddDays(base,-i));
       const ids=new Set([...document.querySelectorAll('#tdsMain .freeChipWrap')].map(w=>w.dataset.routineId));
       const rows=days.map(k=>{
-        const ln=id==='freetime'?ftLines(k,ids):quickLogItems(k,false).map(x=>({n:x.n,s:'',v:x.t||'',tap:x.c||''}));
+        const ln=id==='freetime'?ftLines(k,ids):quickLogItems(k,false).map(x=>({n:String(x.n||'').replace(/⟪[a-z0-9_]+⟫\s*/g,''),s:'',v:x.t||'',tap:x.c||'',col:''})) /* FREE TIME처럼 색 점 + 이름 */;
         return ln.length?`<div class="tdsDay tdsDayL"><div class="tdsDayK">${tdsDayLabel(k)}</div><div class="tdsDayLs">${ln.map(lineHTML).join('')}</div></div>`:'';
       }).join('');
       if(rows){const head=box.querySelector('.tdsSecT');box.innerHTML=(head?head.outerHTML:'<div class="tdsSecT">최근 7일</div>')+rows;}
@@ -15535,6 +15563,68 @@ const pjEditOrig=openProject;
     acts.prepend(links);
     document.getElementById('pjDupBtn')?.classList.add('pjDupTop');
   }catch(e){console.warn(e);}
+})();
+
+/* ===== 독서 타이머를 끝낼 때 책 고르기 (2026-11-23)
+   '읽고있어' 책만 보여서 다른 상태의 책은 연결할 수 없던 문제 → 직접 입력할 때와 같은 책 목록(읽는 중인 책 먼저) ===== */
+chooseBookForReadingTimer=function(dateKey,minutes){
+  pendingReadingTimer={dateKey,minutes};readingPickCtx=null;
+  const books=readingBooksSorted();
+  document.getElementById('readingBookDuration').textContent=`독서 ${formatDurationMin(minutes)}`;
+  document.getElementById('readingPickList').innerHTML=books.map(b=>`<button class="readingPickBtn" onclick="linkPendingReading('${b.id}')">⟪book⟫ ${escapeLife(b.title)}<div class="bookAuthor">${escapeLife(b.author||'')}${b.status?`${b.author?' · ':''}${escapeLife(b.status)}`:''}</div></button>`).join('')
+    +`<button class="readingPickBtn readingPickSkip" onclick="closeReadingBookModal()">책 연결 없이 기록</button>`;
+  try{if(typeof renderAppIcons==='function')renderAppIcons(document.getElementById('readingPickList'));}catch(e){}
+  document.getElementById('readingBookModal').classList.remove('hide');
+};
+(function(){try{const b=document.querySelector('#readingBookModal .modalHead button');if(b){b.className='lifeClose';b.setAttribute('aria-label','닫기');b.textContent='×';}}catch(e){}})();
+
+/* ===== FREE TIME · QUICK LOG 같은 모양으로 (2026-11-23)
+   - 오늘 한 항목은 칸 색이 바뀜(두 곳 모두)
+   - 오늘 남긴 기록은 칸 아래 캡슐로(두 곳 모두). 캡슐을 누르면 그 기록으로
+   - 최근 7일 요약은 색 점 + 이름 ===== */
+function qlTodayCount(btn,k){
+  const oc=btn.getAttribute('onclick')||'';
+  try{
+    if(/openSnackRecord\(/.test(oc))return {n:(loadSnackRecords()[k]||[]).length};
+    const m=/openOneOffQuick\('([^']+)'\)/.exec(oc);if(!m)return {n:0};
+    const id=m[1],d=loadOneOffDefinitions().find(x=>x.id===id);if(!d)return {n:0};
+    if(d.type==='static')return {n:stSessions(k).length};
+    if(d.type==='numeric'){const v=dailyCareNumericValue(k,id);if(v===null||v===undefined||!(Number(v)>0))return {n:0};const def=normalizeDailyCareDefinition(dailyCareDef(id)||d);return {n:1,t:`${formatDailyCareNumber(v)}${def.unit||''}`};}
+    return {n:oneOffLogsOn(k,id).length};
+  }catch(e){return {n:0};}
+}
+function qlMarkDone(){
+  const row=document.getElementById('oneOffQuickRow');if(!row)return;const k=lifeLogKey();
+  row.querySelectorAll('.snackQuickBtn').forEach(b=>{
+    b.querySelector('.qMeta')?.remove();
+    const c=qlTodayCount(b,k),on=c.n>0;b.classList.toggle('qlDone',on);
+    if(on)b.insertAdjacentHTML('beforeend',`<span class="qMeta">${escapeLife(c.t||(c.n>1?c.n+'개':'오늘'))}</span>`);
+  });
+}
+function ftTodayChips(){
+  document.querySelectorAll('.freeGrid').forEach(grid=>{
+    const sec=grid.closest('section')||grid.parentElement;sec.querySelector('.ftTodayLogs')?.remove();
+    const k=lifeLogKey(),logs=(loadLifeLogs()[k]||[]);const rs=loadLifeRoutines();
+    const chips=[];
+    [...grid.querySelectorAll('.freeChipWrap')].forEach(w=>{
+      const id=w.dataset.routineId,r=rs.find(x=>x.id===id),log=logs.find(x=>x&&x.routineId===id);if(!r||!log)return;
+      let t='';
+      if(Number(log.duration)>0){t=formatDurationMin(Number(log.duration));if(rasIsReading(r)){const bk=rasBooksOf(k);if(bk)t+=' · '+bk;}}
+      const ents=freeLogEntries(log);if(ents.length)t=t?t+' · '+ents[0]:ents[0];
+      if(!t)t='했어요';
+      chips.push(`<button type="button" class="olChip" onclick="handleRoutineRowTap(null,'${id}')">${escapeLife(r.name)}<span>${escapeLife(t)}</span></button>`);
+    });
+    if(chips.length)grid.insertAdjacentHTML('afterend',`<div class="oneOffTodayLogs ftTodayLogs">${chips.join('')}</div>`);
+  });
+}
+(function(){
+  const lg=renderLifeGuide;
+  renderLifeGuide=function(){const r=lg.apply(this,arguments);try{ftTodayChips();qlMarkDone();}catch(e){}return r;};
+  const q=renderOneOffQuick;
+  renderOneOffQuick=function(){const r=q.apply(this,arguments);try{qlMarkDone();}catch(e){}return r;};
+  const tl=renderOneOffTodayLogs;
+  renderOneOffTodayLogs=function(){const r=tl.apply(this,arguments);try{qlMarkDone();}catch(e){}return r;};
+  try{ftTodayChips();qlMarkDone();}catch(e){}
 })();
 
 </script>
