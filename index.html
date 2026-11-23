@@ -3065,6 +3065,92 @@ body.tdPastMode #tdHero{box-shadow:inset 0 0 0 1.5px var(--rc-pastl)}
 #calendarDetail .calEdIc svg,#calendarChipEditBtn.calPenBtn svg{width:16px;height:16px}
 #calendarDetail .calEdRow:active .calEdIc,#calendarChipEditBtn.calPenBtn:active{background:var(--rc-soft)!important;color:var(--rc-tx2)}
 
+/* 누를 때 나오는 버튼 (2026-11-23): 큰 버튼 1 + 작은 글자 */
+.routineActionButtons.rasNew{display:flex;flex-direction:column;gap:10px}
+.rasNew .rasSum{margin:-2px 2px 2px;font-size:var(--fs-2);color:var(--rc-tx2);line-height:1.45;word-break:keep-all;text-align:center}
+.rasNew .rasList{display:flex;flex-direction:column;border:1px solid var(--rc-line);border-radius:14px;overflow:hidden;background:var(--rc-card)}
+.rasNew .rasItem{display:flex;align-items:center;gap:10px;min-height:48px;padding:0 14px;border:0;background:transparent;font:inherit;font-size:var(--fs-2);color:var(--rc-tx);text-align:left}
+.rasNew .rasItem+.rasItem{border-top:1px solid var(--rc-line)}
+.rasNew .rasItem span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rasNew .rasItem i{font-style:normal;color:var(--rc-mu)}
+.rasNew .rasItem:active{background:var(--rc-soft)}
+.rasNew .rasMain{width:100%;min-height:52px;border:0;border-radius:14px;background:var(--rc-solid);color:#fff;font:inherit;font-size:var(--fs-3);font-weight:600}
+.rasNew .rasLinks{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:2px 6px;margin-top:2px}
+.routineActionButtons.rasNew .rasLinks button{width:auto!important;min-height:0!important;height:auto!important;flex:none!important;border:0!important;background:transparent!important;box-shadow:none!important;padding:8px 6px!important;margin:0!important;font:inherit;font-size:var(--fs-2)!important;font-weight:400!important;color:var(--rc-tx2)!important}
+.routineActionButtons.rasNew .rasItem{width:100%!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;margin:0!important;justify-content:flex-start!important;font-weight:400!important}
+.rasNew .rasLinks i{font-style:normal;color:var(--rc-line2)}
+.routineActionButtons.rasNew .rasLinks .rasDanger{color:var(--rc-mu)!important}
+.routineActionCard .routineActionCancel{background:transparent!important;border:0!important;color:var(--rc-mu)!important;font-size:var(--fs-2)!important;min-height:40px!important;margin-top:2px}
+.rasQuick{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:10px 0 2px}
+.rasQuick button{height:32px;padding:0 12px;border:1px solid var(--rc-line2);border-radius:999px;background:var(--rc-card);color:var(--rc-tx2);font:inherit;font-size:var(--fs-1)}
+.rasQuick .rasBook{margin-left:auto;border:0;background:transparent;color:var(--rc-gd);text-decoration:underline;text-underline-offset:3px}
+/* 프리다이빙 기록 추가: [훈련 | 다이빙] */
+#stManualKinds.stKinds2{display:block;background:none;padding:0}
+#stManualKinds .stTop2{display:flex;gap:4px;padding:3px;border-radius:12px;background:var(--rc-soft)}
+#stManualKinds .stTop2 button{flex:1;height:38px;border:0;border-radius:9px;background:transparent;font:inherit;font-size:var(--fs-2);color:var(--rc-mu)}
+#stManualKinds .stTop2 button.on{background:var(--rc-card);color:var(--rc-tx);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+#stManualKinds .stSub2{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+#stManualKinds .stSub2 button{height:34px;padding:0 13px;border:1px solid var(--rc-line2);border-radius:999px;background:var(--rc-card);color:var(--rc-tx2);font:inherit;font-size:var(--fs-1)}
+#stManualKinds .stSub2 button.on{border-color:var(--rc-g);background:var(--rc-gl);color:var(--rc-gd);font-weight:600}
+
+/* 다른 날로 옮기기 (2026-11-23) */
+.lgMoveRow{display:flex;align-items:center;justify-content:center;gap:6px;margin:10px 0 4px;font-size:var(--fs-1);color:var(--rc-mu)}
+.lgMoveRow button{border:0;background:transparent;padding:6px 4px;font:inherit;font-size:var(--fs-1);color:var(--rc-tx2);text-decoration:underline;text-underline-offset:3px}
+.lgMoveRow i{font-style:normal;color:var(--rc-line2)}
+#lgDatePick{z-index:2150}
+#lgDatePick .lgdpRow input{width:100%;height:48px;box-sizing:border-box;border:1px solid var(--rc-line2);border-radius:12px;background:var(--rc-soft);color:var(--rc-tx);font:inherit;font-size:var(--fs-3);padding:0 12px;margin:6px 0 10px}
+#lgDatePick .lgdpQuick{display:flex;gap:6px;justify-content:center;margin-bottom:12px}
+#lgDatePick .lgdpQuick button{height:32px;padding:0 12px;border:1px solid var(--rc-line2);border-radius:999px;background:var(--rc-card);color:var(--rc-tx2);font:inherit;font-size:var(--fs-1)}
+
+/* 프로젝트 새창 (2026-11-23) */
+#pjView{z-index:125}
+#pjView .pjvEdit{width:40px;height:40px;border:0;border-radius:50%;background:transparent;color:var(--rc-tx2);display:flex;align-items:center;justify-content:center}
+#pjView .pjvEdit svg{width:19px;height:19px}
+#pjView .tdsTT small{color:var(--rc-mu)}
+.pjvBody{padding-top:6px}
+.pjvCard{background:var(--rc-card);border:1px solid var(--rc-line);border-radius:20px;padding:16px 16px 12px;margin:0 0 12px}
+.pjvProg{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.pjvProg .pjBar{flex:1;margin:0}
+.pjvProg span{font-size:var(--fs-1);color:var(--rc-mu);font-variant-numeric:tabular-nums}
+.pjvList{display:flex;flex-direction:column}
+.pjvRow{display:flex;align-items:center;gap:12px;min-height:50px;border-bottom:1px solid var(--rc-line);transition:opacity .3s}
+.pjvList .pjvRow:last-child{border-bottom:0}
+.pjvChk{flex:none;width:24px;height:24px;border-radius:50%;border:1.6px solid var(--rc-line2);background:transparent;display:flex;align-items:center;justify-content:center;color:#fff;padding:0}
+.pjvChk svg{width:13px;height:13px}
+.pjvRow.done .pjvChk{background:var(--rc-g);border-color:var(--rc-g)}
+.pjvTx{flex:1;min-width:0;font-size:var(--fs-2);color:var(--rc-tx);line-height:1.45;word-break:keep-all;overflow-wrap:anywhere;padding:12px 0}
+.pjvRow.done .pjvTx{color:var(--rc-mu);text-decoration:line-through;text-decoration-color:var(--rc-line2)}
+.pjvRow.pjvJust{opacity:.55}
+.pjvDue{flex:none;font-size:var(--fs-1);color:var(--rc-mu);font-variant-numeric:tabular-nums}
+.pjvDue.soon{color:var(--rc-gd);font-weight:600}
+.pjvDue.over{color:var(--rc-past,#D0647A);font-weight:600}
+.pjvEmpty{padding:14px 0 10px;font-size:var(--fs-2);color:var(--rc-mu);text-align:center}
+.pjvAdd{display:flex;gap:8px;margin-top:10px}
+.pjvAdd input{flex:1;min-width:0;height:44px;box-sizing:border-box;border:0;border-radius:12px;background:var(--rc-soft);color:var(--rc-tx);font:inherit;font-size:var(--fs-2);padding:0 14px}
+.pjvAdd button{flex:none;width:44px;height:44px;border:0;border-radius:12px;background:var(--rc-gl);color:var(--rc-gd);font-size:22px;line-height:1}
+.pjvDoneTgl{display:block;margin:2px auto 12px;border:0;background:transparent;font:inherit;font-size:var(--fs-1);color:var(--rc-mu);padding:6px}
+.pjvDoneList{padding-top:6px;padding-bottom:6px}
+.pjvNote{background:var(--rc-card);border:1px solid var(--rc-line);border-radius:20px;padding:14px 16px}
+.pjvNote b{display:block;font-size:var(--fs-1);font-weight:600;color:var(--rc-mu);letter-spacing:.04em;margin-bottom:6px}
+.pjvNote p{margin:0;font-size:var(--fs-2);color:var(--rc-tx2);line-height:1.6;white-space:pre-wrap}
+
+/* 프로젝트 편집창 정리 (2026-11-23): 칸 테두리·배경을 줄이고 버튼은 저장 하나만 크게 */
+#projectModal .pjTaskRow{gap:8px;padding:2px 0;border-bottom:1px solid var(--rc-line)}
+#projectModal .pjTaskRow .pjTaskInput{background:transparent!important;border:0!important;box-shadow:none!important;padding:12px 2px!important;min-height:0!important;height:auto!important;font-size:var(--fs-2)}
+#projectModal .pjTaskRow .pjTaskInput:focus{outline:none;box-shadow:inset 0 -1.5px 0 var(--rc-g)!important}
+#projectModal .pjDrag{color:var(--rc-line2)!important;font-size:15px!important;width:22px!important}
+#projectModal .pjX{color:var(--rc-mu)!important;opacity:.6;font-size:18px!important;width:28px!important}
+#projectModal .pjTD{height:30px!important;min-width:0!important;padding:0 8px!important;font-size:var(--fs-1)!important;background:var(--rc-soft)!important}
+#projectModal .pjTD.set{background:var(--rc-gl)!important;color:var(--rc-gd)!important}
+#projectModal .pjTD .pjTDx{opacity:.6}
+#projectModal .pjAddRow{margin-top:10px}
+#projectModal .lifeActions{display:flex;align-items:center;gap:10px}
+#projectModal .lifeActions .pjCancelBtn{display:none}
+#projectModal .lifeActions .pjFootLinks{flex:1;display:flex;gap:4px;align-items:center}
+#projectModal .lifeActions .pjFootLinks button{border:0!important;background:transparent!important;box-shadow:none!important;padding:8px 6px!important;width:auto!important;min-height:0!important;flex:none!important;font:inherit;font-size:var(--fs-2)!important;color:var(--rc-mu)!important}
+#projectModal .lifeActions .lifeSave{flex:0 0 52%}
+#projectModal #pjDupBtn.pjDupTop{display:none!important}
+
 </style>
 <script>/* 저장 공간 지킴이 (2026-11-21): 기록을 저장하다 공간이 모자라면 자동 백업 사본(오래된 것부터)을 지우고 다시 저장 → 실제 기록은 꼭 저장되게 */
 (function(){try{var P=Storage.prototype,orig=P.setItem,PFX='__auto_backup__';
@@ -4706,7 +4792,7 @@ function saveOneOffDefinitions(defs){
   localStorage.setItem(ONE_OFF_DEFS_KEY,JSON.stringify((Array.isArray(defs)?defs:[]).map(normalizeOneOffDefinition)));
 }
 function oneOffTypeLabel(d){
-  return d.type==='numeric'?'숫자':d.type==='static'?'숨참기':d.type==='check'?'체크':d.type==='mood'?'상태':'메모';
+  return d.type==='numeric'?'숫자':d.type==='static'?'프리다이빙':d.type==='check'?'체크':d.type==='mood'?'상태':'메모';
 }
 function renderOneOffSettings(){
   const root=document.getElementById('oneOffSettingsList');if(!root)return;
@@ -14928,10 +15014,12 @@ function stDiveText(ss){const best={};ss.filter(x=>x.type==='dive').forEach(x=>{
       val=m*60+sc;
     }else val=Math.round((Number(document.getElementById('dvM')?.value)||0)*10)/10;
     if(!(val>0)){appAlert(dd[2]==='time'?'시간을 입력해 주세요.':'몇 m인지 입력해 주세요.');return;}
-    const k=lifeLogKey(),all=stAllLogs(),prev=diveBest(dd[0]);
-    const session={type:'dive',disc:dd[0],val,place:String(document.getElementById('dvPlace')?.value||'').trim().slice(0,30),memo:String(document.getElementById('dvMemo')?.value||'').trim().slice(0,80),manual:true,id:'st_'+Date.now(),at:new Date().toISOString()};
-    (all[k]=Array.isArray(all[k])?all[k]:[]).push(session);
+    const ed=stManual.editing,k=ed?ed.k:lifeLogKey(),all=stAllLogs(),old=ed?(all[k]||[])[ed.i]:null,prev=diveBest(dd[0],old&&old.id);
+    const session={type:'dive',disc:dd[0],val,place:String(document.getElementById('dvPlace')?.value||'').trim().slice(0,30),memo:String(document.getElementById('dvMemo')?.value||'').trim().slice(0,80),manual:true,id:old?old.id:'st_'+Date.now(),at:old?old.at:new Date().toISOString()};
+    all[k]=Array.isArray(all[k])?all[k]:[];
+    if(old)all[k][ed.i]=session;else all[k].push(session);
     try{localStorage.setItem(ST_LOG_KEY,JSON.stringify(all));}catch(e){appAlert('저장하지 못했어요.');return;}
+    stManual.editing=null;
     stManual.last=dd[0];
     closeStManual();
     try{renderLifeCalendar();renderCalendarDetail(calendarSelectedKey);renderRecordDashboard();renderOneOffQuick();}catch(e){}
@@ -15032,6 +15120,422 @@ function lgRefreshToday(){
 })();
 /* 달력 '루틴으로 보기' 편집 버튼도 같은 연필 아이콘으로 */
 (function(){try{const b=document.getElementById('calendarChipEditBtn');if(b){b.innerHTML=appIconSvg('pencil');b.setAttribute('aria-label','표시할 루틴 고르기');b.classList.add('calPenBtn');}}catch(e){}})();
+
+
+/* ===== 누를 때 나오는 버튼 정리 (2026-11-23)
+   원칙: 큰 버튼은 1개(지금 가장 할 법한 일), 나머지는 작은 글자, 지우는 일(체크 해제·삭제)은 맨 아래 작은 글자.
+   맨 위에는 지금 기록을 한 줄로 보여줌(opts.summary).
+   여러 기록 중 하나를 고르는 경우(목록)는 줄 목록으로 보여줌. ===== */
+showRoutineActionSheet=function(title,actions,opts){
+  opts=opts||{};actions=(actions||[]).filter(Boolean);
+  const sheet=document.getElementById('routineActionSheet'),titleEl=document.getElementById('routineActionTitle'),box=document.getElementById('routineActionButtons');
+  if(!sheet||!titleEl||!box)return;
+  titleEl.textContent=title||'';
+  box.innerHTML='';box.className='routineActionButtons rasNew';
+  const run=a=>()=>{closeRoutineActionSheet();a.run();};
+  const isItem=a=>a.kind==='item'||/^수정 · /.test(a.label||'');
+  const listMode=opts.list||(!actions.some(a=>a.kind==='primary'||a.kind==='danger')&&actions.length>=2);
+  if(opts.summary){const s=document.createElement('div');s.className='rasSum';s.textContent=opts.summary;box.appendChild(s);}
+  const items=listMode?actions.filter(a=>a.kind!=='primary'&&a.kind!=='danger'):actions.filter(isItem);
+  if(items.length){
+    const l=document.createElement('div');l.className='rasList';
+    items.forEach(a=>{const b=document.createElement('button');b.type='button';b.className='rasItem';
+      b.innerHTML=`<span>${escapeLife(String(a.label||'').replace(/^수정 · /,''))}</span><i aria-hidden="true">›</i>`;b.onclick=run(a);l.appendChild(b);});
+    box.appendChild(l);
+  }
+  const rest=actions.filter(a=>!items.includes(a));
+  const prim=rest.find(a=>a.kind==='primary')||(!listMode&&rest.find(a=>a.kind!=='danger'));
+  if(prim){const b=document.createElement('button');b.type='button';b.className='primary rasMain';b.textContent=prim.label;b.onclick=run(prim);box.appendChild(b);}
+  const links=rest.filter(a=>a!==prim&&a.kind!=='danger'),dangers=rest.filter(a=>a.kind==='danger');
+  if(links.length||dangers.length){
+    const row=document.createElement('div');row.className='rasLinks';
+    links.concat(dangers).forEach((a,i)=>{
+      if(i)row.insertAdjacentHTML('beforeend','<i aria-hidden="true">·</i>');
+      const b=document.createElement('button');b.type='button';b.textContent=a.label;b.className=a.kind==='danger'?'rasDanger':'';b.onclick=run(a);row.appendChild(b);
+    });
+    box.appendChild(row);
+  }
+  sheet.classList.remove('hide');
+};
+function rasIsReading(r){return !!r&&(r.id==='free_read'||String(r.name||'').trim()==='독서');}
+function rasBooksOf(k){try{const rows=Array.isArray(loadReadingLogs()[k])?loadReadingLogs()[k]:[];return [...new Set(rows.map(x=>readingTitleOf(x.bookId)).filter(t=>t&&!/삭제된 책/.test(t)))].join(', ');}catch(e){return '';}}
+/* 시간 루틴(독서 포함) */
+openTimeRoutineActions=function(id){
+  const r=loadLifeRoutines().find(x=>x.id===id);if(!r)return;
+  if(isTimerRunningFor(id)){
+    showRoutineActionSheet(r.name,[{label:'종료하고 기록',kind:'primary',run:()=>stopActivityTimer()},{label:'타이머 취소',kind:'danger',run:()=>cancelActivityTimer()}],{summary:'타이머가 돌아가는 중이에요'});
+    return;
+  }
+  const log=getLifeDayLogs().find(x=>x.routineId===id),min=log?Number(log.duration)||0:0;
+  if(!(min>0)){
+    showRoutineActionSheet(r.name,[{label:'타이머 시작',kind:'primary',run:()=>startActivityTimer(id)},{label:'시간 직접 입력',run:()=>setRoutineMinutes(id,'replace')}]);
+    return;
+  }
+  const k=lifeLogKey(),books=rasIsReading(r)?rasBooksOf(k):'';
+  const acts=[{label:'타이머 이어서',kind:'primary',run:()=>startActivityTimer(id)},{label:'고치기',run:()=>rasEditTime(id)}];
+  acts.push({label:'체크 해제',kind:'danger',run:()=>clearRoutineTimeRecord(id)});
+  showRoutineActionSheet(r.name,acts,{summary:`${lifeLogKey()===getLocalDateKey(new Date())?'오늘':'이 날'} ${formatDurationMin(min)}${books?' · '+books:''}`});
+};
+/* '고치기': 시간 한 칸 + 빠른 더하기, 독서면 책별 기록으로 가는 줄 */
+let rasEditId=null;
+function rasEditTime(id){
+  rasEditId=id;setRoutineMinutes(id,'replace');
+  setTimeout(()=>{
+    try{
+      const sheet=document.getElementById('routineInputSheet');if(!sheet||sheet.classList.contains('hide'))return;
+      sheet.querySelector('.rasQuick')?.remove();
+      const inp=sheet.querySelector('input[type="number"],input[inputmode="numeric"],input[inputmode="decimal"]');if(!inp)return;
+      const r=loadLifeRoutines().find(x=>x.id===id);
+      const w=document.createElement('div');w.className='rasQuick';
+      w.innerHTML=[10,30,60].map(n=>`<button type="button" data-n="${n}">+${n}분</button>`).join('')+(rasIsReading(r)?`<button type="button" class="rasBook">책별 기록 ›</button>`:'');
+      w.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{inp.value=String((Number(inp.value)||0)+Number(b.dataset.n));inp.dispatchEvent(new Event('input',{bubbles:true}));});
+      const bk=w.querySelector('.rasBook');if(bk)bk.onclick=()=>{try{closeRoutineInputSheet();}catch(e){}openReadingEntries(lifeLogKey());};
+      document.getElementById('routineInputWrap')?.appendChild(w);
+    }catch(e){}
+  },60);
+}
+openRunningTimerActions=function(){
+  const t=loadActivityTimer();if(!t||!t.startedAt)return;
+  const r=loadLifeRoutines().find(x=>x.id===t.routineId);
+  showRoutineActionSheet(r?.name||'진행 중인 활동',[{label:'종료하고 기록',kind:'primary',run:()=>stopActivityTimer()},{label:'타이머 취소',kind:'danger',run:()=>cancelActivityTimer()}],{summary:'타이머가 돌아가는 중이에요'});
+};
+/* 자유 기록·식사 */
+(function(){
+  const base=openFreeRoutineActions;
+  openFreeRoutineActions=function(id){
+    const r=loadLifeRoutines().find(x=>x.id===id);
+    const log=getLifeDayLogs().find(x=>x.routineId===id);
+    if(!r||!log)return base.apply(this,arguments);
+    const ents=freeLogEntries(log),sum=ents.length?(ents.length>1?`${ents[0]} 외 ${ents.length-1}개`:ents[0]):'';
+    if(isMealFreeRoutine(r)){
+      showRoutineActionSheet(r.name,[{label:'고치기',kind:'primary',run:()=>recordFreeRoutine(id)},{label:'체크 해제',kind:'danger',run:()=>clearFreeRoutineRecord(id)}],{summary:[sum,log.place].filter(Boolean).join(' · ')});
+      return;
+    }
+    showRoutineActionSheet(r.name,[
+      {label:'기록 추가',kind:'primary',run:()=>addFreeEntry(id)},
+      {label:'고치기',run:()=>ents.length>1?pickFreeEntryToEdit(id):recordFreeRoutine(id)},
+      {label:'체크 해제',kind:'danger',run:()=>clearFreeRoutineRecord(id)}],{summary:sum});
+  };
+})();
+/* 여러 개 기록하는 QUICK LOG: 오늘 기록 목록 + [추가] */
+(function(){
+  const sr=showRoutineActionSheet;
+  showRoutineActionSheet=function(title,actions,opts){
+    try{
+      /* 데일리케어 숫자: [더하기] · 오늘 값 고치기 */
+      if(!opts&&Array.isArray(actions)&&actions.some(a=>a.label==='오늘 기록 수정')){
+        const m=/^(.*) · 오늘 (.+)$/.exec(String(title||''));
+        actions=actions.map(a=>a.label==='오늘 기록 수정'?Object.assign({},a,{label:'오늘 값 고치기',kind:undefined}):/더하기/.test(a.label)?Object.assign({},a,{label:'더하기',kind:'primary'}):a);
+        if(m){title=m[1];opts={summary:'오늘 '+m[2]};}else opts={};
+      }
+      if(!opts&&Array.isArray(actions)&&actions.some(a=>/^수정 · /.test(a.label||''))){
+        actions=actions.map(a=>a.kind==='primary'&&/새 기록 추가/.test(a.label)?Object.assign({},a,{label:'추가'}):a);
+        title=String(title||'').replace(/ · 오늘$/,'');
+        opts={summary:'오늘 남긴 기록'};
+      }
+    }catch(e){}
+    return sr.call(this,title,actions,opts);
+  };
+})();
+
+/* ===== 프리다이빙 (2026-11-23): 이름 정리 · 메뉴 2개로 ===== */
+(function(){
+  try{
+    const defs=loadOneOffDefinitions();let ch=false;
+    defs.forEach(d=>{if(d&&d.type==='static'&&String(d.name||'').trim()==='숨참기'){d.name='프리다이빙';ch=true;}});
+    if(ch){saveOneOffDefinitions(defs);try{renderOneOffQuick();renderOneOffSettings();}catch(e){}}
+  }catch(e){}
+  openStaticMenu=function(){
+    const k=lifeLogKey(),ss=stSessions(k);
+    const acts=[{label:'훈련 시작',kind:'primary',run:()=>openStatic()},{label:'기록 추가',run:()=>openStManual(stManual&&stManual.last?'dive':'co2')}];
+    if(ss.length)acts.push({label:`기록 보기 · ${ss.length}`,run:()=>openStLog()});
+    showRoutineActionSheet('프리다이빙',acts,{summary:ss.length?stDayText(ss):''});
+  };
+  /* 기록 추가 화면 위쪽: [훈련 | 다이빙] → 훈련이면 CO2 · O2 · 내 테이블 · 숨참기 */
+  const rm=stRenderManual;
+  stRenderManual=function(){
+    const r=rm.apply(this,arguments);
+    try{
+      const dive=stManual.kind==='dive';
+      const top=`<div class="stTop2"><button type="button" class="${dive?'':'on'}" onclick="stSetManualKind(stManual.kind==='dive'?(stManual.lastTrain||'co2'):stManual.kind)">훈련</button><button type="button" class="${dive?'on':''}" onclick="if(stManual.kind!=='dive')stManual.lastTrain=stManual.kind;stSetManualKind('dive')">다이빙</button></div>`;
+      const sub=dive?'':`<div class="stSub2">${[['co2','CO2'],['o2','O2'],['custom','내 테이블'],['hold','숨참기']].map(x=>`<button type="button" class="${stManual.kind===x[0]?'on':''}" onclick="stSetManualKind('${x[0]}')">${x[1]}</button>`).join('')}</div>`;
+      const el=document.getElementById('stManualKinds');if(el){el.innerHTML=top+sub;el.classList.add('stKinds2');el.hidden=!!stManual.editing;}
+      const head=document.querySelector('#stManualModal .lifeSheetHead b');if(head)head.textContent=stManual.editing?`다이빙 기록 고치기 · ${String(stManual.editing.k).slice(5).replace('-','.')}`:'프리다이빙 기록 추가';
+    }catch(e){}
+    return r;
+  };
+  /* 달력·기록 보기 제목 */
+  const det=renderCalendarDetail;
+  renderCalendarDetail=function(){
+    const r=det.apply(this,arguments);
+    try{document.querySelectorAll('#calendarDetail .stCalRow .rc-routine-name').forEach(n=>{if(n.textContent==='숨참기')n.textContent='프리다이빙';});}catch(e){}
+    return r;
+  };
+  const sr=showRoutineActionSheet;
+  showRoutineActionSheet=function(title,a,o){if(title==='숨참기 · 훈련 기록')title='프리다이빙 · 기록';return sr.call(this,title,a,o);};
+})();
+
+
+/* ===== 기록을 다른 날로 옮기기 · 다이빙 기록 고치기 (2026-11-23)
+   - 루틴 기록(시간·메모·식사): '고치기' 화면 아래 '다른 날로 옮기기'
+   - 체크 루틴: 달력에서 그 기록을 누르면 '다른 날로 옮기기'
+   - 간식·QUICK LOG 기록: 고치는 화면 아래 '다른 날로 옮기기'
+   - 프리다이빙 기록: 기록 상세에서 '고치기'(다이빙) · '다른 날로 옮기기'
+   데일리케어 숫자(물·단백질 등)는 하루 합계라 옮기지 않고, 시간 기록(수면 등)은 기록 날짜를 골라 저장 ===== */
+function lgMD(k){const p=String(k||'').split('-');return p.length===3?`${+p[1]}.${+p[2]}`:k;}
+function lgPickDate(title,cur){
+  return new Promise(res=>{
+    document.getElementById('lgDatePick')?.remove();
+    const t=getLocalDateKey(new Date());
+    const o=document.createElement('div');o.id='lgDatePick';o.className='routineActionOverlay';
+    o.innerHTML=`<div class="routineActionCard"><div class="routineActionTitle">${escapeLife(title||'어느 날로 옮길까요?')}</div>
+      <div class="lgdpRow"><input type="date" id="lgdpIn" value="${cur||t}" max="${t}"></div>
+      <div class="lgdpQuick"><button type="button" data-d="-1">어제</button><button type="button" data-d="1">다음 날</button><button type="button" data-d="0">오늘</button></div>
+      <div class="routineInputActions"><button type="button" data-x="0">취소</button><button type="button" class="primary" data-x="1">옮기기</button></div></div>`;
+    const done=v=>{o.remove();res(v);};
+    o.addEventListener('click',e=>{if(e.target===o)done(null);});
+    o.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{const n=Number(b.dataset.d),i=o.querySelector('#lgdpIn');i.value=n===0?t:periodAddDays(cur||t,n);if(i.value>t)i.value=t;});
+    o.querySelector('[data-x="0"]').onclick=()=>done(null);
+    o.querySelector('[data-x="1"]').onclick=()=>{const v=o.querySelector('#lgdpIn').value;if(!v)return;if(v>t){appAlert('미래 날짜로는 옮길 수 없어요.');return;}done(v);};
+    document.body.appendChild(o);
+  });
+}
+function lgAfterMove(){
+  try{renderLifeGuide();}catch(e){}try{renderLifeCalendar();}catch(e){}try{renderCalendarDetail(calendarSelectedKey);}catch(e){}
+  try{renderRecordDashboard();}catch(e){}try{update();}catch(e){}try{oneOffLogsRefresh();}catch(e){}try{renderTodayHero();}catch(e){}
+}
+/* 루틴 기록 옮기기 */
+function lgMoveLifeLog(from,id,to){
+  if(!from||!to||from===to)return false;
+  const all=loadLifeLogs(),src=Array.isArray(all[from])?all[from]:[],i=src.findIndex(x=>x&&x.routineId===id);
+  if(i<0)return false;
+  const log=src[i],r=loadLifeRoutines().find(x=>x.id===id),meal=isMealFreeRoutine(r);
+  const dst=Array.isArray(all[to])?all[to]:[],ex=dst.find(x=>x&&x.routineId===id);
+  if(ex&&meal){appAlert(`${lgMD(to)}에 이미 ${r?r.name:'이 식사'} 기록이 있어요.\n그 기록을 먼저 지우고 옮겨 주세요.`);return false;}
+  if(meal)try{mealAdjustAll(from,log,-1);}catch(e){}
+  src.splice(i,1);if(src.length)all[from]=src;else delete all[from];
+  if(ex){
+    if(Number(log.duration)>0)ex.duration=(Number(ex.duration)||0)+Number(log.duration);
+    const ents=freeLogEntries(ex).concat(freeLogEntries(log));
+    if(ents.length){ex.memo=ents[0];if(ents.length>1)ex.extra=ents.slice(1);else delete ex.extra;}
+    ex.completed=true;
+  }else{dst.push(log);all[to]=dst;}
+  saveLifeLogs(all);
+  if(meal)try{mealAdjustAll(to,log,1);}catch(e){}
+  if(rasIsReading(r)){try{const rl=loadReadingLogs();if(Array.isArray(rl[from])&&rl[from].length){rl[to]=(Array.isArray(rl[to])?rl[to]:[]).concat(rl[from]);delete rl[from];saveReadingLogs(rl);}}catch(e){}}
+  return true;
+}
+async function lgMoveRoutine(from,id){
+  const r=loadLifeRoutines().find(x=>x.id===id);
+  const to=await lgPickDate(`${r?r.name:'기록'} · ${lgMD(from)} 기록을 어느 날로 옮길까요?`,from);
+  if(!to||to===from)return;
+  if(lgMoveLifeLog(from,id,to)){lgAfterMove();appToast(`${lgMD(to)}로 옮겼어요`);}
+}
+/* 고치는 화면 아래 '날짜 · 다른 날로 옮기기' */
+(function(){
+  const op=openRoutineInputSheet;
+  openRoutineInputSheet=function(ctx){
+    const r=op.apply(this,arguments);
+    try{
+      const sheet=document.getElementById('routineInputSheet');sheet.querySelector('.lgMoveRow')?.remove();
+      const c=ctx||{},k=c.dateKey||lifeLogKey();let can=false,run=null;
+      if(c.mode==='snack'&&c.index!==null&&c.index!==undefined){can=true;run=()=>lgMoveSnack(k,c.index);}
+      else if((c.mode==='free'||c.mode==='time')&&c.id&&c.freeMode!=='add'){
+        const has=(loadLifeLogs()[k]||[]).some(x=>x&&x.routineId===c.id);
+        if(has){can=true;run=()=>lgMoveRoutine(k,c.id);}
+      }
+      if(can){
+        const row=document.createElement('div');row.className='lgMoveRow';
+        row.innerHTML=`<span>${lgMD(k)} 기록</span><button type="button">다른 날로 옮기기</button>`;
+        row.querySelector('button').onclick=()=>{try{closeRoutineInputSheet();}catch(e){}run();};
+        sheet.querySelector('.routineInputActions')?.before(row);
+      }
+    }catch(e){}
+    return r;
+  };
+})();
+async function lgMoveSnack(from,idx){
+  const to=await lgPickDate('어느 날로 옮길까요?',from);if(!to||to===from)return;
+  const all=loadSnackRecords(),src=all[from]||[],x=src[idx];if(!x)return;
+  src.splice(idx,1);if(src.length)all[from]=src;else delete all[from];
+  (all[to]=Array.isArray(all[to])?all[to]:[]).push(x);
+  try{saveSnackRecords(all);}catch(e){appAlert('저장하지 못했어요.');return;}
+  lgAfterMove();appToast(`${lgMD(to)}로 옮겼어요`);
+}
+/* 달력: 체크 루틴 기록 시트에 '다른 날로 옮기기' · 자유 기록 시트에도 */
+(function(){
+  const sr=showRoutineActionSheet;
+  showRoutineActionSheet=function(title,actions,opts){
+    try{
+      const ck=(actions||[]).find(a=>a&&a.label==='체크 해제'&&/removeCalendarCheckRecord\((.*?),(.*?)\)/.test(String(a.run)));
+      if(ck&&window.__lgCalMove){const m=window.__lgCalMove;actions=[{label:'다른 날로 옮기기',run:()=>lgMoveRoutine(m.k,m.id)}].concat(actions);}
+    }catch(e){}
+    return sr.call(this,title,actions,opts);
+  };
+  if(typeof editCalendarRoutineRecord==='function'){
+    const ec=editCalendarRoutineRecord;
+    editCalendarRoutineRecord=function(k,id){window.__lgCalMove={k,id};try{return ec.apply(this,arguments);}finally{setTimeout(()=>{window.__lgCalMove=null;},0);}};
+  }
+  if(typeof editCalendarFreeEntry==='function'){
+    const ef=editCalendarFreeEntry;
+    editCalendarFreeEntry=function(k,id){
+      const o=showRoutineActionSheet;
+      showRoutineActionSheet=function(t,a,op){showRoutineActionSheet=o;return o.call(this,t,(a||[]).concat([{label:'다른 날로 옮기기',run:()=>lgMoveRoutine(k,id)}]),op);};
+      try{return ef.apply(this,arguments);}finally{showRoutineActionSheet=o;}
+    };
+  }
+})();
+/* QUICK LOG 기록 */
+(function(){
+  const op=openOneOffLog;
+  openOneOffLog=function(defId,idx,dateKey){
+    const r=op.apply(this,arguments);
+    try{
+      const m=document.getElementById('oneOffLogModal');m.querySelector('.lgMoveRow')?.remove();
+      if(olCtx&&olCtx.idx!=null){
+        const row=document.createElement('div');row.className='lgMoveRow';
+        row.innerHTML=`<span>${lgMD(olCtx.k)} 기록</span><button type="button">다른 날로 옮기기</button>`;
+        row.querySelector('button').onclick=async()=>{
+          const c=olCtx;if(!c)return;const to=await lgPickDate('어느 날로 옮길까요?',c.k);if(!to||to===c.k)return;
+          const all=loadOneOffLogs(),src=all[c.k]||[],x=src[c.idx];if(!x)return;
+          src.splice(c.idx,1);if(src.length)all[c.k]=src;else delete all[c.k];
+          (all[to]=Array.isArray(all[to])?all[to]:[]).push(x);
+          if(!saveOneOffLogs(all))return;closeOneOffLog();lgAfterMove();appToast(`${lgMD(to)}로 옮겼어요`);
+        };
+        m.querySelector('.lifeActions')?.before(row);
+      }
+    }catch(e){}
+    return r;
+  };
+})();
+/* 프리다이빙 기록 상세: 고치기 · 다른 날로 옮기기 */
+(function(){
+  const os=openStaticSession;
+  openStaticSession=function(k,i){
+    const r=os.apply(this,arguments);
+    try{
+      const s=stSessions(k)[i];const m=document.getElementById('staticSessionModal');m.querySelector('.lgMoveRow')?.remove();
+      const head=document.getElementById('staticSessionHead');if(head)head.textContent=head.textContent.replace(/^숨참기/,'프리다이빙');
+      if(!s)return r;
+      const row=document.createElement('div');row.className='lgMoveRow';
+      row.innerHTML=`<span>${lgMD(k)} 기록</span>${s.type==='dive'?'<button type="button" data-a="edit">고치기</button><i>·</i>':''}<button type="button" data-a="move">다른 날로 옮기기</button>`;
+      row.querySelector('[data-a="move"]').onclick=async()=>{
+        const to=await lgPickDate('어느 날로 옮길까요?',k);if(!to||to===k)return;
+        const all=stAllLogs(),src=all[k]||[],x=src[i];if(!x)return;
+        src.splice(i,1);if(src.length)all[k]=src;else delete all[k];
+        (all[to]=Array.isArray(all[to])?all[to]:[]).push(x);
+        try{localStorage.setItem(ST_LOG_KEY,JSON.stringify(all));}catch(e){appAlert('저장하지 못했어요.');return;}
+        closeStaticSession();lgAfterMove();appToast(`${lgMD(to)}로 옮겼어요`);
+      };
+      const ed=row.querySelector('[data-a="edit"]');
+      if(ed)ed.onclick=()=>{
+        closeStaticSession();
+        stManual={kind:'dive',disc:s.disc,last:s.disc,place:s.place||'',memo:s.memo||'',editing:{k,i}};
+        const dd=diveDisc(s.disc);if(dd[2]==='time'){stManual.min=String(Math.floor(s.val/60));stManual.sec=String(s.val%60);}else stManual.m=String(s.val);
+        stRenderManual();document.getElementById('stManualModal').classList.remove('hide');
+        const h=document.querySelector('#stManualModal .lifeSheetHead b');if(h)h.textContent=`다이빙 기록 고치기 · ${lgMD(k)}`;
+      };
+      m.querySelector('.lifeActions')?.before(row);
+    }catch(e){}
+    return r;
+  };
+  const cm=closeStManual;
+  closeStManual=function(){const r=cm.apply(this,arguments);try{if(stManual&&stManual.editing&&document.getElementById('stManualModal').classList.contains('hide'))stManual.editing=null;}catch(e){}return r;};
+})();
+
+
+/* ===== 프로젝트 새창 (2026-11-23)
+   프로젝트를 누르면 팝업 편집창 대신 전체 화면으로 열림: 할 일을 보면서 바로 체크, 바로 추가(앞에 '11.30'을 쓰면 마감일).
+   이름·기간·순서·메모 같은 큰 수정은 오른쪽 위 연필 → 편집창. 새 프로젝트는 처음부터 편집창. ===== */
+let pjvId=null,pjvShowDone=false,pjvHist=null;
+function pjvScreen(){
+  let o=document.getElementById('pjView');
+  if(!o){
+    o=document.createElement('div');o.id='pjView';o.className='tdsScreen pjViewScreen hide';
+    o.innerHTML=`<div class="tdsTop"><button type="button" class="tdsBack" aria-label="닫기" onclick="pjvClose()">‹</button><div class="tdsTT"><b id="pjvTitle"></b><small id="pjvSub"></small></div><div class="tdsTopAct"><button type="button" class="pjvEdit" aria-label="프로젝트 편집" onclick="pjvEdit()">${appIconSvg('pencil')}</button></div></div><div id="pjvBody" class="pjvBody"></div>`;
+    document.body.appendChild(o);
+    window.addEventListener('popstate',()=>{if(pjvId&&!(history.state&&history.state.__pj)){pjvHist=null;pjvClose(true);}});
+  }
+  return o;
+}
+function pjvOpen(id){
+  const p=pjLoad().find(x=>x.id===id);if(!p)return;
+  pjvId=id;pjvShowDone=false;
+  const o=pjvScreen();const was=o.classList.contains('hide');
+  pjvRender();o.classList.remove('hide');o.scrollTop=0;document.body.classList.add('tdsOn');
+  if(was){pjvHist='pj_'+Date.now();try{history.pushState({...history.state,__pj:pjvHist},'',location.href);}catch(e){}}
+}
+function pjvClose(fromPop){
+  const o=document.getElementById('pjView');if(!o)return;
+  o.classList.add('hide');pjvId=null;
+  if(!document.querySelector('.tdsScreen:not(.hide)'))document.body.classList.remove('tdsOn');
+  if(!fromPop&&pjvHist&&history.state&&history.state.__pj===pjvHist){pjvHist=null;try{history.back();}catch(e){}}
+  try{renderProjects();}catch(e){}
+}
+function pjvEdit(){if(pjvId)pjEditOrig(pjvId);}
+function pjvDueChip(due,done){
+  if(!due)return '';const n=pjDays(due),md=due.slice(5).replace('-','.');
+  const cls=done?'':n<0?' over':n<=2?' soon':'';
+  const tx=done?md:n===0?'오늘':n<0?`${md} 지남`:n<=7?`D-${n}`:md;
+  return `<span class="pjvDue${cls}">${tx}</span>`;
+}
+function pjvRender(){
+  const p=pjLoad().find(x=>x.id===pjvId);if(!p){pjvClose();return;}
+  const ts=p.tasks||[],done=ts.filter(t=>t.done),todo=ts.filter(t=>!t.done);
+  const st=(PJ_STATUS.find(x=>x[0]===p.status)||[,''])[1];
+  document.getElementById('pjvTitle').textContent=p.name||'프로젝트';
+  const range=[p.start?p.start.slice(5).replace('-','.'):'',p.due?p.due.slice(5).replace('-','.'):''].filter(Boolean).join(' – ');
+  document.getElementById('pjvSub').textContent=[st,range,pjDueLabel(p.due)].filter(Boolean).join(' · ');
+  const order=todo.map((t,i)=>[t,i]).sort((a,b)=>{const x=a[0].due||'9999',y=b[0].due||'9999';return x<y?-1:x>y?1:a[1]-b[1];}).map(x=>x[0]);
+  const pct=ts.length?Math.round(done.length/ts.length*100):0;
+  const row=t=>`<div class="pjvRow${t.done?' done':''}"><button type="button" class="pjvChk" aria-label="${t.done?'완료 취소':'완료'}" onclick="pjvToggle('${t.id}')">${t.done?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12.5l4 4 8-9"/></svg>':''}</button><span class="pjvTx">${escapeLife(t.text)}</span>${pjvDueChip(t.due,t.done)}</div>`;
+  let h=`<div class="pjvCard"><div class="pjvProg"><div class="pjBar"><i style="width:${pct}%"></i></div><span>${done.length}/${ts.length}</span></div>`;
+  h+=order.length?`<div class="pjvList">${order.map(row).join('')}</div>`:`<div class="pjvEmpty">${ts.length?'할 일을 모두 마쳤어요':'아직 할 일이 없어요'}</div>`;
+  h+=`<div class="pjvAdd"><input id="pjvNew" maxlength="80" placeholder="할 일 추가 · 예: 11.30 포스터 완성" onkeydown="if(event.key==='Enter'){event.preventDefault();pjvAdd();}"><button type="button" aria-label="추가" onclick="pjvAdd()">＋</button></div></div>`;
+  if(done.length)h+=`<button type="button" class="pjvDoneTgl" onclick="pjvShowDone=!pjvShowDone;pjvRender()">마친 일 ${done.length}개 ${pjvShowDone?'접기':'보기'}</button>${pjvShowDone?`<div class="pjvCard pjvDoneList">${done.map(row).join('')}</div>`:''}`;
+  if(String(p.note||'').trim())h+=`<div class="pjvNote"><b>메모</b><p>${escapeLife(p.note)}</p></div>`;
+  document.getElementById('pjvBody').innerHTML=h;
+}
+function pjvToggle(tid){
+  const list=pjLoad(),p=list.find(x=>x.id===pjvId);if(!p)return;const t=(p.tasks||[]).find(x=>x.id===tid);if(!t)return;
+  if(!t.done){
+    const el=[...document.querySelectorAll('#pjvBody .pjvRow')].find(r=>r.querySelector(`[onclick="pjvToggle('${tid}')"]`));
+    if(el){el.classList.add('done','pjvJust');setTimeout(()=>pjToggle(pjvId,tid),380);return;}
+  }
+  pjToggle(pjvId,tid);
+}
+function pjvAdd(){
+  const inp=document.getElementById('pjvNew');let v=String(inp?.value||'').trim();if(!v)return;
+  const list=pjLoad(),p=list.find(x=>x.id===pjvId);if(!p)return;
+  let due='';const m=v.match(/^(?:(\d{4})[./-])?(\d{1,2})(?:[./-]|월\s*)(\d{1,2})일?\s+(.+)$/);
+  if(m){const y=m[1]||(p.due||p.start||getLocalDateKey(new Date())).slice(0,4),mo=String(m[2]).padStart(2,'0'),d=String(m[3]).padStart(2,'0');if(+mo>=1&&+mo<=12&&+d>=1&&+d<=31){due=`${y}-${mo}-${d}`;v=m[4].trim();}}
+  (p.tasks=p.tasks||[]).push({id:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),text:v,done:false,...(due?{due}:{})});
+  if(p.status==='done')p.status='active',delete p.doneAt;
+  if(!pjStore(list))return;
+  renderProjects();pjvRender();
+  setTimeout(()=>document.getElementById('pjvNew')?.focus(),30);
+}
+const pjEditOrig=openProject;
+(function(){
+  openProject=function(id){if(id&&pjLoad().some(x=>x.id===id)){document.getElementById('projectManageModal')?.classList.add('hide');return pjvOpen(id);}return pjEditOrig.apply(this,arguments);};
+  const tg=pjToggle;pjToggle=function(){const r=tg.apply(this,arguments);try{if(pjvId)pjvRender();}catch(e){}return r;};
+  const sv=pjSave;pjSave=function(){const id=pjDraft&&pjDraft.id;const r=sv.apply(this,arguments);try{if(pjvId&&pjvId===id)pjvRender();}catch(e){}return r;};
+  const dl=pjDelete;pjDelete=async function(){const id=pjDraft&&pjDraft.id;const r=await dl.apply(this,arguments);try{if(pjvId===id&&!pjLoad().some(x=>x.id===id))pjvClose();}catch(e){}return r;};
+})();
+
+/* 프로젝트 편집창 아래: [복제 · 삭제]는 작은 글자, 저장만 크게 (2026-11-23) */
+(function(){
+  try{
+    const acts=document.querySelector('#projectModal .lifeActions');if(!acts||acts.querySelector('.pjFootLinks'))return;
+    const del=document.getElementById('pjDel'),cancel=[...acts.querySelectorAll('button')].find(b=>/closeProject/.test(b.getAttribute('onclick')||''));
+    if(cancel)cancel.classList.add('pjCancelBtn');
+    const links=document.createElement('div');links.className='pjFootLinks';
+    const dup=document.createElement('button');dup.type='button';dup.id='pjDupLink';dup.textContent='복제';dup.onclick=()=>pjDuplicate();
+    links.appendChild(dup);if(del)links.appendChild(del);
+    acts.prepend(links);
+    document.getElementById('pjDupBtn')?.classList.add('pjDupTop');
+  }catch(e){console.warn(e);}
+})();
 
 </script>
 
