@@ -3185,9 +3185,6 @@ body.tdPastMode #tdHero{box-shadow:inset 0 0 0 1.5px var(--rc-pastl)}
 #readingBookModal .rbLinks .rbSkip{color:var(--rc-mu)}
 #readingBookModal .rbLinks i{font-style:normal;color:var(--rc-line2)}
 #readingBookModal .rbEmpty{padding:14px 0 4px;text-align:center;font-size:var(--fs-2);color:var(--rc-mu)}
-/* 캡슐: 이름 아래 아주 작은 글씨 */
-.oneOffTodayLogs .olChip{display:inline-flex!important;flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;line-height:1.25;padding-top:7px!important;padding-bottom:7px!important;height:auto!important;min-height:0!important}
-.oneOffTodayLogs .olChip>span{display:block;font-size:.6875rem!important;color:var(--rc-mu)!important;margin:0!important;max-width:11rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* 목록 시트(기록 여러 개 중 고르기): 한 상자 안에 줄로만 */
 .routineActionCard .routineActionButtons.rasNew .rasList{border:1px solid var(--rc-line)!important;border-radius:14px!important;background:var(--rc-card)!important;overflow:hidden;gap:0!important}
 .routineActionCard .routineActionButtons.rasNew .rasList .rasItem{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;min-height:50px!important;height:auto!important;padding:0 14px!important;margin:0!important;color:var(--rc-tx)!important;font-weight:400!important}
@@ -3211,6 +3208,36 @@ body.tdPastMode #tdHero{box-shadow:inset 0 0 0 1.5px var(--rc-pastl)}
 #stLogList .pjManageMain{gap:1px!important}
 #stLogList .pjManageMeta{font-size:.6875rem!important;color:var(--rc-mu)!important}
 #stLogList button{width:30px!important;height:30px!important;min-height:0!important;background:transparent!important;border:0!important;color:var(--rc-mu)!important;font-size:.875rem!important;padding:0!important}
+
+/* FREE TIME·QUICK LOG 오늘 기록 캡슐: 한 줄 · 아이콘 이름 | 내용 */
+.oneOffTodayLogs .olChip>span:not(.appIco)::before{content:'';display:inline-block;width:1px;height:.8em;background:var(--rc-line2);margin:0 7px 0 1px;vertical-align:-1px}
+.oneOffTodayLogs .olChip{white-space:nowrap}
+.oneOffTodayLogs .olChip>.appIco{display:inline-flex;width:15px;height:15px;color:var(--rc-gd);margin-right:-1px}.oneOffTodayLogs .olChip>.appIco svg{width:15px;height:15px}
+/* 지금 시간대 루틴 캡슐: 시간 기록 */
+.lbPeek button.pkHasTm{height:auto!important;min-height:0;padding-top:6px!important;padding-bottom:6px!important}
+.lbPeek .pkCol{display:inline-flex;flex-direction:column;align-items:flex-start;line-height:1.2;min-width:0}
+.lbPeek .pkTm{font-size:.625rem;color:var(--rc-mu);margin-top:1px;font-weight:400}
+/* 작은 입력창(수치·메모·수면·시간·테이블): 아래에서 올라오지 않고 가운데 카드로 (2026-11-23) */
+:is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal).lifeModal{align-items:center!important;padding:16px;box-sizing:border-box}
+:is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal) .lifeSheet{width:min(100%,360px)!important;max-width:360px!important;max-height:calc(100% - 8px);overflow-y:auto;border-radius:18px!important;border:1px solid var(--rc-line);box-shadow:0 12px 32px rgba(42,48,36,.12);padding:16px 14px 14px!important;margin:0!important;box-sizing:border-box;animation:none!important}
+:is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal) .lifeSheetHead{justify-content:center!important;margin-bottom:8px!important}
+:is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal) .lifeSheetHead b{font-size:var(--fs-3)!important;font-weight:var(--fw-3,600)!important;text-align:center}
+:is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal) .lifeSheetHead .lifeClose{display:none!important}
+:is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal) .lifeActions{display:flex!important;grid-template-columns:none!important;align-items:center;gap:4px;margin-top:12px!important;padding:0!important;position:static!important;background:transparent!important;border:0!important}
+:is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal) .lifeActions>button:not(.lifeSave):not(.dailyCarePopupSave){flex:none!important;width:auto!important;min-height:0!important;height:auto!important;background:transparent!important;border:0!important;box-shadow:none!important;padding:9px 8px!important;font-size:13.5px!important;font-weight:500!important;color:var(--rc-mu)!important}
+:is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal) .lifeActions>button.hide{display:none!important}
+:is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal) .lifeActions>button[id$="Del"],:is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal) .lifeActions>button[id$="Delete"]{color:var(--rc-past,#D0647A)!important}
+:is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal) .lifeActions>:is(.lifeSave,.dailyCarePopupSave){margin-left:auto!important;flex:0 0 52%!important;width:auto!important;height:39px!important;min-height:0!important;padding:0 12px!important;border-radius:11px!important;font-size:13.5px!important;font-weight:600!important;background:var(--rc-solid)!important;color:#fff!important;border:0!important;box-shadow:none!important}
+#dailyCareNumericModal .dailyCareNumericPopupHint{background:transparent!important;border:0!important;padding:0!important;margin:-4px 2px 10px!important;text-align:center;font-size:var(--fs-2)!important;color:var(--rc-mu)!important}
+#dailyCareNumericModal .dailyCareNumericPopupHint:empty{display:none}
+#dailyCareNumericModal #dailyCareNumericInputLabel{display:none}
+#dailyCareNumericModal .dailyCarePopupInputWrap{display:flex!important;align-items:center;gap:8px;border:0!important;background:transparent!important;box-shadow:none!important;padding:0!important;height:auto!important}
+#dailyCareNumericModal .dailyCarePopupInputWrap input{flex:1;height:42px!important;border:1px solid var(--rc-line)!important;border-radius:11px!important;background:var(--rc-soft2,var(--rc-soft))!important;padding:0 12px!important;font:inherit;font-size:var(--fs-3)!important;box-shadow:none!important;outline:none;min-width:0}
+#dailyCareNumericModal .dailyCarePopupInputWrap input:focus{border-color:var(--rc-g)!important;background:var(--rc-card)!important}
+#dailyCareNumericModal .dailyCarePopupInputWrap span{font-size:var(--fs-3);color:var(--rc-mu);flex:none}
+#dailyCareNumericModal .lifeField{margin:0!important}
+
+:is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal) .lifeActions{margin-bottom:0!important}
 
 </style>
 <script>/* 저장 공간 지킴이 (2026-11-21): 기록을 저장하다 공간이 모자라면 자동 백업 사본(오래된 것부터)을 지우고 다시 저장 → 실제 기록은 꼭 저장되게 */
@@ -15645,9 +15672,10 @@ function ftTodayChips(){
       if(Number(log.duration)>0){t=formatDurationMin(Number(log.duration));if(rasIsReading(r)){const bk=rasBooksOf(k);if(bk)t+=' · '+bk;}}
       const ents=freeLogEntries(log);if(ents.length)t=t?t+' · '+ents[0]:ents[0];
       if(!t)t='했어요';
-      chips.push(`<button type="button" class="olChip" onclick="handleRoutineRowTap(null,'${id}')">${escapeLife(r.name)}<span>${escapeLife(t)}</span></button>`);
+      chips.push(`<button type="button" class="olChip" onclick="handleRoutineRowTap(null,'${id}')">${escapeLife([r.icon,r.name].filter(Boolean).join(' '))}<span>${escapeLife(t)}</span></button>`);
     });
     if(chips.length)grid.insertAdjacentHTML('afterend',`<div class="oneOffTodayLogs ftTodayLogs">${chips.join('')}</div>`);
+    const ftl=sec.querySelector('.ftTodayLogs');if(ftl)try{qlWatch(ftl);}catch(e){}
   });
 }
 (function(){
@@ -15732,6 +15760,36 @@ function ftDots(){
 (function(){const r=renderStLog;renderStLog=function(){const x=r.apply(this,arguments);try{const h=document.getElementById('stLogHead');h.textContent=h.textContent.replace('숨참기 기록','프리다이빙 · 기록');}catch(e){}return x;};})();
 
 (function(){const r=renderStLog;renderStLog=function(){const x=r.apply(this,arguments);try{const h=document.getElementById('stLogHead');h.textContent=h.textContent.replace('프리다이빙 · 기록 ·','프리다이빙 기록 ·');}catch(e){}return x;};})();
+
+/* ===== 색이 겹치지 않게 (2026-11-23): 7가지 테마 색 다음은 따로 고른 색, 그 뒤로는 고르게 나눈 색 ===== */
+const FT_EXTRA=[['#7fd3d6','#4fb5b9'],['#a5aef2','#7a86e0'],['#c2dc7a','#9cbf4a'],['#e09ae6','#c56fcf'],['#d8b48f','#b88f66'],['#a9b6c6','#8796aa']];
+(function(){
+  const oi=ftColorOfIndex,oh=ftHex;
+  ftColorOfIndex=function(i){return i<FT_CYC.length?oi(i):'x'+(i-FT_CYC.length);};
+  ftHex=function(c,k){
+    const m=/^x(\d+)$/.exec(String(c||''));if(!m)return oh.apply(this,arguments);
+    let dark=false;try{const md=themeMode();dark=md==='dark'||(md==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);}catch(e){}
+    const n=+m[1];if(n<FT_EXTRA.length)return FT_EXTRA[n][dark?1:0];
+    const h=Math.round((n*137.5+20)%360);return `hsl(${h} ${dark?50:62}% ${dark?60:74}%)`;
+  };
+  try{renderLifeGuide();renderOneOffQuick();}catch(e){}
+})();
+
+/* ===== 지금 시간대 루틴 캡슐: 시간 기록이면 이름 아래 작은 글씨로 기록 시간 (2026-11-23) ===== */
+function lbPeekTimes(){
+  const k=lifeLogKey(),logs=loadLifeLogs()[k]||[];
+  document.querySelectorAll('.lbPeek button').forEach(b=>{
+    const m=/handleRoutineRowTap\(null,'([^']+)'\)/.exec(b.getAttribute('onclick')||'');if(!m)return;
+    b.querySelector('.pkCol')?.replaceWith(...(b.querySelector('.pkCol .pkNm')?.childNodes||[]));
+    b.classList.remove('pkHasTm');
+    const log=logs.find(x=>x&&x.routineId===m[1]);const d=log&&Number(log.duration);if(!(d>0))return;
+    const col=document.createElement('span');col.className='pkCol';const nm=document.createElement('span');nm.className='pkNm';
+    [...b.childNodes].filter(n=>n.nodeType===3&&n.nodeValue.trim()).forEach(n=>nm.appendChild(n));
+    col.appendChild(nm);col.insertAdjacentHTML('beforeend',`<small class="pkTm">${escapeLife(formatDurationMin(d))}</small>`);
+    b.appendChild(col);b.classList.add('pkHasTm');
+  });
+}
+(function(){const lg=renderLifeGuide;renderLifeGuide=function(){const r=lg.apply(this,arguments);try{lbPeekTimes();}catch(e){}return r;};try{lbPeekTimes();}catch(e){}})();
 
 </script>
 
