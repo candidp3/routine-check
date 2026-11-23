@@ -3245,6 +3245,17 @@ body.tdPastMode #tdHero{box-shadow:inset 0 0 0 1.5px var(--rc-pastl)}
 .lbPeek .pkTm{font-size:.6875rem!important;margin:0!important}
 .lbPeek .pkTm::before{content:'·';margin:0 4px;color:var(--rc-line2)}
 
+/* DAILY CARE 카드 (2026-11-23) */
+#viewToday .dailyCareItemCard{position:relative}
+#viewToday .dailyCareItemCard .dailyCareReset{display:none!important}
+#viewToday .dailyCareItemCard .dcMore{position:absolute;top:4px;right:4px;z-index:2;width:22px;height:22px;min-height:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;color:var(--rc-mu)!important;font-size:15.75px;line-height:1;letter-spacing:-1px}
+#viewToday .dailyCareItemCard .dailyCareMeta.dcTwo{display:flex!important;flex-direction:column;align-items:center;gap:1px;line-height:1.25}
+#viewToday .dailyCareItemCard .dcVal{color:var(--rc-tx)}
+#viewToday .dailyCareItemCard .dcVal.dcNone{color:var(--rc-mu)}
+#viewToday .dailyCareItemCard .dcGoal{font-size:.6875rem;color:var(--rc-mu);font-weight:400}
+#viewToday .dcNumAct{grid-template-columns:1fr!important;display:grid!important}
+#viewToday .dcNumAct button{width:100%}
+
 </style>
 <script>/* 저장 공간 지킴이 (2026-11-21): 기록을 저장하다 공간이 모자라면 자동 백업 사본(오래된 것부터)을 지우고 다시 저장 → 실제 기록은 꼭 저장되게 */
 (function(){try{var P=Storage.prototype,orig=P.setItem,PFX='__auto_backup__';
@@ -14801,11 +14812,11 @@ function rwGridHTML(days,onlyBlock){
   const check='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12.5l4 4 8-9"/></svg>';
   const body=rows.map(({r,cells,n})=>{
     const c=rwColor(bIdx[r.block]),nm=String(r.name||'');
-    return `<button type="button" class="rwRow rwTap" style="--c:${c}" data-name="${escapeLife(nm)}" onclick="rwOpen(this.dataset.name)"><span class="rwName">${escapeLife(nm)}</span>${cells.map(x=>`<span class="rwC"><i class="rw-${x}">${x==='rest'?restLeafSvg():x==='done'?check:''}</i></span>`).join('')}<span class="rwN">${n?n:''}</span></button>`;
+    return `<button type="button" class="rwRow rwTap" style="--c:${c}" data-name="${escapeLife(nm)}" onclick="rwOpenWeek(this.dataset.name)"><span class="rwName">${escapeLife(nm)}</span>${cells.map(x=>`<span class="rwC"><i class="rw-${x}">${x==='rest'?restLeafSvg():x==='done'?check:''}</i></span>`).join('')}<span class="rwN">${n?n:''}</span></button>`;
   }).join('');
   return `<div class="rwGrid">${head}${body}</div>`;
 }
-function rwOpen(name){try{if(!rhCtx||!rhCtx.list)return;const i=rhCtx.list.findIndex(e=>e.name===name);if(i>=0)rhOpenRoutine(i);}catch(e){}}
+function rwOpenWeek(name){try{if(!rhCtx||!rhCtx.list)return;const i=rhCtx.list.findIndex(e=>e.name===name);if(i>=0)rhOpenRoutine(i);}catch(e){}}
 (function(){
   const rr=rhRender;
   rhRender=function(){
@@ -15811,6 +15822,104 @@ try{renderLifeGuide();renderOneOffQuick();}catch(e){}
   }).observe(document.body,{childList:true,subtree:true});
   setTimeout(run,0);
 })();
+
+/* ===== DAILY CARE 카드 정리 (2026-11-23)
+   - 모든 카드: 아이콘 · 이름 · 기록(목표는 작은 글씨로 따로) · 버튼
+   - 수치형도 한 칸에 하나, '기록' 버튼
+   - 카드 아래 '초기화'·'기록 삭제'는 없애고, 오른쪽 위 ··· 에서 '기록 지우기'·'항목 고치기' ===== */
+function dcDefOf(id){try{return normalizeDailyCareDefinition(dailyCareDef(id)||{id});}catch(e){return dailyCareDef(id)||{id};}}
+function dcFmt(v){try{return formatDailyCareNumber(v);}catch(e){return String(v);}}
+function dcHasRecord(id,card){
+  const d=dcDefOf(id);
+  try{
+    if(id==='sleep'){const x=calendarDaySleepRecord(activeDateKey);return Number.isFinite(x.dur)||!!loadSleepSession()?.startAt;}
+    if(id==='protein'||id==='water'){const t=(card.querySelector('.dailyCareMeta')?.textContent||'').trim();return !/^0(\D|$)/.test(t);}
+    if(d.type==='duration'){const raw=readDailyCareMetricValue(activeDateKey,id);return !!raw||!!getDailyCareDurationSession(id)?.startAt;}
+    const v=dailyCareNumericValue(activeDateKey,id);return v!==null&&v!==undefined&&!(d.type!=='numeric'&&Number(v)===0);
+  }catch(e){return false;}
+}
+async function dcClearNumeric(id){
+  const d=dcDefOf(id);
+  if(!await appConfirm(`오늘 ${d.name||'이 항목'} 기록을 지울까요?`,{ok:'지우기',cancel:'취소'}))return;
+  const all=getDailyCareValues();if(all[activeDateKey]){delete all[activeDateKey][id];localStorage.setItem(DAILY_CARE_VALUES_KEY,JSON.stringify(all));}
+  renderCustomDailyCare();try{renderDailyCareDashboard();}catch(e){}
+}
+function dcMoreMenu(id){
+  const card=document.querySelector(`#viewToday .dailyCareItemCard[data-daily-care-id="${CSS.escape(id)}"]`);
+  const d=dcDefOf(id),acts=[];
+  if(card&&card.classList.contains('dailyCareNumericCard'))acts.push({label:dcHasRecord(id,card)?'기록 고치기':'기록하기',kind:'primary',run:()=>{const b=card.querySelector('.dcNumAct button');b&&b.click();}});
+  if(id==='sleep')acts.push({label:'직접 기록',kind:'primary',run:()=>manualSleep()});
+  else if(d.type==='duration')acts.push({label:'직접 기록',kind:'primary',run:()=>openCustomDailyCareDurationModal(id)});
+  if(card&&dcHasRecord(id,card)){
+    const rb=card.querySelector('.dailyCareReset');
+    acts.push({label:'오늘 기록 지우기',kind:'danger',run:()=>{if(rb)rb.click();else dcClearNumeric(id);}});
+  }
+  acts.push({label:'항목 설정',run:()=>{try{openDailyCareItemEditor(id);}catch(e){openDailyCareSettings();}}});
+  showRoutineActionSheet(d.name||'',acts);
+}
+function dcDecorate(){
+  const grid=document.querySelector('#viewToday .dailyCareGrid');if(!grid)return;
+  grid.querySelectorAll('.dailyCareItemCard[data-daily-care-id]').forEach(card=>{
+    const id=card.dataset.dailyCareId,d=dcDefOf(id),meta=card.querySelector('.dailyCareMeta');
+    if(!card.querySelector('.dcMore'))card.insertAdjacentHTML('beforeend',`<button type="button" class="dcMore routineEditDots" aria-label="${escapeLife(d.name||'')} 메뉴" onclick="event.stopPropagation();dcMoreMenu('${escapeLife(id)}')">···</button>`);
+    if(!meta)return;
+    const two=(val,goal)=>{const html=`<span class="dcVal${val?'':' dcNone'}">${val||'기록 없음'}</span>${goal?`<small class="dcGoal">목표 ${goal}</small>`:''}`;if(meta.innerHTML!==html)meta.innerHTML=html;meta.classList.add('dcTwo');};
+    try{
+      if(card.classList.contains('dailyCareNumericCard')){
+        card.classList.add('dcNumFull');
+        const mood=typeof lgIsMood==='function'&&lgIsMood(d);
+        if(!mood){
+          const v=dailyCareNumericValue(activeDateKey,id),t=Number(d.target)||0,u=escapeLife(d.unit||'');
+          two(v===null||v===undefined?'':`${dcFmt(v)}${u}`,t?`${dcFmt(t)}${u}`:'');
+        }
+        if(!card.querySelector('.dcNumAct')){
+          const has=dcHasRecord(id,card);
+          card.insertAdjacentHTML('beforeend',`<div class="dailyCareActions dcNumAct"><button type="button" onclick="event.stopPropagation();${mood?`lgOpenMood('${id}')`:`openCustomDailyCareNumericPopup('${id}')`}">${has?'고치기':'기록'}</button></div>`);
+        }
+        return;
+      }
+      if(id==='sleep'){
+        if(loadSleepSession()?.startAt)return meta.classList.remove('dcTwo');
+        const x=calendarDaySleepRecord(activeDateKey),t=Number(d.target)||0;
+        two(Number.isFinite(x.dur)?formatDailyCareDuration(x.dur):'',t?formatDailyCareDuration(Math.round(t*60)):'');return;
+      }
+      if(d.type==='duration'){
+        if(getDailyCareDurationSession(id)?.startAt)return meta.classList.remove('dcTwo');
+        const raw=readDailyCareMetricValue(activeDateKey,id),val=raw&&typeof raw==='object'?raw:null,g=Number(d.durationGoalMinutes)||0;
+        if(val&&!Number.isFinite(Number(val.minutes)))return meta.classList.remove('dcTwo'); /* 시각만 기록하는 항목은 그대로 */
+        two(val?formatDailyCareDuration(Number(val.minutes)):'',g?formatDailyCareDuration(g):'');
+      }
+    }catch(e){}
+  });
+}
+/* 수치형도 짝지어 위아래로 쌓지 않고 한 칸에 하나 */
+dcLayout=function(){
+  const grid=document.querySelector('.dailyCareGrid');if(!grid)return;
+  const cards=dcAllCards();cards.forEach(c=>{c.style.order='';});
+  grid.querySelectorAll('.dailyCareNumPair').forEach(w=>{[...w.children].forEach(c=>grid.insertBefore(c,w));w.remove();});
+  const map=new Map(cards.map(c=>[String(c.dataset.dailyCareId),c]));
+  const order=normalizedDailyCareTodayOrder().filter(id=>map.has(id));
+  cards.forEach(c=>{if(!order.includes(String(c.dataset.dailyCareId)))order.push(String(c.dataset.dailyCareId));});
+  const holder=document.getElementById('customDailyCareGrid');
+  order.forEach(id=>grid.insertBefore(map.get(id),holder||null));
+};
+(function(){
+  let busy=false,q=0;
+  const run=()=>{q=0;busy=true;try{dcDecorate();}catch(e){}busy=false;};
+  new MutationObserver(ms=>{
+    if(busy||q)return;
+    if(ms.some(m=>{const t=m.target.nodeType===3?m.target.parentElement:m.target;return t&&t.closest&&t.closest('#viewToday .dailyCareGrid');}))q=requestAnimationFrame(run);
+  }).observe(document.body,{childList:true,subtree:true,characterData:true});
+  try{applyDailyCareTodayOrder();}catch(e){}
+  setTimeout(run,0);
+})();
+
+/* ===== QUICK LOG 칸 안에는 내용을 적지 않음 (아래 캡슐에 이미 보이니까) — 칸 크기가 늘 같게 ===== */
+qlMarkDone=function(){
+  const row=document.getElementById('oneOffQuickRow');if(!row)return;const k=lifeLogKey();
+  row.querySelectorAll('.snackQuickBtn').forEach(b=>{b.querySelector('.qMeta')?.remove();b.classList.toggle('qlDone',qlTodayCount(b,k).n>0);});
+};
+try{qlMarkDone();}catch(e){}
 
 </script>
 
