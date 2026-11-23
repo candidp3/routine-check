@@ -3256,6 +3256,8 @@ body.tdPastMode #tdHero{box-shadow:inset 0 0 0 1.5px var(--rc-pastl)}
 #viewToday .dcNumAct{grid-template-columns:1fr!important;display:grid!important}
 #viewToday .dcNumAct button{width:100%}
 
+.rr-numeric-card .rrBodyDot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:1px}
+
 </style>
 <script>/* 저장 공간 지킴이 (2026-11-21): 기록을 저장하다 공간이 모자라면 자동 백업 사본(오래된 것부터)을 지우고 다시 저장 → 실제 기록은 꼭 저장되게 */
 (function(){try{var P=Storage.prototype,orig=P.setItem,PFX='__auto_backup__';
@@ -16019,6 +16021,48 @@ function rrFreeColor(name,j){
 try{renderRecordDashboard();}catch(e){}
 
 document.querySelectorAll('.secSub').forEach(s=>{const m={'여유 있을 때':'시간을 들여 한 활동','필요할 때 한 줄':'가끔 생기는 일'};if(m[s.textContent])s.textContent=m[s.textContent];});
+
+/* ===== RECORD FREE TIME: 그래프와 색은 많이 한 5개까지, 나머지는 '다른 활동'으로 (2026-11-24) ===== */
+(function(){
+  const bs=rrLeisureStackedSvg;
+  rrLeisureStackedSvg=function(buckets,labels,top){
+    const keep=rrLeisureRows;
+    rrLeisureRows=function(){return keep.apply(this,arguments).slice(0,5);};
+    try{return bs.apply(this,arguments);}finally{rrLeisureRows=keep;}
+  };
+  const su=rrLeisureSummary;
+  rrLeisureSummary=function(){
+    const html=su.apply(this,arguments);
+    const box=document.createElement('div');box.innerHTML=html;
+    const main=box.querySelector('.rr-leisure-list'),det=box.querySelector('.rr-leisure-more');
+    if(main&&det){
+      const extra=[...det.querySelectorAll('.rr-leisure-item')];
+      extra.slice(0,Math.max(0,5-main.children.length)).forEach(it=>main.appendChild(it));
+      const rest=det.querySelectorAll('.rr-leisure-item');
+      rest.forEach(it=>{const sw=it.querySelector('.rr-leisure-swatch');if(sw)sw.style.background='var(--rc-line2)';});
+      if(!rest.length)det.remove();else{const s=det.querySelector('summary');if(s)s.textContent=`다른 활동 ${rest.length}개 보기`;}
+    }
+    return box.innerHTML;
+  };
+})();
+/* ===== RECORD BODY 그래프: 항목마다 다른 색 (선·점·고른 칩) ===== */
+function rrBodyColor(id){
+  try{const defs=rrNumericDefs(),i=Math.max(0,defs.findIndex(d=>d.id===id||(d._group||[]).includes(id)));const c=ftColorOfIndex(i);return {line:ftHex(c,'gs')||ftHex(c,'g'),soft:ftHex(c,'gl')||ftHex(c,'g')};}catch(e){return {line:'#f28fa2',soft:'#fde3e8'};}
+}
+function rrBodyPaint(){
+  document.querySelectorAll('.rr-numeric-card').forEach(card=>{
+    const cur=rrNumericMetric,col=rrBodyColor(cur);
+    card.querySelectorAll('polyline').forEach(p=>{p.setAttribute('stroke',col.line);p.style.setProperty('stroke',col.line,'important');});card.querySelectorAll('.rr-point').forEach(c=>{c.style.setProperty('fill',col.line,'important');c.style.setProperty('stroke',col.line,'important');});
+    card.querySelectorAll('.rr-hit circle, circle').forEach(c=>{if(c.getAttribute('fill')&&c.getAttribute('fill')!=='transparent')c.setAttribute('fill',col.line);if(c.getAttribute('stroke')&&c.getAttribute('stroke')!=='transparent')c.setAttribute('stroke',col.line);});
+    card.querySelectorAll('.rr-metric-chip').forEach(ch=>{
+      const m=/rrSetNumericMetric\('([^']+)'\)/.exec(ch.getAttribute('onclick')||'');if(!m)return;
+      const c=rrBodyColor(m[1]);ch.querySelector('.rrBodyDot')?.remove();
+      ch.insertAdjacentHTML('afterbegin',`<i class="rrBodyDot" style="background:${c.line}"></i>`);
+      if(ch.classList.contains('on')){ch.style.borderColor=c.line;ch.style.background=c.soft;}
+    });
+  });
+}
+(function(){const r=renderRecordDashboard;renderRecordDashboard=function(){const x=r.apply(this,arguments);try{rrBodyPaint();}catch(e){}return x;};try{renderRecordDashboard();}catch(e){}})();
 
 </script>
 
