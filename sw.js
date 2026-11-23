@@ -1,4 +1,4 @@
-const CACHE='routine-check-v6-137';
+const CACHE='routine-check-v6-138';
 const ASSETS=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png','./pretendard-sub.woff2'];
 
 self.addEventListener('install',e=>{

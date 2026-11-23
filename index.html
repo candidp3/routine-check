@@ -3258,6 +3258,14 @@ body.tdPastMode #tdHero{box-shadow:inset 0 0 0 1.5px var(--rc-pastl)}
 
 .rr-numeric-card .rrBodyDot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:1px}
 
+/* 키보드가 올라오면 가운데 카드 창도 키보드 위 공간 안에서 스크롤되게 (2026-11-24) */
+html .routineActionOverlay{bottom:var(--kb,0px)!important;top:0!important;height:auto!important}
+.routineActionOverlay>.routineInputCard,.routineActionOverlay>.routineActionCard{max-height:calc(100% - 24px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+html.kbOpen .routineActionOverlay{align-items:center!important}
+/* DAILY CARE: '기록 없음'은 목표와 같은 크기, 목표와 버튼 사이 조금 더 */
+#viewToday .dailyCareItemCard .dcVal.dcNone{font-size:.6875rem!important;line-height:1.5}
+#viewToday .dailyCareItemCard .dailyCareMeta.dcTwo{margin-bottom:7px!important}
+
 </style>
 <script>/* 저장 공간 지킴이 (2026-11-21): 기록을 저장하다 공간이 모자라면 자동 백업 사본(오래된 것부터)을 지우고 다시 저장 → 실제 기록은 꼭 저장되게 */
 (function(){try{var P=Storage.prototype,orig=P.setItem,PFX='__auto_backup__';
