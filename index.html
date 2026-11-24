@@ -3348,6 +3348,9 @@ html.kbOpen .routineActionOverlay{align-items:center!important}
 :is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal) .lifeActions>button:not(.lifeSave):not(.dailyCarePopupSave):not([id$="Del"]):not([id$="Delete"]){margin-left:auto!important;flex:0 0 30%!important;height:39px!important;border-radius:11px!important;background:var(--rc-soft)!important;border:1px solid var(--rc-line)!important;color:var(--rc-tx2)!important;padding:0 10px!important}
 :is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal) .lifeActions>:is(.lifeSave,.dailyCarePopupSave){margin-left:0!important;flex:0 0 42%!important}
 
+/* 테마 색 18가지: 한 줄 6개씩 */
+#themeColorChoices{display:grid!important;grid-template-columns:repeat(6,1fr)!important;gap:10px 8px!important;justify-items:center}
+
 </style>
 <script>/* 저장 공간 지킴이 (2026-11-21): 기록을 저장하다 공간이 모자라면 자동 백업 사본(오래된 것부터)을 지우고 다시 저장 → 실제 기록은 꼭 저장되게 */
 (function(){try{var P=Storage.prototype,orig=P.setItem,PFX='__auto_backup__';
@@ -16348,6 +16351,40 @@ const LG_OLD_COLOR={red:'c_red',orange:'c_orange',yellow:'c_yellow',green:'c_gre
     return r;
   };
 })();
+
+/* ===== 테마 색 18가지 (2026-11-24) — 순환 색과 같은 18가지, 같은 순서
+   - 테마를 고르면 그 색부터 이어지는 순서로 FREE TIME·QUICK LOG·DAILY CARE·그래프 색이 돌아감
+   - 버튼 바탕(흰 글씨)이 되는 색은 글씨가 잘 보이도록 자동으로 진하게
+   - 예전 테마(빨강·주황·노랑·그린·파랑·보라·분홍)를 쓰던 사람은 같은 계열 새 색으로 ===== */
+const TH18=[['c_red','#D05C5D','레드'],['c_orange','#DE8040','오렌지'],['c_yellow','#E2B53E','옐로우'],['c_lime','#A3CB58','라임'],['c_green','#59997E','그린'],['c_blue','#4D80CF','블루'],['c_cyan','#40B9CC','시안'],['c_purple','#8465CC','퍼플'],['c_pink','#D36E9A','핑크'],['c_coral','#EE747F','코랄'],['c_tangerine','#F39D42','탠저린'],['c_lemon','#E8D45C','레몬'],['c_mint','#60CDB1','민트'],['c_leaf','#70BB69','리프'],['c_sky','#70B9EC','스카이'],['c_lavender','#AA96E8','라벤더'],['c_rose','#EB91BB','로즈'],['c_gray','#A0A6B0','그레이']];
+const TH_OLD={red:'c_red',orange:'c_orange',yellow:'c_yellow',green:'c_green',blue:'c_blue',purple:'c_purple',pink:'c_pink'};
+(function(){
+  const hx=h=>[1,3,5].map(k=>parseInt(h.slice(k,k+2),16)),to=a=>'#'+a.map(v=>Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,'0')).join('');
+  const mixTo=(h,t,w)=>{const a=hx(h),b=hx(t);return to(a.map((v,k)=>v+(b[k]-v)*w));};
+  const lum=h=>{const c=hx(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);});return .2126*c[0]+.7152*c[1]+.0722*c[2];};
+  const contrast=(a,b)=>{const x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);};
+  const darkUntil=(h,bg,min)=>{let t=0,c=h;while(contrast(c,bg)<min&&t<.9){t+=.04;c=mixTo(h,'#141816',t);}return c;};
+  const lightUntil=(h,bg,min)=>{let t=0,c=h;while(contrast(c,bg)<min&&t<.9){t+=.04;c=mixTo(h,'#ffffff',t);}return c;};
+  const make=(h,i)=>{
+    const n2=TH18[(i+1)%18][1],n3=TH18[(i+3)%18][1];
+    const Lb=h2=>({g:h2,gs:darkUntil(h2,'#ffffff',3.2),gd:darkUntil(mixTo(h2,'#141816',.3),'#ffffff',5),gl:mixTo(h2,'#ffffff',.87)});
+    const Db=h2=>({g:mixTo(h2,'#141816',.08),gs:lightUntil(mixTo(h2,'#ffffff',.18),'#1d2125',4),gd:mixTo(h2,'#ffffff',.6),gl:mixTo(h2,'#141816',.76)});
+    return {
+      light:{base:Lb(h),t2:Lb(n2),t3:Lb(n3),n:{bg:mixTo('#f5f7f6',h,.035),card:'#ffffff',soft:mixTo('#f2f5f3',h,.05),soft2:mixTo('#f9faf9',h,.03),line:mixTo('#e7ebe9',h,.06),line2:mixTo('#d4dcd8',h,.08)}},
+      dark:{base:Db(h),t2:Db(n2),t3:Db(n3),n:{bg:mixTo('#131518',h,.03),card:mixTo('#1d2125',h,.035),soft:mixTo('#262c31',h,.045),soft2:mixTo('#22272c',h,.04),line:mixTo('#2c3239',h,.05),line2:mixTo('#3c454d',h,.06)}}
+    };
+  };
+  /* 예전 7가지는 남겨 두되(저장된 값용) 고르기 목록에서는 빼고, 18가지를 순서대로 */
+  Object.keys(THEME_PALETTES).forEach(k=>{const v=THEME_PALETTES[k];Object.defineProperty(THEME_PALETTES,k,{value:v,enumerable:false,configurable:true,writable:true});});
+  TH18.forEach(([k,h,ko],i)=>{Object.defineProperty(THEME_PALETTES,k,{value:make(h,i),enumerable:true,configurable:true,writable:true});THEME_LABELS[k]=ko;});
+})();
+getThemeColor=function(){try{let v=localStorage.getItem(THEME_KEY)||'';if(TH_OLD[v])v=TH_OLD[v];return TH18.some(x=>x[0]===v)?v:'c_green';}catch(e){return 'c_green';}};
+renderThemeChoices=function(){
+  const root=document.getElementById('themeColorChoices');if(!root)return;const cur=getThemeColor();
+  root.innerHTML=TH18.map(([n,h,ko])=>`<button type="button" class="themeSwatch ${n===cur?'on':''}" role="radio" aria-checked="${n===cur}" aria-label="${ko}" title="${ko}" onclick="setThemeColor('${n}')"><i style="background:${h}"></i></button>`).join('');
+};
+try{applyThemeColor();}catch(e){}
+try{renderLifeGuide();renderOneOffQuick();renderCustomDailyCare();renderRecordDashboard();}catch(e){}
 
 </script>
 
