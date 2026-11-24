@@ -3348,14 +3348,6 @@ html.kbOpen .routineActionOverlay{align-items:center!important}
 :is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal) .lifeActions>button:not(.lifeSave):not(.dailyCarePopupSave):not([id$="Del"]):not([id$="Delete"]){margin-left:auto!important;flex:0 0 30%!important;height:39px!important;border-radius:11px!important;background:var(--rc-soft)!important;border:1px solid var(--rc-line)!important;color:var(--rc-tx2)!important;padding:0 10px!important}
 :is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal) .lifeActions>:is(.lifeSave,.dailyCarePopupSave){margin-left:0!important;flex:0 0 42%!important}
 
-/* 테마 색 18가지: 한 줄 6개씩 */
-#themeColorChoices{display:grid!important;grid-template-columns:repeat(6,1fr)!important;gap:10px 8px!important;justify-items:center}
-
-/* 테마 색 고르기: 9칸 × 2줄, 작게 */
-#themeColorChoices{grid-template-columns:repeat(9,minmax(0,1fr))!important;gap:8px 0!important;margin-top:10px}
-#themeColorChoices .themeSwatch{width:30px!important;height:30px!important;min-width:0!important;padding:0!important}
-#themeColorChoices .themeSwatch i{width:22px!important;height:22px!important}
-
 </style>
 <script>/* 저장 공간 지킴이 (2026-11-21): 기록을 저장하다 공간이 모자라면 자동 백업 사본(오래된 것부터)을 지우고 다시 저장 → 실제 기록은 꼭 저장되게 */
 (function(){try{var P=Storage.prototype,orig=P.setItem,PFX='__auto_backup__';
@@ -3893,7 +3885,8 @@ setTimeout(function(){try{
       <label class="dailyCareFormWide">색
         <select id="dailyCareEditColor">
           <option value="auto">자동 · 순서대로 색이 돌아가요</option>
-          <option value="c_red">레드</option><option value="c_orange">오렌지</option><option value="c_yellow">옐로우</option><option value="c_lime">라임</option><option value="c_green">그린</option><option value="c_blue">블루</option><option value="c_cyan">시안</option><option value="c_purple">퍼플</option><option value="c_pink">핑크</option><option value="c_coral">코랄</option><option value="c_tangerine">탠저린</option><option value="c_lemon">레몬</option><option value="c_mint">민트</option><option value="c_leaf">리프</option><option value="c_sky">스카이</option><option value="c_lavender">라벤더</option><option value="c_rose">로즈</option><option value="c_gray">그레이</option></select>
+          <option value="red">빨강</option><option value="orange">주황</option><option value="yellow">노랑</option><option value="green">초록</option><option value="blue">파랑</option><option value="purple">보라</option><option value="pink">분홍</option>
+        </select>
       </label>
       <label class="dailyCareFormWide">기록 종류
         <select id="dailyCareEditType" onchange="updateDailyCareEditorFields()">
@@ -5137,7 +5130,7 @@ function openDailyCareItemEditor(id=''){
   document.getElementById('dailyCareEditId').value=d.id||'';
   document.getElementById('dailyCareEditIcon').value=d.icon||'';
   document.getElementById('dailyCareEditName').value=d.name||'';
-  {const cs=document.getElementById('dailyCareEditColor');if(cs)cs.value=['c_red','c_orange','c_yellow','c_lime','c_green','c_blue','c_cyan','c_purple','c_pink','c_coral','c_tangerine','c_lemon','c_mint','c_leaf','c_sky','c_lavender','c_rose','c_gray'].includes(d.color)?d.color:'auto';}
+  {const cs=document.getElementById('dailyCareEditColor');if(cs)cs.value=['red','orange','yellow','green','blue','purple','pink'].includes(d.color)?d.color:'auto';}
   document.getElementById('dailyCareEditType').value=d.type||'cumulative';
   document.getElementById('dailyCareEditUnit').value=d.unit||'';
   document.getElementById('dailyCareEditTarget').value=d.target??'';
@@ -10350,22 +10343,7 @@ async function searchBookOnline(parsedOverride=null){
 /* ===== 테마 색 + 항목별 그래프 색 ===== */
 const THEME_KEY='themeColor_v1';
 const THEME_PALETTES={"red": {"light": {"base": {"g": "#f2a3a6", "gs": "#e0525a", "gd": "#a23b43", "gl": "#fdeaea"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#c3b7ee", "gs": "#8d7cbf", "gd": "#615583", "gl": "#f0ecfd"}, "n": {"bg": "#f9f6f5", "card": "#ffffff", "soft": "#faf4f3", "soft2": "#fdf9f9", "line": "#efe8e8", "line2": "#e4d7d6"}}, "dark": {"base": {"g": "#e4757a", "gs": "#f59a9d", "gd": "#fcd0d2", "gl": "#46262a"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#a797da", "gs": "#c0b1f2", "gd": "#ddd6f8", "gl": "#353144"}, "n": {"bg": "#181414", "card": "#251f1e", "soft": "#312928", "soft2": "#2c2423", "line": "#392f2e", "line2": "#4d403f"}}}, "orange": {"light": {"base": {"g": "#f6b384", "gs": "#ec7a2c", "gd": "#a3521a", "gl": "#fff0e3"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#c3b7ee", "gs": "#8d7cbf", "gd": "#615583", "gl": "#f0ecfd"}, "n": {"bg": "#f8f6f4", "card": "#ffffff", "soft": "#f9f5f1", "soft2": "#fcfaf7", "line": "#eee9e6", "line2": "#e3d9d2"}}, "dark": {"base": {"g": "#e8934f", "gs": "#f6b07a", "gd": "#fbd6b6", "gl": "#43301f"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#a797da", "gs": "#c0b1f2", "gd": "#ddd6f8", "gl": "#353144"}, "n": {"bg": "#171412", "card": "#241f1c", "soft": "#302a25", "soft2": "#2b2521", "line": "#37302b", "line2": "#4c413a"}}}, "yellow": {"light": {"base": {"g": "#f8d556", "gs": "#eab308", "gd": "#8a6500", "gl": "#fff7d1"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#c3b7ee", "gs": "#8d7cbf", "gd": "#615583", "gl": "#f0ecfd"}, "n": {"bg": "#f9f8f3", "card": "#ffffff", "soft": "#f8f6ec", "soft2": "#fcfbf5", "line": "#eeebe0", "line2": "#e0dccb"}}, "dark": {"base": {"g": "#d3ab27", "gs": "#f4cb3f", "gd": "#fbe7a0", "gl": "#3d3515"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#a797da", "gs": "#c0b1f2", "gd": "#ddd6f8", "gl": "#353144"}, "n": {"bg": "#161512", "card": "#22201b", "soft": "#2d2a22", "soft2": "#27251e", "line": "#363229", "line2": "#4a453a"}}}, "green": {"light": {"base": {"g": "#8fd1b5", "gs": "#3f9c7c", "gd": "#2f6b55", "gl": "#e2f4ec"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#c3b7ee", "gs": "#8d7cbf", "gd": "#615583", "gl": "#f0ecfd"}}, "dark": {"base": {"g": "#5fb797", "gs": "#7fd0b0", "gd": "#bfe6d4", "gl": "#223a31"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#a797da", "gs": "#c0b1f2", "gd": "#ddd6f8", "gl": "#353144"}}}, "blue": {"light": {"base": {"g": "#9cc4f2", "gs": "#3b82d6", "gd": "#285a9a", "gl": "#e6f1fd"}, "t2": {"g": "#81d0d4", "gs": "#1c9ba1", "gd": "#1c6a6e", "gl": "#dff4f5"}, "t3": {"g": "#ccb4ea", "gs": "#9778ba", "gd": "#67537f", "gl": "#f2ecfb"}, "n": {"bg": "#f5f7f9", "card": "#ffffff", "soft": "#f2f6fa", "soft2": "#f8fafd", "line": "#e7ebef", "line2": "#d4dce4"}}, "dark": {"base": {"g": "#5b9be0", "gs": "#86b8f4", "gd": "#c2dcfb", "gl": "#243649"}, "t2": {"g": "#49b6bb", "gs": "#6dcfd4", "gd": "#b8e6e8", "gl": "#1d3a3b"}, "t3": {"g": "#b193d5", "gs": "#caaeed", "gd": "#e2d4f5", "gl": "#383043"}, "n": {"bg": "#131518", "card": "#1d2125", "soft": "#262c31", "soft2": "#22272c", "line": "#2c3239", "line2": "#3c454d"}}}, "purple": {"light": {"base": {"g": "#c4b0f0", "gs": "#8a63d2", "gd": "#5b3f9a", "gl": "#f1ebfd"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#a8c0f4", "gs": "#6a87c6", "gd": "#4a5d87", "gl": "#e8effe"}, "n": {"bg": "#f7f6f8", "card": "#ffffff", "soft": "#f6f5f9", "soft2": "#fafafd", "line": "#ebe9ef", "line2": "#dcd9e3"}}, "dark": {"base": {"g": "#9a7de0", "gs": "#bba2f4", "gd": "#ddd0fa", "gl": "#352d47"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#85a2e1", "gs": "#a0bcf9", "gd": "#ccdcfc", "gl": "#2c3446"}, "n": {"bg": "#151418", "card": "#211f24", "soft": "#2c2a30", "soft2": "#27252b", "line": "#333038", "line2": "#45424c"}}}, "pink": {"light": {"base": {"g": "#f2a5c4", "gs": "#e2679c", "gd": "#a8386a", "gl": "#fdebf3"}, "t2": {"g": "#8ec9ec", "gs": "#4292bd", "gd": "#306481", "gl": "#e2f2fc"}, "t3": {"g": "#c3b7ee", "gs": "#8d7cbf", "gd": "#615583", "gl": "#f0ecfd"}, "n": {"bg": "#faf5f7", "card": "#ffffff", "soft": "#fbf3f6", "soft2": "#fdf8fa", "line": "#f0e7ec", "line2": "#e5d6de"}}, "dark": {"base": {"g": "#e079a6", "gs": "#f59fc3", "gd": "#fcd3e4", "gl": "#46262f"}, "t2": {"g": "#61add8", "gs": "#7fc7f0", "gd": "#bee1f7", "gl": "#223743"}, "t3": {"g": "#a797da", "gs": "#c0b1f2", "gd": "#ddd6f8", "gl": "#353144"}, "n": {"bg": "#181416", "card": "#251f22", "soft": "#312829", "soft2": "#2c2426", "line": "#392f33", "line2": "#4d3f45"}}}};
-
-/* 순환 색 18가지 (2026-11-24 v2, 사용자가 고른 순서) — 아래 8가지(라임·틸…)는 예전에 저장된 색을 위해 남겨 둠
-   순환 색 15가지 (2026-11-24): 테마 색 7가지 + 라임·틸·브라운·코랄·인디고·올리브·베리·스카이
-   테마 고르기에는 7가지만 보이게 추가 색은 숨은 항목으로 넣음 */
-(function(){
-  const X={lime:'#86B65B',teal:'#379E9D',brown:'#A47B5D',coral:'#DF8277',indigo:'#6269A8',olive:'#929C48',berry:'#B3598C',sky:'#60AECF'};
-  const hx=h=>[1,3,5].map(k=>parseInt(h.slice(k,k+2),16)),to=a=>'#'+a.map(v=>Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,'0')).join('');
-  const mix=(h,w,t)=>{const a=hx(h),b=w==='w'?[255,255,255]:[18,24,22];return to(a.map((v,k)=>v+(b[k]-v)*t));};
-  const C18={c_red:'#D05C5D',c_orange:'#DE8040',c_yellow:'#E2B53E',c_lime:'#A3CB58',c_green:'#59997E',c_blue:'#4D80CF',c_cyan:'#40B9CC',c_purple:'#8465CC',c_pink:'#D36E9A',c_coral:'#EE747F',c_tangerine:'#F39D42',c_lemon:'#E8D45C',c_mint:'#60CDB1',c_leaf:'#70BB69',c_sky:'#70B9EC',c_lavender:'#AA96E8',c_rose:'#EB91BB',c_gray:'#A0A6B0'};
-  Object.entries(C18).forEach(([k,h])=>{const L={g:h,gs:mix(h,'k',.2),gd:mix(h,'k',.45),gl:mix(h,'w',.86)},D={g:h,gs:mix(h,'w',.2),gd:mix(h,'w',.6),gl:mix(h,'k',.78)};
-    Object.defineProperty(THEME_PALETTES,k,{value:{light:{base:L,t2:L,t3:L},dark:{base:D,t2:D,t3:D}},enumerable:false,configurable:true});});
-  Object.entries(X).forEach(([k,h])=>{
-    const L={g:mix(h,'w',.38),gs:h,gd:mix(h,'k',.32),gl:mix(h,'w',.88)},D={g:h,gs:mix(h,'w',.25),gd:mix(h,'w',.62),gl:mix(h,'k',.78)};
-    Object.defineProperty(THEME_PALETTES,k,{value:{light:{base:L,t2:L,t3:L},dark:{base:D,t2:D,t3:D}},enumerable:false,configurable:true});
-  });
-})();const THEME_LABELS={red:'빨강',orange:'주황',yellow:'노랑',green:'그린',blue:'파랑',purple:'보라',pink:'분홍'};
+const THEME_LABELS={red:'빨강',orange:'주황',yellow:'노랑',green:'그린',blue:'파랑',purple:'보라',pink:'분홍'};
 function getThemeColor(){try{const v=localStorage.getItem(THEME_KEY);return THEME_PALETTES[v]?v:'green';}catch(e){return 'green';}}
 function themeCssBlock(p,withBase){
   const b=p.base,o=[];
@@ -11831,7 +11809,7 @@ function appIconSvg(name){const x=APP_ICON_MAP[name];if(!x)return '';return `<sv
 })();
 
 /* ===== 데일리케어 색 규칙 ===== */
-const DC_CYCLE=['c_red','c_orange','c_yellow','c_lime','c_green','c_blue','c_cyan','c_purple','c_pink','c_coral','c_tangerine','c_lemon','c_mint','c_leaf','c_sky','c_lavender','c_rose','c_gray'];
+const DC_CYCLE=['red','orange','yellow','green','blue','purple','pink'];
 (function(){
   function dcColorOf(id,defs){
     const i=defs.findIndex(x=>x.id===id);if(i<0)return DC_CYCLE[0];
@@ -12852,7 +12830,7 @@ function setThemeMode(v){try{localStorage.setItem(THEME_MODE_KEY,v);}catch(e){}a
 })();
 /* 캘린더: 고른 루틴마다 테마 색 순서(지금 테마 색부터)로 칩·날짜 점 표시 */
 function calRtColor(i){
-  const cyc=['c_red','c_orange','c_yellow','c_lime','c_green','c_blue','c_cyan','c_purple','c_pink','c_coral','c_tangerine','c_lemon','c_mint','c_leaf','c_sky','c_lavender','c_rose','c_gray'];let st=cyc.indexOf(getThemeColor());if(st<0)st=0;
+  const cyc=['red','orange','yellow','green','blue','purple','pink'];let st=cyc.indexOf(getThemeColor());if(st<0)st=3;
   let dark=false;try{const m=themeMode();dark=m==='dark'||(m==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);}catch(e){}
   const c=cyc[(st+i)%cyc.length];try{return THEME_PALETTES[c][dark?'dark':'light'].base.gs;}catch(e){return '#3f9c7c';}
 }
@@ -14157,8 +14135,8 @@ renderTdJump=function(){
   row.innerHTML=t.map(([id,ic,name,n])=>`<button type="button" class="tdJumpBtn tdJ3" onclick="tdsOpen('${id}')"><span class="tdJIc">${ic}${n?`<b>${n}</b>`:''}</span><span class="tdJT"><span class="tdJName">${name}</span><small>${tdJumpSub(id)}</small></span></button>`).join('');
 };
 /* ===== 프로젝트 색: 데일리케어처럼 테마 색 순서로 순환 (지금 테마 색부터, 만든 순서 기준) ===== */
-const PJ_CYC=['c_red','c_orange','c_yellow','c_lime','c_green','c_blue','c_cyan','c_purple','c_pink','c_coral','c_tangerine','c_lemon','c_mint','c_leaf','c_sky','c_lavender','c_rose','c_gray'];
-function pjColorName(p){let st=PJ_CYC.indexOf(getThemeColor());if(st<0)st=0;return PJ_CYC[(st+pjIdx(p))%PJ_CYC.length];}
+const PJ_CYC=['red','orange','yellow','green','blue','purple','pink'];
+function pjColorName(p){let st=PJ_CYC.indexOf(getThemeColor());if(st<0)st=3;return PJ_CYC[(st+pjIdx(p))%PJ_CYC.length];}
 pjIdx=function(p){const all=pjLoad().slice().sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));return Math.max(0,all.findIndex(x=>x.id===p.id));};
 pjColors=function(){const n=Math.max(7,pjLoad().length);const a=[];for(let i=0;i<n;i++)a.push(calRtColor(i));return a;};
 (function(){
@@ -14167,13 +14145,13 @@ pjColors=function(){const n=Math.max(7,pjLoad().length);const a=[];for(let i=0;i
 })();
 
 /* ===== FREE TIME 색: 활동 순서대로 테마 색 순환(파스텔) — TODAY는 한 날만 색, RECORD 그래프도 같은 색 (2026-11-16) ===== */
-const FT_CYC=['c_red','c_orange','c_yellow','c_lime','c_green','c_blue','c_cyan','c_purple','c_pink','c_coral','c_tangerine','c_lemon','c_mint','c_leaf','c_sky','c_lavender','c_rose','c_gray'];
+const FT_CYC=['red','orange','yellow','green','blue','purple','pink'];
 function ftOrderIds(){
   let ids=[...document.querySelectorAll('.freeChipWrap[data-routine-id]')].map(w=>w.dataset.routineId);
   if(!ids.length)try{ids=loadLifeRoutines().filter(r=>r.block==='free').map(r=>r.id);}catch(e){}
   return [...new Set(ids)];
 }
-function ftColorOfIndex(i){let st=FT_CYC.indexOf(getThemeColor());if(st<0)st=0;return FT_CYC[(st+i)%FT_CYC.length];}
+function ftColorOfIndex(i){let st=FT_CYC.indexOf(getThemeColor());if(st<0)st=3;return FT_CYC[(st+i)%FT_CYC.length];}
 function ftColorById(id){const i=ftOrderIds().indexOf(id);return i<0?'':ftColorOfIndex(i);}
 function ftHex(c,k){let dark=false;try{const m=themeMode();dark=m==='dark'||(m==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);}catch(e){}try{return THEME_PALETTES[c][dark?'dark':'light'].base[k||'g'];}catch(e){return '';}}
 function ftTintToday(){
@@ -16346,105 +16324,17 @@ function ufQuickRender(mid){
   const u=updateDailyCareEditorFields;updateDailyCareEditorFields=function(){const r=u.apply(this,arguments);try{ufQuickRender('dailyCareItemModal');}catch(e){}return r;};
 })();
 
-/* 예전에 고른 DAILY CARE 색은 새 18가지 중 가까운 색으로 보여줌 (2026-11-24) */
-const LG_OLD_COLOR={red:'c_red',orange:'c_orange',yellow:'c_yellow',green:'c_green',blue:'c_blue',purple:'c_purple',pink:'c_pink',lime:'c_lime',teal:'c_cyan',brown:'c_orange',coral:'c_coral',indigo:'c_blue',olive:'c_leaf',berry:'c_rose',sky:'c_sky'};
+/* ===== 색은 기본 7가지로 (2026-11-24 되돌림)
+   잠깐 쓰였던 18색 이름(c_…)이나 추가 색이 저장돼 있으면 가까운 기본 색으로 바꿔 둠 ===== */
 (function(){
-  const o=openDailyCareItemEditor;
-  openDailyCareItemEditor=function(id){
-    const r=o.apply(this,arguments);
-    try{const d=loadDailyCareDefinitions().find(x=>x.id===id),cs=document.getElementById('dailyCareEditColor');if(d&&cs&&d.color&&LG_OLD_COLOR[d.color])cs.value=LG_OLD_COLOR[d.color];}catch(e){}
-    return r;
-  };
+  const M={c_red:'red',c_orange:'orange',c_yellow:'yellow',c_lime:'green',c_green:'green',c_blue:'blue',c_cyan:'blue',c_purple:'purple',c_pink:'pink',c_coral:'red',c_tangerine:'orange',c_lemon:'yellow',c_mint:'green',c_leaf:'green',c_sky:'blue',c_lavender:'purple',c_rose:'pink',c_gray:'green',lime:'green',teal:'blue',brown:'orange',coral:'red',indigo:'purple',olive:'green',berry:'pink',sky:'blue'};
+  try{const v=localStorage.getItem(THEME_KEY);if(v&&M[v]){localStorage.setItem(THEME_KEY,M[v]);applyThemeColor();}}catch(e){}
+  try{const ds=loadDailyCareDefinitions();let ch=false;ds.forEach(d=>{if(d&&d.color&&M[d.color]){d.color=M[d.color];ch=true;}});if(ch){saveDailyCareDefinitions(ds);try{renderCustomDailyCare();}catch(e){}}}catch(e){}
 })();
 
-/* ===== 테마 색 18가지 (2026-11-24) — 순환 색과 같은 18가지, 같은 순서
-   - 테마를 고르면 그 색부터 이어지는 순서로 FREE TIME·QUICK LOG·DAILY CARE·그래프 색이 돌아감
-   - 버튼 바탕(흰 글씨)이 되는 색은 글씨가 잘 보이도록 자동으로 진하게
-   - 예전 테마(빨강·주황·노랑·그린·파랑·보라·분홍)를 쓰던 사람은 같은 계열 새 색으로 ===== */
-const TH18=[['c_red','#D05C5D','레드'],['c_orange','#DE8040','오렌지'],['c_yellow','#E2B53E','옐로우'],['c_lime','#A3CB58','라임'],['c_green','#59997E','그린'],['c_blue','#4D80CF','블루'],['c_cyan','#40B9CC','시안'],['c_purple','#8465CC','퍼플'],['c_pink','#D36E9A','핑크'],['c_coral','#EE747F','코랄'],['c_tangerine','#F39D42','탠저린'],['c_lemon','#E8D45C','레몬'],['c_mint','#60CDB1','민트'],['c_leaf','#70BB69','리프'],['c_sky','#70B9EC','스카이'],['c_lavender','#AA96E8','라벤더'],['c_rose','#EB91BB','로즈'],['c_gray','#A0A6B0','그레이']];
-const TH_OLD={red:'c_red',orange:'c_orange',yellow:'c_yellow',green:'c_green',blue:'c_blue',purple:'c_purple',pink:'c_pink'};
-(function(){
-  const hx=h=>[1,3,5].map(k=>parseInt(h.slice(k,k+2),16)),to=a=>'#'+a.map(v=>Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,'0')).join('');
-  const mixTo=(h,t,w)=>{const a=hx(h),b=hx(t);return to(a.map((v,k)=>v+(b[k]-v)*w));};
-  const lum=h=>{const c=hx(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);});return .2126*c[0]+.7152*c[1]+.0722*c[2];};
-  const contrast=(a,b)=>{const x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);};
-  const darkUntil=(h,bg,min)=>{let t=0,c=h;while(contrast(c,bg)<min&&t<.9){t+=.04;c=mixTo(h,'#141816',t);}return c;};
-  const lightUntil=(h,bg,min)=>{let t=0,c=h;while(contrast(c,bg)<min&&t<.9){t+=.04;c=mixTo(h,'#ffffff',t);}return c;};
-  const make=(h,i)=>{
-    const n2=TH18[(i+1)%18][1],n3=TH18[(i+3)%18][1];
-    const Lb=h2=>({g:h2,gs:darkUntil(h2,'#ffffff',3.2),gd:darkUntil(mixTo(h2,'#141816',.3),'#ffffff',5),gl:mixTo(h2,'#ffffff',.87)});
-    const Db=h2=>({g:mixTo(h2,'#141816',.08),gs:lightUntil(mixTo(h2,'#ffffff',.18),'#1d2125',4),gd:mixTo(h2,'#ffffff',.6),gl:mixTo(h2,'#141816',.76)});
-    return {
-      light:{base:Lb(h),t2:Lb(n2),t3:Lb(n3),n:{bg:mixTo('#f5f7f6',h,.035),card:'#ffffff',soft:mixTo('#f2f5f3',h,.05),soft2:mixTo('#f9faf9',h,.03),line:mixTo('#e7ebe9',h,.06),line2:mixTo('#d4dcd8',h,.08)}},
-      dark:{base:Db(h),t2:Db(n2),t3:Db(n3),n:{bg:mixTo('#131518',h,.03),card:mixTo('#1d2125',h,.035),soft:mixTo('#262c31',h,.045),soft2:mixTo('#22272c',h,.04),line:mixTo('#2c3239',h,.05),line2:mixTo('#3c454d',h,.06)}}
-    };
-  };
-  /* 예전 7가지는 남겨 두되(저장된 값용) 고르기 목록에서는 빼고, 18가지를 순서대로 */
-  Object.keys(THEME_PALETTES).forEach(k=>{const v=THEME_PALETTES[k];Object.defineProperty(THEME_PALETTES,k,{value:v,enumerable:false,configurable:true,writable:true});});
-  TH18.forEach(([k,h,ko],i)=>{Object.defineProperty(THEME_PALETTES,k,{value:make(h,i),enumerable:true,configurable:true,writable:true});THEME_LABELS[k]=ko;});
-})();
-getThemeColor=function(){try{let v=localStorage.getItem(THEME_KEY)||'';if(TH_OLD[v])v=TH_OLD[v];return TH18.some(x=>x[0]===v)?v:'c_green';}catch(e){return 'c_green';}};
-renderThemeChoices=function(){
-  const root=document.getElementById('themeColorChoices');if(!root)return;const cur=getThemeColor();
-  root.innerHTML=TH18.map(([n,h,ko])=>`<button type="button" class="themeSwatch ${n===cur?'on':''}" role="radio" aria-checked="${n===cur}" aria-label="${ko}" title="${ko}" onclick="setThemeColor('${n}')"><i style="background:${h}"></i></button>`).join('');
-};
-try{applyThemeColor();}catch(e){}
-try{renderLifeGuide();renderOneOffQuick();renderCustomDailyCare();renderRecordDashboard();}catch(e){}
-
-/* ===== 색 다듬기 (2026-11-24 v3)
-   - 빨강·주황·노랑·초록·파랑·보라·분홍: 예전에 디자인한 값 그대로 (테마·순환 색 모두)
-   - 새로 넣은 11색: 채도는 그대로 두고 밝기만 바꿔서 단계 만들기 (검정·흰색 섞지 않음 → 탁해지지 않음)
-   - 점 색: 살짝 파스텔 톤 (예전 점 색과 비슷한 밝기)
-   - 화면 바탕·카드: 예전처럼 무채색 (새 색 테마는 바탕을 건드리지 않음) ===== */
-const TH_ORIG={c_red:'red',c_orange:'orange',c_yellow:'yellow',c_green:'green',c_blue:'blue',c_purple:'purple',c_pink:'pink'};
-(function(){
-  const ORIG={};['red','orange','yellow','green','blue','purple','pink'].forEach(k=>{ORIG[k]=THEME_PALETTES[k];});
-  const toHsl=h=>{let [r,g,b]=[1,3,5].map(k=>parseInt(h.slice(k,k+2),16)/255);const mx=Math.max(r,g,b),mn=Math.min(r,g,b);let H=0,S=0;const L=(mx+mn)/2;
-    if(mx!==mn){const d=mx-mn;S=L>.5?d/(2-mx-mn):d/(mx+mn);H=mx===r?(g-b)/d+(g<b?6:0):mx===g?(b-r)/d+2:(r-g)/d+4;H/=6;}return [H,S,L];};
-  const fromHsl=(H,S,L)=>{const f=n=>{const k=(n+H*12)%12,a=S*Math.min(L,1-L);return L-a*Math.max(-1,Math.min(k-3,9-k,1));};return '#'+[f(0),f(8),f(4)].map(v=>Math.round(Math.max(0,Math.min(1,v))*255).toString(16).padStart(2,'0')).join('');};
-  const lum=h=>{const c=[1,3,5].map(k=>{let v=parseInt(h.slice(k,k+2),16)/255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);});return .2126*c[0]+.7152*c[1]+.0722*c[2];};
-  const contrast=(a,b)=>{const x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);};
-  const atL=(h,L)=>{const [H,S]=toHsl(h);return fromHsl(H,S,L);};
-  /* 글씨가 잘 보일 때까지 밝기만 내리거나 올림 */
-  const darkTo=(h,bg,min)=>{let [H,S,L]=toHsl(h);let c=h;while(contrast(c,bg)<min&&L>.12){L-=.02;c=fromHsl(H,S,L);}return c;};
-  const lightTo=(h,bg,min)=>{let [H,S,L]=toHsl(h);let c=h;while(contrast(c,bg)<min&&L<.92){L+=.02;c=fromHsl(H,S,L);}return c;};
-  const lightBase=h=>{const L0=toHsl(h)[2];return {g:atL(h,Math.max(L0,.72)),gs:darkTo(h,'#ffffff',3.2),gd:darkTo(atL(h,Math.min(L0,.36)),'#ffffff',5.5),gl:atL(h,.94)};};
-  const darkBase=h=>{const L0=toHsl(h)[2];return {g:atL(h,Math.min(Math.max(L0,.5),.6)),gs:lightTo(atL(h,Math.max(L0,.66)),'#1d2125',4.5),gd:atL(h,.84),gl:atL(h,.2)};};
-  TH18.forEach(([k,h],i)=>{
-    let pal;
-    if(TH_ORIG[k])pal=ORIG[TH_ORIG[k]];
-    else{
-      const n2=TH18[(i+1)%18],n3=TH18[(i+3)%18];
-      const pick=(x,mode)=>TH_ORIG[x[0]]?ORIG[TH_ORIG[x[0]]][mode].base:(mode==='light'?lightBase(x[1]):darkBase(x[1]));
-      pal={light:{base:lightBase(h),t2:pick(n2,'light'),t3:pick(n3,'light')},dark:{base:darkBase(h),t2:pick(n2,'dark'),t3:pick(n3,'dark')}}; /* n(바탕) 없음 = 무채색 그대로 */
-    }
-    Object.defineProperty(THEME_PALETTES,k,{value:pal,enumerable:true,configurable:true,writable:true});
-  });
-})();
-/* 초록 테마는 예전처럼 앱 기본 색 그대로, 예전 7색은 예전 이름표(data-tc)로 */
-applyThemeColor=function(){
-  const name=getThemeColor(),pal=THEME_PALETTES[name],orig=TH_ORIG[name]||name,withBase=orig!=='green';
-  let st=document.getElementById('themeColorStyle');
-  if(!st){st=document.createElement('style');st.id='themeColorStyle';document.head.appendChild(st);}
-  document.documentElement.dataset.tc=orig;
-  st.textContent=`:root:root{${themeCssBlock(pal.light,withBase)}}@media (prefers-color-scheme:dark){:root:root{${themeCssBlock(pal.dark,withBase)}}}`;
-  renderThemeChoices();
-};
-try{applyThemeColor();}catch(e){}
-try{renderLifeGuide();renderOneOffQuick();renderCustomDailyCare();renderRecordDashboard();}catch(e){}
-
-/* DAILY CARE 상자 색: 처음 한 번 만들어 둔 색 표(예전 계산 값)를 지금 색으로 다시 만듦 (2026-11-24) */
-function dcColorRebuild(){
-  const st=document.getElementById('dcColorStyle');if(!st)return;
-  const blk=(mode,sel,get)=>DC_CYCLE.map(c=>`${sel(c)}{${get(THEME_PALETTES[c][mode].base)}}`).join('');
-  const sel=c=>`.dcc-${c}`,get=b=>`--dc-bg:${b.gl};--dc-fg:${b.gs};--dc-bd:${b.gd}`;
-  st.dataset.base=blk('light',sel,get)+`@media (prefers-color-scheme:dark){${blk('dark',sel,get)}}`;
-  const g=b=>`--gc-g:${b.g};--gc-gs:${b.gs};--gc-gd:${b.gd};--gc-gl:${b.gl}`;
-  st.dataset.rcc=blk('light',c=>`.rcc-${c}`,g)+`@media (prefers-color-scheme:dark){${blk('dark',c=>`.rcc-${c}`,g)}}`;
-  st.textContent='';try{applyDcColors();}catch(e){}
-}
-try{dcColorRebuild();}catch(e){}
-setTimeout(()=>{try{dcColorRebuild();}catch(e){}},300);
+/* 순환 색도 기본 7가지만 (8번째부터 쓰던 추가 색은 쓰지 않음, 2026-11-24) */
+ftColorOfIndex=function(i){let st=FT_CYC.indexOf(getThemeColor());if(st<0)st=3;return FT_CYC[(st+i)%FT_CYC.length];};
+try{renderLifeGuide();renderOneOffQuick();renderRecordDashboard();}catch(e){}
 
 </script>
 
