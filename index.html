@@ -3351,6 +3351,10 @@ html.kbOpen .routineActionOverlay{align-items:center!important}
 /* 테마 색 9가지: 한 줄에 여유 있게 */
 .themeColorChoices .themeSwatch i{width:28px!important;height:28px!important}
 
+/* RECORD: 주·월·년 밑줄과 제목 앞 표시를 테마 색으로 (2026-11-25) — 책 화면처럼 */
+#viewAll_v2 .rr-tabs .on,#viewAll_v2 .bookPeriodTab.on{border-bottom-color:var(--rc-gs,var(--accent))!important;color:var(--rc-tx)!important}
+#viewAll_v2 .rr-card>h2::before{width:6px!important;height:6px!important;border-radius:1.5px!important;background:var(--rc-gs,var(--accent))!important}
+
 </style>
 <script>/* 저장 공간 지킴이 (2026-11-21): 기록을 저장하다 공간이 모자라면 자동 백업 사본(오래된 것부터)을 지우고 다시 저장 → 실제 기록은 꼭 저장되게 */
 (function(){try{var P=Storage.prototype,orig=P.setItem,PFX='__auto_backup__';
@@ -3888,7 +3892,7 @@ setTimeout(function(){try{
       <label class="dailyCareFormWide">색
         <select id="dailyCareEditColor">
           <option value="auto">자동 · 순서대로 색이 돌아가요</option>
-          <option value="red">빨강</option><option value="orange">주황</option><option value="yellow">노랑</option><option value="green">초록</option><option value="aqua">아쿠아</option><option value="blue">파랑</option><option value="purple">보라</option><option value="pink">분홍</option><option value="slate">슬레이트</option>
+          <option value="red">빨강</option><option value="orange">주황</option><option value="yellow">노랑</option><option value="green">초록</option><option value="aqua">청록</option><option value="blue">파랑</option><option value="purple">보라</option><option value="pink">분홍</option><option value="slate">회색</option>
         </select>
       </label>
       <label class="dailyCareFormWide">기록 종류
@@ -10358,7 +10362,7 @@ const THEME_PALETTES={"red": {"light": {"base": {"g": "#f2a3a6", "gs": "#e0525a"
   const all=Object.assign({},THEME_PALETTES,{aqua,slate});
   Object.keys(THEME_PALETTES).forEach(k=>delete THEME_PALETTES[k]);
   ['red','orange','yellow','green','aqua','blue','purple','pink','slate'].forEach(k=>{THEME_PALETTES[k]=all[k];});
-})();const THEME_LABELS={red:'빨강',orange:'주황',yellow:'노랑',green:'그린',aqua:'아쿠아',blue:'파랑',purple:'보라',pink:'분홍',slate:'슬레이트'};
+})();const THEME_LABELS={red:'빨강',orange:'주황',yellow:'노랑',green:'그린',aqua:'청록',blue:'파랑',purple:'보라',pink:'분홍',slate:'회색'};
 function getThemeColor(){try{const v=localStorage.getItem(THEME_KEY);return THEME_PALETTES[v]?v:'green';}catch(e){return 'green';}}
 function themeCssBlock(p,withBase){
   const b=p.base,o=[];
@@ -14068,8 +14072,7 @@ function tdsExtra(id){
     }
     if(id==='project'){
       const done=pjLoad().filter(p=>p.status==='done').length;
-      if(done)h=`<div class="tdsEmpty tdsSmall">끝낸 프로젝트 ${done}개는 <button type="button" class="tdsLink" onclick="openProjectManage()">전체 보기</button>에서 볼 수 있어요.</div>`;
-      else if(!pjLoad().length)h=`<div class="tdsEmpty">진행 중인 일을 프로젝트로 묶어 두면<br>할 일과 마감을 한눈에 볼 수 있어요.<br><span>예) 이사 준비 · 발표 자료 · 여행 계획</span></div>`;
+      if(!pjLoad().length)h=`<div class="tdsEmpty">진행 중인 일을 프로젝트로 묶어 두면<br>할 일과 마감을 한눈에 볼 수 있어요.<br><span>예) 이사 준비 · 발표 자료 · 여행 계획</span></div>`;
     }
   }catch(e){h='';}
   box.innerHTML=h;
