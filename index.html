@@ -3351,6 +3351,11 @@ html.kbOpen .routineActionOverlay{align-items:center!important}
 /* 테마 색 18가지: 한 줄 6개씩 */
 #themeColorChoices{display:grid!important;grid-template-columns:repeat(6,1fr)!important;gap:10px 8px!important;justify-items:center}
 
+/* 테마 색 고르기: 9칸 × 2줄, 작게 */
+#themeColorChoices{grid-template-columns:repeat(9,minmax(0,1fr))!important;gap:8px 0!important;margin-top:10px}
+#themeColorChoices .themeSwatch{width:30px!important;height:30px!important;min-width:0!important;padding:0!important}
+#themeColorChoices .themeSwatch i{width:22px!important;height:22px!important}
+
 </style>
 <script>/* 저장 공간 지킴이 (2026-11-21): 기록을 저장하다 공간이 모자라면 자동 백업 사본(오래된 것부터)을 지우고 다시 저장 → 실제 기록은 꼭 저장되게 */
 (function(){try{var P=Storage.prototype,orig=P.setItem,PFX='__auto_backup__';
@@ -16427,6 +16432,19 @@ applyThemeColor=function(){
 };
 try{applyThemeColor();}catch(e){}
 try{renderLifeGuide();renderOneOffQuick();renderCustomDailyCare();renderRecordDashboard();}catch(e){}
+
+/* DAILY CARE 상자 색: 처음 한 번 만들어 둔 색 표(예전 계산 값)를 지금 색으로 다시 만듦 (2026-11-24) */
+function dcColorRebuild(){
+  const st=document.getElementById('dcColorStyle');if(!st)return;
+  const blk=(mode,sel,get)=>DC_CYCLE.map(c=>`${sel(c)}{${get(THEME_PALETTES[c][mode].base)}}`).join('');
+  const sel=c=>`.dcc-${c}`,get=b=>`--dc-bg:${b.gl};--dc-fg:${b.gs};--dc-bd:${b.gd}`;
+  st.dataset.base=blk('light',sel,get)+`@media (prefers-color-scheme:dark){${blk('dark',sel,get)}}`;
+  const g=b=>`--gc-g:${b.g};--gc-gs:${b.gs};--gc-gd:${b.gd};--gc-gl:${b.gl}`;
+  st.dataset.rcc=blk('light',c=>`.rcc-${c}`,g)+`@media (prefers-color-scheme:dark){${blk('dark',c=>`.rcc-${c}`,g)}}`;
+  st.textContent='';try{applyDcColors();}catch(e){}
+}
+try{dcColorRebuild();}catch(e){}
+setTimeout(()=>{try{dcColorRebuild();}catch(e){}},300);
 
 </script>
 
