@@ -3274,6 +3274,11 @@ html.kbOpen .routineActionOverlay{align-items:center!important}
 
 #oneOffQuickRow .snackQuickBtn .qlMore{position:absolute;top:4px;right:6px;width:24px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--rc-mu);font-size:15px;letter-spacing:-1px;line-height:1;z-index:2}
 
+/* 지금 시간대 캡슐: 개수·상태와 상관없이 모두 같은 크기, 예전보다 조금 작게 (2026-11-24 v2) */
+.tdHero .lbPeek button,.tdHero .thRest button,.tdHero .lbPeek button.pkHasTm,.tdHero .thRest button.pkHasTm{height:2.1rem!important;min-height:0!important;padding:0 .85rem 0 .65rem!important;font-size:.78rem!important;gap:.45rem!important;line-height:1!important}
+.tdHero .lbPeek button i,.tdHero .thRest button i{width:.9rem!important;height:.9rem!important}
+.tdHero .lbPeek .lbMore{height:2.1rem!important}
+
 </style>
 <script>/* 저장 공간 지킴이 (2026-11-21): 기록을 저장하다 공간이 모자라면 자동 백업 사본(오래된 것부터)을 지우고 다시 저장 → 실제 기록은 꼭 저장되게 */
 (function(){try{var P=Storage.prototype,orig=P.setItem,PFX='__auto_backup__';
@@ -3631,11 +3636,11 @@ setTimeout(function(){try{
 
   <section class="backupCard backupBundle">
     <div class="backupCardTitle">MANAGE</div>
-    <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openDailyCareSettings()"><div><div class="backupSubTitle">데일리케어 관리</div><div class="backupHint">단백질·물·수면 등 매일 챙기는 항목</div></div><span class="manageChev" aria-hidden="true">›</span></div>
+    <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openDailyCareSettings()"><div><div class="backupSubTitle">데일리케어 관리</div><div class="backupHint">매일 챙기는 항목과 목표</div></div><span class="manageChev" aria-hidden="true">›</span></div>
     <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openInactiveRoutineManager()"><div><div class="backupSubTitle">루틴 관리</div><div class="backupHint">루틴·FREE TIME 항목의 편집, 순서, 사용 중지</div></div><span class="manageChev" aria-hidden="true">›</span></div>
     <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openLifeBlockSettings()"><div><div class="backupSubTitle">시간대 관리</div><div class="backupHint">BREAKFAST 같은 시간대 이름 바꾸기, 새벽·밤 추가</div></div><span class="manageChev" aria-hidden="true">›</span></div>
     <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openProjectManage()"><div><div class="backupSubTitle">프로젝트 관리</div><div class="backupHint">할 일과 마감일이 있는 일</div></div><span class="manageChev" aria-hidden="true">›</span></div>
-    <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openOneOffManage()"><div><div class="backupSubTitle">QUICK LOG 관리</div><div class="backupHint">간식·몸무게·숨참기처럼 필요할 때 남기는 기록</div></div><span class="manageChev" aria-hidden="true">›</span></div>
+    <div class="backupPart settingLinkRow tapRow" role="button" tabindex="0" onclick="openOneOffManage()"><div><div class="backupSubTitle">QUICK LOG 관리</div><div class="backupHint">매일이 아니라 생길 때만 한 줄로 남기는 기록</div></div><span class="manageChev" aria-hidden="true">›</span></div>
   </section>
 
   <section class="backupCard backupBundle">
@@ -3762,8 +3767,8 @@ setTimeout(function(){try{
       <label>항목명<input id="oneOffEditName" placeholder="예: 야식, 몸무게"></label>
       <label class="dailyCareFormWide">기록 종류
         <select id="oneOffEditType" onchange="updateOneOffEditorFields()">
-          <option value="check">체크 · 했는지만 기록 (예: 음주)</option>
-          <option value="numeric">숫자 · 몸무게처럼 값을 기록</option>
+          <option value="check">체크 · 했는지만 기록</option>
+          <option value="numeric">숫자 · 잰 값을 기록</option>
           <option value="meal">메모 · 글로 적어서 기록</option>
           <option value="mood">상태 · 1~5단계와 메모</option>
           <option value="static">숨참기 · 훈련 타이머 열기</option>
@@ -3771,7 +3776,7 @@ setTimeout(function(){try{
       </label>
       <div id="oneOffTypeHint" class="oneOffTypeHint"></div>
       <div id="oneOffStaticBox" class="dailyCareFormWide stAlertBox" hidden></div>
-      <label id="oneOffMealBox" class="dailyCareFormWide oneOffCheckRow" hidden><input id="oneOffAsMeal" type="checkbox"><span>식사 기록에 함께 보이기 (간식·야식처럼)</span></label>
+      <label id="oneOffMealBox" class="dailyCareFormWide oneOffCheckRow" hidden><input id="oneOffAsMeal" type="checkbox"><span>식사 기록에 함께 보이기</span></label>
       <label id="oneOffUnitField" class="dailyCareFormWide">단위
         <input id="oneOffEditUnit" placeholder="예: kg, cm, %, mmHg">
       </label>
@@ -3816,9 +3821,9 @@ setTimeout(function(){try{
       </label>
       <label class="dailyCareFormWide">기록 종류
         <select id="dailyCareEditType" onchange="updateDailyCareEditorFields()">
-          <option value="cumulative">누적 · 물·단백질처럼 더해서 기록</option>
-          <option value="numeric">숫자 · 체중처럼 값을 입력</option>
-          <option value="duration">시간 · 수면처럼 시작/종료 기록</option>
+          <option value="cumulative">누적 · 하루 동안 더해서 기록</option>
+          <option value="numeric">숫자 · 잰 값을 입력</option>
+          <option value="duration">시간 · 시작과 끝을 기록</option>
         </select>
       </label>
       <label id="dailyCareUnitField"><span id="dailyCareUnitLabel">단위</span><input id="dailyCareEditUnit" placeholder="g, ml, kg, cm, %"></label>
@@ -4934,7 +4939,7 @@ function renderOneOffSettings(){
       </div>
     </div>`;
   }).join('');
-  root.innerHTML=base+rows+(defs.length?'':'<div class="oneOffEmpty">몸무게처럼 가끔 재는 값은 숫자형 항목으로 추가하면<br>TODAY에 값만 입력하는 기록 버튼이 생겨요.</div>');
+  root.innerHTML=base+rows+(defs.length?'':'<div class="oneOffEmpty">가끔 재는 값은 숫자형 항목으로 추가하면<br>값만 입력하는 기록 버튼이 생겨요.</div>');
 }
 function updateOneOffEditorFields(){
   const type=document.getElementById('oneOffEditType')?.value||'meal';
@@ -4942,8 +4947,8 @@ function updateOneOffEditorFields(){
   const hint=document.getElementById('oneOffTypeHint');
   if(unitField)unitField.hidden=type!=='numeric';
   if(hint)hint.textContent=type==='numeric'
-    ?'몸무게·허리둘레처럼 잰 날에만 값을 입력해요.'
-    :'간식·야식처럼 필요할 때 내용을 적어요. 식사 기록에 함께 보여요.';
+    ?'잰 날에만 값을 입력해요.'
+    :'필요할 때 내용을 적어요. 식사 기록에 함께 보여요.';
 }
 (function(){const o=updateOneOffEditorFields;updateOneOffEditorFields=function(){
   const r=o.apply(this,arguments);
@@ -5039,10 +5044,10 @@ function updateDailyCareEditorFields(){
   if(unitInput)unitInput.placeholder=type==='numeric'?'예: kg, cm, %':'예: g, ml, 회';
   if(hint){
     hint.textContent=type==='numeric'
-      ?'체중·허리둘레처럼 잰 값을 직접 입력해요.'
+      ?'잰 값을 직접 입력해요.'
       :type==='duration'
         ?'시작·종료 시각, 경과 시간 중 기록할 것을 골라요.'
-        :'물·단백질처럼 하루 동안 더해서 기록해요.';
+        :'하루 동안 조금씩 더해서 기록해요.';
   }
 }
 function updateDailyCareScheduleFields(){
@@ -9555,7 +9560,7 @@ function renderMealLinkSettings(){
   const defs=loadDailyCareDefinitions().map(normalizeDailyCareDefinition).filter(d=>d.type==='cumulative'&&!d.oneOff&&d.enabled!==false);
   root.innerHTML=defs.map(d=>`<div class="dailyCareSettingRow manageRow mealLinkRow ${on.has(d.id)?'on':''}" role="button" tabindex="0" aria-pressed="${on.has(d.id)}" onclick="toggleMealLinkItem('${d.id}')"><div class="dailyCareSettingMain"><div class="dailyCareSettingName">${escapeLife(d.icon||'')} ${escapeLife(d.name)}</div><div class="dailyCareSettingMeta">누적형${d.unit?' · '+escapeLife(d.unit):''}</div></div><span class="mealLinkCheck">${on.has(d.id)?'✓':''}</span></div>`).join('');
   const hint=document.getElementById('mealLinkHint');
-  if(hint)hint.textContent=defs.length>1?'':'데일리케어에서 탄수화물·지방처럼 누적형 항목을 만들면 여기에 나타나요.';
+  if(hint)hint.textContent=defs.length>1?'':'데일리케어에서 누적형 항목을 만들면 여기에 나타나요.';
 }
 function toggleMealLinkItem(id){
   const cur=mealLinkedIds(),next=cur.includes(id)?cur.filter(x=>x!==id):[...cur,id];
@@ -11560,7 +11565,7 @@ renderInactiveRoutineManager=function(){
   if(n1)n1.textContent=`${cnt('daily')}개 사용 중`;if(n2)n2.textContent=`${cnt('free')}개 사용 중`;
   const hint=document.getElementById('routineKindHint');
   if(hint)hint.textContent=isFree
-    ?'TODAY의 FREE TIME에 모이는 취미 활동이에요. 해야 할 일이 아니라, 여유 있을 때 골라서 시간이나 내용을 기록해요.'
+    ?'TODAY의 FREE TIME에 모이는 활동이에요. 해야 할 일이 아니라, 시간을 들여 한 활동을 골라 시간이나 내용을 기록해요.'
     :'TODAY의 BREAKFAST · MORNING · LUNCH · AFTERNOON · EVENING에 시간대별로 나오는 체크리스트예요.';
   const add=document.getElementById('routineKindAddBtn');if(add)add.textContent=isFree?'+ FREE TIME 항목 추가':'+ 일상 루틴 추가';
   document.getElementById('routineManagerActiveTab')?.classList.toggle('on',routineManagerMode==='active');
@@ -11979,7 +11984,7 @@ function oneOffLogQuick(d){
     u.apply(this,arguments);
     const t=document.getElementById('oneOffEditType')?.value,h=document.getElementById('oneOffTypeHint'),mb=document.getElementById('oneOffMealBox');
     if(mb)mb.hidden=t!=='meal';
-    const hints={check:'음주 여부처럼 했는지만 남겨요. 누르면 바로 기록돼요.',mood:'오늘 상태를 1~5단계로 고르고, 원하면 메모를 남겨요.',meal:'간식·야식·새로운 활동처럼 필요할 때 내용을 적어요.',numeric:'몸무게·허리둘레처럼 잰 날에만 값을 입력해요.'};
+    const hints={check:'했는지만 남겨요. 누르면 바로 기록돼요.',mood:'오늘 상태를 1~5단계로 고르고, 원하면 메모를 남겨요.',meal:'생길 때 내용을 한 줄로 적어요.',numeric:'잰 날에만 값을 입력해요.'};
     if(h&&hints[t])h.textContent=hints[t];
   };
   const rq=renderOneOffQuick;renderOneOffQuick=function(){rq.apply(this,arguments);renderOneOffTodayLogs();};
@@ -13107,7 +13112,7 @@ const SW_DEFS={
     ].map(p=>({...p,hide:have.has(p.name)}));},
     afterPreset:()=>2,
     steps:d=>[
-      swNameStep({title:'매일 챙길 것을\n추가할까요?',sub:'물·수면처럼 매일 한눈에 보는 기록이에요.',ph:'직접 입력 (예: 커피, 체중)',presets:()=>SW_DEFS.dc.presets(),icon:'sparkle'}),
+      swNameStep({title:'매일 챙길 것을\n추가할까요?',sub:'매일 한눈에 보는 기록이에요.',ph:'직접 입력 (예: 커피, 체중)',presets:()=>SW_DEFS.dc.presets(),icon:'sparkle'}),
       swPickStep({title:'어떻게 기록할까요?',key:'type',items:()=>[
         {id:'cumulative',ic:'drop',name:'더해 가며 기록',desc:'버튼을 눌러 조금씩 더해요',ex:'커피 2잔, 물 1,200ml'},
         {id:'numeric',ic:'scale',name:'숫자 하나 기록',desc:'그날의 값을 한 번 적어요',ex:'체중 52.3kg, 걸음 8,000걸음'},
@@ -15975,7 +15980,7 @@ document.querySelectorAll('.lifeBlockHead').forEach(h=>{try{const t=h.querySelec
   updateOneOffEditorFields=function(){
     const r=u.apply(this,arguments);
     const t=document.getElementById('oneOffEditType')?.value,h=document.getElementById('oneOffTypeHint');
-    if(h&&t==='numeric')h.textContent='몇 달에 한 번처럼 가끔 재는 수치를 남겨요. 매일 잰다면 DAILY CARE에 두세요. DAILY CARE에 같은 이름이 있으면 RECORD에서 한 그래프로 합쳐 보여요.';
+    if(h&&t==='numeric')h.textContent='가끔 재는 수치를 남겨요. 매일 잰다면 DAILY CARE에 두세요. DAILY CARE에 같은 이름이 있으면 RECORD에서 한 그래프로 합쳐 보여요.';
     return r;
   };
 })();
