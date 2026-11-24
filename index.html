@@ -3279,6 +3279,60 @@ html.kbOpen .routineActionOverlay{align-items:center!important}
 .tdHero .lbPeek button i,.tdHero .thRest button i{width:.9rem!important;height:.9rem!important}
 .tdHero .lbPeek .lbMore{height:2.1rem!important}
 
+/* ===== 항목 편집 화면 통일 (2026-11-24) ===== */
+.ufForm .ufGone{display:none!important}
+.ufForm .life2col.ufOne{grid-template-columns:1fr!important}
+.ufForm .ufLabel{font-size:var(--fs-1,.75rem);color:var(--rc-mu);margin:0 0 7px 2px;font-weight:500}
+.ufForm .ufLabel span{margin-left:6px;font-weight:400;opacity:.85}
+.ufNameRow{display:flex;align-items:flex-end;gap:10px;margin:2px 0 16px}
+.ufNameRow .ufIco{flex:none;width:48px;height:48px;border-radius:50%;border:1px solid var(--rc-line);background:var(--rc-gl);color:var(--rc-gd);display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer}
+.ufNameRow .ufIco .appIco,.ufNameRow .ufIco svg{width:22px;height:22px}
+.ufNameRow .ufIco .ufEmo{font-size:22px;line-height:1}
+.ufNameRow .ufIco .ufPlus{font-size:22px;color:var(--rc-mu);font-weight:300}
+.ufNameField{flex:1;min-width:0}
+.ufNameField input{width:100%;box-sizing:border-box}
+.ufTypeBox{grid-column:1/-1;margin:0 0 14px}
+.ufChips{display:flex;flex-wrap:wrap;gap:6px}
+.ufChips button{border:1px solid var(--rc-line);background:var(--rc-card);color:var(--rc-tx2);border-radius:999px;height:36px;padding:0 15px;font:inherit;font-size:var(--fs-2,.8125rem)}
+.ufChips button.on{border-color:var(--rc-g);background:var(--rc-gl);color:var(--rc-gd);font-weight:600}
+.ufTypeHint{font-size:var(--fs-1,.75rem);color:var(--rc-mu);margin:7px 2px 0;min-height:1em}
+.ufTypeHint:empty{display:none}
+.ufForm #oneOffTypeHint{display:none!important}
+.ufSwitch{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid var(--rc-line);border-radius:14px;margin:6px 0 4px;cursor:pointer;background:var(--rc-card)}
+.ufSwitch b{display:block;font-size:var(--fs-2,.8125rem);font-weight:600;color:var(--rc-tx)}
+.ufSwitch small{display:block;font-size:var(--fs-1,.75rem);color:var(--rc-mu);margin-top:2px}
+.ufSwitch .svSw{flex:none}
+.ufMore{margin:10px 0 2px;border-top:1px solid var(--rc-line);padding-top:6px}
+.ufMore summary{list-style:none;cursor:pointer;font-size:var(--fs-2,.8125rem);color:var(--rc-mu);padding:8px 2px}
+.ufMore summary::-webkit-details-marker{display:none}
+.ufMore summary::after{content:' ›';display:inline-block;transition:transform .15s}
+.ufMore[open] summary::after{transform:rotate(90deg)}
+.ufMoreBody{display:grid;gap:12px;padding:4px 0 6px}
+/* 빠른 버튼 */
+.ufQuick{grid-column:1/-1;margin:2px 0 8px}
+.ufQChips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.ufQChip{display:inline-flex;align-items:center;gap:2px;height:34px;padding:0 4px 0 13px;border-radius:999px;background:var(--rc-gl);color:var(--rc-gd);font-size:var(--fs-2,.8125rem);font-weight:600}
+.ufQChip button{border:0;background:transparent;color:inherit;opacity:.65;width:26px;height:26px;font-size:15px;padding:0;cursor:pointer}
+.ufQEmpty{font-size:var(--fs-1,.75rem);color:var(--rc-mu);padding:8px 2px}
+.ufQSug{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:8px}
+.ufQSug span{font-size:var(--fs-1,.75rem);color:var(--rc-mu);margin-right:2px}
+.ufQSug button{border:1px dashed var(--rc-line2);background:transparent;color:var(--rc-tx2);border-radius:999px;height:30px;padding:0 11px;font:inherit;font-size:var(--fs-1,.75rem)}
+.ufQAdd{display:flex;gap:6px}
+.ufQAdd input{flex:1;min-width:0}
+.ufQAdd button{flex:none;border:0;border-radius:11px;background:var(--rc-soft);color:var(--rc-tx2);padding:0 14px;font:inherit;font-size:var(--fs-2,.8125rem)}
+/* 아래 버튼: 작은 글씨 삭제 · 취소 + 큰 저장 */
+.ufForm .lifeActions{display:flex!important;grid-template-columns:none!important;align-items:center;gap:4px}
+.ufForm .lifeActions>button:not(.lifeSave){flex:none!important;width:auto!important;min-height:0!important;height:auto!important;background:transparent!important;border:0!important;box-shadow:none!important;padding:10px 8px!important;font-size:13.5px!important;font-weight:500!important;color:var(--rc-mu)!important}
+.ufForm .lifeActions>button.hide{display:none!important}
+.ufForm .lifeActions>button[id$="DeleteBtn"]{color:var(--rc-past,#D0647A)!important}
+.ufForm .lifeActions>.lifeSave{margin-left:auto!important;flex:0 0 52%!important;height:44px!important;border-radius:12px!important}
+
+.ufSwitch.on .svSw{background:var(--rc-g,#3f9c7c)}
+.ufSwitch.on .svSw::after{transform:translateX(20px)}
+.ufForm #dailyCareTypeHint{display:none!important}
+.ufNameField input{display:block;width:100%;height:48px;box-sizing:border-box;border:1px solid var(--rc-line)!important;border-radius:12px!important;background:var(--rc-soft2,var(--rc-soft))!important;padding:0 14px!important;font:inherit;font-size:var(--fs-3,.9375rem)!important;color:var(--rc-tx);outline:none;box-shadow:none!important}
+.ufNameField input:focus{border-color:var(--rc-g)!important;background:var(--rc-card)!important}
+
 </style>
 <script>/* 저장 공간 지킴이 (2026-11-21): 기록을 저장하다 공간이 모자라면 자동 백업 사본(오래된 것부터)을 지우고 다시 저장 → 실제 기록은 꼭 저장되게 */
 (function(){try{var P=Storage.prototype,orig=P.setItem,PFX='__auto_backup__';
@@ -3771,7 +3825,7 @@ setTimeout(function(){try{
           <option value="numeric">숫자 · 잰 값을 기록</option>
           <option value="meal">메모 · 글로 적어서 기록</option>
           <option value="mood">상태 · 1~5단계와 메모</option>
-          <option value="static">숨참기 · 훈련 타이머 열기</option>
+          <option value="static">프리다이빙 · 훈련 타이머와 다이빙 기록</option>
         </select>
       </label>
       <div id="oneOffTypeHint" class="oneOffTypeHint"></div>
@@ -16132,6 +16186,127 @@ function qlMoreDots(){
   const q=renderOneOffQuick;renderOneOffQuick=function(){const r=q.apply(this,arguments);try{qlMoreDots();}catch(e){}return r;};
   const lg=renderLifeGuide;renderLifeGuide=function(){const r=lg.apply(this,arguments);try{qlMoreDots();}catch(e){}return r;};
   setTimeout(()=>{try{qlMoreDots();}catch(e){}},400);
+})();
+
+/* ===== 항목 편집 화면 통일 (2026-11-24): DAILY CARE · 루틴 · QUICK LOG
+   1) 맨 위 한 줄: [아이콘] [이름]   2) 기록 방식: 칩으로 고르기 + 한 줄 설명   3) 방식별 칸(목표·단위 등)
+   4) 언제(시간대·반복)   5) TODAY에 보이기 스위치   6) 자주 안 쓰는 설정은 '더 보기'
+   7) 아래: 작은 글씨 삭제 · 취소 + 큰 저장
+   빠른 버튼(누적형): 칩으로 보고 ×로 지우기, 추천 값 누르기, 원하는 값 직접 넣기
+   — 입력칸 id는 그대로라 저장 방식은 바뀌지 않음 ===== */
+const UF_SPEC={
+  dailyCareItemModal:{name:'dailyCareEditName',icon:'dailyCareEditIcon',type:'dailyCareEditType',enabledSel:'dailyCareEditEnabled',more:['#dailyCareEditColor'],quick:'dailyCareQuickValues',unit:'dailyCareEditUnit'},
+  routineModal:{name:'rName',icon:'rIcon',type:'rType',enabledChk:'rEnabled',more:['#rPauseWrap']},
+  oneOffRecordModal:{name:'oneOffEditName',icon:'oneOffEditIcon',type:'oneOffEditType'}
+};
+function ufWrapOf(el){return el?el.closest('label,.lifeField')||el.parentElement:null;}
+function ufIcoHTML(v){v=String(v||'').trim();const m=/^⟪([a-z0-9_]+)⟫$/.exec(v);if(m&&appIconSvg(m[1]))return `<span class="appIco">${appIconSvg(m[1])}</span>`;if(v)return `<span class="ufEmo">${escapeLife(v)}</span>`;return `<span class="ufPlus">+</span>`;}
+function ufSyncIcon(mid){const sp=UF_SPEC[mid],b=document.querySelector(`#${mid} .ufIco`),inp=document.getElementById(sp.icon);if(b&&inp)b.innerHTML=ufIcoHTML(inp.value);}
+function ufTypeSync(mid){
+  const sp=UF_SPEC[mid],sel=document.getElementById(sp.type),box=document.querySelector(`#${mid} .ufChips`);if(!sel||!box)return;
+  box.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===sel.value));
+  const o=[...sel.options].find(x=>x.value===sel.value),h=document.querySelector(`#${mid} .ufTypeHint`);
+  if(h)h.textContent=o&&o.textContent.includes(' · ')?o.textContent.split(' · ').slice(1).join(' · '):'';
+}
+function ufSetType(mid,v){const sel=document.getElementById(UF_SPEC[mid].type);if(!sel)return;sel.value=v;sel.dispatchEvent(new Event('change',{bubbles:true}));ufTypeSync(mid);}
+function ufApply(mid){
+  const sp=UF_SPEC[mid],m=document.getElementById(mid);if(!sp||!m)return;
+  const sheet=m.querySelector('.lifeSheet');if(!sheet)return;
+  if(!m.dataset.uf){
+    m.dataset.uf='1';m.classList.add('ufForm');
+    const name=document.getElementById(sp.name),icon=document.getElementById(sp.icon),nw=ufWrapOf(name),iw=ufWrapOf(icon);
+    /* 1) 아이콘 · 이름 한 줄 */
+    const row=document.createElement('div');row.className='ufNameRow';
+    row.innerHTML=`<button type="button" class="ufIco" aria-label="아이콘 고르기"></button><div class="ufNameField"><div class="ufLabel">이름</div></div>`;
+    row.querySelector('.ufNameField').appendChild(name);
+    row.querySelector('.ufIco').onclick=e=>{e.preventDefault();const ob=icon&&icon._icRow&&icon._icRow.querySelector('.icOpenBtn');if(ob)ob.click();};
+    const head=sheet.querySelector('.lifeSheetHead');
+    const anchor=sheet.querySelector('.dailyCareFormGrid,.life2col,.lifeField');
+    (anchor||head).parentElement.insertBefore(row,anchor||head.nextSibling);
+    if(nw&&nw!==row)nw.classList.add('ufGone');
+    if(iw)iw.classList.add('ufGone');
+    if(icon)icon.addEventListener('input',()=>ufSyncIcon(mid));
+    /* 2) 기록 방식 칩 */
+    const sel=document.getElementById(sp.type),sw=ufWrapOf(sel);
+    if(sel&&sw){
+      const box=document.createElement('div');box.className='ufTypeBox';
+      box.innerHTML=`<div class="ufLabel">기록 방식</div><div class="ufChips"></div><div class="ufTypeHint"></div>`;
+      const chips=box.querySelector('.ufChips');
+      const renderChips=()=>{chips.innerHTML=[...sel.options].filter(o=>!o.hidden&&!o.disabled).map(o=>`<button type="button" data-v="${o.value}">${escapeLife(o.textContent.split(' · ')[0])}</button>`).join('');
+        chips.querySelectorAll('button').forEach(b=>b.onclick=()=>ufSetType(mid,b.dataset.v));ufTypeSync(mid);};
+      renderChips();box._render=renderChips;
+      sw.parentElement.insertBefore(box,sw);sw.classList.add('ufGone');
+      sel.addEventListener('change',()=>ufTypeSync(mid));
+      /* 루틴: 시간대 칸이 혼자 남으면 한 줄 전체로 */
+      const two=sw.closest('.life2col');if(two)two.classList.add('ufOne');
+    }
+    /* 이름 바꾸기: 하루 목표 → 목표 */
+    m.querySelectorAll('label,.lifeField>label').forEach(l=>{const t=l.firstChild;if(t&&t.nodeType===3){const s=t.nodeValue.trim();if(s==='하루 목표')t.nodeValue='목표';if(s==='항목명')t.nodeValue='이름';}});
+    /* 5) TODAY에 보이기 스위치 */
+    const swRow=document.createElement('div');swRow.className='ufSwitch';swRow.setAttribute('role','switch');swRow.tabIndex=0;
+    swRow.innerHTML=`<div><b>TODAY에 보이기</b><small>끄면 숨김 · 기록은 그대로 남아요</small></div><span class="svSw" aria-hidden="true"></span>`;
+    if(sp.enabledSel){const s=document.getElementById(sp.enabledSel),w=ufWrapOf(s);if(s&&w){w.parentElement.insertBefore(swRow,w);w.classList.add('ufGone');swRow.onclick=()=>{s.value=s.value==='false'?'true':'false';ufSwitchSync(mid);};}}
+    else if(sp.enabledChk){const c=document.getElementById(sp.enabledChk),w=ufWrapOf(c);if(c&&w){w.parentElement.insertBefore(swRow,w);w.classList.add('ufGone');swRow.onclick=()=>{c.checked=!c.checked;ufSwitchSync(mid);};}}
+    else swRow.remove();
+    /* 6) 더 보기 */
+    const moreEls=(sp.more||[]).map(q=>m.querySelector(q)).filter(Boolean).map(ufWrapOf).filter(Boolean);
+    if(moreEls.length){
+      const det=document.createElement('details');det.className='ufMore';det.innerHTML='<summary>더 보기</summary><div class="ufMoreBody"></div>';
+      const act=sheet.querySelector('.lifeActions');sheet.insertBefore(det,act);
+      moreEls.forEach(e=>det.querySelector('.ufMoreBody').appendChild(e));
+    }
+    /* 빠른 버튼: 칩 편집 */
+    if(sp.quick)ufQuickMount(mid);
+  }
+  ufSyncIcon(mid);ufTypeSync(mid);ufSwitchSync(mid);if(sp.quick)ufQuickRender(mid);
+  const tb=m.querySelector('.ufTypeBox');if(tb&&tb._render)tb._render();
+}
+function ufSwitchSync(mid){
+  const sp=UF_SPEC[mid],r=document.querySelector(`#${mid} .ufSwitch`);if(!r)return;let on=true;
+  if(sp.enabledSel)on=document.getElementById(sp.enabledSel)?.value!=='false';
+  if(sp.enabledChk)on=!!document.getElementById(sp.enabledChk)?.checked;
+  r.classList.toggle('on',on);r.setAttribute('aria-checked',String(on));
+}
+/* --- 빠른 버튼 칩 --- */
+function ufQuickVals(mid){const inp=document.getElementById(UF_SPEC[mid].quick);return String(inp?.value||'').split(/[,\s]+/).map(x=>x.trim()).filter(Boolean).map(Number).filter(n=>Number.isFinite(n)&&n!==0);}
+function ufQuickSet(mid,arr){const inp=document.getElementById(UF_SPEC[mid].quick);if(!inp)return;const u=[...new Set(arr)].sort((a,b)=>a-b);inp.value=u.map(n=>n>0?`+${n}`:String(n)).join(', ');inp.dispatchEvent(new Event('input',{bubbles:true}));ufQuickRender(mid);}
+function ufQuickMount(mid){
+  const inp=document.getElementById(UF_SPEC[mid].quick),w=ufWrapOf(inp);if(!inp||!w)return;
+  const box=document.createElement('div');box.className='ufQuick';box.id=mid+'Quick';
+  box.innerHTML=`<div class="ufLabel">빠른 버튼 <span>TODAY 카드에 보이는 버튼</span></div><div class="ufQChips"></div><div class="ufQSug"></div>
+    <div class="ufQAdd"><input type="number" step="any" inputmode="decimal" placeholder="직접 넣기 (빼기는 -5처럼)"><button type="button">추가</button></div>`;
+  w.parentElement.insertBefore(box,w);w.classList.add('ufGone');
+  const ni=box.querySelector('.ufQAdd input');
+  const add=()=>{const n=Number(String(ni.value).replace(',','.'));if(Number.isFinite(n)&&n!==0){ufQuickSet(mid,ufQuickVals(mid).concat([n]));ni.value='';}};
+  box.querySelector('.ufQAdd button').onclick=add;ni.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();add();}});
+  const u=document.getElementById(UF_SPEC[mid].unit);if(u)u.addEventListener('input',()=>ufQuickRender(mid));
+}
+function ufQuickSuggest(unit){
+  const u=String(unit||'').trim().toLowerCase();
+  if(/^ml$/.test(u))return [120,250,500];if(/^l$/.test(u))return [0.5,1];
+  if(/^g$/.test(u))return [5,10,20];if(/^kg$/.test(u))return [0.1,0.5,1];
+  if(/^(잔|개|회|알|번|컵|병|정)$/.test(u))return [1,2];
+  if(/^(분|min)$/.test(u))return [5,10,30];if(/^(걸음|보)$/.test(u))return [1000,5000];
+  return [1,5,10];
+}
+function ufQuickRender(mid){
+  const box=document.getElementById(mid+'Quick');if(!box)return;
+  const vals=ufQuickVals(mid),unit=document.getElementById(UF_SPEC[mid].unit)?.value||'';
+  const f=n=>`${n>0?'+':''}${formatDailyCareNumber(n)}`;
+  box.querySelector('.ufQChips').innerHTML=vals.length?vals.map(n=>`<span class="ufQChip">${f(n)}<button type="button" aria-label="${f(n)} 지우기" data-n="${n}">×</button></span>`).join(''):'<span class="ufQEmpty">버튼이 없어요 · 아래에서 골라 주세요</span>';
+  box.querySelectorAll('.ufQChip button').forEach(b=>b.onclick=()=>ufQuickSet(mid,ufQuickVals(mid).filter(x=>x!==Number(b.dataset.n))));
+  const sug=ufQuickSuggest(unit).flatMap(n=>[n,-n]).filter(n=>!vals.includes(n));
+  box.querySelector('.ufQSug').innerHTML=sug.length?`<span>추천</span>${sug.map(n=>`<button type="button" data-n="${n}">${f(n)}${escapeLife(unit)}</button>`).join('')}`:'';
+  box.querySelectorAll('.ufQSug button').forEach(b=>b.onclick=()=>ufQuickSet(mid,ufQuickVals(mid).concat([Number(b.dataset.n)])));
+  /* 누적형일 때만 */
+  const t=document.getElementById(UF_SPEC[mid].type)?.value;box.hidden=!!t&&t!=='cumulative';
+}
+(function(){
+  const wrap=(fn,mid)=>{const o=window[fn];if(typeof o!=='function')return;window[fn]=function(){const r=o.apply(this,arguments);setTimeout(()=>{try{ufApply(mid);}catch(e){console.warn(e);}},0);return r;};};
+  wrap('openDailyCareItemEditor','dailyCareItemModal');
+  wrap('openRoutineModal','routineModal');
+  wrap('openOneOffRecordEditor','oneOffRecordModal');
+  const u=updateDailyCareEditorFields;updateDailyCareEditorFields=function(){const r=u.apply(this,arguments);try{ufQuickRender('dailyCareItemModal');}catch(e){}return r;};
 })();
 
 </script>
