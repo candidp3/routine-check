@@ -3333,6 +3333,21 @@ html.kbOpen .routineActionOverlay{align-items:center!important}
 .ufNameField input{display:block;width:100%;height:48px;box-sizing:border-box;border:1px solid var(--rc-line)!important;border-radius:12px!important;background:var(--rc-soft2,var(--rc-soft))!important;padding:0 14px!important;font:inherit;font-size:var(--fs-3,.9375rem)!important;color:var(--rc-tx);outline:none;box-shadow:none!important}
 .ufNameField input:focus{border-color:var(--rc-g)!important;background:var(--rc-card)!important}
 
+/* 편집 화면 다듬기 (2026-11-24 v2) */
+.ufForm details.ufMore{border:0!important;border-top:1px solid var(--rc-line)!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;padding:6px 0 0!important;margin:12px 0 2px!important}
+.ufForm details.ufMore>summary{padding:8px 2px!important;background:transparent!important}
+/* TODAY에 보이기는 목록의 '숨기기'와 같은 기능이라 편집 화면에서는 뺌 */
+.ufForm .ufSwitch{display:none!important}
+/* 아래 버튼: 삭제는 글씨만(왼쪽), 취소·저장은 각각 버튼 */
+.ufForm .lifeActions>button:not(.lifeSave):not([id$="DeleteBtn"]){margin-left:auto!important;flex:0 0 28%!important;height:44px!important;border-radius:12px!important;background:var(--rc-soft)!important;border:1px solid var(--rc-line)!important;color:var(--rc-tx2)!important;font-weight:500!important;padding:0 10px!important}
+.ufForm .lifeActions>button[id$="DeleteBtn"]+button:not(.lifeSave){margin-left:auto!important}
+.ufForm .lifeActions>.lifeSave{margin-left:0!important;flex:0 0 40%!important}
+.ufForm .lifeActions{gap:8px!important}
+
+:is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal) .lifeActions{gap:8px!important}
+:is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal) .lifeActions>button:not(.lifeSave):not(.dailyCarePopupSave):not([id$="Del"]):not([id$="Delete"]){margin-left:auto!important;flex:0 0 30%!important;height:39px!important;border-radius:11px!important;background:var(--rc-soft)!important;border:1px solid var(--rc-line)!important;color:var(--rc-tx2)!important;padding:0 10px!important}
+:is(#dailyCareNumericModal,#oneOffLogModal,#sleepManualModal,#dailyCareDurationModal,#staticTableEditModal) .lifeActions>:is(.lifeSave,.dailyCarePopupSave){margin-left:0!important;flex:0 0 42%!important}
+
 </style>
 <script>/* 저장 공간 지킴이 (2026-11-21): 기록을 저장하다 공간이 모자라면 자동 백업 사본(오래된 것부터)을 지우고 다시 저장 → 실제 기록은 꼭 저장되게 */
 (function(){try{var P=Storage.prototype,orig=P.setItem,PFX='__auto_backup__';
